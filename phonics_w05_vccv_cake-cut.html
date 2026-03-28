@@ -379,7 +379,7 @@ const levels = {
     從<span class="cut">兩個子音中間</span>切下去！<br><br>
     📌 子音（紅色）：b c d f g h j k l m n p q r s t v w x y z<br>
     📌 母音（藍色）：a e i o u</div>`,
-    questions: [
+    wordBank: [
       { word:"winter", emoji:"❄️", hint:"冬天", answer:"win·ter", cut:3, letters:"winter" },
       { word:"absent", emoji:"🙈", hint:"沒來、缺席", answer:"ab·sent", cut:2, letters:"absent" },
       { word:"rabbit", emoji:"🐰", hint:"兔子", answer:"rab·bit", cut:3, letters:"rabbit" },
@@ -388,7 +388,24 @@ const levels = {
       { word:"cactus", emoji:"🌵", hint:"仙人掌", answer:"cac·tus", cut:3, letters:"cactus" },
       { word:"kitten", emoji:"🐱", hint:"小貓", answer:"kit·ten", cut:3, letters:"kitten" },
       { word:"pencil", emoji:"✏️", hint:"鉛筆", answer:"pen·cil", cut:3, letters:"pencil" },
-    ]
+      { word:"muffin", emoji:"🧁", hint:"馬芬蛋糕", answer:"muf·fin", cut:3, letters:"muffin" },
+      { word:"butter", emoji:"🧈", hint:"奶油", answer:"but·ter", cut:3, letters:"butter" },
+      { word:"dinner", emoji:"🍽️", hint:"晚餐", answer:"din·ner", cut:3, letters:"dinner" },
+      { word:"garden", emoji:"🌻", hint:"花園", answer:"gar·den", cut:3, letters:"garden" },
+      { word:"happen", emoji:"⭐", hint:"發生", answer:"hap·pen", cut:3, letters:"happen" },
+      { word:"hidden", emoji:"🙈", hint:"隱藏的", answer:"hid·den", cut:3, letters:"hidden" },
+      { word:"lesson", emoji:"📚", hint:"課程", answer:"les·son", cut:3, letters:"lesson" },
+      { word:"mitten", emoji:"🧤", hint:"手套", answer:"mit·ten", cut:3, letters:"mitten" },
+      { word:"pillow", emoji:"🛏️", hint:"枕頭", answer:"pil·low", cut:3, letters:"pillow" },
+      { word:"common", emoji:"🌍", hint:"常見的", answer:"com·mon", cut:3, letters:"common" },
+      { word:"cotton", emoji:"☁️", hint:"棉花", answer:"cot·ton", cut:3, letters:"cotton" },
+      { word:"sudden", emoji:"💥", hint:"突然的", answer:"sud·den", cut:3, letters:"sudden" },
+    ],
+    get questions() {
+      // Randomly pick 8 from wordBank each game
+      const shuffled = [...this.wordBank].sort(() => Math.random() - 0.5);
+      return shuffled.slice(0, 8);
+    }
   }
 };
 
@@ -459,8 +476,8 @@ function renderCakeQ(q) {
 
   document.getElementById('qCard').innerHTML = `
     <div class="q-instruction" id="qInstruction">
-      🎨 <b>步驟一</b>：點每個字母，標出母音（藍🔵）和子音（紅🔴）！<br>
-      <small style="color:#aaa">母音 = a e i o u</small>
+      🎨 <b>步驟一</b>：點每個字母標顏色！<br>
+      <small style="color:#888">🔴 第一下 = 子音 ｜ 🔵 再點一下 = 母音 ｜ 母音 = a e i o u</small>
     </div>
     <span class="q-emoji">${q.emoji}</span>
     <div class="q-hint">「${q.hint}」</div>
@@ -482,16 +499,12 @@ const tagState = {}; // index -> 'v' or 'c'
 
 function tagLetter(i, l) {
   if (cakePhase !== 1) return;
-  // toggle between vowel / consonant / untagged
+  // First tap = RED (consonant), second tap = BLUE (vowel), third tap = RED again
   const current = tagState[i];
   if (!current) {
-    tagState[i] = VOWELS.has(l.toLowerCase()) ? 'auto-v' : 'auto-c';
-    // First tap: auto-suggest
-    const isV = VOWELS.has(l.toLowerCase());
-    tagState[i] = isV ? 'v' : 'c';
+    tagState[i] = 'c'; // always start as RED (consonant)
   } else {
-    // Second tap toggles
-    tagState[i] = tagState[i] === 'v' ? 'c' : 'v';
+    tagState[i] = tagState[i] === 'c' ? 'v' : 'c'; // toggle
   }
 
   const el = document.getElementById('cl_' + i);
