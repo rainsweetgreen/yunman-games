@@ -222,6 +222,14 @@
     color: #b71c1c;
   }
   .cake-letter.locked { cursor: default; }
+  @keyframes shakeLetter {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-5px); }
+    40% { transform: translateX(5px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+  .shake-letter { animation: shakeLetter 0.4s ease; }
   /* reveal colours after step 2 */
   .cake-letter.correct-vowel {
     background: linear-gradient(180deg, #e3f2fd, #bbdefb);
@@ -401,11 +409,7 @@ const levels = {
       { word:"cotton", emoji:"☁️", hint:"棉花", answer:"cot·ton", cut:3, letters:"cotton" },
       { word:"sudden", emoji:"💥", hint:"突然的", answer:"sud·den", cut:3, letters:"sudden" },
     ],
-    get questions() {
-      // Randomly pick 8 from wordBank each game
-      const shuffled = [...this.wordBank].sort(() => Math.random() - 0.5);
-      return shuffled.slice(0, 8);
-    }
+    questions: [] // filled by startLevel()
   }
 };
 
@@ -424,6 +428,9 @@ function startLevel(lv) {
   score = 0;
   wrongItems = [];
   answered = false;
+  // Randomly pick 8 questions from wordBank once per game
+  const shuffled = [...levels[lv].wordBank].sort(() => Math.random() - 0.5);
+  levels[lv].questions = shuffled.slice(0, 8);
 
   // worldMap hidden (single level mode)
   // gameScreen always active
@@ -528,57 +535,75 @@ function tagLetter(i, l) {
 function confirmColours() {
   const q = levels[currentLevel].questions[currentQ];
   const letters = q.letters.split('');
-  // Check if student got vowel/consonant right
-  let colourErrors = 0;
+
+  // Step 1: find errors
+  let errorIdxs = [];
   letters.forEach((l, i) => {
     const isV = VOWELS.has(l.toLowerCase());
     const studentSaysV = tagState[i] === 'v';
-    const el = document.getElementById('cl_' + i);
-    el.classList.remove('tagged-vowel','tagged-consonant');
-    el.classList.add('locked');
-    if (isV === studentSaysV) {
-      el.classList.add('correct-vowel'.replace('vowel', isV ? 'vowel' : 'consonant'));
-      el.style.background = isV
-        ? 'linear-gradient(180deg,#e3f2fd,#bbdefb)'
-        : 'linear-gradient(180deg,#fce4ec,#f8bbd0)';
-      el.style.borderColor = isV ? '#42a5f5' : '#ef5350';
-    } else {
-      colourErrors++;
-      el.style.background = '#fff3e0';
-      el.style.borderColor = '#ffa726';
-      el.style.outline = '3px solid #ff6b6b';
-    }
+    if (isV !== studentSaysV) errorIdxs.push(i);
   });
 
-  // Now add cut slots between letters
+  const fb = document.getElementById('feedback');
+
+  if (errorIdxs.length > 0) {
+    // ❌ Highlight errors and BLOCK progress
+    errorIdxs.forEach(i => {
+      const el = document.getElementById('cl_' + i);
+      if (!el) return;
+      el.style.outline = '3px solid #ff6b6b';
+      el.style.background = '#fff3e0';
+      el.style.borderColor = '#ffa726';
+      el.classList.add('shake-letter');
+    });
+    fb.innerHTML = `❌ 還有 ${errorIdxs.length} 個字母標錯了！<br><small>橘色框框要再想想，全部標對才能切蛋糕！</small>`;
+    fb.className = 'feedback show bad';
+
+    // After 2s: remove error highlight so student can try again
+    setTimeout(() => {
+      errorIdxs.forEach(i => {
+        const el = document.getElementById('cl_' + i);
+        if (!el) return;
+        el.classList.remove('shake-letter');
+        el.style.outline = '';
+        el.style.background = '';
+        el.style.borderColor = '';
+        // Restore the student's chosen tag colour
+        el.classList.remove('tagged-vowel','tagged-consonant');
+        el.classList.add(tagState[i] === 'v' ? 'tagged-vowel' : 'tagged-consonant');
+      });
+      fb.className = 'feedback';
+    }, 2000);
+
+    return; // 🚫 Stop here — do NOT proceed to step 2
+  }
+
+  // ✅ All correct — rebuild cakeWord with cut slots
   cakePhase = 2;
+
   const cakeWord = document.getElementById('cakeWord');
-  const letterEls = Array.from(cakeWord.querySelectorAll('.cake-letter'));
   const newHtml = letters.map((l, i) => {
     const isV = VOWELS.has(l.toLowerCase());
-    const bg = isV ? 'linear-gradient(180deg,#e3f2fd,#bbdefb)' : 'linear-gradient(180deg,#fce4ec,#f8bbd0)';
+    const bg = isV
+      ? 'linear-gradient(180deg,#e3f2fd,#bbdefb)'
+      : 'linear-gradient(180deg,#fce4ec,#f8bbd0)';
     const bc = isV ? '#42a5f5' : '#ef5350';
     const slot = i < letters.length - 1
       ? `<div class="cut-slot" data-pos="${i+1}" onclick="makeCut(${i+1},${q.cut})"><div class="cut-line"></div></div>`
       : '';
-    return `<div class="cake-letter locked" style="background:${bg};border-color:${bc}">${l}</div>${slot}`;
+    return `<div class="cake-letter locked" style="background:${bg};border-color:${bc};cursor:default">${l}</div>${slot}`;
   }).join('');
   cakeWord.innerHTML = newHtml;
 
-  const fb = document.getElementById('feedback');
-  const instruction = document.getElementById('qInstruction');
-  instruction.innerHTML = `🔪 <b>步驟二</b>：找到兩個子音中間，點線切下去！`;
+  // Update instruction
+  document.getElementById('qInstruction').innerHTML =
+    `🔪 <b>步驟二</b>：顏色全對！找到兩個子音中間，點線切下去！`;
   document.getElementById('confirmBtn').style.display = 'none';
   document.getElementById('tagStatus').style.display = 'none';
 
-  if (colourErrors > 0) {
-    fb.innerHTML = `⚠️ 有 ${colourErrors} 個字母標錯了，已幫你修正（橘色框框）！<br>現在來切蛋糕！`;
-    fb.className = 'feedback show bad';
-  } else {
-    fb.innerHTML = `🎨 顏色全對！現在來切蛋糕！🔪`;
-    fb.className = 'feedback show ok';
-    setTimeout(() => fb.className = 'feedback', 1500);
-  }
+  fb.innerHTML = `🎨 全對！來切蛋糕！🔪`;
+  fb.className = 'feedback show ok';
+  setTimeout(() => { fb.className = 'feedback'; }, 1200);
 }
 
 function makeCut(pos, correct) {
