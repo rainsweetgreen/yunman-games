@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎂 VC/CV 切蛋糕！</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #1a0a2e;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== STARS BG ===== */
+  .stars-bg {
+    position: fixed; inset: 0; z-index: 0;
+    background: radial-gradient(ellipse at 20% 20%, #2d1b69 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, #1a3a5c 0%, transparent 50%),
+                #0d0d1a;
+    overflow: hidden;
+  }
+  .star { position: absolute; border-radius: 50%; background: white; animation: twinkle ease-in-out infinite; }
+  @keyframes twinkle { 0%,100%{opacity:0.2;transform:scale(1)} 50%{opacity:1;transform:scale(1.3)} }
+
+  .wrap {
+    position: relative; z-index: 1;
+    max-width: 520px; margin: 0 auto;
+    padding: 20px 16px 60px;
+  }
+
+  /* ===== WORLD MAP / LEVEL SELECT ===== */
+  .world {
+    text-align: center;
+    padding: 10px 0 20px;
+  }
+  .world-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.8rem;
+    color: #FFD95A;
+    text-shadow: 0 0 20px rgba(255,217,90,0.5);
+    margin-bottom: 4px;
+  }
+  .world-sub { color: #aaa; font-size: 0.9rem; font-weight: 700; margin-bottom: 28px; }
+
+  .level-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .level-card {
+    border-radius: 24px;
+    padding: 22px 22px;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+  .level-card:active { transform: scale(0.97); }
+  .level-card.locked { opacity: 0.45; cursor: not-allowed; }
+
+  .level-card.lv1 { background: linear-gradient(135deg, #7c2d12, #c2410c); border-color: #fb923c; box-shadow: 0 8px 30px rgba(251,146,60,0.3); }
+  .level-card.lv2 { background: linear-gradient(135deg, #14532d, #15803d); border-color: #4ade80; box-shadow: 0 8px 30px rgba(74,222,128,0.3); }
+  .level-card.lv3 { background: linear-gradient(135deg, #1e3a5f, #1d4ed8); border-color: #60a5fa; box-shadow: 0 8px 30px rgba(96,165,250,0.3); }
+
+  .level-card .lv-emoji { font-size: 2.8rem; margin-bottom: 8px; display: block; }
+  .level-card .lv-num { font-size: 0.72rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 4px; }
+  .level-card .lv-title { font-family: 'Fredoka One', cursive; font-size: 1.5rem; color: white; margin-bottom: 4px; }
+  .level-card .lv-desc { font-size: 0.88rem; font-weight: 700; color: rgba(255,255,255,0.75); line-height: 1.5; }
+  .level-card .lv-stars { position: absolute; top: 18px; right: 18px; font-size: 1.2rem; letter-spacing: 2px; }
+  .level-card .lv-lock { position: absolute; top: 18px; right: 18px; font-size: 1.5rem; }
+  .level-card .lv-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50px;
+    padding: 3px 12px;
+    font-size: 0.78rem;
+    font-weight: 900;
+    color: white;
+    margin-top: 8px;
+  }
+
+  /* ===== GAME SCREEN ===== */
+  .game-screen { display: none; }
+  .game-screen.active { display: block; }
+
+  .game-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .back-btn {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .game-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.3rem;
+    color: white;
+    flex: 1;
+  }
+  .game-progress {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    color: #FFD95A;
+  }
+
+  .progress-bar-wrap {
+    background: rgba(255,255,255,0.1);
+    border-radius: 50px;
+    height: 10px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 50px;
+    transition: width 0.4s ease;
+  }
+  .lv1-fill { background: linear-gradient(90deg, #fb923c, #fbbf24); }
+  .lv2-fill { background: linear-gradient(90deg, #4ade80, #a3e635); }
+  .lv3-fill { background: linear-gradient(90deg, #60a5fa, #a78bfa); }
+
+  /* ===== TEACH CARD ===== */
+  .teach-card {
+    background: rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 2px solid rgba(255,255,255,0.15);
+    animation: fadeIn 0.4s ease;
+  }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  .teach-card .t-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    color: #FFD95A;
+    margin-bottom: 10px;
+  }
+  .teach-card .t-body {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #ddd;
+    line-height: 1.7;
+  }
+  .teach-card .t-body .hl { color: #FFD95A; font-size: 1.1rem; }
+  .teach-card .t-body .cut { color: #ff6b6b; font-weight: 900; }
+
+  /* ===== Q CARD ===== */
+  .q-card {
+    background: white;
+    border-radius: 24px;
+    padding: 28px 22px 24px;
+    text-align: center;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    animation: cardPop 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes cardPop { from{opacity:0;transform:scale(0.82) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
+  .q-card.shake { animation: shake 0.4s ease; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-10px)} 40%{transform:translateX(10px)} 60%{transform:translateX(-6px)} 80%{transform:translateX(6px)} }
+
+  .q-emoji { font-size: 3.5rem; display: block; margin-bottom: 8px; }
+  .q-instruction { font-size: 0.85rem; font-weight: 800; color: #aaa; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
+  .q-word {
+    font-family: 'Fredoka One', cursive;
+    font-size: 3rem;
+    color: #222;
+    margin-bottom: 6px;
+    letter-spacing: 3px;
+  }
+  .q-hint { font-size: 0.9rem; font-weight: 700; color: #bbb; margin-bottom: 20px; }
+
+  /* ===== CAKE CUTTER (LV1) ===== */
+  .cake-word {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .cake-letter {
+    width: 44px; height: 54px;
+    background: #f5f5f5;
+    border: 3px solid #ddd;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.6rem;
+    color: #555;
+    margin: 2px;
+    position: relative;
+    transition: all 0.2s;
+    cursor: pointer;
+    user-select: none;
+  }
+  .cake-letter:hover:not(.locked) {
+    border-color: #aaa;
+    transform: scale(1.05);
+  }
+  .cake-letter.tagged-vowel {
+    background: linear-gradient(180deg, #e3f2fd, #bbdefb);
+    border-color: #42a5f5;
+    color: #1565c0;
+  }
+  .cake-letter.tagged-consonant {
+    background: linear-gradient(180deg, #fce4ec, #f8bbd0);
+    border-color: #ef5350;
+    color: #b71c1c;
+  }
+  .cake-letter.locked { cursor: default; }
+  /* reveal colours after step 2 */
+  .cake-letter.correct-vowel {
+    background: linear-gradient(180deg, #e3f2fd, #bbdefb);
+    border-color: #42a5f5;
+  }
+  .cake-letter.correct-consonant {
+    background: linear-gradient(180deg, #fce4ec, #f8bbd0);
+    border-color: #ef5350;
+  }
+
+  .cut-slot {
+    width: 32px; height: 60px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    position: relative;
+    border-radius: 8px;
+    transition: background 0.15s;
+  }
+  .cut-slot:hover .cut-line { opacity: 1; width: 4px; }
+  .cut-line {
+    width: 3px; height: 100%;
+    background: #ff6b6b;
+    border-radius: 3px;
+    opacity: 0.3;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .cut-line::after {
+    content: '🔪';
+    position: absolute;
+    top: -18px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.1rem;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .cut-slot:hover .cut-line::after { opacity: 1; }
+  .cut-slot.selected .cut-line {
+    opacity: 1;
+    width: 5px;
+    background: #ff6b6b;
+    box-shadow: 0 0 10px rgba(255,107,107,0.8);
+  }
+  .cut-slot.selected .cut-line::after { opacity: 1; }
+
+  /* ===== OPTIONS ===== */
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .opt-btn {
+    padding: 16px 18px;
+    border-radius: 16px;
+    border: 3px solid #ddd;
+    background: white;
+    color: #222;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.05rem;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+    letter-spacing: 0px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    line-height: 1.4;
+  }
+  .opt-btn:hover { border-color: #FFD95A; background: #fffbe6; transform: translateY(-2px); }
+  .opt-btn:active { transform: scale(0.97); }
+  .opt-btn.correct-ans { background: #d1fae5 !important; border-color: #059669 !important; color: #065f46 !important; box-shadow: 0 4px 16px rgba(5,150,105,0.3); }
+  .opt-btn.wrong-ans { background: #fee2e2 !important; border-color: #dc2626 !important; color: #991b1b !important; }
+
+  /* ===== FEEDBACK ===== */
+  .feedback {
+    border-radius: 16px;
+    padding: 14px 18px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.15rem;
+    text-align: center;
+    margin-bottom: 14px;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok { background: #d1fae5; color: #065f46; border: 3px solid #6ee7b7; }
+  .feedback.bad { background: #fee2e2; color: #991b1b; border: 3px solid #fca5a5; }
+
+  .next-btn {
+    width: 100%;
+    padding: 15px;
+    border-radius: 50px;
+    border: none;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.3rem;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(245,158,11,0.4);
+    display: none;
+    margin-bottom: 16px;
+  }
+  .next-btn.show { display: block; animation: fadeIn 0.3s ease; }
+
+  /* ===== FINAL ===== */
+  .final-card {
+    background: white;
+    border-radius: 28px;
+    padding: 36px 22px;
+    text-align: center;
+    display: none;
+    animation: cardPop 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .final-card.show { display: block; }
+  .final-card .f-emoji { font-size: 5rem; display: block; animation: bob 1s ease-in-out infinite; }
+  @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+  .final-card h2 { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #ff6b6b; margin: 12px 0 4px; }
+  .final-card .f-score { font-family: 'Fredoka One', cursive; font-size: 3rem; color: #5c6bc0; }
+  .final-card .f-stars { font-size: 2.5rem; letter-spacing: 6px; margin: 8px 0 12px; }
+  .final-card .f-msg { font-size: 1rem; font-weight: 700; color: #666; margin-bottom: 20px; line-height: 1.6; }
+  .final-btn {
+    width: 100%; padding: 14px;
+    border-radius: 50px; border: none;
+    font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+    cursor: pointer; margin-bottom: 10px;
+  }
+  .final-btn.retry { background: linear-gradient(135deg, #fb923c, #f59e0b); color: white; box-shadow: 0 4px 16px rgba(251,146,60,0.4); }
+  .final-btn.map { background: linear-gradient(135deg, #818cf8, #6366f1); color: white; box-shadow: 0 4px 16px rgba(99,102,241,0.4); }
+
+  .wrong-review { margin-top: 14px; text-align: left; }
+  .wrong-item { background: #fff8e1; border-radius: 10px; padding: 9px 13px; margin-bottom: 7px; font-size: 0.88rem; font-weight: 700; color: #555; border-left: 4px solid #ffc107; }
+  .wrong-item strong { color: #e53935; }
+  .wrong-item .ans { color: #2e7d32; }
+
+  /* star pop */
+  .star-pop { position: fixed; font-size: 2rem; pointer-events: none; z-index: 200; animation: starFly 0.9s ease-out forwards; }
+  @keyframes starFly { from{opacity:1;transform:translateY(0) scale(1)} to{opacity:0;transform:translateY(-100px) scale(2)} }
+</style>
+</head>
+<body>
+<div class="wrap" style="max-width:520px;margin:0 auto;padding:16px 16px 60px;">
+  <div class="g-header">
+    <div class="g-title" id="gTitle"></div>
+    <div class="g-prog" id="gProg"></div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
+  <div class="teach" id="teachCard"></div>
+  <div class="q-card" id="qCard"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextQ()"></button>
+  <div class="final-card" id="finalCard"></div>
+</div>
+
+<script>
+const levels = {
+  1: {
+    title: "🎂 切蛋糕！", fillClass: "lv1-fill",
+    teach: `<div class="t-title">🎂 怎麼切蛋糕？</div>
+    <div class="t-body">把單字想像成一條蛋糕！<br>
+    找到中間<span class="hl">兩個子音</span>（consonants）站在一起的地方，<br>
+    從<span class="cut">兩個子音中間</span>切下去！<br><br>
+    📌 子音（紅色）：b c d f g h j k l m n p q r s t v w x y z<br>
+    📌 母音（藍色）：a e i o u</div>`,
+    questions: [
+      { word:"winter", emoji:"❄️", hint:"冬天", answer:"win·ter", cut:3, letters:"winter" },
+      { word:"absent", emoji:"🙈", hint:"沒來、缺席", answer:"ab·sent", cut:2, letters:"absent" },
+      { word:"rabbit", emoji:"🐰", hint:"兔子", answer:"rab·bit", cut:3, letters:"rabbit" },
+      { word:"napkin", emoji:"🍽️", hint:"餐巾紙", answer:"nap·kin", cut:3, letters:"napkin" },
+      { word:"basket", emoji:"🧺", hint:"籃子", answer:"bas·ket", cut:3, letters:"basket" },
+      { word:"cactus", emoji:"🌵", hint:"仙人掌", answer:"cac·tus", cut:3, letters:"cactus" },
+      { word:"kitten", emoji:"🐱", hint:"小貓", answer:"kit·ten", cut:3, letters:"kitten" },
+      { word:"pencil", emoji:"✏️", hint:"鉛筆", answer:"pen·cil", cut:3, letters:"pencil" },
+    ]
+  }
+};
+
+let currentLevel = 0;
+let currentQ = 0;
+let score = 0;
+let wrongItems = [];
+let answered = false;
+let levelStars = {1:0};
+
+const VOWELS = new Set(['a','e','i','o','u']);
+
+function startLevel(lv) {
+  currentLevel = lv;
+  currentQ = 0;
+  score = 0;
+  wrongItems = [];
+  answered = false;
+
+  // worldMap hidden (single level mode)
+  // gameScreen always active
+  document.getElementById('finalCard').classList.remove('show');
+
+  const data = levels[lv];
+  document.getElementById('gTitle').textContent = data.title;
+  document.getElementById('pbarFill').className = 'pbar-fill ' + data.fillClass;
+  document.getElementById('teachCard').innerHTML = data.teach;
+  document.getElementById('teachCard').style.display = 'block';
+
+  showQ();
+}
+
+function showQ() {
+  const data = levels[currentLevel];
+  const total = data.questions.length;
+
+  document.getElementById('gProg').textContent = `${currentQ+1}/${total}`;
+  document.getElementById('pbarFill').style.width = ((currentQ/total)*100) + '%';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('nextBtn').className = 'next-btn';
+  document.getElementById('finalCard').classList.remove('show');
+  answered = false;
+
+  const q = data.questions[currentQ];
+
+  if (currentLevel === 1) renderCakeQ(q);
+  else renderMCQ(q);
+
+  const card = document.getElementById('qCard');
+  card.style.display = 'block';
+  card.style.animation = 'none';
+  void card.offsetWidth;
+  card.style.animation = 'cardPop 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+}
+
+// ===== LV1: CAKE CUTTER — 2-phase =====
+let cakePhase = 1; // 1=color tagging, 2=cutting
+
+function renderCakeQ(q) {
+  cakePhase = 1;
+  Object.keys(tagState).forEach(k => delete tagState[k]);
+  const letters = q.letters.split('');
+
+  let lettersHtml = '';
+  letters.forEach((l, i) => {
+    lettersHtml += `<div class="cake-letter" id="cl_${i}" onclick="tagLetter(${i},'${l}')">${l}</div>`;
+  });
+
+  document.getElementById('qCard').innerHTML = `
+    <div class="q-instruction" id="qInstruction">
+      🎨 <b>步驟一</b>：點每個字母，標出母音（藍🔵）和子音（紅🔴）！<br>
+      <small style="color:#aaa">母音 = a e i o u</small>
+    </div>
+    <span class="q-emoji">${q.emoji}</span>
+    <div class="q-hint">「${q.hint}」</div>
+    <div class="cake-word" id="cakeWord">${lettersHtml}</div>
+    <div id="tagStatus" style="font-size:0.85rem;font-weight:800;color:#aaa;margin-top:8px;text-align:center">
+      點每個字母來標顏色！
+    </div>
+    <button id="confirmBtn" onclick="confirmColours()" style="
+      display:none;width:100%;margin-top:14px;padding:13px;
+      border-radius:50px;border:none;
+      background:linear-gradient(135deg,#42a5f5,#1565c0);
+      color:white;font-family:'Fredoka One',cursive;font-size:1.2rem;
+      cursor:pointer;box-shadow:0 4px 14px rgba(66,165,245,0.4);">
+      ✅ 標好了！來切蛋糕 🔪
+    </button>`;
+}
+
+const tagState = {}; // index -> 'v' or 'c'
+
+function tagLetter(i, l) {
+  if (cakePhase !== 1) return;
+  // toggle between vowel / consonant / untagged
+  const current = tagState[i];
+  if (!current) {
+    tagState[i] = VOWELS.has(l.toLowerCase()) ? 'auto-v' : 'auto-c';
+    // First tap: auto-suggest
+    const isV = VOWELS.has(l.toLowerCase());
+    tagState[i] = isV ? 'v' : 'c';
+  } else {
+    // Second tap toggles
+    tagState[i] = tagState[i] === 'v' ? 'c' : 'v';
+  }
+
+  const el = document.getElementById('cl_' + i);
+  el.classList.remove('tagged-vowel','tagged-consonant');
+  el.classList.add(tagState[i] === 'v' ? 'tagged-vowel' : 'tagged-consonant');
+
+  const q = levels[currentLevel].questions[currentQ];
+  const total = q.letters.length;
+  const tagged = Object.keys(tagState).length;
+  const statusEl = document.getElementById('tagStatus');
+
+  if (tagged >= total) {
+    statusEl.textContent = '全部標好了！確認後切蛋糕！';
+    statusEl.style.color = '#43a047';
+    document.getElementById('confirmBtn').style.display = 'block';
+  } else {
+    statusEl.textContent = `已標 ${tagged} / ${total} 個，繼續標！`;
+  }
+}
+
+function confirmColours() {
+  const q = levels[currentLevel].questions[currentQ];
+  const letters = q.letters.split('');
+  // Check if student got vowel/consonant right
+  let colourErrors = 0;
+  letters.forEach((l, i) => {
+    const isV = VOWELS.has(l.toLowerCase());
+    const studentSaysV = tagState[i] === 'v';
+    const el = document.getElementById('cl_' + i);
+    el.classList.remove('tagged-vowel','tagged-consonant');
+    el.classList.add('locked');
+    if (isV === studentSaysV) {
+      el.classList.add('correct-vowel'.replace('vowel', isV ? 'vowel' : 'consonant'));
+      el.style.background = isV
+        ? 'linear-gradient(180deg,#e3f2fd,#bbdefb)'
+        : 'linear-gradient(180deg,#fce4ec,#f8bbd0)';
+      el.style.borderColor = isV ? '#42a5f5' : '#ef5350';
+    } else {
+      colourErrors++;
+      el.style.background = '#fff3e0';
+      el.style.borderColor = '#ffa726';
+      el.style.outline = '3px solid #ff6b6b';
+    }
+  });
+
+  // Now add cut slots between letters
+  cakePhase = 2;
+  const cakeWord = document.getElementById('cakeWord');
+  const letterEls = Array.from(cakeWord.querySelectorAll('.cake-letter'));
+  const newHtml = letters.map((l, i) => {
+    const isV = VOWELS.has(l.toLowerCase());
+    const bg = isV ? 'linear-gradient(180deg,#e3f2fd,#bbdefb)' : 'linear-gradient(180deg,#fce4ec,#f8bbd0)';
+    const bc = isV ? '#42a5f5' : '#ef5350';
+    const slot = i < letters.length - 1
+      ? `<div class="cut-slot" data-pos="${i+1}" onclick="makeCut(${i+1},${q.cut})"><div class="cut-line"></div></div>`
+      : '';
+    return `<div class="cake-letter locked" style="background:${bg};border-color:${bc}">${l}</div>${slot}`;
+  }).join('');
+  cakeWord.innerHTML = newHtml;
+
+  const fb = document.getElementById('feedback');
+  const instruction = document.getElementById('qInstruction');
+  instruction.innerHTML = `🔪 <b>步驟二</b>：找到兩個子音中間，點線切下去！`;
+  document.getElementById('confirmBtn').style.display = 'none';
+  document.getElementById('tagStatus').style.display = 'none';
+
+  if (colourErrors > 0) {
+    fb.innerHTML = `⚠️ 有 ${colourErrors} 個字母標錯了，已幫你修正（橘色框框）！<br>現在來切蛋糕！`;
+    fb.className = 'feedback show bad';
+  } else {
+    fb.innerHTML = `🎨 顏色全對！現在來切蛋糕！🔪`;
+    fb.className = 'feedback show ok';
+    setTimeout(() => fb.className = 'feedback', 1500);
+  }
+}
+
+function makeCut(pos, correct) {
+  if (cakePhase !== 2 || answered) return;
+  answered = true;
+
+  document.querySelectorAll('.cut-slot').forEach(s => {
+    s.style.pointerEvents = 'none';
+    if (parseInt(s.dataset.pos) === pos) s.classList.add('selected');
+  });
+
+  const q = levels[currentLevel].questions[currentQ];
+  const fb = document.getElementById('feedback');
+  const nextBtn = document.getElementById('nextBtn');
+
+  if (pos === correct) {
+    score++;
+    fb.innerHTML = `🎂 切對了！<br><span style="font-size:1.1rem;letter-spacing:3px">${q.answer}</span>`;
+    fb.className = 'feedback show ok';
+    popStars();
+  } else {
+    wrongItems.push({ word: q.word, answer: q.answer });
+    fb.innerHTML = `❌ 切錯了！正確是：<br><span style="font-size:1.1rem;letter-spacing:3px;color:#059669">${q.answer}</span>`;
+    fb.className = 'feedback show bad';
+    document.getElementById('qCard').classList.add('shake');
+    setTimeout(() => document.getElementById('qCard').classList.remove('shake'), 400);
+  }
+
+  nextBtn.textContent = currentQ === levels[currentLevel].questions.length - 1 ? '看結果 🎊' : '下一題 ➡️';
+  nextBtn.className = 'next-btn show';
+}
+
+// ===== LV2 & LV3: MC =====
+function renderMCQ(q) {
+  let opts = '';
+  q.options.forEach((o, i) => {
+    opts += `<button class="opt-btn" onclick="pickOpt(${i})">${o}</button>`;
+  });
+
+  document.getElementById('qCard').innerHTML = `
+    <div class="q-instruction">${currentLevel===2?'Y 在這裡怎麼唸？':'-ed 怎麼唸？'}</div>
+    <span class="q-emoji">${q.emoji}</span>
+    <div class="q-word">${q.word}</div>
+    <div class="q-hint">「${q.hint}」</div>
+    <div class="options">${opts}</div>`;
+}
+
+function pickOpt(idx) {
+  if (answered) return;
+  answered = true;
+
+  const q = levels[currentLevel].questions[currentQ];
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.disabled = true);
+
+  const fb = document.getElementById('feedback');
+  const nextBtn = document.getElementById('nextBtn');
+
+  if (idx === q.answer) {
+    btns[idx].classList.add('correct-ans');
+    score++;
+    fb.innerHTML = `✅ 答對！${q.explain}`;
+    fb.className = 'feedback show ok';
+    popStars();
+  } else {
+    btns[idx].classList.add('wrong-ans');
+    btns[q.answer].classList.add('correct-ans');
+    wrongItems.push({ word: q.word, answer: q.options[q.answer], explain: q.explain });
+    fb.innerHTML = `❌ 答錯！${q.explain}`;
+    fb.className = 'feedback show bad';
+    document.getElementById('qCard').classList.add('shake');
+    setTimeout(() => document.getElementById('qCard').classList.remove('shake'), 400);
+  }
+
+  nextBtn.textContent = currentQ === levels[currentLevel].questions.length - 1 ? '看結果 🎊' : '下一題 ➡️';
+  nextBtn.className = 'next-btn show';
+}
+
+function nextQ() {
+  currentQ++;
+  const total = levels[currentLevel].questions.length;
+  if (currentQ >= total) {
+    showFinal();
+  } else {
+    document.getElementById('teachCard').style.display = 'none';
+    showQ();
+  }
+}
+
+function showFinal() {
+  document.getElementById('qCard').style.display = 'none';
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('teachCard').style.display = 'none';
+
+  const total = levels[currentLevel].questions.length;
+  const pct = score / total;
+  let stars = pct >= 0.9 ? 3 : pct >= 0.6 ? 2 : 1;
+  levelStars[currentLevel] = Math.max(levelStars[currentLevel], stars);
+  updateWorldStars();
+
+  const starStr = '⭐'.repeat(stars) + '☆'.repeat(3-stars);
+  let emoji, title, msg;
+  if (pct === 1) { emoji='🏆'; title='全部答對！！'; msg='Yunman 你太厲害了！完全學會了！🎉'; }
+  else if (pct >= 0.75) { emoji='😊'; title='好棒！快全對了！'; msg='只有幾個答錯，再看看錯的地方，下次就全對了！'; }
+  else { emoji='💪'; title='繼續練習！'; msg='沒關係！看看答錯的地方，再試一次會更好！'; }
+
+  const final = document.getElementById('finalCard');
+  let reviewHtml = '';
+  if (wrongItems.length > 0) {
+    reviewHtml = '<div class="wrong-review"><div style="font-weight:900;color:#e53935;margin-bottom:8px;font-size:0.9rem">📝 複習一下這些：</div>';
+    wrongItems.forEach(w => {
+      reviewHtml += `<div class="wrong-item"><strong>${w.word}</strong> → <span class="ans">${w.answer}</span>${w.explain ? '<br><span style="font-size:0.82rem;color:#888">'+w.explain+'</span>' : ''}</div>`;
+    });
+    reviewHtml += '</div>';
+  }
+
+  final.innerHTML = `
+    <span class="f-emoji">${emoji}</span>
+    <h2>${title}</h2>
+    <div class="f-score">${score} / ${total}</div>
+    <div class="f-stars">${starStr}</div>
+    <div class="f-msg">${msg}</div>
+    <button class="final-btn retry" onclick="startLevel(${currentLevel})">🔄 再玩一次！</button>
+    
+    ${reviewHtml}`;
+
+  final.classList.add('show');
+  document.getElementById('pbarFill').style.width = '100%';
+  for (let i = 0; i < 3; i++) setTimeout(popStars, i * 350);
+}
+
+function updateWorldStars() {
+  [1,2,3].forEach(lv => {
+    const s = levelStars[lv];
+    document.getElementById('stars'+lv).textContent = '⭐'.repeat(s) + '☆'.repeat(3-s);
+  });
+}
+
+function goBack() {
+  // no worldMap in single mode
+  // no worldMap in single mode;
+  document.getElementById('qCard').style.display = 'block';
+  document.getElementById('feedback').style.display = '';
+  document.getElementById('nextBtn').style.display = '';
+}
+
+function popStars() {
+  const emojis = ['⭐','🌟','✨','🎉','🎊','🍰','🪄'];
+  for (let i = 0; i < 5; i++) {
+    setTimeout(() => {
+      const s = document.createElement('div');
+      s.className = 'star-pop';
+      s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      s.style.left = (15 + Math.random() * 70) + 'vw';
+      s.style.top = (25 + Math.random() * 45) + 'vh';
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }, i * 100);
+  }
+}
+
+window.onload = () => startLevel(1);
+</script>
+</body>
+</html>
