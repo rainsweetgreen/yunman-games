@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚾ Jackie Robinson 閱讀大挑戰！</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #fff9f0;
+    min-height: 100vh;
+    overflow-x: hidden;
+    color: #333;
+  }
+
+  /* Baseball field bg */
+  .field-bg {
+    position: fixed; inset: 0; z-index: 0;
+    background: #fff9f0;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: 520px; margin: 0 auto; padding: 20px 16px 50px; }
+
+  /* ===== STORY MAP ===== */
+  .story-map {
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .story-map h2 { font-family:'Fredoka One',cursive; font-size:1.1rem; color:#FFD95A; margin-bottom:14px; }
+
+  .timeline { position: relative; padding-left: 20px; }
+  .timeline::before { content:''; position:absolute; left:6px; top:0; bottom:0; width:3px; background:linear-gradient(180deg,#FFD95A,#ff6b6b); border-radius:3px; }
+
+  .tl-item {
+    position: relative;
+    margin-bottom: 14px;
+    padding-left: 16px;
+    animation: fadeIn 0.4s ease both;
+  }
+  .tl-item::before {
+    content:'⚾';
+    position: absolute;
+    left: -14px;
+    top: 0;
+    font-size: 0.85rem;
+  }
+  .tl-year { font-family:'Fredoka One',cursive; font-size:0.85rem; color:#FFD95A; }
+  .tl-text { font-size:0.88rem; font-weight:700; color:#ccc; line-height:1.4; }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:translateX(0)} }
+
+  /* ===== HEADER ===== */
+  header { text-align:center; padding:20px 0 16px; }
+  .mascot { font-size:3.5rem; display:inline-block; animation:bob 2s ease-in-out infinite; }
+  @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  header h1 { font-family:'Fredoka One',cursive; font-size:1.9rem; color:#FFD95A; text-shadow:2px 2px 0 rgba(0,0,0,0.4); margin:6px 0 4px; }
+  header p  { color:#aaa; font-size:0.88rem; font-weight:700; }
+
+  /* mode tabs */
+  .tabs { display:flex; gap:8px; margin-bottom:18px; background:rgba(255,255,255,0.05); border-radius:50px; padding:6px; }
+  .tab {
+    flex:1; padding:10px 8px; border-radius:50px; border:none;
+    font-family:'Fredoka One',cursive; font-size:0.9rem; cursor:pointer;
+    background:transparent; color:#aaa; transition:all 0.2s;
+  }
+  .tab.active { background:#FFD95A; color:#fff9f0; box-shadow:0 3px 10px rgba(255,217,90,0.4); }
+
+  /* progress */
+  .prog-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+  .prog-label { font-family:'Fredoka One',cursive; font-size:0.95rem; color:#FFD95A; }
+  .prog-score { font-family:'Fredoka One',cursive; font-size:0.95rem; color:#6ee7b7; }
+  .pbar-wrap { background:rgba(255,255,255,0.1); border-radius:50px; height:10px; margin-bottom:16px; overflow:hidden; }
+  .pbar-fill { height:100%; border-radius:50px; background:linear-gradient(90deg,#FFD95A,#ff6b6b); transition:width 0.4s ease; }
+
+  .dots { display:flex; justify-content:center; gap:6px; margin-bottom:16px; flex-wrap:wrap; }
+  .dot { width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,0.15);transition:all 0.3s; }
+  .dot.curr { background:#FFD95A; transform:scale(1.4); }
+  .dot.ok   { background:#6ee7b7; }
+  .dot.bad  { background:#f87171; }
+
+  /* q card */
+  .q-card {
+    background: white;
+    border-radius: 22px;
+    padding: 24px 20px 20px;
+    color: #222;
+    text-align: center;
+    box-shadow: 0 10px 36px rgba(0,0,0,0.4);
+    margin-bottom: 14px;
+    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes popIn { from{opacity:0;transform:scale(0.82)} to{opacity:1;transform:scale(1)} }
+  .q-card.shake { animation: shake 0.35s ease; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
+
+  .q-tag {
+    display:inline-block; padding:4px 14px; border-radius:50px;
+    font-size:0.72rem; font-weight:900; letter-spacing:1px;
+    text-transform:uppercase; margin-bottom:10px;
+  }
+  .tag-comp  { background:#fef3c7; color:#92400e; }
+  .tag-vocab { background:#ede9fe; color:#5b21b6; }
+  .tag-time  { background:#d1fae5; color:#065f46; }
+  .tag-infer { background:#fee2e2; color:#991b1b; }
+
+  .q-emoji { font-size:3rem; display:block; margin-bottom:8px; }
+  .q-text  { font-size:1.05rem; font-weight:800; color:#333; margin-bottom:20px; line-height:1.5; }
+
+  .opts { display:flex; flex-direction:column; gap:10px; }
+  .opt {
+    padding:14px 16px; border-radius:14px;
+    border:3px solid #eee; background:#f9f9f9;
+    font-family:'Nunito',sans-serif; font-size:0.95rem; font-weight:700;
+    color:#333; cursor:pointer; transition:all 0.15s; text-align:left;
+  }
+  .opt:hover { border-color:#FFD95A; background:#fffbe6; transform:translateY(-2px); }
+  .opt:active { transform:scale(0.97); }
+  .opt.correct { background:#d1fae5; border-color:#059669; color:#065f46; }
+  .opt.wrong   { background:#fee2e2; border-color:#dc2626; color:#991b1b; }
+
+  /* timeline fill mode */
+  .tl-fill { display:flex; flex-direction:column; gap:10px; }
+  .tl-fill-row {
+    display:flex; align-items:center; gap:10px;
+    background:#f5f5f5; border-radius:12px; padding:10px 14px;
+  }
+  .tl-fill-year { font-family:'Fredoka One',cursive; font-size:1.1rem; color:#ff6b6b; min-width:50px; }
+  .tl-fill-desc { font-size:0.9rem; font-weight:700; color:#555; flex:1; }
+  .tl-year-input {
+    width:70px; padding:6px 8px; border:3px solid #ddd;
+    border-radius:8px; font-family:'Fredoka One',cursive;
+    font-size:1rem; text-align:center; outline:none;
+    transition:border-color 0.2s;
+  }
+  .tl-year-input:focus { border-color:#FFD95A; }
+  .tl-year-input.correct { border-color:#059669; background:#d1fae5; color:#065f46; }
+  .tl-year-input.wrong   { border-color:#dc2626; background:#fee2e2; color:#991b1b; }
+
+  .check-btn {
+    width:100%; padding:14px; border-radius:50px; border:none;
+    background:linear-gradient(135deg,#FFD95A,#f59e0b);
+    color:#333; font-family:'Fredoka One',cursive; font-size:1.2rem;
+    cursor:pointer; box-shadow:0 5px 16px rgba(245,158,11,0.4);
+    margin-top:12px;
+  }
+  .check-btn:active { transform:scale(0.97); }
+
+  /* feedback */
+  .feedback {
+    border-radius:14px; padding:13px 16px;
+    font-family:'Fredoka One',cursive; font-size:1.05rem;
+    text-align:center; margin-bottom:12px;
+    display:none; line-height:1.5;
+  }
+  .feedback.show { display:block; animation:fadeIn 0.3s ease; }
+  .feedback.ok  { background:#d1fae5; color:#065f46; border:3px solid #6ee7b7; }
+  .feedback.bad { background:#fee2e2; color:#991b1b; border:3px solid #fca5a5; }
+
+  .next-btn {
+    width:100%; padding:14px; border-radius:50px; border:none;
+    background:linear-gradient(135deg,#ff6b6b,#ff8e53);
+    color:white; font-family:'Fredoka One',cursive; font-size:1.3rem;
+    cursor:pointer; box-shadow:0 5px 16px rgba(255,107,107,0.4);
+    display:none; margin-bottom:14px;
+  }
+  .next-btn.show { display:block; animation:fadeIn 0.3s ease; }
+
+  /* done */
+  .done-card {
+    background:white; color:#333; border-radius:24px;
+    padding:36px 22px; text-align:center;
+    box-shadow:0 10px 36px rgba(0,0,0,0.4);
+    display:none;
+  }
+  .done-card.show { display:block; animation:popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  .done-card .d-emoji { font-size:5rem; display:block; animation:bob 1s ease-in-out infinite; }
+  .done-card h2 { font-family:'Fredoka One',cursive; font-size:2rem; color:#ff6b6b; margin:10px 0 4px; }
+  .done-card .d-score { font-family:'Fredoka One',cursive; font-size:3rem; color:#5c6bc0; }
+  .done-card .d-stars { font-size:2.5rem; letter-spacing:6px; margin:6px 0 10px; }
+  .done-card .d-msg   { font-size:0.95rem; font-weight:700; color:#888; margin-bottom:18px; line-height:1.6; }
+  .done-btn {
+    width:100%; padding:13px; border-radius:50px; border:none;
+    font-family:'Fredoka One',cursive; font-size:1.15rem; cursor:pointer; margin-bottom:8px;
+  }
+  .done-btn.retry  { background:linear-gradient(135deg,#FFD95A,#f59e0b); color:#333; box-shadow:0 4px 14px rgba(245,158,11,0.4); }
+  .done-btn.change { background:linear-gradient(135deg,#818cf8,#6366f1); color:white; box-shadow:0 4px 14px rgba(99,102,241,0.4); }
+
+  .wrong-rev { margin-top:14px; text-align:left; }
+  .wr-item { background:#fff8e1; border-radius:10px; padding:9px 13px; margin-bottom:7px; font-size:0.88rem; font-weight:700; color:#555; border-left:4px solid #ffc107; }
+  .wr-item .ans { color:#059669; font-weight:900; }
+
+  /* star pop */
+  .star-pop { position:fixed; font-size:2rem; pointer-events:none; z-index:300; animation:starFly 0.9s ease-out forwards; }
+  @keyframes starFly { from{opacity:1;transform:translateY(0) scale(1)} to{opacity:0;transform:translateY(-110px) scale(2)} }
+</style>
+</head>
+<body>
+<div class="field-bg"></div>
+<div class="wrap">
+
+  <header>
+    <div class="mascot">⚾</div>
+    <h1>Jackie Robinson 閱讀大挑戰！</h1>
+    <p>讀完故事，來考考你！🏆</p>
+  </header>
+
+  <!-- STORY MAP -->
+  <div class="story-map" id="storyMap">
+    <h2>📖 故事地圖 — 先看這個再做題！</h2>
+    <div class="timeline">
+      <div class="tl-item" style="animation-delay:0.1s">
+        <div class="tl-year">1919年</div>
+        <div class="tl-text">Jackie Robinson 出生在 Georgia 州 🌟</div>
+      </div>
+      <div class="tl-item" style="animation-delay:0.2s">
+        <div class="tl-year">大學時期</div>
+        <div class="tl-text">參加 football、basketball、track 三種運動 🏈🏀🏃</div>
+      </div>
+      <div class="tl-item" style="animation-delay:0.3s">
+        <div class="tl-year">1945年</div>
+        <div class="tl-text">加入 Kansas City Monarchs（黑人聯盟球隊）⚾<br>
+        <span style="color:#ff6b6b;font-size:0.82rem">當時非裔美國人不能加入 Major League！</span></div>
+      </div>
+      <div class="tl-item" style="animation-delay:0.4s">
+        <div class="tl-year">1945年8月</div>
+        <div class="tl-text">認識 Branch Rickey（Brooklyn Dodgers 老闆）🤝</div>
+      </div>
+      <div class="tl-item" style="animation-delay:0.5s">
+        <div class="tl-year">1947年4月15日</div>
+        <div class="tl-text">🎉 成為第一個在 Major League 打球的非裔美國人！</div>
+      </div>
+      <div class="tl-item" style="animation-delay:0.6s">
+        <div class="tl-year">第1個球季</div>
+        <div class="tl-text">獲得 Rookie of the Year（年度最佳新秀）🏆</div>
+      </div>
+      <div class="tl-item" style="animation-delay:0.7s">
+        <div class="tl-year">第3個球季</div>
+        <div class="tl-text">獲得 Most Valuable Player（MVP 最有價值球員）👑</div>
+      </div>
+      <div class="tl-item" style="animation-delay:0.8s">
+        <div class="tl-year">1956年</div>
+        <div class="tl-text">最後一個球季 ⭐</div>
+      </div>
+      <div class="tl-item" style="animation-delay:0.9s">
+        <div class="tl-year">1972年</div>
+        <div class="tl-text">10月24日去世，享年53歲 🕊️</div>
+      </div>
+    </div>
+    <div style="margin-top:14px;background:rgba(255,217,90,0.1);border-radius:12px;padding:12px;border:2px solid rgba(255,217,90,0.3);font-size:0.88rem;font-weight:700;color:#FFD95A;line-height:1.6">
+      💬 Jackie 的名言：<br>
+      <span style="color:white;font-style:italic">"A life is not important except in the impact it has on other lives."</span><br>
+      <span style="color:#aaa">（一個人的生命，只有在影響其他人的生命時才有意義。）</span>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="setMode('mc')">📝 Multiple Choice</button>
+    <button class="tab" onclick="setMode('timeline')">📅 Timeline</button>
+    <button class="tab" onclick="setMode('write')">✏️ Write</button>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="prog-row">
+    <div class="prog-label" id="progLabel">第 1 題 / 共 10 題</div>
+    <div class="prog-score" id="progScore">✅ 0 ❌ 0</div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
+  <div class="dots" id="dots"></div>
+
+  <div class="q-card" id="qCard"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextQ()"></button>
+  <div class="done-card" id="doneCard"></div>
+
+</div>
+
+<script>
+const mcQuestions = [
+  {
+    tag:"tag-comp", tagLabel:"Comprehension",
+    emoji:"📖", type:"mc",
+    text:'What type of text is "Jackie Robinson"?',
+    opts:["a. It teaches readers how to play baseball.", "b. It is a biography about Jackie Robinson's real life.", "c. It is a fictional story about a baseball player."],
+    answer:1,
+    explain:"Biography = a true story about a real person's life, told in time order!"
+  },
+  {
+    tag:"tag-time", tagLabel:"Sequence",
+    emoji:"📅", type:"mc",
+    text:"What happened on April 15, 1947?",
+    opts:["a. Jackie Robinson was born.", "b. Jackie met Branch Rickey.", "c. Jackie started playing for the Dodgers and became the first African American in the Major League."],
+    answer:2,
+    explain:"April 15th, 1947 — Jackie Robinson ran onto the field! A historic day! 🏟️"
+  },
+  {
+    tag:"tag-time", tagLabel:"Sequence",
+    emoji:"🏆", type:"mc",
+    text:"When did Jackie Robinson win the Most Valuable Player (MVP) award?",
+    opts:["a. In his first season.", "b. In his second season.", "c. In his third season."],
+    answer:2,
+    explain:"He won Rookie of the Year in his first season, then MVP two seasons later — his third season!"
+  },
+  {
+    tag:"tag-comp", tagLabel:"Comprehension",
+    emoji:"⚾", type:"mc",
+    text:"How are the Monarchs and the Dodgers similar and different?",
+    opts:["a. Both are baseball teams, but in different leagues.", "b. Both are in the Major League.", "c. Both are Jackie's favorite teams."],
+    answer:0,
+    explain:"Both are baseball teams, but the Monarchs played in the Negro League and the Dodgers played in the Major League!"
+  },
+  {
+    tag:"tag-vocab", tagLabel:"Vocabulary",
+    emoji:"📣", type:"mc",
+    text:'The text says "Most baseball fans cheered for Robinson." What does cheered mean?',
+    opts:["a. They booed him.", "b. They cheered and rooted for him.", "c. They ignored him."],
+    answer:1,
+    explain:"cheer = to shout with excitement and support! Most fans cheered for him even though some people were unkind. 📣"
+  },
+  {
+    tag:"tag-infer", tagLabel:"Inference",
+    emoji:"🤔", type:"mc",
+    text:"Why were African Americans not allowed to join the Major League before 1945?",
+    opts:["a. Because they did not know how to play baseball.", "b. Because of racial discrimination — only white players were allowed.", "c. Because they did not want to join."],
+    answer:1,
+    explain:"In those days, African Americans were NOT allowed to play in the Major League because of racial discrimination."
+  },
+  {
+    tag:"tag-comp", tagLabel:"Comprehension",
+    emoji:"💪", type:"mc",
+    text:"Some people were unkind to Jackie. What did he do?",
+    opts:["a. He gave up and stopped playing.", "b. He cried for a long time.", "c. He kept playing hard, and later began to stand up for himself."],
+    answer:2,
+    explain:"Robinson kept playing anyway. After a while, he began to stand up for himself! 💪"
+  },
+  {
+    tag:"tag-infer", tagLabel:"Inference",
+    emoji:"🌟", type:"mc",
+    text:'What does Jackie Robinson\'s quote mean: "A life is not important except in the impact it has on other lives"?',
+    opts:["a. A person's life is not important.", "b. Only famous people matter.", "c. A person's life matters most when it makes a difference in other people's lives."],
+    answer:2,
+    explain:"Don't just live for yourself — make a positive impact on others. That's what Jackie's whole life showed! ✨"
+  },
+  {
+    tag:"tag-vocab", tagLabel:"Vocabulary",
+    emoji:"😤", type:"mc",
+    text:'The text says people wrote "nasty letters" to Jackie. What does nasty mean?',
+    opts:["a. Sweet and kind.", "b. Mean and hurtful.", "c. Long and detailed."],
+    answer:1,
+    explain:"nasty = mean and hurtful! People wrote terrible letters and called him names. But Jackie never gave up!"
+  },
+  {
+    tag:"tag-comp", tagLabel:"Comprehension",
+    emoji:"🏟️", type:"mc",
+    text:"Why did Branch Rickey call Jackie Robinson?",
+    opts:["a. To invite him to join the Negro League.", "b. To invite him to become the first African American to play in the Major League.", "c. To invite him to become a coach."],
+    answer:1,
+    explain:"Rickey wanted Robinson to be the FIRST African American to play in the Major League — a historic invitation!"
+  }
+];
+
+const timelineQ = {
+  tag:"tag-time", tagLabel:"Timeline",
+  emoji:"📅", type:"timeline",
+  text:"Fill in the correct year for each event!",
+  items:[
+    { year:"1945", desc:"Jackie started playing for the Kansas City Monarchs ⚾" },
+    { year:"1947", desc:"Jackie Robinson became the first African American in the Major League 🎉" },
+    { year:"1956", desc:"Jackie finished his last season ⭐" },
+    { year:"1972", desc:"Robinson passed away on October 24, age 53 🕊️" },
+  ]
+};
+
+const writeQ = {
+  tag:"tag-comp", tagLabel:"Writing",
+  emoji:"✏️", type:"write",
+  text:"Write a complete sentence: Why did many people admire Jackie Robinson?",
+  hint:"Start with: 'People admired Jackie Robinson because...'",
+  sample:"People admired Jackie Robinson because he stood up for himself and kept playing baseball even when people were mean to him."
+};
+
+let mode = 'mc';
+let qi = 0, scoreOk = 0, scoreBad = 0;
+let answered = false;
+let wrongList = [];
+let questions = [];
+
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    t.classList.toggle('active', ['mc','timeline','write'][i] === m);
+  });
+  qi = 0; scoreOk = 0; scoreBad = 0; wrongList = []; answered = false;
+
+  if (m === 'mc') questions = [...mcQuestions];
+  else if (m === 'timeline') questions = [timelineQ];
+  else questions = [writeQ];
+
+  document.getElementById('doneCard').classList.remove('show');
+  document.getElementById('qCard').style.display = 'block';
+  document.getElementById('feedback').style.display = '';
+  document.getElementById('nextBtn').style.display = '';
+  buildDots();
+  showQ();
+}
+
+function buildDots() {
+  const c = document.getElementById('dots');
+  c.innerHTML = '';
+  questions.forEach((_,i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i===0?' curr':'');
+    d.id = 'dot'+i;
+    c.appendChild(d);
+  });
+}
+
+function updateUI() {
+  const total = questions.length;
+  document.getElementById('progLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('progScore').textContent = `✅ ${scoreOk} ❌ ${scoreBad}`;
+  document.getElementById('pbarFill').style.width = ((qi/total)*100) + '%';
+}
+
+function showQ() {
+  answered = false;
+  const q = questions[qi];
+  updateUI();
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  const card = document.getElementById('qCard');
+  card.style.display = 'block';
+  card.style.animation = 'none'; void card.offsetWidth;
+  card.style.animation = 'popIn 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+
+  if (q.type === 'mc') renderMC(q);
+  else if (q.type === 'timeline') renderTimeline(q);
+  else renderWrite(q);
+}
+
+function renderMC(q) {
+  const opts = q.opts.map((o,i) =>
+    `<button class="opt" data-idx="${i}" onclick="checkMC(this)">${o}</button>`
+  ).join('');
+  document.getElementById('qCard').innerHTML = `
+    <span class="q-tag ${q.tag}">${q.tagLabel}</span><br>
+    <span class="q-emoji">${q.emoji}</span>
+    <div class="q-text">${q.text}</div>
+    <div class="opts">${opts}</div>`;
+}
+
+function checkMC(btn) {
+  if (answered) return; answered = true;
+  const idx = parseInt(btn.dataset.idx);
+  const q = questions[qi];
+  const correct = q.answer;
+  const explain = q.explain;
+  document.querySelectorAll('.opt').forEach(b => b.disabled = true);
+  const btns = document.querySelectorAll('.opt');
+  const fb = document.getElementById('feedback');
+
+  if (idx === correct) {
+    btns[idx].classList.add('correct');
+    scoreOk++; popStars();
+    fb.innerHTML = '✅ ' + explain;
+    fb.className = 'feedback show ok';
+  } else {
+    btns[idx].classList.add('wrong');
+    scoreBad++;
+    wrongList.push({ q: q.text, ans: q.opts[correct] });
+    fb.innerHTML = '❌ Not quite! Think about it again...<br><small style="color:#888">(You will see the answer at the end!)</small>';
+    fb.className = 'feedback show bad';
+    document.getElementById('qCard').classList.add('shake');
+    setTimeout(() => document.getElementById('qCard').classList.remove('shake'), 400);
+  }
+
+  updateDot(idx === correct);
+  setNextBtn();
+}
+
+function renderTimeline(q) {
+  const rows = q.items.map((item, i) => `
+    <div class="tl-fill-row">
+      <input class="tl-year-input" id="tly${i}" placeholder="Year" maxlength="4"
+        type="number" inputmode="numeric">
+      <div class="tl-fill-desc">${item.desc}</div>
+    </div>`).join('');
+
+  document.getElementById('qCard').innerHTML = `
+    <span class="q-tag tag-time">Timeline</span><br>
+    <span class="q-emoji">📅</span>
+    <div class="q-text">Fill in the correct year for each event!</div>
+    <div class="tl-fill">${rows}</div>
+    <button class="check-btn" onclick="checkTimeline()">Check Answers ✅</button>`;
+}
+
+function checkTimeline() {
+  if (answered) return; answered = true;
+  const q = questions[qi];
+  let allCorrect = true;
+
+  q.items.forEach((item, i) => {
+    const inp = document.getElementById('tly'+i);
+    if (inp.value.trim() === item.year) {
+      inp.classList.add('correct');
+    } else {
+      inp.classList.add('wrong');
+      // Don't reveal the year — mark wrong only
+      allCorrect = false;
+    }
+  });
+
+  const fb = document.getElementById('feedback');
+  if (allCorrect) {
+    scoreOk++; popStars();
+    fb.innerHTML = '✅ All correct! You remembered Jackie\'s story really well! 🎉';
+    fb.className = 'feedback show ok';
+  } else {
+    scoreBad++;
+    fb.innerHTML = '❌ Some years are wrong! Check the red boxes and try again!';
+    fb.className = 'feedback show bad';
+    answered = false; // allow retry
+    return;
+  }
+
+  updateDot(allCorrect);
+  setNextBtn();
+}
+
+function renderWrite(q) {
+  document.getElementById('qCard').innerHTML = `
+    <span class="q-tag tag-comp">Writing</span><br>
+    <span class="q-emoji">✏️</span>
+    <div class="q-text">${q.text}</div>
+    <div style="background:#f5f5f5;border-radius:12px;padding:10px 14px;font-size:0.85rem;font-weight:700;color:#888;margin-bottom:12px;text-align:left">
+      💡 Hint: ${q.hint}
+    </div>
+    <textarea id="writeInput" rows="4" placeholder="Write your complete sentence here..."
+      style="width:100%;padding:12px;border:3px solid #e0e0e0;border-radius:12px;font-family:Nunito,sans-serif;font-size:0.95rem;font-weight:700;outline:none;resize:none;color:#333"></textarea>
+    <button class="check-btn" onclick="checkWrite()">Show Sample Answer ✅</button>`;
+}
+
+function checkWrite() {
+  if (answered) return; answered = true;
+  const inp = document.getElementById('writeInput');
+  const q = questions[qi];
+  const fb = document.getElementById('feedback');
+
+  const userText = inp.value.trim();
+  if (!userText) {
+    fb.innerHTML = '✍️ Please write your answer first before checking!';
+    fb.className = 'feedback show bad';
+    answered = false;
+    return;
+  }
+  fb.innerHTML = `✏️ Sample answer:<br><span style="color:#059669;font-family:Nunito,sans-serif;font-size:0.9rem">"${q.sample}"</span><br><br>Did your answer mention <b>stood up for himself</b> and <b>kept playing</b>?`;
+  fb.className = 'feedback show ok';
+  scoreOk++;
+  popStars();
+  updateDot(true);
+  setNextBtn();
+}
+
+function updateDot(ok) {
+  const dot = document.getElementById('dot'+qi);
+  dot.classList.remove('curr');
+  dot.classList.add(ok ? 'ok' : 'bad');
+  const next = document.getElementById('dot'+(qi+1));
+  if (next) next.classList.add('curr');
+}
+
+function setNextBtn() {
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === questions.length - 1 ? 'See Results 🎊' : 'Next Question ➡️';
+  nb.className = 'next-btn show';
+  updateUI();
+}
+
+function nextQ() {
+  qi++;
+  if (qi >= questions.length) { showDone(); return; }
+  showQ();
+}
+
+function showDone() {
+  document.getElementById('qCard').style.display = 'none';
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('pbarFill').style.width = '100%';
+
+  const total = questions.length;
+  const pct = scoreOk / total;
+  let emoji, title, stars, msg;
+  if (pct === 1)       { emoji='🏆'; title='Perfect Score!'; stars='⭐⭐⭐'; msg='You completely understood Jackie Robinson\'s story! Amazing! 🎉'; }
+  else if (pct >= 0.8) { emoji='😊'; title='Great job!'; stars='⭐⭐⭐'; msg='Almost perfect! Check the ones you got wrong and try again!'; }
+  else if (pct >= 0.6) { emoji='💪'; title='Good effort!'; stars='⭐⭐'; msg='Go back to the Story Map, review the key events, and try again!'; }
+  else                 { emoji='📖'; title='Read the story again!'; stars='⭐'; msg='Look at the Story Map above, remember the key dates and events, then try again!'; }
+
+  let rev = '';
+  if (wrongList.length > 0) {
+    rev = '<div class="wrong-rev"><div style="font-weight:900;color:#e53935;margin-bottom:8px;font-size:0.9rem">📝 Review these:</div>';
+    wrongList.forEach(w => {
+      rev += `<div class="wr-item">${w.q.substring(0,30)}...<br>→ <span class="ans">${w.ans.substring(0,50)}</span></div>`;
+    });
+    rev += '</div>';
+  }
+
+  const done = document.getElementById('doneCard');
+  done.innerHTML = `
+    <span class="d-emoji">${emoji}</span>
+    <h2>${title}</h2>
+    <div class="d-score">${scoreOk} / ${total}</div>
+    <div class="d-stars">${stars}</div>
+    <div class="d-msg">${msg}</div>
+    <button class="done-btn retry" onclick="setMode('${mode}')">🔄 Try Again!</button>
+    <button class="done-btn change" onclick="setMode('timeline')">📅 Try the Timeline!</button>
+    ${rev}`;
+  done.classList.add('show');
+  for (let i=0; i<4; i++) setTimeout(popStars, i*300);
+}
+
+function popStars() {
+  const e = ['⭐','🌟','✨','🎉','⚾','🏆','📣'];
+  for (let i=0; i<5; i++) {
+    setTimeout(() => {
+      const s = document.createElement('div');
+      s.className = 'star-pop';
+      s.textContent = e[Math.floor(Math.random()*e.length)];
+      s.style.left = (15+Math.random()*70)+'vw';
+      s.style.top  = (20+Math.random()*50)+'vh';
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }, i*100);
+  }
+}
+
+// init
+setMode('mc');
+</script>
+</body>
+</html>
