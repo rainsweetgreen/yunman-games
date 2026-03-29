@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Long i vs Long e 大挑戰！</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #fff9f0;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated sky background */
+  .bg {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(180deg, #87CEEB 0%, #b8e4f7 40%, #fff9f0 100%);
+    z-index: 0;
+    transition: background 0.8s ease;
+  }
+  .bg.correct-bg { background: linear-gradient(180deg, #a8e6cf 0%, #dcedc8 40%, #f1f8e9 100%); }
+  .bg.wrong-bg { background: linear-gradient(180deg, #ffccbc 0%, #ffe0b2 40%, #fff9f0 100%); }
+
+  /* Clouds */
+  .cloud {
+    position: fixed;
+    font-size: 2.5rem;
+    opacity: 0.5;
+    animation: floatCloud linear infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+  @keyframes floatCloud {
+    from { transform: translateX(-150px); }
+    to   { transform: translateX(110vw); }
+  }
+
+  /* Stars for correct */
+  .star-pop {
+    position: fixed;
+    font-size: 2rem;
+    pointer-events: none;
+    z-index: 100;
+    animation: starFly 1s ease-out forwards;
+  }
+  @keyframes starFly {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to   { opacity: 0; transform: translateY(-120px) scale(1.8); }
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 16px 40px;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    margin-bottom: 16px;
+    width: 100%;
+    max-width: 480px;
+  }
+  .char {
+    font-size: 3.5rem;
+    animation: charBob 2s ease-in-out infinite;
+    display: inline-block;
+  }
+  @keyframes charBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+  header h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.8rem;
+    color: #ff6b6b;
+    text-shadow: 2px 2px 0 #ffd95a;
+    margin-top: 4px;
+  }
+  header p { font-size: 0.9rem; color: #888; font-weight: 700; margin-top: 4px; }
+
+  /* Score bar */
+  .score-bar {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 12px 18px;
+    background: white;
+    border-radius: 50px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+  .score-item {
+    text-align: center;
+  }
+  .score-item .num {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+  .score-item .lbl {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #aaa;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .score-item.correct .num { color: #43a047; }
+  .score-item.wrong .num { color: #ff6b6b; }
+  .score-item.left .num { color: #5c6bc0; }
+
+  /* Progress dots */
+  .progress-dots {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+  .pdot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: #ddd;
+    transition: all 0.3s;
+  }
+  .pdot.done-correct { background: #43a047; transform: scale(1.1); }
+  .pdot.done-wrong { background: #ff6b6b; }
+  .pdot.current { background: #ffd95a; transform: scale(1.3); }
+
+  /* Question card */
+  .q-card {
+    width: 100%;
+    max-width: 480px;
+    background: white;
+    border-radius: 28px;
+    padding: 32px 24px 28px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    text-align: center;
+    animation: cardPop 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    margin-bottom: 20px;
+  }
+  @keyframes cardPop {
+    from { opacity:0; transform: scale(0.8) translateY(20px); }
+    to   { opacity:1; transform: scale(1) translateY(0); }
+  }
+  .q-card.shake {
+    animation: shake 0.4s ease;
+  }
+  @keyframes shake {
+    0%,100%{transform:translateX(0)}
+    20%{transform:translateX(-12px)}
+    40%{transform:translateX(12px)}
+    60%{transform:translateX(-8px)}
+    80%{transform:translateX(8px)}
+  }
+
+  .q-num {
+    font-size: 0.8rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: #ccc;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .q-emoji {
+    font-size: 4rem;
+    margin-bottom: 12px;
+    animation: emojiPulse 1.5s ease-in-out infinite;
+    display: block;
+  }
+  @keyframes emojiPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+
+  .q-word {
+    font-family: 'Fredoka One', cursive;
+    font-size: 3.5rem;
+    color: #333;
+    margin-bottom: 6px;
+    letter-spacing: 2px;
+  }
+
+  .q-hint {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #bbb;
+    margin-bottom: 24px;
+  }
+
+  /* Choice buttons */
+  .choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .choice {
+    padding: 18px 12px;
+    border-radius: 20px;
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    font-family: 'Fredoka One', cursive;
+  }
+  .choice:active { transform: scale(0.95); }
+
+  .choice.long-i {
+    background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+    border-color: #7c3aed;
+  }
+  .choice.long-e {
+    background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+    border-color: #0284c7;
+  }
+
+  .choice .c-label {
+    font-size: 1.6rem;
+    color: #333;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .choice .c-sub {
+    font-size: 0.85rem;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    color: #666;
+    display: block;
+    margin-bottom: 8px;
+  }
+  .choice .c-example {
+    font-size: 0.8rem;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    color: #999;
+    display: block;
+  }
+
+  .choice.correct-ans {
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0) !important;
+    border-color: #059669 !important;
+    transform: scale(1.04);
+    box-shadow: 0 6px 20px rgba(5,150,105,0.3);
+  }
+  .choice.wrong-ans {
+    background: linear-gradient(135deg, #fee2e2, #fecaca) !important;
+    border-color: #dc2626 !important;
+  }
+  .choice:disabled, .choice.disabled { cursor: not-allowed; }
+
+  /* Feedback message */
+  .feedback {
+    width: 100%;
+    max-width: 480px;
+    text-align: center;
+    padding: 16px 20px;
+    border-radius: 20px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.3rem;
+    margin-bottom: 16px;
+    display: none;
+    animation: cardPop 0.3s ease;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok {
+    background: #d1fae5;
+    color: #065f46;
+    border: 3px solid #6ee7b7;
+  }
+  .feedback.bad {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 3px solid #fca5a5;
+  }
+
+  /* Next button */
+  .next-btn {
+    width: 100%;
+    max-width: 480px;
+    padding: 16px;
+    border-radius: 50px;
+    border: none;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.4rem;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(245,158,11,0.4);
+    display: none;
+    transition: transform 0.15s;
+    letter-spacing: 1px;
+  }
+  .next-btn.show { display: block; animation: cardPop 0.3s ease; }
+  .next-btn:active { transform: scale(0.97); }
+
+  /* Final screen */
+  .final {
+    display: none;
+    width: 100%;
+    max-width: 480px;
+    background: white;
+    border-radius: 28px;
+    padding: 36px 24px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    animation: cardPop 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .final.show { display: block; }
+  .final .trophy { font-size: 5rem; animation: charBob 1s ease-in-out infinite; display: block; }
+  .final h2 { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #ff6b6b; margin: 12px 0 6px; text-shadow: 2px 2px 0 #ffd95a; }
+  .final .big-score { font-family: 'Fredoka One', cursive; font-size: 3.5rem; color: #5c6bc0; margin: 8px 0; }
+  .final .msg { font-size: 1rem; font-weight: 700; color: #888; margin-bottom: 20px; line-height: 1.6; }
+  .final .stars { font-size: 2.5rem; letter-spacing: 6px; margin-bottom: 16px; }
+
+  .retry-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 50px;
+    border: none;
+    background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.3rem;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(255,107,107,0.4);
+    margin-bottom: 10px;
+  }
+  .retry-btn:active { transform: scale(0.97); }
+
+  /* Wrong review */
+  .review-list {
+    margin-top: 16px;
+    text-align: left;
+  }
+  .review-item {
+    background: #fff3cd;
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #555;
+    border-left: 4px solid #ffc107;
+  }
+  .review-item strong { color: #ff6b6b; font-size: 1.1rem; }
+  .review-item .correct-label { color: #059669; }
+</style>
+</head>
+<body>
+
+<div class="bg" id="bg"></div>
+
+<!-- Floating clouds -->
+<div class="cloud" style="top:8%;animation-duration:18s;animation-delay:0s">☁️</div>
+<div class="cloud" style="top:18%;animation-duration:24s;animation-delay:6s">☁️</div>
+<div class="cloud" style="top:5%;animation-duration:20s;animation-delay:12s">⛅</div>
+
+<div class="wrap">
+
+  <header>
+    <div class="char">🐣</div>
+    <h1>Long i vs Long e</h1>
+    <p>Yunman 加油！分清楚這兩個音！💪</p>
+  </header>
+
+  <!-- Score bar -->
+  <div class="score-bar">
+    <div class="score-item correct">
+      <div class="num" id="scoreCorrect">0</div>
+      <div class="lbl">✅ 答對</div>
+    </div>
+    <div class="score-item wrong">
+      <div class="num" id="scoreWrong">0</div>
+      <div class="lbl">❌ 答錯</div>
+    </div>
+    <div class="score-item left">
+      <div class="num" id="scoreLeft">16</div>
+      <div class="lbl">📝 剩餘</div>
+    </div>
+  </div>
+
+  <!-- Progress dots -->
+  <div class="progress-dots" id="progressDots"></div>
+
+  <!-- Question card -->
+  <div class="q-card" id="qCard">
+    <div class="q-num" id="qNum">第 1 題 / 共 16 題</div>
+    <span class="q-emoji" id="qEmoji">🌟</span>
+    <div class="q-word" id="qWord">sky</div>
+    <div class="q-hint" id="qHint">這個單字是哪個音？</div>
+    <div class="choices">
+      <button class="choice long-i" id="btnI" onclick="answer('long-i')">
+        <span class="c-label">long i</span>
+        <span class="c-sub">「哎」的音</span>
+        <span class="c-example">like: my, kite</span>
+      </button>
+      <button class="choice long-e" id="btnE" onclick="answer('long-e')">
+        <span class="c-label">long e</span>
+        <span class="c-sub">「依」的音</span>
+        <span class="c-example">like: see, tree</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Feedback -->
+  <div class="feedback" id="feedback"></div>
+
+  <!-- Next button -->
+  <button class="next-btn" id="nextBtn" onclick="nextQuestion()">下一題 ➡️</button>
+
+  <!-- Final screen -->
+  <div class="final" id="finalScreen">
+    <span class="trophy" id="finalEmoji">🏆</span>
+    <h2 id="finalTitle">好棒！</h2>
+    <div class="big-score" id="finalScore">16 / 16</div>
+    <div class="stars" id="finalStars">⭐⭐⭐</div>
+    <div class="msg" id="finalMsg"></div>
+    <button class="retry-btn" onclick="restart()">🔄 再玩一次！</button>
+    <div class="review-list" id="reviewList"></div>
+  </div>
+
+</div>
+
+<script>
+const words = [
+  { word: "my",    emoji: "👧", hint: "我的", answer: "long-i" },
+  { word: "see",   emoji: "👀", hint: "看", answer: "long-e" },
+  { word: "sky",   emoji: "🌤️", hint: "天空", answer: "long-i" },
+  { word: "tree",  emoji: "🌳", hint: "樹", answer: "long-e" },
+  { word: "kite",  emoji: "🪁", hint: "風箏", answer: "long-i" },
+  { word: "feet",  emoji: "🦶", hint: "腳", answer: "long-e" },
+  { word: "fine",  emoji: "😊", hint: "好的", answer: "long-i" },
+  { word: "peel",  emoji: "🍌", hint: "剝皮", answer: "long-e" },
+  { word: "bike",  emoji: "🚲", hint: "腳踏車", answer: "long-i" },
+  { word: "green", emoji: "🟢", hint: "綠色", answer: "long-e" },
+  { word: "shine", emoji: "✨", hint: "閃耀", answer: "long-i" },
+  { word: "queen", emoji: "👸", hint: "女王", answer: "long-e" },
+  { word: "fly",   emoji: "🦋", hint: "飛", answer: "long-i" },
+  { word: "sleep", emoji: "😴", hint: "睡覺", answer: "long-e" },
+  { word: "why",   emoji: "🤔", hint: "為什麼", answer: "long-i" },
+  { word: "sweet", emoji: "🍬", hint: "甜的", answer: "long-e" },
+  { word: "cry",   emoji: "😢", hint: "哭", answer: "long-i" },
+];
+
+// Shuffle
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+let queue = [];
+let current = 0;
+let scoreCorrect = 0;
+let scoreWrong = 0;
+let wrongList = [];
+let answered = false;
+
+const correctMsgs = [
+  "🎉 答對了！超棒的！",
+  "⭐ 太厲害了！完全正確！",
+  "🌟 哇！你真的懂！",
+  "🎊 答對！Yunman 好聰明！",
+  "🏆 完美！繼續加油！",
+  "🦋 飛高高！答對了！",
+  "🍭 甜蜜的答對！",
+];
+const wrongMsgs = [
+  "再想想！",
+  "加油！下次一定會！",
+  "沒關係，繼續練習！",
+  "快記住正確答案喔！",
+];
+
+function init() {
+  queue = shuffle([...words]);
+  current = 0;
+  scoreCorrect = 0;
+  scoreWrong = 0;
+  wrongList = [];
+  answered = false;
+  buildDots();
+  showQuestion();
+  updateScore();
+}
+
+function buildDots() {
+  const c = document.getElementById('progressDots');
+  c.innerHTML = '';
+  queue.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'pdot' + (i === 0 ? ' current' : '');
+    d.id = 'dot' + i;
+    c.appendChild(d);
+  });
+}
+
+function updateDots(idx, result) {
+  document.querySelectorAll('.pdot').forEach(d => d.classList.remove('current'));
+  if (idx >= 0) {
+    const d = document.getElementById('dot' + idx);
+    if (d) d.classList.add(result === 'correct' ? 'done-correct' : 'done-wrong');
+  }
+  const next = document.getElementById('dot' + (idx + 1));
+  if (next) next.classList.add('current');
+}
+
+function showQuestion() {
+  if (current >= queue.length) { showFinal(); return; }
+  const q = queue[current];
+  answered = false;
+
+  document.getElementById('qNum').textContent = `第 ${current + 1} 題 / 共 ${queue.length} 題`;
+  document.getElementById('qEmoji').textContent = q.emoji;
+  document.getElementById('qWord').textContent = q.word;
+  document.getElementById('qHint').textContent = `「${q.hint}」是哪個音？`;
+
+  const btnI = document.getElementById('btnI');
+  const btnE = document.getElementById('btnE');
+  btnI.className = 'choice long-i';
+  btnE.className = 'choice long-e';
+  btnI.disabled = false;
+  btnE.disabled = false;
+
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('nextBtn').className = 'next-btn';
+  document.getElementById('bg').className = 'bg';
+
+  const card = document.getElementById('qCard');
+  card.style.animation = 'none';
+  void card.offsetWidth;
+  card.style.animation = 'cardPop 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+}
+
+function answer(chosen) {
+  if (answered) return;
+  answered = true;
+  const q = queue[current];
+  const isCorrect = chosen === q.answer;
+
+  document.getElementById('btnI').disabled = true;
+  document.getElementById('btnE').disabled = true;
+
+  const chosenBtn = chosen === 'long-i' ? document.getElementById('btnI') : document.getElementById('btnE');
+  const correctBtn = q.answer === 'long-i' ? document.getElementById('btnI') : document.getElementById('btnE');
+
+  if (isCorrect) {
+    chosenBtn.classList.add('correct-ans');
+    scoreCorrect++;
+    const fb = document.getElementById('feedback');
+    fb.textContent = correctMsgs[Math.floor(Math.random() * correctMsgs.length)];
+    fb.className = 'feedback show ok';
+    document.getElementById('bg').className = 'bg correct-bg';
+    popStars();
+    updateDots(current, 'correct');
+  } else {
+    chosenBtn.classList.add('wrong-ans');
+    correctBtn.classList.add('correct-ans');
+    scoreWrong++;
+    const correctLabel = q.answer === 'long-i' ? 'long i（哎的音）' : 'long e（依的音）';
+    const fb = document.getElementById('feedback');
+    fb.textContent = `❌ 答錯了！「${q.word}」是 ${correctLabel}`;
+    fb.className = 'feedback show bad';
+    document.getElementById('bg').className = 'bg wrong-bg';
+    document.getElementById('qCard').classList.add('shake');
+    setTimeout(() => document.getElementById('qCard').classList.remove('shake'), 400);
+    wrongList.push({ word: q.word, emoji: q.emoji, hint: q.hint, correct: q.answer });
+    updateDots(current, 'wrong');
+  }
+
+  updateScore();
+  document.getElementById('nextBtn').className = 'next-btn show';
+  document.getElementById('nextBtn').textContent = current === queue.length - 1 ? '看結果 🎊' : '下一題 ➡️';
+}
+
+function nextQuestion() {
+  current++;
+  showQuestion();
+}
+
+function updateScore() {
+  document.getElementById('scoreCorrect').textContent = scoreCorrect;
+  document.getElementById('scoreWrong').textContent = scoreWrong;
+  document.getElementById('scoreLeft').textContent = Math.max(0, queue.length - current - (answered ? 1 : 0));
+}
+
+function popStars() {
+  const emojis = ['⭐','🌟','✨','🎉','🎊'];
+  for (let i = 0; i < 5; i++) {
+    setTimeout(() => {
+      const s = document.createElement('div');
+      s.className = 'star-pop';
+      s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      s.style.left = (20 + Math.random() * 60) + 'vw';
+      s.style.top = (30 + Math.random() * 40) + 'vh';
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 1000);
+    }, i * 120);
+  }
+}
+
+function showFinal() {
+  document.getElementById('qCard').style.display = 'none';
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('progressDots').style.display = 'none';
+
+  const total = queue.length;
+  const pct = scoreCorrect / total;
+  const final = document.getElementById('finalScreen');
+
+  document.getElementById('finalScore').textContent = `${scoreCorrect} / ${total}`;
+
+  let emoji, title, stars, msg;
+  if (pct === 1) {
+    emoji = '🏆'; title = '全部答對！！！'; stars = '⭐⭐⭐';
+    msg = 'Yunman 你太厲害了！long i 和 long e 完全搞清楚了！下次考試一定 100 分！🎉';
+  } else if (pct >= 0.8) {
+    emoji = '😊'; title = '好棒！快全對了！'; stars = '⭐⭐⭐';
+    msg = '只有幾個答錯，再複習一下就完美了！加油！';
+  } else if (pct >= 0.6) {
+    emoji = '💪'; title = '不錯喔！繼續練！'; stars = '⭐⭐';
+    msg = '有進步！把答錯的單字多念幾次，下次會更好！';
+  } else {
+    emoji = '📖'; title = '再練習一次！'; stars = '⭐';
+    msg = '沒關係！多練幾次一定會進步的！Yunman 加油！';
+  }
+
+  document.getElementById('finalEmoji').textContent = emoji;
+  document.getElementById('finalTitle').textContent = title;
+  document.getElementById('finalStars').textContent = stars;
+  document.getElementById('finalMsg').textContent = msg;
+
+  // Wrong words review
+  if (wrongList.length > 0) {
+    const rev = document.getElementById('reviewList');
+    rev.innerHTML = '<div style="font-weight:900;color:#ff6b6b;margin-bottom:10px;font-size:0.95rem">📝 這些要多練習：</div>';
+    wrongList.forEach(w => {
+      const label = w.correct === 'long-i' ? 'long i（哎）' : 'long e（依）';
+      rev.innerHTML += `<div class="review-item">${w.emoji} <strong>${w.word}</strong>「${w.hint}」→ <span class="correct-label">${label}</span></div>`;
+    });
+  }
+
+  final.classList.add('show');
+  document.getElementById('bg').className = 'bg correct-bg';
+  for (let i = 0; i < 3; i++) setTimeout(popStars, i * 400);
+}
+
+function restart() {
+  document.getElementById('qCard').style.display = '';
+  document.getElementById('progressDots').style.display = '';
+  document.getElementById('finalScreen').classList.remove('show');
+  init();
+}
+
+init();
+</script>
+</body>
+</html>
