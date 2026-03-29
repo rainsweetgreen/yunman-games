@@ -355,21 +355,43 @@
 const levels = {
   2: {
     title: "🪄 Y 變魔術！", fillClass: "lv2-fill",
-    teach: `<div class="t-title">🪄 字母 Y 的魔術！</div>
-    <div class="t-body">Y 在<span class="hl">長長的單字</span>最後面，會唸<span class="hl">「一」</span>的音！<br><br>
-    口訣：<span class="cut">字長長，Y 唸「一」！</span><br><br>
-    例如：par-<span class="hl">ty</span>（派對）、can-<span class="hl">dy</span>（糖果）<br>
-    這裡的 Y 都唸「一」！</div>`,
-    questions: [
-      { word:"party",  emoji:"🎉", hint:"派對",   options:["par·ty（唸「一」）","par·ty（唸「ㄞ」）"], answer:0, explain:"Y在長單字後面，唸「一」！par-ty" },
-      { word:"candy",  emoji:"🍬", hint:"糖果",   options:["can·dy（唸「一」）","can·dy（唸「ㄞ」）"], answer:0, explain:"Y在長單字後面，唸「一」！can-dy" },
-      { word:"puppy",  emoji:"🐶", hint:"小狗",   options:["pup·py（唸「一」）","pup·py（唸「ㄞ」）"], answer:0, explain:"Y在長單字後面，唸「一」！pup-py" },
-      { word:"bunny",  emoji:"🐰", hint:"小兔子", options:["bun·ny（唸「一」）","bun·ny（唸「ㄞ」）"], answer:0, explain:"Y在長單字後面，唸「一」！bun-ny" },
-      { word:"funny",  emoji:"😂", hint:"好笑的", options:["fun·ny（唸「一」）","fun·ny（唸「ㄞ」）"], answer:0, explain:"Y在長單字後面，唸「一」！fun-ny" },
-      { word:"happy",  emoji:"😊", hint:"快樂的", options:["hap·py（唸「一」）","hap·py（唸「ㄞ」）"], answer:0, explain:"Y在長單字後面，唸「一」！hap-py" },
-      { word:"baby",   emoji:"👶", hint:"嬰兒",   options:["ba·by（唸「一」）","ba·by（唸「ㄞ」）"],   answer:0, explain:"Y在長單字後面，唸「一」！ba-by" },
-      { word:"windy",  emoji:"🌬️", hint:"有風的", options:["win·dy（唸「一」）","win·dy（唸「ㄞ」）"], answer:0, explain:"Y在長單字後面，唸「一」！win-dy" },
-    ]
+    teach: `<div class="t-title">🪄 Vowel Sounds of Y</div>
+    <div class="t-body">
+    <span class="hl">Rule 1：Y 唸 Long i（ㄞ）</span><br>
+    Y 在<span class="cut">短單字（1音節）</span>結尾 → 唸「ㄞ」！<br>
+    例如：<span class="hl">my</span>（我的）、<span class="hl">fly</span>（飛）、<span class="hl">cry</span>（哭）、<span class="hl">sky</span>（天空）<br><br>
+    <span class="hl">Rule 2：Y 唸 Long e（一）</span><br>
+    Y 在<span class="cut">長單字（2音節以上）</span>結尾 → 唸「一」！<br>
+    例如：<span class="hl">hap·py</span>（快樂）、<span class="hl">sil·ly</span>（傻的）、<span class="hl">cit·y</span>（城市）<br><br>
+    口訣：<span class="cut">字短短 Y 唸ㄞ，字長長 Y 唸一！</span>
+    </div>`,
+    wordBank: [
+      // Long i (ㄞ) — short words, 1 syllable
+      { word:"fly",    emoji:"✈️", hint:"飛",     options:["fly（唸「ㄞ」Long i）","fly（唸「一」Long e）"], answer:0, explain:"fly 只有1個音節，Y 唸 Long i（ㄞ）！" },
+      { word:"sky",    emoji:"🌤️", hint:"天空",   options:["sky（唸「ㄞ」Long i）","sky（唸「一」Long e）"], answer:0, explain:"sky 只有1個音節，Y 唸 Long i（ㄞ）！" },
+      { word:"my",     emoji:"👋", hint:"我的",   options:["my（唸「ㄞ」Long i）","my（唸「一」Long e）"],  answer:0, explain:"my 只有1個音節，Y 唸 Long i（ㄞ）！" },
+      { word:"by",     emoji:"➡️", hint:"在旁邊", options:["by（唸「ㄞ」Long i）","by（唸「一」Long e）"],  answer:0, explain:"by 只有1個音節，Y 唸 Long i（ㄞ）！" },
+      { word:"shy",    emoji:"🙈", hint:"害羞的", options:["shy（唸「ㄞ」Long i）","shy（唸「一」Long e）"], answer:0, explain:"shy 只有1個音節，Y 唸 Long i（ㄞ）！" },
+      { word:"try",    emoji:"💪", hint:"嘗試",   options:["try（唸「ㄞ」Long i）","try（唸「一」Long e）"], answer:0, explain:"try 只有1個音節，Y 唸 Long i（ㄞ）！" },
+      { word:"dry",    emoji:"☀️", hint:"乾的",   options:["dry（唸「ㄞ」Long i）","dry（唸「一」Long e）"], answer:0, explain:"dry 只有1個音節，Y 唸 Long i（ㄞ）！" },
+      { word:"fry",    emoji:"🍳", hint:"油炸",   options:["fry（唸「ㄞ」Long i）","fry（唸「一」Long e）"], answer:0, explain:"fry 只有1個音節，Y 唸 Long i（ㄞ）！" },
+      { word:"cry",    emoji:"😢", hint:"哭",     options:["cry（唸「ㄞ」Long i）","cry（唸「一」Long e）"], answer:0, explain:"cry 只有1個音節，Y 唸 Long i（ㄞ）！" },
+      // Long e (一) — longer words, 2+ syllables
+      { word:"doggy",  emoji:"🐶", hint:"小狗",   options:["dog·gy（唸「一」Long e）","dog·gy（唸「ㄞ」Long i）"], answer:0, explain:"doggy 有2個音節，Y 唸 Long e（一）！" },
+      { word:"sleepy", emoji:"😴", hint:"想睡的", options:["sleep·y（唸「一」Long e）","sleep·y（唸「ㄞ」Long i）"], answer:0, explain:"sleepy 有2個音節，Y 唸 Long e（一）！" },
+      { word:"windy",  emoji:"🌬️", hint:"有風的", options:["win·dy（唸「一」Long e）","win·dy（唸「ㄞ」Long i）"], answer:0, explain:"windy 有2個音節，Y 唸 Long e（一）！" },
+      { word:"copy",   emoji:"📋", hint:"複製",   options:["cop·y（唸「一」Long e）","cop·y（唸「ㄞ」Long i）"],  answer:0, explain:"copy 有2個音節，Y 唸 Long e（一）！" },
+      { word:"happy",  emoji:"😊", hint:"快樂的", options:["hap·py（唸「一」Long e）","hap·py（唸「ㄞ」Long i）"], answer:0, explain:"happy 有2個音節，Y 唸 Long e（一）！" },
+      { word:"funny",  emoji:"😂", hint:"好笑的", options:["fun·ny（唸「一」Long e）","fun·ny（唸「ㄞ」Long i）"], answer:0, explain:"funny 有2個音節，Y 唸 Long e（一）！" },
+      { word:"silly",  emoji:"🤪", hint:"傻的",   options:["sil·ly（唸「一」Long e）","sil·ly（唸「ㄞ」Long i）"], answer:0, explain:"silly 有2個音節，Y 唸 Long e（一）！" },
+      { word:"city",   emoji:"🏙️", hint:"城市",   options:["cit·y（唸「一」Long e）","cit·y（唸「ㄞ」Long i）"],  answer:0, explain:"city 有2個音節，Y 唸 Long e（一）！" },
+    ],
+    get questions() {
+      // Mix: 4 Long i + 4 Long e, shuffled
+      const longI = this.wordBank.slice(0, 9).sort(() => Math.random()-0.5).slice(0, 4);
+      const longE = this.wordBank.slice(9).sort(() => Math.random()-0.5).slice(0, 4);
+      return [...longI, ...longE].sort(() => Math.random()-0.5);
+    }
   }
 };
 
@@ -404,7 +426,8 @@ function startLevel(lv) {
 
 function showQ() {
   const data = levels[currentLevel];
-  const total = data.questions.length;
+  if (!data._qs) data._qs = data.questions;
+  const total = (data._qs || data.questions).length;
 
   document.getElementById('gProg').textContent = `${currentQ+1}/${total}`;
   document.getElementById('pbarFill').style.width = ((currentQ/total)*100) + '%';
@@ -456,7 +479,7 @@ function makeCut(pos, correct) {
     if (parseInt(s.dataset.pos) === pos) s.classList.add('selected');
   });
 
-  const q = levels[currentLevel].questions[currentQ];
+  const q = (levels[currentLevel]._qs || levels[currentLevel].questions)[currentQ];
   const fb = document.getElementById('feedback');
   const nextBtn = document.getElementById('nextBtn');
 
@@ -496,7 +519,7 @@ function pickOpt(idx) {
   if (answered) return;
   answered = true;
 
-  const q = levels[currentLevel].questions[currentQ];
+  const q = (levels[currentLevel]._qs || levels[currentLevel].questions)[currentQ];
   const btns = document.querySelectorAll('.opt-btn');
   btns.forEach(b => b.disabled = true);
 
