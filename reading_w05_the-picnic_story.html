@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧺 The Picnic — Story Game</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #fff8f0; font-family: 'Nunito', sans-serif; min-height: 100vh; }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 16px 16px 60px; }
+
+  .g-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .g-title  { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #333; }
+  .g-prog   { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #aaa; }
+  .pbar-wrap { background: #eee; border-radius: 99px; height: 8px; margin-bottom: 18px; overflow: hidden; }
+  .pbar-fill { height: 100%; border-radius: 99px; transition: width 0.5s; }
+  .p1-bar { background: linear-gradient(90deg, #f97316, #ea580c); }
+  .p2-bar { background: linear-gradient(90deg, #10b981, #059669); }
+  .p3-bar { background: linear-gradient(90deg, #8b5cf6, #7c3aed); }
+
+  .phase-label {
+    font-family: 'Fredoka One', cursive; font-size: 0.8rem; letter-spacing: 2px;
+    text-transform: uppercase; border-radius: 20px; padding: 4px 14px;
+    display: inline-block; margin-bottom: 12px;
+  }
+  .p1-label { background: #ffedd5; color: #c2410c; }
+  .p2-label { background: #d1fae5; color: #065f46; }
+  .p3-label { background: #ede9fe; color: #5b21b6; }
+
+  .instruction {
+    border-radius: 14px; padding: 12px 16px; margin-bottom: 14px;
+    font-size: 0.95rem; font-weight: 700; text-align: center; line-height: 1.5;
+  }
+  .p1-inst { background: linear-gradient(135deg, #ffedd5, #fed7aa); color: #c2410c; }
+  .p2-inst { background: linear-gradient(135deg, #d1fae5, #a7f3d0); color: #065f46; }
+  .p3-inst { background: linear-gradient(135deg, #ede9fe, #ddd6fe); color: #5b21b6; }
+
+  .article-card {
+    background: white; border-radius: 20px; padding: 20px 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+  }
+  .article-title {
+    font-family: 'Fredoka One', cursive; font-size: 1rem; margin-bottom: 12px; text-align: center;
+  }
+  .p1-title { color: #ea580c; }
+  .p2-title { color: #059669; }
+  .p3-title { color: #7c3aed; }
+
+  .article-text { font-size: 1.15rem; line-height: 2.3; color: #333; }
+  .word {
+    display: inline-block; cursor: pointer; border-radius: 6px;
+    padding: 1px 3px; transition: all 0.15s;
+  }
+  .word:hover:not(.locked) { opacity: 0.85; transform: scale(1.05); }
+  .word.correct { font-weight: 800; color: white; }
+  .p1-correct .word.correct { background: linear-gradient(135deg, #6ee7b7, #34d399); }
+  .p2-correct .word.correct { background: linear-gradient(135deg, #6ee7b7, #34d399); }
+  .p3-correct .word.correct { background: linear-gradient(135deg, #6ee7b7, #34d399); }
+  .word.wrong   { background: #fca5a5; color: white; }
+  .word.locked  { cursor: default; }
+
+  .feedback {
+    border-radius: 14px; padding: 12px 16px; margin-bottom: 12px;
+    font-weight: 800; font-size: 1rem; display: none; text-align: center;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok   { background: #d1fae5; color: #065f46; border: 3px solid #6ee7b7; }
+  .feedback.bad  { background: #fee2e2; color: #991b1b; border: 3px solid #fca5a5; }
+  .feedback.info { background: #ede9fe; color: #5b21b6; border: 3px solid #a78bfa; }
+
+  .next-btn {
+    width: 100%; padding: 15px; border-radius: 50px; border: none;
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+    cursor: pointer; display: none; transition: transform 0.1s;
+  }
+  .next-btn.show { display: block; }
+  .next-btn:active { transform: scale(0.97); }
+  .p1-btn { background: linear-gradient(135deg, #f97316, #ea580c); box-shadow: 0 4px 14px rgba(234,88,12,0.3); }
+  .p2-btn { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 14px rgba(5,150,105,0.3); }
+  .p3-btn { background: linear-gradient(135deg, #8b5cf6, #7c3aed); box-shadow: 0 4px 14px rgba(124,58,237,0.3); }
+
+  .final-card {
+    background: white; border-radius: 24px; padding: 30px 24px;
+    text-align: center; box-shadow: 0 8px 28px rgba(0,0,0,0.1); display: none;
+  }
+  .final-card.show { display: block; }
+  .final-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #f97316; margin-bottom: 8px; }
+  .final-msg   { font-size: 1rem; color: #666; margin-bottom: 18px; line-height: 1.7; }
+  .summary     { border-radius: 14px; padding: 16px; margin-bottom: 20px; text-align: left; }
+  .sum-section { margin-bottom: 14px; }
+  .sum-title   { font-weight: 900; font-size: 0.9rem; margin-bottom: 8px; }
+  .sum-words   { display: flex; flex-wrap: wrap; gap: 6px; }
+  .sum-chip    { padding: 4px 12px; border-radius: 20px; font-family: 'Fredoka One', cursive; font-size: 0.9rem; }
+  .chip-vccv  { background: #ffedd5; color: #c2410c; border: 2px solid #fb923c; }
+  .chip-longe { background: #d1fae5; color: #065f46; border: 2px solid #34d399; }
+  .chip-longi { background: #ede9fe; color: #5b21b6; border: 2px solid #a78bfa; }
+  .retry-btn {
+    width: 100%; padding: 14px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg, #f97316, #ea580c); color: white;
+    font-family: 'Fredoka One', cursive; font-size: 1.2rem; cursor: pointer;
+  }
+  .star-pop {
+    position: fixed; font-size: 1.8rem; pointer-events: none;
+    animation: fly 0.9s ease-out forwards; z-index: 999;
+  }
+  @keyframes fly { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-80px) scale(1.4)} }
+</style>
+</head>
+<body>
+<div class="wrap" id="wrap">
+  <div class="g-header">
+    <div class="g-title" id="gTitle">🧺 The Picnic</div>
+    <div class="g-prog" id="gProg">1 / 3</div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill p1-bar" id="pbarFill" style="width:0%"></div></div>
+  <div class="instruction" id="inst"></div>
+  <div class="article-card" id="articleCard"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextPage()"></button>
+  <div class="final-card" id="finalCard"></div>
+</div>
+
+<script>
+// ===== DATA =====
+// Page 1: VCCV 2-syllable closed-syllable words
+// VCCV = VC|CV split, both syllables closed (end in consonant)
+// basket(bas-ket), napkin(nap-kin), picnic(pic-nic)
+const pages = [
+  {
+    pg: 1,
+    label: "Page 1 — Find the VCCV Words 🧺",
+    instClass: "p1-inst",
+    labelClass: "p1-label",
+    titleClass: "p1-title",
+    btnClass: "p1-btn",
+    barClass: "p1-bar",
+    text: "Bandit the kitten has a picnic. He asks Lily the rabbit to come. Bandit gets a basket. He takes a napkin and a drink.",
+    task: "Find 4 two-syllable VCCV words! (VC·CV — both syllables end in a consonant) Tap them!",
+    targets: ["picnic","basket","napkin","rabbit"],
+    hints: {
+      picnic: "pic·nic — pic(closed) | nic(closed) — VCCV! Both syllables end in a consonant ✅",
+      basket: "bas·ket — bas(closed) | ket(closed) — VCCV! Both syllables end in a consonant ✅",
+      napkin: "nap·kin — nap(closed) | kin(closed) — VCCV! Both syllables end in a consonant ✅",
+      rabbit: "rab·bit — rab(closed) | bit(closed) — VCCV! Both syllables end in a consonant ✅",
+    },
+    wrongMsg: "Not a VCCV word. Look for 2-syllable words where two consonants sit in the middle!"
+  },
+  {
+    pg: 2,
+    label: "Page 2 — Long e spelled Y 🌿",
+    instClass: "p2-inst",
+    labelClass: "p2-label",
+    titleClass: "p2-title",
+    btnClass: "p2-btn",
+    barClass: "p2-bar",
+    text: "Bandit comes to the city. Lily is not there. He sits down and gets weepy. Lily comes by too late.",
+    task: "Find 4 words where Y spells Long e! (Lily appears twice — tap her both times!)",
+    targets: ["city","lily","weepy","lily"],
+    targetCount: 4, // lily appears twice — counts as 2
+    hints: {
+      city:  "cit·y — Y at end of 2-syllable word → Long e (ee)! ✅",
+      lily:  "Lil·y — Y at end of 2-syllable word → Long e (ee)! ✅",
+      weepy: "weep·y — Y at end of 2-syllable word → Long e (ee)! ✅",
+    },
+    wrongMsg: "Not a Long e Y word here. Look for words ending in Y!"
+  },
+  {
+    pg: 3,
+    label: "Page 3 — Long i spelled Y 💜",
+    instClass: "p3-inst",
+    labelClass: "p3-label",
+    titleClass: "p3-title",
+    btnClass: "p3-btn",
+    barClass: "p3-bar",
+    text: "Now she sees Bandit cry. She feels bad. Lily sits by him and smiles. Together they have fun!",
+    task: "Find 2 words where Y spells Long i (sounds like 'eye')! Tap them!",
+    targets: ["cry","by"],
+    hints: {
+      cry: "cry — 1-syllable word ending in Y → Long i (ㄞ)! ✅",
+      by:  "by — 1-syllable word ending in Y → Long i (ㄞ)! ✅",
+    },
+    wrongMsg: "Not a Long i Y word. Look for short 1-syllable words ending in Y!"
+  }
+];
+
+let pageIdx = 0;
+let found   = [];
+
+function loadPage(idx) {
+  const p = pages[idx];
+  found = [];
+
+  document.getElementById('gTitle').textContent = '🧺 The Picnic';
+  document.getElementById('gProg').textContent  = `${idx + 1} / ${pages.length}`;
+
+  const pbar = document.getElementById('pbarFill');
+  pbar.className = `pbar-fill ${p.barClass}`;
+  pbar.style.width = (idx / pages.length * 100) + '%';
+
+  const inst = document.getElementById('inst');
+  inst.className = `instruction ${p.instClass}`;
+  inst.innerHTML = `<b>${p.label}</b><br>${p.task}`;
+
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('nextBtn').className   = 'next-btn';
+  document.getElementById('finalCard').classList.remove('show');
+
+  // Build article
+  const card = document.getElementById('articleCard');
+  card.className = `article-card p${p.pg}-correct`;
+
+  const tokens = p.text.split(/(\s+|[.,!?])/);
+  let html = `<div class="article-title ${p.titleClass}">🧺 The Picnic</div><div class="article-text" id="articleText">`;
+  tokens.forEach(t => {
+    if (/\s+/.test(t))    html += ' ';
+    else if (/[.,!?]/.test(t)) html += t;
+    else if (t) {
+      const clean = t.replace(/[.,!?'"]/g, '').toLowerCase();
+      html += `<span class="word" data-word="${clean}" onclick="tap(this,'${clean}')">${t}</span>`;
+    }
+  });
+  html += '</div>';
+  card.innerHTML = html;
+}
+
+function tap(el, word) {
+  if (el.classList.contains('locked')) return;
+  const p  = pages[pageIdx];
+  const fb = document.getElementById('feedback');
+
+  if (p.targets.includes(word)) {
+    // allow words that appear multiple times in targets (e.g. lily x2)
+    const maxCount = p.targets.filter(t => t === word).length;
+    const timesFound = found.filter(w => w === word).length;
+    if (timesFound >= maxCount) {
+      fb.innerHTML = `"${word}" already found! Keep looking!`;
+      fb.className = 'feedback show info';
+      setTimeout(() => fb.className = 'feedback', 1200);
+      return;
+    }
+    found.push(word);
+    el.classList.add('correct','locked');
+    fb.innerHTML = `✅ "${word}" — ${p.hints[word]}`;
+    fb.className = 'feedback show ok';
+    popStars();
+
+    const totalNeeded = p.targetCount || p.targets.length;
+    if (found.length === totalNeeded) {
+      setTimeout(() => {
+        fb.innerHTML = `🎉 All ${p.targets.length} found! Great job!`;
+        fb.className = 'feedback show ok';
+        const btn = document.getElementById('nextBtn');
+        btn.textContent = pageIdx < pages.length - 1 ? 'Next Page ➡️' : 'See Results 🎊';
+        btn.className   = `next-btn show ${p.btnClass}`;
+      }, 700);
+    }
+  } else {
+    el.classList.add('wrong');
+    fb.innerHTML = `❌ "${word}" — ${p.wrongMsg}`;
+    fb.className = 'feedback show bad';
+    setTimeout(() => { el.classList.remove('wrong'); fb.className = 'feedback'; }, 1800);
+  }
+}
+
+function nextPage() {
+  pageIdx++;
+  if (pageIdx < pages.length) {
+    loadPage(pageIdx);
+  } else {
+    showFinal();
+  }
+}
+
+function showFinal() {
+  document.getElementById('articleCard').style.display = 'none';
+  document.getElementById('inst').style.display        = 'none';
+  document.getElementById('feedback').className        = 'feedback';
+  document.getElementById('nextBtn').className         = 'next-btn';
+  document.getElementById('pbarFill').style.width      = '100%';
+  document.getElementById('gProg').textContent         = '✅ Done!';
+
+  const p0 = pages[0], p1 = pages[1], p2 = pages[2];
+  document.getElementById('finalCard').innerHTML = `
+    <div class="final-title">🧺 Story Complete!</div>
+    <div class="final-msg">You found all the target words in The Picnic!<br>Here's what you learned:</div>
+    <div class="summary" style="background:#fff7ed">
+      <div class="sum-section">
+        <div class="sum-title" style="color:#c2410c">🧺 VCCV Closed Syllable Words (Page 1)</div>
+        <div class="sum-words">
+          ${p0.targets.map(w => `<span class="sum-chip chip-vccv"><b>${w}</b> — ${p0.hints[w]}</span>`).join('')}
+        </div>
+      </div>
+      <div class="sum-section">
+        <div class="sum-title" style="color:#065f46">🌿 Long e spelled Y — 2-syllable words (Page 2)</div>
+        <div class="sum-words">
+          ${p1.targets.map(w => `<span class="sum-chip chip-longe"><b>${w}</b></span>`).join('')}
+        </div>
+      </div>
+      <div class="sum-section">
+        <div class="sum-title" style="color:#5b21b6">💜 Long i spelled Y — 1-syllable words (Page 3)</div>
+        <div class="sum-words">
+          ${p2.targets.map(w => `<span class="sum-chip chip-longi"><b>${w}</b></span>`).join('')}
+        </div>
+      </div>
+      <div style="background:#f0fdf4;border-radius:10px;padding:12px;margin-top:12px;font-size:0.88rem;color:#065f46;font-weight:700">
+        💡 Rule: Y = Long i (ㄞ) in short 1-syllable words (cry, by, my, fly)<br>
+        💡 Rule: Y = Long e (一) in longer 2-syllable words (city, happy, funny)
+      </div>
+    </div>
+    <button class="retry-btn" onclick="location.reload()">🔄 Play Again!</button>`;
+  document.getElementById('finalCard').classList.add('show');
+}
+
+function popStars() {
+  ['⭐','✨','🌟','🎉','🧺','🐱','🐰'].sort(()=>Math.random()-0.5).slice(0,4).forEach((e,i) => {
+    setTimeout(() => {
+      const s = document.createElement('div'); s.className = 'star-pop'; s.textContent = e;
+      s.style.left = (15 + Math.random()*70)+'vw'; s.style.top = (20 + Math.random()*50)+'vh';
+      document.body.appendChild(s); setTimeout(() => s.remove(), 900);
+    }, i*120);
+  });
+}
+
+window.onload = () => loadPage(0);
+</script>
+</body>
+</html>
