@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎵 Sing! — 故事闖關</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #fff8f0; font-family: 'Nunito', sans-serif; min-height: 100vh; }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 16px 16px 60px; }
+
+  .g-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .g-title  { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #333; }
+  .g-prog   { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #aaa; }
+  .pbar-wrap { background: #eee; border-radius: 99px; height: 8px; margin-bottom: 18px; overflow: hidden; }
+  .pbar-fill { height: 100%; border-radius: 99px; transition: width 0.4s; }
+  .pbar-lv1 { background: linear-gradient(90deg, #a78bfa, #7c3aed); }
+  .pbar-lv2 { background: linear-gradient(90deg, #f97316, #ea580c); }
+  .pbar-lv3 { background: linear-gradient(90deg, #3b82f6, #1d4ed8); }
+
+  /* Article card */
+  .article-card {
+    background: white; border-radius: 20px; padding: 20px 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+  }
+  .page-label {
+    font-family: 'Fredoka One', cursive; font-size: 0.85rem;
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 10px; padding: 4px 12px; border-radius: 20px;
+    display: inline-block;
+  }
+  .lv1 .page-label { background: #ede9fe; color: #7c3aed; }
+  .lv2 .page-label { background: #ffedd5; color: #ea580c; }
+  .lv3 .page-label { background: #dbeafe; color: #1d4ed8; }
+  .article-text {
+    font-size: 1.15rem; line-height: 2.2; color: #333; letter-spacing: 0.3px;
+  }
+  .word {
+    display: inline-block; cursor: pointer; border-radius: 6px;
+    padding: 1px 3px; transition: all 0.15s;
+  }
+  .word:hover:not(.locked) { opacity: 0.8; transform: scale(1.05); }
+  .word.selected { font-weight: 800; }
+  .lv1 .word.selected { background: #a78bfa; color: white; }
+  .lv2 .word.selected { background: #f97316; color: white; }
+  .lv3 .word.selected { background: #3b82f6; color: white; }
+  .word.correct { font-weight: 800; color: white !important; }
+  .lv1 .word.correct { background: linear-gradient(135deg, #6ee7b7, #34d399) !important; }
+  .lv2 .word.correct { background: linear-gradient(135deg, #6ee7b7, #34d399) !important; }
+  .lv3 .word.correct { background: linear-gradient(135deg, #6ee7b7, #34d399) !important; }
+  .word.wrong { background: #fca5a5; color: white; }
+  .word.locked { cursor: default; }
+
+  /* Instruction */
+  .instruction {
+    border-radius: 14px; padding: 14px 16px; margin-bottom: 14px;
+    font-size: 0.95rem; font-weight: 700; text-align: center; line-height: 1.6;
+  }
+  .lv1-inst { background: linear-gradient(135deg, #ede9fe, #ddd6fe); color: #5b21b6; }
+  .lv2-inst { background: linear-gradient(135deg, #ffedd5, #fed7aa); color: #c2410c; }
+  .lv3-inst { background: linear-gradient(135deg, #dbeafe, #bfdbfe); color: #1e40af; }
+
+  /* Chips */
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; justify-content: center; }
+  .chip {
+    border-radius: 20px; padding: 4px 14px;
+    font-family: 'Fredoka One', cursive; font-size: 1rem; transition: all 0.2s;
+    border: 2px solid;
+  }
+  .lv1 .chip { background: #f3e8ff; border-color: #c4b5fd; color: #7c3aed; }
+  .lv2 .chip { background: #fff7ed; border-color: #fdba74; color: #ea580c; }
+  .lv3 .chip { background: #eff6ff; border-color: #93c5fd; color: #1d4ed8; }
+  .chip.found { background: #6ee7b7 !important; border-color: #34d399 !important; color: #065f46 !important; }
+
+  /* Feedback */
+  .feedback {
+    border-radius: 14px; padding: 12px 16px; margin-bottom: 12px;
+    font-weight: 800; font-size: 1rem; display: none; text-align: center;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok   { background: #d1fae5; color: #065f46; border: 3px solid #6ee7b7; }
+  .feedback.bad  { background: #fee2e2; color: #991b1b; border: 3px solid #fca5a5; }
+  .feedback.info { background: #ede9fe; color: #5b21b6; border: 3px solid #a78bfa; }
+
+  /* Buttons */
+  .next-btn {
+    width: 100%; padding: 15px; border-radius: 50px; border: none;
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+    cursor: pointer; display: none; transition: transform 0.1s;
+  }
+  .next-btn.show { display: block; }
+  .next-btn:active { transform: scale(0.97); }
+  .lv1 .next-btn { background: linear-gradient(135deg, #a78bfa, #7c3aed); box-shadow: 0 4px 14px rgba(124,58,237,0.35); }
+  .lv2 .next-btn { background: linear-gradient(135deg, #f97316, #ea580c); box-shadow: 0 4px 14px rgba(234,88,12,0.35); }
+  .lv3 .next-btn { background: linear-gradient(135deg, #3b82f6, #1d4ed8); box-shadow: 0 4px 14px rgba(29,78,216,0.35); }
+
+  /* Final */
+  .final-card {
+    background: white; border-radius: 24px; padding: 30px 24px;
+    text-align: center; box-shadow: 0 8px 28px rgba(0,0,0,0.1); display: none;
+  }
+  .final-card.show { display: block; }
+  .final-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #7c3aed; margin-bottom: 8px; }
+  .final-msg   { font-size: 1rem; color: #666; margin-bottom: 20px; line-height: 1.6; }
+  .summary { background: #f3e8ff; border-radius: 14px; padding: 16px; margin-bottom: 20px; text-align: left; }
+  .sum-section { margin-bottom: 12px; }
+  .sum-title { font-weight: 900; font-size: 0.9rem; margin-bottom: 6px; }
+  .sum-words { display: flex; flex-wrap: wrap; gap: 6px; }
+  .sum-chip {
+    padding: 3px 12px; border-radius: 20px;
+    font-family: 'Fredoka One', cursive; font-size: 0.9rem;
+  }
+  .open-chip { background: #c4b5fd; color: #4c1d95; }
+  .ng-chip   { background: #fdba74; color: #7c2d12; }
+  .nk-chip   { background: #93c5fd; color: #1e3a5f; }
+  .retry-btn {
+    width: 100%; padding: 14px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg, #a78bfa, #7c3aed);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.2rem; cursor: pointer;
+  }
+
+  /* Star pop */
+  .star-pop {
+    position: fixed; font-size: 1.8rem; pointer-events: none;
+    animation: starFly 0.9s ease-out forwards; z-index: 999;
+  }
+  @keyframes starFly {
+    0%   { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-80px) scale(1.4); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap" id="gameWrap">
+  <div class="g-header">
+    <div class="g-title" id="gTitle">🎵 Sing!</div>
+    <div class="g-prog" id="gProg">1 / 3</div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill pbar-lv1" id="pbarFill" style="width:0%"></div></div>
+  <div class="instruction" id="instruction"></div>
+  <div class="chips" id="chips"></div>
+  <div class="article-card" id="articleCard"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextPage()"></button>
+  <div class="final-card" id="finalCard"></div>
+</div>
+
+<script>
+// ===== DATA =====
+const pages = [
+  {
+    lv: 1,
+    label: "Page 1 — Find the Open Syllables ✨",
+    text: "Link and Tony go to class. The class is full of kids. Miss King asks the class to sing. They blink and grow silent.",
+    task: "Find 3 words that have an open syllable! Tap them!",
+    targets: ["go","tony","silent"],
+    hints: {
+      "go":     "go — ends with vowel o → open syllable!",
+      "tony":   "to·ny — 'to' ends with vowel o → open syllable!",
+      "silent": "si·lent — 'si' ends with vowel i → open syllable!",
+    },
+    chipLabel: word => word,
+  },
+  {
+    lv: 2,
+    label: "Page 2 — Find the -ng Words 🎵",
+    text: "Link and Tony glance around. Link gets up to sing a solo. Tony can bring a bell to ring. They find a spot under the pink kite.",
+    task: "Find all words that end with -ng! Tap them!",
+    targets: ["sing","bring","ring"],
+    hints: {
+      "sing":  "sing → ends with -ng!",
+      "bring": "bring → ends with -ng!",
+      "ring":  "ring → ends with -ng!",
+    },
+    chipLabel: word => word,
+  },
+  {
+    lv: 3,
+    label: "Page 3 — Find the -nk Words 💙",
+    text: "Miss King winks at Link and Tony. Link grabs a gong. Tony can drink some water and think. They blink at the pink kite. Link and Tony think singing is fun!",
+    task: "Find all 5 words that end with -nk! Tap them!",
+    targets: ["winks","drink","think","blink","pink"],
+    hints: {
+      "winks": "winks → ends with -nk! (wi-nk + s)",
+      "drink": "drink → ends with -nk! (dri-nk)",
+      "think": "think → ends with -nk! (thi-nk)",
+      "blink": "blink → ends with -nk! (bli-nk)",
+      "pink":  "pink → ends with -nk! (pi-nk)",
+    },
+    chipLabel: word => word,
+  },
+];
+
+let pageIdx = 0;
+let found = [];
+
+function loadPage(idx) {
+  const p = pages[idx];
+  found = [];
+
+  // Update wrap class
+  const wrap = document.getElementById('gameWrap');
+  wrap.className = `wrap lv${p.lv}`;
+
+  // Header
+  document.getElementById('gTitle').textContent = '🎵 Sing!';
+  document.getElementById('gProg').textContent = `${idx + 1} / ${pages.length}`;
+  const pbar = document.getElementById('pbarFill');
+  pbar.className = `pbar-fill pbar-lv${p.lv}`;
+  pbar.style.width = ((idx / pages.length) * 100) + '%';
+
+  // Instruction
+  const inst = document.getElementById('instruction');
+  inst.className = `instruction lv${p.lv}-inst`;
+  inst.innerHTML = `<b>${p.label}</b><br>${p.task}`;
+
+  // Chips hidden — don't reveal target words to kids
+  const chipsEl = document.getElementById('chips');
+  chipsEl.innerHTML = '';
+
+  // Article
+  const card = document.getElementById('articleCard');
+  card.innerHTML = `<div class="article-text" id="articleText"></div>`;
+  const textEl = document.getElementById('articleText');
+
+  const tokens = p.text.split(/(\s+|[.,!?])/);
+  tokens.forEach(token => {
+    if (/\s+/.test(token)) {
+      textEl.appendChild(document.createTextNode(token));
+    } else if (/[.,!?]/.test(token)) {
+      textEl.appendChild(document.createTextNode(token));
+    } else if (token) {
+      const clean = token.replace(/[.,!?'"]/g, '').toLowerCase();
+      const span = document.createElement('span');
+      span.className = 'word';
+      span.textContent = token;
+      span.dataset.word = clean;
+      span.onclick = () => tapWord(span, clean, p);
+      textEl.appendChild(span);
+    }
+  });
+
+  // Reset UI
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('nextBtn').className = 'next-btn';
+  document.getElementById('finalCard').classList.remove('show');
+  card.style.display = 'block';
+  inst.style.display = 'block';
+  chipsEl.style.display = 'none';
+}
+
+function tapWord(el, word, p) {
+  if (el.classList.contains('locked')) return;
+  const fb = document.getElementById('feedback');
+
+  if (p.targets.includes(word)) {
+    if (found.includes(word)) {
+      fb.innerHTML = `"${word}" is already found! Keep looking!`;
+      fb.className = 'feedback show info';
+      setTimeout(() => fb.className = 'feedback', 1200);
+      return;
+    }
+    found.push(word);
+    el.classList.add('correct', 'locked');
+    fb.innerHTML = `✅ Great job! You found "${word}"!`;
+    fb.className = 'feedback show ok';
+    popStars();
+
+    if (found.length === p.targets.length) {
+      setTimeout(() => {
+        fb.innerHTML = `🎉 All found! Amazing work!`;
+        fb.className = 'feedback show ok';
+        const btn = document.getElementById('nextBtn');
+        btn.textContent = pageIdx < pages.length - 1 ? 'Next Page ➡️' : 'See Results 🎊';
+        btn.className = 'next-btn show';
+      }, 700);
+    }
+  } else {
+    el.classList.add('wrong');
+    const lv = pages[pageIdx].lv;
+    const hint = lv === 1 ? 'No open syllable here. Try another word!' :
+                 lv === 2 ? 'This word does not end with -ng. Try again!' :
+                            'This word does not end with -nk. Try again!';
+    fb.innerHTML = `❌ "${word}" — ${hint}`;
+    fb.className = 'feedback show bad';
+    setTimeout(() => {
+      el.classList.remove('wrong');
+      fb.className = 'feedback';
+    }, 1500);
+  }
+}
+
+function nextPage() {
+  pageIdx++;
+  if (pageIdx < pages.length) {
+    loadPage(pageIdx);
+  } else {
+    showFinal();
+  }
+}
+
+function showFinal() {
+  document.getElementById('articleCard').style.display = 'none';
+  document.getElementById('instruction').style.display = 'none';
+  document.getElementById('chips').style.display = 'none';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('nextBtn').className = 'next-btn';
+  document.getElementById('pbarFill').style.width = '100%';
+  document.getElementById('gProg').textContent = '✅ 完成！';
+
+  const p0 = pages[0], p1 = pages[1], p2 = pages[2];
+  document.getElementById('finalCard').innerHTML = `
+    <div class="final-title">🎉 Sing! Complete!</div>
+    <div class="final-msg">You found all the target words in the story!<br>Here is what you learned:</div>
+    <div class="summary">
+      <div class="sum-section">
+        <div class="sum-title" style="color:#7c3aed">✨ Open Syllable Words (Page 1)</div>
+        <div class="sum-words">
+          ${p0.targets.map(w => `<span class="sum-chip open-chip">${w}<br><small>${p0.hints[w]}</small></span>`).join('')}
+        </div>
+      </div>
+      <div class="sum-section">
+        <div class="sum-title" style="color:#ea580c">🎵 Words ending in -ng (Page 2)</div>
+        <div class="sum-words">
+          ${p1.targets.map(w => `<span class="sum-chip ng-chip">${w}</span>`).join('')}
+        </div>
+      </div>
+      <div class="sum-section">
+        <div class="sum-title" style="color:#1d4ed8">💙 Words ending in -nk (Page 3)</div>
+        <div class="sum-words">
+          ${p2.targets.map(w => `<span class="sum-chip nk-chip">${w} — ${p2.hints[w]}</span>`).join('')}
+        </div>
+      </div>
+    </div>
+    <button class="retry-btn" onclick="location.reload()">🔄 Play Again!</button>`;
+  document.getElementById('finalCard').classList.add('show');
+}
+
+function popStars() {
+  const emojis = ['⭐','✨','🌟','🎉','🎵','🎶','💜'];
+  for (let i = 0; i < 4; i++) {
+    setTimeout(() => {
+      const s = document.createElement('div');
+      s.className = 'star-pop';
+      s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      s.style.left = (15 + Math.random() * 70) + 'vw';
+      s.style.top  = (20 + Math.random() * 50) + 'vh';
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }, i * 120);
+  }
+}
+
+window.onload = () => loadPage(0);
+</script>
+</body>
+</html>
