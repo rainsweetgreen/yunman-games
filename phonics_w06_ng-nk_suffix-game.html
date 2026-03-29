@@ -326,22 +326,37 @@ const data = { 1: {
     <div class="ex-row"><span class="ex-chip">si<span style="color:#ff6b6b">ng</span> 🎵</span><span class="ex-chip">thi<span style="color:#ff6b6b">ng</span> 🌟</span><span class="ex-chip">ba<span style="color:#ff6b6b">ng</span> 💥</span></div><br>
     <span class="hl2">-nk</span> → 有一個清脆的 k 音在結尾！<br>
     <div class="ex-row"><span class="ex-chip">ta<span style="color:#3b9eff">nk</span> 🪖</span><span class="ex-chip">wi<span style="color:#3b9eff">nk</span> 😉</span><span class="ex-chip">pi<span style="color:#3b9eff">nk</span> 🌸</span></div></div>`,
-    questions: [
-      { stem:"si",  emoji:"🎵", hint:"唱歌",     answer:"-ng", options:["-ng","-nk","不用加"] },
-      { stem:"thi", emoji:"💭", hint:"東西、事情", answer:"-ng", options:["-ng","-nk","不用加"] },
-      { stem:"ta",  emoji:"🪖", hint:"坦克",      answer:"-nk", options:["-ng","-nk","不用加"] },
-      { stem:"wi",  emoji:"😉", hint:"眨眼",      answer:"-nk", options:["-ng","-nk","不用加"] },
-      { stem:"ba",  emoji:"💥", hint:"砰！",      answer:"-ng", options:["-ng","-nk","不用加"] },
-      { stem:"pi",  emoji:"🌸", hint:"粉紅色",    answer:"-nk", options:["-ng","-nk","不用加"] },
-      { stem:"ri",  emoji:"💍", hint:"戒指",      answer:"-ng", options:["-ng","-nk","不用加"] },
-      { stem:"ra",  emoji:"🏅", hint:"排名",      answer:"-nk", options:["-ng","-nk","不用加"] },
-      { stem:"so",  emoji:"🎶", hint:"歌曲",      answer:"-ng", options:["-ng","-nk","不用加"] },
-      { stem:"li",  emoji:"🔗", hint:"連結",      answer:"-nk", options:["-ng","-nk","不用加"] },
-    ]} };
+    wordBank: [
+      { stem:"si",    emoji:"🎵", hint:"唱歌",        answer:"-ng" },
+      { stem:"ri",    emoji:"💍", hint:"戒指",        answer:"-ng" },
+      { stem:"sti",   emoji:"🐝", hint:"刺、叮",      answer:"-ng" },
+      { stem:"ba",    emoji:"💥", hint:"砰！",        answer:"-ng" },
+      { stem:"ha",    emoji:"🪝", hint:"掛、懸掛",    answer:"-ng" },
+      { stem:"ra",    emoji:"🔔", hint:"（鈴）響了",  answer:"-ng" },
+      { stem:"ki",    emoji:"👑", hint:"國王",        answer:"-ng" },
+      { stem:"bri",   emoji:"🌉", hint:"帶來",        answer:"-ng" },
+      { stem:"thi",   emoji:"💭", hint:"東西、事情",  answer:"-ng" },
+      { stem:"bli",   emoji:"👁️", hint:"眨眼睛",      answer:"-nk" },
+      { stem:"dri",   emoji:"🥤", hint:"喝",          answer:"-nk" },
+      { stem:"thi",   emoji:"🤔", hint:"思考",        answer:"-nk" },
+      { stem:"ba",    emoji:"🏦", hint:"銀行",        answer:"-nk" },
+      { stem:"ta",    emoji:"🪖", hint:"坦克",        answer:"-nk" },
+      { stem:"sa",    emoji:"⚓", hint:"沉沒",        answer:"-nk" },
+      { stem:"pi",    emoji:"🌸", hint:"粉紅色",      answer:"-nk" },
+      { stem:"ju",    emoji:"🗑️", hint:"垃圾",        answer:"-nk" },
+      { stem:"wi",    emoji:"😉", hint:"眨眼",        answer:"-nk" },
+    ],
+    get questions() {
+      const shuffled = [...this.wordBank].sort(() => Math.random() - 0.5);
+      const q = shuffled.slice(0, 10);
+      return q.map(w => ({...w, options: ["-ng", "-nk", "不用加"]}));
+    }
+    } };
 let lv=1, qi=0, score=0, wrong=[], answered=false, levelStars={1:0};
 
 function startLevel(l) {
   lv=l; qi=0; score=0; wrong=[]; answered=false;
+  data[lv]._qs = data[lv].questions; // cache random questions once
   // single level mode — no worldMap/gameScreen needed
   document.getElementById('finalCard').classList.remove('show');
   document.getElementById('gTitle').textContent=data[lv].title;
@@ -352,7 +367,7 @@ function startLevel(l) {
 }
 
 function showQ() {
-  const qs=data[lv].questions;
+  const qs=data[lv]._qs || data[lv].questions;
   document.getElementById('gProg').textContent=`${qi+1}/${qs.length}`;
   document.getElementById('pbarFill').style.width=((qi/qs.length)*100)+'%';
   document.getElementById('feedback').className='feedback';

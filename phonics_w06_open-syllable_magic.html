@@ -327,20 +327,38 @@ const data = { 3: {
     <span class="ex-row"><span class="ex-chip"><b>yo</b>·yo 🪀 → 兩個都是開音節！</span></span>
     <span class="ex-row"><span class="ex-chip"><b>no</b> 🙅 → o 唸「喔」長音</span></span>
     <br>口訣：<span class="hl3">音節末尾是母音，就唸長音！</span></div>`,
-    questions: [
-      { word:"baby",  syllables:["ba","by"],  openIdx:[0],   emoji:"👶", hint:"嬰兒",   q:"「baby」哪個音節是開音節？",    options:["ba（結尾是母音 a）","by（結尾是 y）","兩個都是"],      answer:0, explain:"ba 結尾是母音 a，是開音節！唸「貝」的長音！" },
-      { word:"yo-yo", syllables:["yo","yo"],  openIdx:[0,1], emoji:"🪀", hint:"溜溜球", q:"「yo-yo」哪個音節是開音節？",   options:["第一個 yo","第二個 yo","兩個都是開音節"],              answer:2, explain:"yo-yo 兩個音節結尾都是母音 o，兩個都是開音節！" },
-      { word:"no",    syllables:["no"],       openIdx:[0],   emoji:"🙅", hint:"不",     q:"「no」是開音節嗎？",            options:["是！結尾是母音 o，唸長音「喔」","不是，它太短了","不確定"], answer:0, explain:"對！no 結尾是 o，是開音節，唸長音「喔」！" },
-      { word:"crazy", syllables:["cra","zy"], openIdx:[0],   emoji:"🤪", hint:"瘋狂的", q:"「cra-zy」哪個音節是開音節？",  options:["cra（結尾是母音 a）","zy（結尾是 y）","兩個都是"],      answer:0, explain:"cra 結尾是母音 a，是開音節！唸「克雷」！" },
-      { word:"music", syllables:["mu","sic"], openIdx:[0],   emoji:"🎵", hint:"音樂",   q:"「mu-sic」哪個音節是開音節？",  options:["mu（結尾是母音 u）","sic（結尾是子音 c）","兩個都是"],  answer:0, explain:"mu 結尾是母音 u，是開音節！唸「謬」長音！" },
-      { word:"tiger", syllables:["ti","ger"], openIdx:[0],   emoji:"🐯", hint:"老虎",   q:"「ti-ger」哪個音節是開音節？",  options:["ti（結尾是母音 i）","ger（結尾是子音 r）","兩個都是"],  answer:0, explain:"ti 結尾是母音 i，是開音節！唸「泰」長音！" },
-      { word:"robot", syllables:["ro","bot"], openIdx:[0],   emoji:"🤖", hint:"機器人", q:"「ro-bot」哪個音節是開音節？",  options:["ro（結尾是母音 o）","bot（結尾是子音 t）","兩個都是"],  answer:0, explain:"ro 結尾是母音 o，是開音節！唸「若」長音！" },
-      { word:"paper", syllables:["pa","per"], openIdx:[0],   emoji:"📄", hint:"紙",     q:"「pa-per」哪個音節是開音節？",  options:["pa（結尾是母音 a）","per（結尾是子音 r）","兩個都是"],  answer:0, explain:"pa 結尾是母音 a，是開音節！唸「配」長音！" },
-    ]} };
+    wordBank: [
+      { word:"baby",   syllables:["ba","by"],    openIdx:[0],   emoji:"👶", hint:"嬰兒",    q:"「baby」哪個音節是開音節？",    options:["ba（結尾是母音 a）","by（結尾是 y）","兩個都是"],      answer:0, explain:"ba 結尾是母音 a，是開音節！唸「貝」的長音！" },
+      { word:"yo-yo",  syllables:["yo","yo"],    openIdx:[0,1], emoji:"🪀", hint:"溜溜球",  q:"「yo-yo」哪個音節是開音節？",   options:["第一個 yo","第二個 yo","兩個都是開音節"],              answer:2, explain:"yo-yo 兩個音節結尾都是母音 o，兩個都是開音節！" },
+      { word:"no",     syllables:["no"],          openIdx:[0],   emoji:"🙅", hint:"不",      q:"「no」是開音節嗎？",            options:["是！結尾是母音 o，唸長音「喔」","不是，它太短了","不確定"], answer:0, explain:"對！no 結尾是 o，是開音節，唸長音「喔」！" },
+      { word:"crazy",  syllables:["cra","zy"],   openIdx:[0],   emoji:"🤪", hint:"瘋狂的",  q:"「cra-zy」哪個音節是開音節？",  options:["cra（結尾是母音 a）","zy（結尾是 y）","兩個都是"],      answer:0, explain:"cra 結尾是母音 a，是開音節！唸「克雷」！" },
+      { word:"music",  syllables:["mu","sic"],   openIdx:[0],   emoji:"🎵", hint:"音樂",    q:"「mu-sic」哪個音節是開音節？",  options:["mu（結尾是母音 u）","sic（結尾是子音 c）","兩個都是"],  answer:0, explain:"mu 結尾是母音 u，是開音節！唸「謬」長音！" },
+      { word:"tiger",  syllables:["ti","ger"],   openIdx:[0],   emoji:"🐯", hint:"老虎",    q:"「ti-ger」哪個音節是開音節？",  options:["ti（結尾是母音 i）","ger（結尾是子音 r）","兩個都是"],  answer:0, explain:"ti 結尾是母音 i，是開音節！唸「泰」長音！" },
+      { word:"robot",  syllables:["ro","bot"],   openIdx:[0],   emoji:"🤖", hint:"機器人",  q:"「ro-bot」哪個音節是開音節？",  options:["ro（結尾是母音 o）","bot（結尾是子音 t）","兩個都是"],  answer:0, explain:"ro 結尾是母音 o，是開音節！唸「若」長音！" },
+      { word:"paper",  syllables:["pa","per"],   openIdx:[0],   emoji:"📄", hint:"紙",      q:"「pa-per」哪個音節是開音節？",  options:["pa（結尾是母音 a）","per（結尾是子音 r）","兩個都是"],  answer:0, explain:"pa 結尾是母音 a，是開音節！唸「配」長音！" },
+      { word:"hi",     syllables:["hi"],          openIdx:[0],   emoji:"👋", hint:"嗨",      q:"「hi」是開音節嗎？",            options:["是！結尾是母音 i，唸長音「嗨」","不是","不確定"],       answer:0, explain:"hi 結尾是母音 i，是開音節！唸長音「嗨」！" },
+      { word:"go",     syllables:["go"],          openIdx:[0],   emoji:"🏃", hint:"去",      q:"「go」是開音節嗎？",            options:["是！結尾是母音 o，唸長音「勾」","不是","不確定"],       answer:0, explain:"go 結尾是母音 o，是開音節！唸長音「勾」！" },
+      { word:"be",     syllables:["be"],          openIdx:[0],   emoji:"🐝", hint:"是",      q:"「be」是開音節嗎？",            options:["是！結尾是母音 e，唸長音「逼」","不是","不確定"],       answer:0, explain:"be 結尾是母音 e，是開音節！唸長音「逼」！" },
+      { word:"so",     syllables:["so"],          openIdx:[0],   emoji:"✨", hint:"所以",    q:"「so」是開音節嗎？",            options:["是！結尾是母音 o，唸長音「搜」","不是","不確定"],       answer:0, explain:"so 結尾是母音 o，是開音節！唸長音「搜」！" },
+      { word:"we",     syllables:["we"],          openIdx:[0],   emoji:"👫", hint:"我們",    q:"「we」是開音節嗎？",            options:["是！結尾是母音 e，唸長音「威」","不是","不確定"],       answer:0, explain:"we 結尾是母音 e，是開音節！唸長音「威」！" },
+      { word:"me",     syllables:["me"],          openIdx:[0],   emoji:"👆", hint:"我",      q:"「me」是開音節嗎？",            options:["是！結尾是母音 e，唸長音「迷」","不是","不確定"],       answer:0, explain:"me 結尾是母音 e，是開音節！唸長音「迷」！" },
+      { word:"he",     syllables:["he"],          openIdx:[0],   emoji:"👦", hint:"他",      q:"「he」是開音節嗎？",            options:["是！結尾是母音 e，唸長音「嘿」","不是","不確定"],       answer:0, explain:"he 結尾是母音 e，是開音節！唸長音「嘿」！" },
+      { word:"lilac",  syllables:["li","lac"],   openIdx:[0],   emoji:"💜", hint:"紫丁香",  q:"「li-lac」哪個音節是開音節？",  options:["li（結尾是母音 i）","lac（結尾是子音 c）","兩個都是"],  answer:0, explain:"li 結尾是母音 i，是開音節！唸長音！" },
+      { word:"banjo",  syllables:["ban","jo"],   openIdx:[1],   emoji:"🪕", hint:"班卓琴",  q:"「ban-jo」哪個音節是開音節？",  options:["ban（結尾是子音 n）","jo（結尾是母音 o）","兩個都是"],  answer:1, explain:"jo 結尾是母音 o，是開音節！唸長音「喬」！" },
+      { word:"pilot",  syllables:["pi","lot"],   openIdx:[0],   emoji:"✈️", hint:"飛行員",  q:"「pi-lot」哪個音節是開音節？",  options:["pi（結尾是母音 i）","lot（結尾是子音 t）","兩個都是"],  answer:0, explain:"pi 結尾是母音 i，是開音節！唸長音「派」！" },
+      { word:"motor",  syllables:["mo","tor"],   openIdx:[0],   emoji:"🔧", hint:"馬達",    q:"「mo-tor」哪個音節是開音節？",  options:["mo（結尾是母音 o）","tor（結尾是子音 r）","兩個都是"],  answer:0, explain:"mo 結尾是母音 o，是開音節！唸長音「磨」！" },
+      { word:"tiny",   syllables:["ti","ny"],    openIdx:[0],   emoji:"🔬", hint:"微小的",  q:"「ti-ny」哪個音節是開音節？",   options:["ti（結尾是母音 i）","ny（結尾是 y）","兩個都是"],      answer:0, explain:"ti 結尾是母音 i，是開音節！唸長音「泰」！" },
+      { word:"hotel",  syllables:["ho","tel"],   openIdx:[0],   emoji:"🏨", hint:"飯店",    q:"「ho-tel」哪個音節是開音節？",  options:["ho（結尾是母音 o）","tel（結尾是子音 l）","兩個都是"],  answer:0, explain:"ho 結尾是母音 o，是開音節！唸長音「厚」！" },
+    ],
+    get questions() {
+      return [...this.wordBank].sort(() => Math.random() - 0.5).slice(0, 8);
+    }
+    } };
 let lv=3, qi=0, score=0, wrong=[], answered=false, levelStars={3:0};
 
 function startLevel(l) {
   lv=l; qi=0; score=0; wrong=[]; answered=false;
+  data[lv]._qs = data[lv].questions;
   // single level mode — no worldMap/gameScreen needed
   document.getElementById('finalCard').classList.remove('show');
   document.getElementById('gTitle').textContent=data[lv].title;
@@ -351,7 +369,7 @@ function startLevel(l) {
 }
 
 function showQ() {
-  const qs=data[lv].questions;
+  const qs=data[lv]._qs || data[lv].questions;
   document.getElementById('gProg').textContent=`${qi+1}/${qs.length}`;
   document.getElementById('pbarFill').style.width=((qi/qs.length)*100)+'%';
   document.getElementById('feedback').className='feedback';
