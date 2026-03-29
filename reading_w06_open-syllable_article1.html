@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✨ 開音節大挑戰！The Robot</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #fff8f0; font-family: 'Nunito', sans-serif; min-height: 100vh; }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 16px 16px 60px; }
+  .g-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .g-title { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #333; }
+  .g-prog  { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #aaa; }
+  .pbar-wrap { background: #eee; border-radius: 99px; height: 8px; margin-bottom: 18px; overflow: hidden; }
+  .pbar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #a78bfa, #7c3aed); transition: width 0.5s; }
+  .phase-label {
+    font-family: 'Fredoka One', cursive; font-size: 0.8rem; letter-spacing: 2px;
+    text-transform: uppercase; background: #ede9fe; color: #7c3aed;
+    border-radius: 20px; padding: 4px 14px; display: inline-block; margin-bottom: 12px;
+  }
+  .card {
+    background: white; border-radius: 20px; padding: 20px 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+  }
+  .card-title { font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: #7c3aed; margin-bottom: 14px; text-align: center; }
+  .rule-box {
+    background: linear-gradient(135deg, #ede9fe, #ddd6fe); border-radius: 12px;
+    padding: 12px 14px; font-size: 0.9rem; color: #5b21b6; font-weight: 700;
+    margin-bottom: 14px; line-height: 1.7;
+  }
+  .syllable-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .syl-word { font-family: 'Fredoka One', cursive; font-size: 1.6rem; color: #333; }
+  .syl-arrow { color: #bbb; }
+  .syl-chip {
+    padding: 5px 14px; border-radius: 10px; font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem; border: 3px solid; display: inline-flex; align-items: center; gap: 4px;
+  }
+  .syl-open  { background: #ede9fe; border-color: #a78bfa; color: #5b21b6; }
+  .syl-close { background: #f1f5f9; border-color: #cbd5e1; color: #475569; }
+  .badge {
+    font-size: 0.65rem; font-weight: 900; border-radius: 5px; padding: 1px 5px;
+  }
+  .open-badge  { background: #a78bfa; color: white; }
+  .close-badge { background: #94a3b8; color: white; }
+  .explain-box { background: #f3e8ff; border-radius: 10px; padding: 10px; font-size: 0.88rem; color: #5b21b6; font-weight: 700; }
+  /* Quiz */
+  .q-word { font-family: 'Fredoka One', cursive; font-size: 2.2rem; color: #222; text-align: center; margin: 8px 0 2px; letter-spacing: 2px; }
+  .q-syl  { font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: #bbb; text-align: center; margin-bottom: 4px; }
+  .q-hint { font-size: 0.85rem; color: #aaa; font-weight: 700; text-align: center; margin-bottom: 14px; }
+  .q-instr { font-size: 0.85rem; font-weight: 900; color: #a78bfa; letter-spacing: 1px; text-align: center; margin-bottom: 6px; }
+  .opts { display: flex; flex-direction: column; gap: 10px; }
+  .opt-btn {
+    padding: 13px 16px; border-radius: 16px; border: 3px solid #ddd; background: #f9f9f9;
+    font-family: 'Fredoka One', cursive; font-size: 1rem; color: #333; cursor: pointer;
+    text-align: left; transition: all 0.15s;
+  }
+  .opt-btn:hover { border-color: #a78bfa; background: #f3e8ff; }
+  .opt-btn.correct { background: #d1fae5; border-color: #34d399; color: #065f46; }
+  .opt-btn.wrong   { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+  /* Article */
+  .article-text { font-size: 1.15rem; line-height: 2.2; color: #333; }
+  .word { display: inline-block; cursor: pointer; border-radius: 6px; padding: 1px 3px; transition: all 0.15s; }
+  .word:hover:not(.locked) { background: #f3e8ff; }
+  .word.correct { background: linear-gradient(135deg, #6ee7b7, #34d399); color: white; font-weight: 800; }
+  .word.wrong   { background: #fca5a5; color: white; }
+  .word.locked  { cursor: default; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; justify-content: center; }
+  .chip {
+    background: #f3e8ff; border: 2px solid #c4b5fd; border-radius: 20px;
+    padding: 4px 14px; font-family: 'Fredoka One', cursive; font-size: 0.95rem; color: #7c3aed;
+  }
+  .chip.found { background: #6ee7b7; border-color: #34d399; color: #065f46; }
+  .instruction {
+    background: linear-gradient(135deg, #ede9fe, #ddd6fe); border-radius: 14px;
+    padding: 12px 16px; margin-bottom: 14px; font-size: 0.95rem; color: #5b21b6;
+    font-weight: 700; text-align: center; line-height: 1.5;
+  }
+  .feedback {
+    border-radius: 14px; padding: 12px 16px; margin-bottom: 12px;
+    font-weight: 800; font-size: 1rem; display: none; text-align: center;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok   { background: #d1fae5; color: #065f46; border: 3px solid #6ee7b7; }
+  .feedback.bad  { background: #fee2e2; color: #991b1b; border: 3px solid #fca5a5; }
+  .feedback.info { background: #ede9fe; color: #5b21b6; border: 3px solid #a78bfa; }
+  .next-btn {
+    width: 100%; padding: 15px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg, #a78bfa, #7c3aed); color: white;
+    font-family: 'Fredoka One', cursive; font-size: 1.2rem; cursor: pointer;
+    display: none; box-shadow: 0 4px 14px rgba(124,58,237,0.35); transition: transform 0.1s;
+  }
+  .next-btn.show { display: block; }
+  .next-btn:active { transform: scale(0.97); }
+  .final-card {
+    background: white; border-radius: 24px; padding: 30px 24px;
+    text-align: center; box-shadow: 0 8px 28px rgba(0,0,0,0.1); display: none;
+  }
+  .final-card.show { display: block; }
+  .final-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #7c3aed; margin-bottom: 8px; }
+  .final-score { font-size: 1rem; color: #666; margin-bottom: 18px; line-height: 1.7; }
+  .final-words { background: #ede9fe; border-radius: 12px; padding: 14px; margin-bottom: 20px; text-align: left; }
+  .fw-item { font-size: 0.88rem; color: #5b21b6; font-weight: 700; padding: 3px 0; }
+  .retry-btn {
+    width: 100%; padding: 14px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg, #a78bfa, #7c3aed); color: white;
+    font-family: 'Fredoka One', cursive; font-size: 1.2rem; cursor: pointer;
+  }
+  .star-pop {
+    position: fixed; font-size: 1.8rem; pointer-events: none;
+    animation: fly 0.9s ease-out forwards; z-index: 999;
+  }
+  @keyframes fly { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-80px) scale(1.4)} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="g-header">
+    <div class="g-title" id="gTitle">✨ 開音節大挑戰！</div>
+    <div class="g-prog" id="gProg"></div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
+  <div id="content"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="handleNext()"></button>
+  <div class="final-card" id="finalCard"></div>
+</div>
+
+<script>
+// ===== DATA =====
+const teachWords = [
+  { word:"robot",  syllables:["ro","bot"],   openIdx:[0], explain:"ro 結尾是母音 o → 開音節！唸長音「若」" },
+  { word:"tiny",   syllables:["ti","ny"],    openIdx:[0], explain:"ti 結尾是母音 i → 開音節！唸長音「泰」" },
+  { word:"banjo",  syllables:["ban","jo"],   openIdx:[1], explain:"jo 結尾是母音 o → 開音節！唸長音「喬」" },
+  { word:"donate", syllables:["do","nate"],  openIdx:[0], explain:"do 結尾是母音 o → 開音節！唸長音「多」" },
+  { word:"reset",  syllables:["re","set"],   openIdx:[0], explain:"re 結尾是母音 e → 開音節！唸長音「瑞」" },
+];
+
+const quizWords = [
+  { word:"pilot", syllables:["pi","lot"],  hint:"飛行員",
+    opts:["pi（結尾母音 i）→ 開音節 ✨","lot（結尾子音 t）→ 閉音節","兩個都是開音節"], ans:0 },
+  { word:"music", syllables:["mu","sic"],  hint:"音樂",
+    opts:["sic（結尾子音 c）→ 閉音節","mu（結尾母音 u）→ 開音節 ✨","兩個都是"], ans:1 },
+  { word:"hotel", syllables:["ho","tel"],  hint:"飯店",
+    opts:["ho（結尾母音 o）→ 開音節 ✨","tel（結尾子音 l）→ 閉音節","兩個都是"], ans:0 },
+  { word:"motor", syllables:["mo","tor"],  hint:"馬達",
+    opts:["tor（結尾子音 r）→ 閉音節","兩個都是","mo（結尾母音 o）→ 開音節 ✨"], ans:2 },
+];
+
+const article = {
+  text: "The robot said hello to me. He had a tiny banjo. It had to be reset. We could go donate it.",
+  targets: ["robot","tiny","banjo","be","reset","go","donate"],
+  hints: {
+    robot:"ro- 結尾是母音 o → 開音節",
+    tiny: "ti- 結尾是母音 i → 開音節",
+    banjo:"-jo 結尾是母音 o → 開音節",
+    be:   "be 結尾是母音 e → 開音節",
+    reset:"re- 結尾是母音 e → 開音節",
+    go:   "go 結尾是母音 o → 開音節",
+    donate:"do- 結尾是母音 o → 開音節",
+  }
+};
+
+// ===== STATE =====
+let phase='teach', teachIdx=0, quizIdx=0, quizScore=0, found=[], chipSlot=0;
+const TOTAL_STEPS = teachWords.length + quizWords.length + 1;
+
+function setProgress(step) {
+  document.getElementById('pbarFill').style.width = (step / TOTAL_STEPS * 100) + '%';
+}
+function fb(msg, type) {
+  const el = document.getElementById('feedback');
+  el.innerHTML = msg; el.className = `feedback show ${type}`;
+}
+function clearFb() { document.getElementById('feedback').className = 'feedback'; }
+function showNextBtn(label) {
+  const b = document.getElementById('nextBtn');
+  b.textContent = label; b.className = 'next-btn show';
+}
+function hideNextBtn() { document.getElementById('nextBtn').className = 'next-btn'; }
+
+// ===== PART 1A: TEACH =====
+function showTeach() {
+  phase = 'teach';
+  clearFb();
+  setProgress(teachIdx);
+  document.getElementById('gTitle').textContent = '✨ 第一部分：認識開音節';
+  document.getElementById('gProg').textContent = `${teachIdx+1} / ${teachWords.length}`;
+  showNextBtn(teachIdx < teachWords.length-1 ? '下一個 ➡️' : '開始練習！🧠');
+
+  const w = teachWords[teachIdx];
+  const chipsHtml = w.syllables.map((s,i) => {
+    const open = w.openIdx.includes(i);
+    return `<span class="syl-chip ${open?'syl-open':'syl-close'}">${s}<span class="badge ${open?'open-badge':'close-badge'}">${open?'開':'閉'}</span></span>`;
+  }).join('<span style="color:#bbb;margin:0 4px">·</span>');
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label">第一部分 — 學音節</div>
+    <div class="card">
+      <div class="card-title">✨ 開音節 = 音節最後是母音！</div>
+      <div class="rule-box">
+        📌 母音：a &nbsp;e &nbsp;i &nbsp;o &nbsp;u<br>
+        🟣 <b>開音節</b>：音節末是母音 → 唸<b>長音</b>（如 ba·<b>by</b> 的 ba 唸「貝」）<br>
+        ⬜ <b>閉音節</b>：音節末是子音 → 唸短音（如 win·ter 的 win 唸「溫」）
+      </div>
+      <div class="syllable-row">
+        <span class="syl-word">${w.word}</span>
+        <span class="syl-arrow">→</span>
+        <div style="display:flex;gap:6px;align-items:center">${chipsHtml}</div>
+      </div>
+      <div class="explain-box">💡 ${w.explain}</div>
+    </div>`;
+}
+
+// ===== PART 1B: QUIZ =====
+function showQuiz() {
+  phase = 'quiz';
+  clearFb(); hideNextBtn();
+  setProgress(teachWords.length + quizIdx);
+  document.getElementById('gTitle').textContent = '🧠 第一部分：來練習！';
+  document.getElementById('gProg').textContent = `${quizIdx+1} / ${quizWords.length}`;
+
+  const q = quizWords[quizIdx];
+  const optsHtml = q.opts.map((o,i) =>
+    `<button class="opt-btn" id="opt${i}" onclick="pickOpt(${i},${q.ans})">${o}</button>`
+  ).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label">第一部分 — 練習</div>
+    <div class="card">
+      <div class="q-instr">哪個音節是開音節？</div>
+      <div class="q-word">${q.word}</div>
+      <div class="q-syl">${q.syllables.join(' · ')}</div>
+      <div class="q-hint">「${q.hint}」</div>
+      <div class="opts">${optsHtml}</div>
+    </div>`;
+}
+
+function pickOpt(idx, ans) {
+  document.querySelectorAll('.opt-btn').forEach(b => b.style.pointerEvents='none');
+  document.getElementById(`opt${idx}`).classList.add(idx===ans?'correct':'wrong');
+  if (idx!==ans) document.getElementById(`opt${ans}`).classList.add('correct');
+  if (idx===ans) { quizScore++; fb('✅ 答對了！找到開音節了！','ok'); popStars(); }
+  else fb('❌ 再想想！音節末尾是母音的才是開音節！','bad');
+  showNextBtn(quizIdx < quizWords.length-1 ? '下一題 ➡️' : '進入第二部分！📖');
+}
+
+// ===== PART 2: ARTICLE =====
+function showArticle() {
+  phase = 'article';
+  found = []; chipSlot = 0;
+  clearFb(); hideNextBtn();
+  setProgress(teachWords.length + quizWords.length);
+  document.getElementById('gTitle').textContent = '📖 第二部分：從文章找！';
+  document.getElementById('gProg').textContent = `0 / ${article.targets.length}`;
+
+  const chipsHtml = article.targets.map((_,i) =>
+    `<div class="chip" id="chip${i}">？</div>`
+  ).join('');
+
+  const tokens = article.text.split(/(\s+|[.,!?])/);
+  let wordsHtml = '';
+  tokens.forEach(t => {
+    if (/\s+/.test(t)) wordsHtml += ' ';
+    else if (/[.,!?]/.test(t)) wordsHtml += t;
+    else if (t) {
+      const clean = t.replace(/[.,!?'"]/g,'').toLowerCase();
+      wordsHtml += `<span class="word" data-word="${clean}" onclick="tapWord(this,'${clean}')">${t}</span>`;
+    }
+  });
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label">第二部分 — 找開音節</div>
+    <div class="instruction">
+      📖 在文章中找出所有含開音節的單字！<br>
+      <small>共 ${article.targets.length} 個，用你剛學到的來找！</small>
+    </div>
+    <div class="chips" id="chips">${chipsHtml}</div>
+    <div class="card">
+      <div class="card-title" style="font-size:0.95rem">📖 The Robot</div>
+      <div class="article-text">${wordsHtml}</div>
+    </div>`;
+}
+
+function tapWord(el, word) {
+  if (el.classList.contains('locked')) return;
+  if (article.targets.includes(word)) {
+    if (found.includes(word)) {
+      fb(`「${word}」已經找到了！繼續找！`,'info');
+      setTimeout(clearFb, 1200); return;
+    }
+    found.push(word);
+    el.classList.add('correct','locked');
+    const chip = document.getElementById(`chip${chipSlot++}`);
+    if (chip) { chip.textContent = word; chip.classList.add('found'); }
+    fb(`✅ 「${word}」找到了！`,'ok');
+    popStars();
+    document.getElementById('gProg').textContent = `${found.length} / ${article.targets.length}`;
+    setProgress(teachWords.length + quizWords.length + found.length / article.targets.length);
+    if (found.length === article.targets.length) {
+      setTimeout(() => {
+        fb('🎉 全部找到了！太棒了！','ok');
+        showNextBtn('看結果 🎊');
+      }, 700);
+    }
+  } else {
+    el.classList.add('wrong');
+    fb(`❌ 「${word}」裡沒有開音節，再找找！`,'bad');
+    setTimeout(() => { el.classList.remove('wrong'); clearFb(); }, 1500);
+  }
+}
+
+// ===== NAVIGATION =====
+function handleNext() {
+  if (phase==='teach') {
+    teachIdx++;
+    if (teachIdx < teachWords.length) showTeach(); else showQuiz();
+  } else if (phase==='quiz') {
+    quizIdx++;
+    if (quizIdx < quizWords.length) showQuiz(); else showArticle();
+  } else {
+    showFinal();
+  }
+}
+
+function showFinal() {
+  document.getElementById('content').innerHTML = '';
+  clearFb(); hideNextBtn();
+  document.getElementById('pbarFill').style.width = '100%';
+  document.getElementById('gProg').textContent = '✅ 完成！';
+
+  const list = article.targets.map(w =>
+    `<div class="fw-item">✨ <b>${w}</b> — ${article.hints[w]}</div>`
+  ).join('');
+
+  document.getElementById('finalCard').innerHTML = `
+    <div class="final-title">🎉 全部完成！</div>
+    <div class="final-score">
+      第一部分練習：${quizScore} / ${quizWords.length} 答對 ⭐<br>
+      第二部分找出全部 ${article.targets.length} 個開音節單字 🎊
+    </div>
+    <div class="final-words">
+      <div style="font-weight:900;color:#5b21b6;margin-bottom:8px">📋 文章裡的開音節單字：</div>
+      ${list}
+    </div>
+    <button class="retry-btn" onclick="location.reload()">🔄 再玩一次！</button>`;
+  document.getElementById('finalCard').classList.add('show');
+}
+
+function popStars() {
+  ['⭐','✨','🌟','🎉','💜','🪄'].sort(()=>Math.random()-0.5).slice(0,4).forEach((e,i)=>{
+    setTimeout(()=>{
+      const s=document.createElement('div'); s.className='star-pop'; s.textContent=e;
+      s.style.left=(15+Math.random()*70)+'vw'; s.style.top=(20+Math.random()*50)+'vh';
+      document.body.appendChild(s); setTimeout(()=>s.remove(),900);
+    },i*120);
+  });
+}
+
+window.onload = () => showTeach();
+</script>
+</body>
+</html>
