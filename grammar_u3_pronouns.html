@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🙋 Pronouns Challenge!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #fff8f0; font-family: 'Nunito', sans-serif; min-height: 100vh; }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 16px 16px 60px; }
+
+  /* Header */
+  .g-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .g-title { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #333; }
+  .g-prog  { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #aaa; }
+  .pbar-wrap { background: #eee; border-radius: 99px; height: 8px; margin-bottom: 16px; overflow: hidden; }
+  .pbar-fill { height: 100%; border-radius: 99px; transition: width 0.4s; }
+
+  /* ===== PART 1: LEARN ===== */
+  .learn-card {
+    background: white; border-radius: 20px; padding: 20px 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+  }
+  .learn-title { font-family: 'Fredoka One', cursive; font-size: 1.1rem; text-align: center; margin-bottom: 14px; }
+  .pronoun-table { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
+  .pronoun-table th {
+    font-family: 'Fredoka One', cursive; font-size: 0.85rem; padding: 8px 10px;
+    border-radius: 8px 8px 0 0; text-align: center;
+  }
+  .th-sub { background: #dbeafe; color: #1e40af; }
+  .th-obj { background: #fce7f3; color: #9d174d; }
+  .pronoun-table td { padding: 7px 10px; text-align: center; font-size: 0.95rem; font-weight: 700; border-bottom: 1px solid #f0f0f0; }
+  .pronoun-table tr:last-child td { border-bottom: none; }
+  .td-sub { color: #1d4ed8; background: #eff6ff; }
+  .td-obj { color: #be185d; background: #fdf2f8; }
+  .td-who { color: #555; font-size: 0.85rem; }
+  .rule-box {
+    border-radius: 12px; padding: 12px 14px; font-size: 0.88rem;
+    font-weight: 700; line-height: 1.7; margin-bottom: 10px;
+  }
+  .rule-sub { background: #eff6ff; color: #1e40af; border-left: 4px solid #3b82f6; }
+  .rule-obj { background: #fdf2f8; color: #9d174d; border-left: 4px solid #ec4899; }
+  .example-row { display: flex; gap: 8px; align-items: flex-start; margin-top: 6px; flex-wrap: wrap; }
+  .ex-chip {
+    padding: 3px 10px; border-radius: 20px; font-size: 0.82rem; font-weight: 800;
+  }
+  .ex-sub { background: #dbeafe; color: #1e40af; }
+  .ex-obj { background: #fce7f3; color: #9d174d; }
+
+  /* ===== PART 2 & 3: PRACTICE ===== */
+  .phase-label {
+    font-family: 'Fredoka One', cursive; font-size: 0.8rem; letter-spacing: 2px;
+    text-transform: uppercase; border-radius: 20px; padding: 4px 14px;
+    display: inline-block; margin-bottom: 12px;
+  }
+  .sub-label { background: #dbeafe; color: #1e40af; }
+  .obj-label { background: #fce7f3; color: #9d174d; }
+  .mix-label { background: #f3e8ff; color: #6d28d9; }
+
+  .q-card {
+    background: white; border-radius: 20px; padding: 22px 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+    animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .q-card.shake { animation: shake 0.35s ease; }
+  @keyframes popIn { from{opacity:0;transform:scale(0.88)} to{opacity:1;transform:scale(1)} }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+
+  .q-emoji { font-size: 2.8rem; display: block; text-align: center; margin-bottom: 10px; }
+  .q-sentence {
+    font-size: 1.1rem; font-weight: 800; color: #222; text-align: center;
+    line-height: 1.7; margin-bottom: 6px;
+  }
+  .q-underline { text-decoration: underline; text-decoration-color: #f59e0b; text-decoration-thickness: 3px; }
+  .q-sub-hint {
+    text-align: center; font-size: 0.82rem; color: #aaa; font-weight: 700;
+    margin-bottom: 18px;
+  }
+  .q-blank {
+    display: inline-block; min-width: 60px; border-bottom: 3px solid #f59e0b;
+    font-weight: 900; color: #f59e0b; text-align: center; padding: 0 4px;
+  }
+
+  .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .opt-btn {
+    padding: 13px 10px; border-radius: 14px; border: 3px solid #eee;
+    background: #f9f9f9; font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem; color: #333; cursor: pointer; transition: all 0.15s;
+    text-align: center;
+  }
+  .opt-btn:hover { border-color: #f59e0b; background: #fffbeb; transform: translateY(-2px); }
+  .opt-btn.correct { background: #d1fae5; border-color: #34d399; color: #065f46; }
+  .opt-btn.wrong   { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+  .opt-btn:disabled { cursor: default; transform: none; }
+
+  /* Mixed: show full sentence after */
+  .full-sentence {
+    background: #f3e8ff; border-radius: 10px; padding: 10px 14px;
+    font-size: 0.9rem; font-weight: 700; color: #5b21b6; margin-top: 10px;
+    display: none; text-align: center;
+  }
+  .full-sentence.show { display: block; }
+
+  /* Dots */
+  .dots { display: flex; justify-content: center; gap: 5px; margin-bottom: 14px; flex-wrap: wrap; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #e5e7eb; transition: all 0.3s; }
+  .dot.curr { background: #f59e0b; transform: scale(1.4); }
+  .dot.ok   { background: #34d399; }
+  .dot.bad  { background: #f87171; }
+
+  /* Feedback */
+  .feedback {
+    border-radius: 14px; padding: 12px 16px; margin-bottom: 12px;
+    font-weight: 800; font-size: 0.95rem; display: none; text-align: center; line-height: 1.5;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok  { background: #d1fae5; color: #065f46; border: 3px solid #6ee7b7; }
+  .feedback.bad { background: #fee2e2; color: #991b1b; border: 3px solid #fca5a5; }
+
+  /* Buttons */
+  .next-btn {
+    width: 100%; padding: 15px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+    cursor: pointer; display: none; box-shadow: 0 4px 14px rgba(245,158,11,0.35);
+    transition: transform 0.1s;
+  }
+  .next-btn.show { display: block; }
+  .next-btn:active { transform: scale(0.97); }
+
+  /* Score dots row */
+  .score-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  .score-label { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #aaa; }
+  .score-val   { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #34d399; }
+
+  /* Final */
+  .final-card {
+    background: white; border-radius: 24px; padding: 30px 22px;
+    text-align: center; box-shadow: 0 8px 28px rgba(0,0,0,0.1); display: none;
+  }
+  .final-card.show { display: block; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  .final-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #f59e0b; margin-bottom: 6px; }
+  .final-score { font-family: 'Fredoka One', cursive; font-size: 3rem; color: #5c6bc0; }
+  .final-stars { font-size: 2.2rem; letter-spacing: 4px; margin: 6px 0 12px; }
+  .final-msg   { font-size: 0.95rem; color: #666; font-weight: 700; margin-bottom: 20px; line-height: 1.6; }
+  .summary-box { background: #fffbeb; border-radius: 12px; padding: 14px; margin-bottom: 18px; text-align: left; }
+  .sum-title   { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #92400e; margin-bottom: 8px; }
+  .sum-item    { font-size: 0.85rem; font-weight: 700; color: #555; padding: 3px 0; border-bottom: 1px solid #f5f5f5; }
+  .sum-ans     { color: #059669; font-weight: 900; }
+  .final-btns  { display: flex; flex-direction: column; gap: 10px; }
+  .retry-btn {
+    padding: 14px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.1rem; cursor: pointer;
+  }
+  .next-part-btn {
+    padding: 14px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg, #a78bfa, #7c3aed);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.1rem; cursor: pointer;
+  }
+
+  /* Star pop */
+  .star-pop {
+    position: fixed; font-size: 1.8rem; pointer-events: none;
+    animation: fly 0.9s ease-out forwards; z-index: 999;
+  }
+  @keyframes fly { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-80px) scale(1.5)} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="g-header">
+    <div class="g-title" id="gTitle">🙋 Pronouns!</div>
+    <div class="g-prog" id="gProg"></div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
+  <div class="score-row">
+    <div class="score-label" id="scoreLabel"></div>
+    <div class="score-val" id="scoreVal"></div>
+  </div>
+  <div id="content"></div>
+  <div class="dots" id="dots"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="handleNext()"></button>
+  <div class="final-card" id="finalCard"></div>
+</div>
+
+<script>
+// ===== DATA =====
+const SUBJECT = [
+  {sentence:"Amy goes to school every day.", ul:"Amy", ans:"She", opts:["I","She","He","They"], emoji:"👧", explain:"Amy is one girl → She"},
+  {sentence:"My dad cooks dinner.", ul:"My dad", ans:"He", opts:["She","He","We","They"], emoji:"👨‍🍳", explain:"Dad is one man → He"},
+  {sentence:"The dog runs fast.", ul:"The dog", ans:"It", opts:["He","She","It","They"], emoji:"🐕", explain:"A dog (animal) → It"},
+  {sentence:"The rose is very pretty.", ul:"The rose", ans:"It", opts:["She","He","It","They"], emoji:"🌹", explain:"A plant → It"},
+  {sentence:"Tom and Jerry play together.", ul:"Tom and Jerry", ans:"They", opts:["We","They","He","It"], emoji:"👦👦", explain:"Two people → They"},
+  {sentence:"The cats sleep on the sofa.", ul:"The cats", ans:"They", opts:["It","He","She","They"], emoji:"🐱🐱", explain:"More than one → They"},
+  {sentence:"Jenny and I walk to the park.", ul:"Jenny and I", ans:"We", opts:["They","We","I","You"], emoji:"👧👦", explain:"Jenny + I = We"},
+  {sentence:"My mom and I bake cookies.", ul:"My mom and I", ans:"We", opts:["They","I","We","She"], emoji:"👩‍👧", explain:"Mom + I = We"},
+  {sentence:"The bird sings every morning.", ul:"The bird", ans:"It", opts:["She","He","It","They"], emoji:"🐦", explain:"A bird → It"},
+  {sentence:"Sam is my best friend.", ul:"Sam", ans:"He", opts:["He","She","It","They"], emoji:"👦", explain:"Sam is a boy → He"},
+  {sentence:"Miss Lisa is our teacher.", ul:"Miss Lisa", ans:"She", opts:["He","She","It","They"], emoji:"👩‍🏫", explain:"Miss Lisa is a woman → She"},
+  {sentence:"The trees grow tall.", ul:"The trees", ans:"They", opts:["It","We","They","She"], emoji:"🌳🌳", explain:"More than one plant → They"},
+  {sentence:"Jayden and I go swimming.", ul:"Jayden and I", ans:"We", opts:["They","We","You","I"], emoji:"🏊", explain:"Jayden + I = We"},
+  {sentence:"The bunny hops around.", ul:"The bunny", ans:"It", opts:["She","It","He","They"], emoji:"🐰", explain:"A bunny → It"},
+  {sentence:"My little brother loves to draw.", ul:"My little brother", ans:"He", opts:["I","She","He","They"], emoji:"🎨", explain:"My little brother is one boy → He"},
+  {sentence:"Julia goes to school by bus.", ul:"Julia", ans:"She", opts:["He","She","It","They"], emoji:"🚌", explain:"Julia is a girl → She"},
+  {sentence:"____ am seven years old.", ul:"____", ans:"I", opts:["I","Me","We","She"], emoji:"🙋", explain:"The subject of the sentence (myself doing the action) → I (not Me!)"},
+  {sentence:"You and Tim are in the same class.", ul:"You and Tim", ans:"You", opts:["We","They","You","He"], emoji:"👫", explain:"Talking to a group including 'you' → You (plural)!"},
+];
+
+const OBJECT = [
+  {sentence:'Mom gives ____ a cookie.', subjectHint:'me (I am receiving)', ans:'me', opts:['I','me','my','mine'], emoji:'🙋', explain:'I receive the cookie → me'},
+  {sentence:'Lisa calls ____ every day.', subjectHint:'Tom (one boy)', ans:'him', opts:['he','him','his','they'], emoji:'👦', explain:'Tom receives the call → him'},
+  {sentence:'We see ____ at the park.', subjectHint:'Amy (one girl)', ans:'her', opts:['she','her','hers','they'], emoji:'👧', explain:'Amy is seen → her'},
+  {sentence:'I like the cake. I want to eat ____.', subjectHint:'the cake (a thing)', ans:'it', opts:['its','them','it','him'], emoji:'🎂', explain:'The cake is a thing → it'},
+  {sentence:'The teacher helps ____ with homework.', subjectHint:'my friends and me', ans:'us', opts:['we','us','our','them'], emoji:'👫', explain:'My friends + me receive help → us'},
+  {sentence:'Can you feed ____?', subjectHint:'the dogs (animals)', ans:'them', opts:['they','it','them','their'], emoji:'🐶🐶', explain:'The dogs receive food → them'},
+  {sentence:'I see ____ every morning!', subjectHint:'you (one person)', ans:'you', opts:['your','you','yours','we'], emoji:'👉', explain:'You receive the seeing → you'},
+  {sentence:'Abby plays with ____.', subjectHint:'Tom (one boy)', ans:'him', opts:['he','him','it','her'], emoji:'👦', explain:'Tom is played with → him'},
+  {sentence:'Show the pictures to ____.', subjectHint:'Anna (one girl)', ans:'her', opts:['she','her','him','them'], emoji:'👧', explain:'Anna receives the pictures → her'},
+  {sentence:'Dad gives ____ some fruit.', subjectHint:'my brother and me', ans:'us', opts:['we','our','us','them'], emoji:'👦🙋', explain:'My brother + me receive fruit → us'},
+  {sentence:'I can see ____ from my window.', subjectHint:'the birds (animals)', ans:'them', opts:['they','it','them','their'], emoji:'🐦🐦', explain:'The birds are seen → them'},
+  {sentence:'The lion roars at ____.', subjectHint:'me (I am there)', ans:'me', opts:['I','me','my','we'], emoji:'🦁🙋', explain:'I receive the roar → me'},
+  {sentence:'I will call ____ tomorrow.', subjectHint:'you and Sam (two people)', ans:'you', opts:['your','you','they','them'], emoji:'👦👤', explain:'You and Sam receive the call → you (plural)!'},
+];
+
+const MIXED = [
+  {type:'sub', original:'Jenny and John like the dog.', ul:'Jenny and John', ans:'They', opts:['We','They','He','It'], emoji:'👫', full:'They like the dog.', explain:'Jenny + John = two people → They'},
+  {type:'sub', original:'The sunflower grows tall.', ul:'The sunflower', ans:'It', opts:['She','He','It','They'], emoji:'🌻', full:'It grows tall.', explain:'A plant → It'},
+  {type:'sub', original:'Jayden and I go to school.', ul:'Jayden and I', ans:'We', opts:['They','We','You','I'], emoji:'🏫', full:'We go to school.', explain:'Jayden + I → We'},
+  {type:'sub', original:'My grandma lives in Taipei.', ul:'My grandma', ans:'She', opts:['He','She','It','They'], emoji:'👵', full:'She lives in Taipei.', explain:'Grandma is a woman → She'},
+  {type:'sub', original:'The children sit on a bench.', ul:'The children', ans:'They', opts:['It','We','He','They'], emoji:'🪑', full:'They sit on a bench.', explain:'More than one person → They'},
+  {type:'sub', original:'The bus is yellow.', ul:'The bus', ans:'It', opts:['He','She','It','They'], emoji:'🚌', full:'It is yellow.', explain:'A thing → It'},
+  {type:'obj', original:'She says hello to Ms. Lisa. She says hello to ____.', ul:'Ms. Lisa', ans:'her', opts:['him','her','them','it'], emoji:'👩‍🏫', full:'She says hello to her.', explain:'Ms. Lisa is a woman, receives hello → her'},
+  {type:'obj', original:'I water the flowers every day. I water ____ every day.', ul:'the flowers', ans:'them', opts:['it','them','him','her'], emoji:'💐', full:'I water them every day.', explain:'Flowers (plural things) → them'},
+  {type:'obj', original:'Ted makes paper planes. He gives ____ to us.', ul:'paper planes', ans:'them', opts:['it','them','us','him'], emoji:'✈️', full:'He gives them to us.', explain:'Paper planes (plural) → them'},
+  {type:'obj', original:'I can see the cat. I feed ____.', ul:'the cat', ans:'it', opts:['him','her','it','them'], emoji:'🐱', full:'I feed it.', explain:'The cat (singular animal) → it'},
+  {type:'obj', original:'My mom helps my brother and me. She gives ____ snacks.', ul:'my brother and me', ans:'us', opts:['we','us','them','it'], emoji:'🍎', full:'She gives us snacks.', explain:'Brother + me receive snacks → us'},
+  {type:'obj', original:'The teacher calls Eric. He looks at ____.', ul:'Eric', ans:'him', opts:['her','him','it','them'], emoji:'📢', full:'He looks at him.', explain:'Eric is a boy, receives the look → him'},
+  {type:'sub', original:'You and Anna play in the park.', ul:'You and Anna', ans:'You', opts:['We','They','You','She'], emoji:'🏃', full:'You play in the park.', explain:'Talking to "you and Anna" as a group → You (plural)!'},
+];
+
+// ===== STATE =====
+// phases: 'learn' | 'subject' | 'object' | 'mixed'
+let phase = 'learn';
+let qi = 0, score = 0, wrong = [], answered = false;
+let currentQ = [];
+
+// ===== COLORS per phase =====
+const phaseColor = {
+  learn:   'linear-gradient(90deg, #60a5fa, #3b82f6)',
+  subject: 'linear-gradient(90deg, #60a5fa, #3b82f6)',
+  object:  'linear-gradient(90deg, #f472b6, #ec4899)',
+  mixed:   'linear-gradient(90deg, #a78bfa, #7c3aed)',
+};
+
+function setPbar(pct, ph) {
+  const el = document.getElementById('pbarFill');
+  el.style.background = phaseColor[ph] || phaseColor.learn;
+  el.style.width = pct + '%';
+}
+
+// ===== PART 1: LEARN =====
+function showLearn() {
+  phase = 'learn';
+  document.getElementById('gTitle').textContent = '📚 Learn: Pronouns';
+  document.getElementById('gProg').textContent = 'Part 1 / 4';
+  document.getElementById('scoreLabel').textContent = '';
+  document.getElementById('scoreVal').textContent = '';
+  setPbar(10, 'learn');
+  document.getElementById('dots').innerHTML = '';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('finalCard').classList.remove('show');
+
+  document.getElementById('nextBtn').textContent = 'Start Subject Practice! 🔵';
+  document.getElementById('nextBtn').className = 'next-btn show';
+
+  document.getElementById('content').innerHTML = `
+    <div class="learn-card">
+      <div class="learn-title" style="color:#1e40af">📋 Pronoun Chart</div>
+      <table class="pronoun-table">
+        <tr>
+          <th class="th-sub">🔵 Subject Pronoun<br><small style="font-weight:600;font-family:Nunito">(before the verb)</small></th>
+          <th></th>
+          <th class="th-obj">🩷 Object Pronoun<br><small style="font-weight:600;font-family:Nunito">(after the verb)</small></th>
+        </tr>
+        <tr><td class="td-sub">I</td><td class="td-who">🙋 我（自己做動作）</td><td class="td-obj">me</td></tr>
+        <tr><td class="td-sub">you</td><td class="td-who">👉 你（1個人）</td><td class="td-obj">you</td></tr>
+        <tr><td class="td-sub">he</td><td class="td-who">👦 他（1個男生）</td><td class="td-obj">him</td></tr>
+        <tr><td class="td-sub">she</td><td class="td-who">👧 她（1個女生）</td><td class="td-obj">her</td></tr>
+        <tr><td class="td-sub">it</td><td class="td-who">🐶🌸📦 它（動物/植物/東西）</td><td class="td-obj">it</td></tr>
+        <tr><td class="td-sub">we</td><td class="td-who">🙋🙋 我們（包含自己）</td><td class="td-obj">us</td></tr>
+        <tr><td class="td-sub">you</td><td class="td-who">👉👉 你們（多個人）</td><td class="td-obj">you</td></tr>
+        <tr><td class="td-sub">they</td><td class="td-who">👦👧🐱 他們/她們/它們</td><td class="td-obj">them</td></tr>
+      </table>
+      <div class="rule-box rule-sub">
+        🔵 <b>Subject Pronoun</b> = 誰在做動作（句子的主詞）<br>
+        <div class="example-row">
+          <span class="ex-chip ex-sub">She sings.</span>
+          <span class="ex-chip ex-sub">They run.</span>
+          <span class="ex-chip ex-sub">We play.</span>
+        </div>
+      </div>
+      <div class="rule-box rule-obj">
+        🩷 <b>Object Pronoun</b> = 接受動作的人（動詞後面）<br>
+        <div class="example-row">
+          <span class="ex-chip ex-obj">Call him.</span>
+          <span class="ex-chip ex-obj">See her.</span>
+          <span class="ex-chip ex-obj">Help us.</span>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ===== PART 2: SUBJECT PRACTICE =====
+function startSubject() {
+  phase = 'subject';
+  score = 0; wrong = []; qi = 0; answered = false;
+  // Shuffle and pick all 14
+  currentQ = [...SUBJECT].sort(() => Math.random() - 0.5).slice(0, 12);
+  document.getElementById('gTitle').textContent = '🔵 Subject Pronouns';
+  document.getElementById('gProg').textContent = 'Part 2 / 4';
+  buildDots(currentQ.length);
+  showSubjectQ();
+}
+
+function showSubjectQ() {
+  answered = false;
+  const q = currentQ[qi];
+  const total = currentQ.length;
+  setPbar(25 + (qi / total) * 25, 'subject');
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  // Build sentence with underline
+  // Handle fill-in-the-blank style (for "I" pronoun question)
+  const sentHTML = q.ul === '____'
+    ? q.sentence.replace('____', `<span class="q-blank">____</span>`)
+    : q.sentence.replace(q.ul, `<span class="q-underline">${q.ul}</span>`);
+  const hintText = q.ul === '____' ? 'Choose the correct subject pronoun:' : 'Replace the underlined words with a pronoun:';
+  const optsHTML = q.opts.map(o =>
+    `<button class="opt-btn" data-val="${o}" onclick="pickSub(this)">${o}</button>`
+  ).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label sub-label">🔵 Subject Pronoun</div>
+    <div class="q-card" id="qCard">
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-sentence">${sentHTML}</div>
+      <div class="q-sub-hint">${hintText}</div>
+      <div class="opts">${optsHTML}</div>
+    </div>`;
+
+  updateDot(qi, 'curr');
+}
+
+function pickSub(btn) {
+  if (answered) return; answered = true;
+  const q = currentQ[qi];
+  const val = btn.dataset.val;
+  document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+
+  if (val === q.ans) {
+    btn.classList.add('correct'); score++;
+    fb.innerHTML = `✅ ${q.explain}`;
+    fb.className = 'feedback show ok';
+    popStars();
+    updateDot(qi, 'ok');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelector(`[data-val="${q.ans}"]`).classList.add('correct');
+    wrong.push(q);
+    fb.innerHTML = `❌ The answer is <b>${q.ans}</b>. ${q.explain}`;
+    fb.className = 'feedback show bad';
+    document.getElementById('qCard').classList.add('shake');
+    setTimeout(() => document.getElementById('qCard')?.classList.remove('shake'), 400);
+    updateDot(qi, 'bad');
+  }
+
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === currentQ.length - 1 ? 'See Results 🎊' : 'Next ➡️';
+  nb.className = 'next-btn show';
+}
+
+// ===== PART 3: OBJECT PRACTICE =====
+function startObject() {
+  phase = 'object';
+  score = 0; wrong = []; qi = 0; answered = false;
+  currentQ = [...OBJECT].sort(() => Math.random() - 0.5);
+  document.getElementById('gTitle').textContent = '🩷 Object Pronouns';
+  document.getElementById('gProg').textContent = 'Part 3 / 4';
+  buildDots(currentQ.length);
+  showObjectQ();
+}
+
+function showObjectQ() {
+  answered = false;
+  const q = currentQ[qi];
+  const total = currentQ.length;
+  setPbar(50 + (qi / total) * 25, 'object');
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  // Show sentence with blank
+  const sentHTML = q.sentence.replace('____', `<span class="q-blank">____</span>`);
+  const optsHTML = q.opts.map(o =>
+    `<button class="opt-btn" data-val="${o}" onclick="pickObj(this)">${o}</button>`
+  ).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label obj-label">🩷 Object Pronoun</div>
+    <div class="q-card" id="qCard">
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-sentence">${sentHTML}</div>
+      <div class="q-sub-hint">Fill in the blank for: <b>${q.subjectHint}</b></div>
+      <div class="opts">${optsHTML}</div>
+    </div>`;
+
+  updateDot(qi, 'curr');
+}
+
+function pickObj(btn) {
+  if (answered) return; answered = true;
+  const q = currentQ[qi];
+  const val = btn.dataset.val;
+  document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+
+  if (val === q.ans) {
+    btn.classList.add('correct'); score++;
+    fb.innerHTML = `✅ ${q.explain}`;
+    fb.className = 'feedback show ok';
+    popStars();
+    updateDot(qi, 'ok');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelector(`[data-val="${q.ans}"]`).classList.add('correct');
+    wrong.push(q);
+    fb.innerHTML = `❌ The answer is <b>${q.ans}</b>. ${q.explain}`;
+    fb.className = 'feedback show bad';
+    document.getElementById('qCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('qCard')?.classList.remove('shake'), 400);
+    updateDot(qi, 'bad');
+  }
+
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === currentQ.length - 1 ? 'See Results 🎊' : 'Next ➡️';
+  nb.className = 'next-btn show';
+}
+
+// ===== PART 4: MIXED CHALLENGE =====
+function startMixed() {
+  phase = 'mixed';
+  score = 0; wrong = []; qi = 0; answered = false;
+  currentQ = [...MIXED].sort(() => Math.random() - 0.5);
+  document.getElementById('gTitle').textContent = '🌈 Mixed Challenge!';
+  document.getElementById('gProg').textContent = 'Part 4 / 4';
+  buildDots(currentQ.length);
+  showMixedQ();
+}
+
+function showMixedQ() {
+  answered = false;
+  const q = currentQ[qi];
+  const total = currentQ.length;
+  setPbar(75 + (qi / total) * 25, 'mixed');
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  const typeLabel = q.type === 'sub'
+    ? '🔵 Replace the underlined subject'
+    : '🩷 Fill in the object pronoun';
+
+  let sentHTML;
+  if (q.type === 'sub') {
+    sentHTML = q.original.replace(q.ul, `<span class="q-underline">${q.ul}</span>`);
+  } else {
+    sentHTML = q.original.replace('____', `<span class="q-blank">____</span>`);
+  }
+
+  const optsHTML = q.opts.map(o =>
+    `<button class="opt-btn" data-val="${o}" onclick="pickMixed(this)">${o}</button>`
+  ).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label mix-label">🌈 Mixed</div>
+    <div class="q-card" id="qCard">
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-sentence">${sentHTML}</div>
+      <div class="q-sub-hint">${typeLabel}</div>
+      <div class="opts">${optsHTML}</div>
+      <div class="full-sentence" id="fullSent">✨ Full sentence: "${q.full}"</div>
+    </div>`;
+
+  updateDot(qi, 'curr');
+}
+
+function pickMixed(btn) {
+  if (answered) return; answered = true;
+  const q = currentQ[qi];
+  const val = btn.dataset.val;
+  document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+
+  if (val === q.ans) {
+    btn.classList.add('correct'); score++;
+    fb.innerHTML = `✅ ${q.explain}`;
+    fb.className = 'feedback show ok';
+    popStars();
+    updateDot(qi, 'ok');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelector(`[data-val="${q.ans}"]`).classList.add('correct');
+    wrong.push(q);
+    fb.innerHTML = `❌ The answer is <b>${q.ans}</b>. ${q.explain}`;
+    fb.className = 'feedback show bad';
+    document.getElementById('qCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('qCard')?.classList.remove('shake'), 400);
+    updateDot(qi, 'bad');
+  }
+
+  // Show full sentence
+  document.getElementById('fullSent')?.classList.add('show');
+
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === currentQ.length - 1 ? 'See Final Results! 🎊' : 'Next ➡️';
+  nb.className = 'next-btn show';
+}
+
+// ===== NAVIGATION =====
+function handleNext() {
+  if (phase === 'learn') {
+    startSubject();
+  } else if (phase === 'subject') {
+    qi++;
+    if (qi < currentQ.length) showSubjectQ();
+    else showPartResult('subject');
+  } else if (phase === 'object') {
+    qi++;
+    if (qi < currentQ.length) showObjectQ();
+    else showPartResult('object');
+  } else if (phase === 'mixed') {
+    qi++;
+    if (qi < currentQ.length) showMixedQ();
+    else showFinal();
+  } else if (phase === 'result-sub') {
+    startObject();
+  } else if (phase === 'result-obj') {
+    startMixed();
+  }
+}
+
+function showPartResult(part) {
+  phase = 'result-' + (part === 'subject' ? 'sub' : 'obj');
+  const total = currentQ.length;
+  const pct = score / total;
+  const stars = pct === 1 ? '⭐⭐⭐' : pct >= 0.7 ? '⭐⭐' : '⭐';
+  const msg = pct === 1 ? 'Perfect! All correct!' :
+              pct >= 0.7 ? 'Great job! Almost there!' :
+              'Good try! Keep practicing!';
+  const nextLabel = part === 'subject' ? 'Next: Object Pronouns 🩷' : 'Next: Mixed Challenge! 🌈';
+
+  document.getElementById('dots').innerHTML = '';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('content').innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  const wrongHtml = wrong.length > 0 ? `
+    <div class="summary-box">
+      <div class="sum-title">📝 Review these:</div>
+      ${wrong.slice(0,4).map(q => `
+        <div class="sum-item">
+          ${q.sentence || q.original}
+          → <span class="sum-ans">${q.ans}</span>
+          <small style="color:#aaa;display:block">${q.explain}</small>
+        </div>`).join('')}
+    </div>` : '';
+
+  document.getElementById('finalCard').innerHTML = `
+    <div class="final-title">${part === 'subject' ? '🔵' : '🩷'} Part Done!</div>
+    <div class="final-score">${score} / ${total}</div>
+    <div class="final-stars">${stars}</div>
+    <div class="final-msg">${msg}</div>
+    ${wrongHtml}
+    <div class="final-btns">
+      <button class="next-part-btn" onclick="handleNext()">${nextLabel}</button>
+      <button class="retry-btn" onclick="${part === 'subject' ? 'startSubject()' : 'startObject()'}">🔄 Retry This Part</button>
+    </div>`;
+  document.getElementById('finalCard').classList.add('show');
+  setPbar(part === 'subject' ? 50 : 75, part === 'subject' ? 'subject' : 'object');
+}
+
+function showFinal() {
+  const total = currentQ.length;
+  const pct = score / total;
+  const stars = pct === 1 ? '⭐⭐⭐' : pct >= 0.7 ? '⭐⭐' : '⭐';
+  const msg = pct === 1 ? 'You are a Pronoun Master! 🏆' :
+              pct >= 0.7 ? 'Great work! Almost perfect!' :
+              'Good effort! Review and try again!';
+
+  document.getElementById('dots').innerHTML = '';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('content').innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+  setPbar(100, 'mixed');
+
+  const wrongHtml = wrong.length > 0 ? `
+    <div class="summary-box">
+      <div class="sum-title">📝 Review these:</div>
+      ${wrong.slice(0,5).map(q => `
+        <div class="sum-item">
+          ${q.sentence || q.original}
+          → <span class="sum-ans">${q.ans}</span>
+          <small style="color:#aaa;display:block">${q.explain}</small>
+        </div>`).join('')}
+    </div>` : '';
+
+  document.getElementById('finalCard').innerHTML = `
+    <div class="final-title">🌈 All Done!</div>
+    <div class="final-score">${score} / ${total}</div>
+    <div class="final-stars">${stars}</div>
+    <div class="final-msg">${msg}</div>
+    ${wrongHtml}
+    <div class="final-btns">
+      <button class="retry-btn" onclick="location.reload()">🔄 Play Again!</button>
+      <button class="next-part-btn" onclick="startMixed()">🌈 Retry Mixed!</button>
+    </div>`;
+  document.getElementById('finalCard').classList.add('show');
+  for (let i = 0; i < 4; i++) setTimeout(popStars, i * 250);
+}
+
+// ===== HELPERS =====
+function buildDots(n) {
+  const c = document.getElementById('dots');
+  c.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' curr' : '');
+    d.id = 'dot' + i;
+    c.appendChild(d);
+  }
+}
+
+function updateDot(i, state) {
+  const d = document.getElementById('dot' + i);
+  if (!d) return;
+  d.className = 'dot ' + state;
+  const next = document.getElementById('dot' + (i + 1));
+  if (next && state !== 'curr') next.classList.add('curr');
+}
+
+function popStars() {
+  const emojis = ['⭐','✨','🌟','🎉','🙋','💪','🏆'];
+  for (let i = 0; i < 4; i++) {
+    setTimeout(() => {
+      const s = document.createElement('div'); s.className = 'star-pop';
+      s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      s.style.left = (15 + Math.random() * 70) + 'vw';
+      s.style.top  = (20 + Math.random() * 50) + 'vh';
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }, i * 110);
+  }
+}
+
+window.onload = () => showLearn();
+</script>
+</body>
+</html>
