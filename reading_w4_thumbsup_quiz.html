@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎨 Thumbs Up for Art and Music — Quiz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #fff8f0; font-family: 'Nunito', sans-serif; min-height: 100vh; }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 16px 16px 60px; }
+  .g-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .g-title { font-family: 'Fredoka One', cursive; font-size: 1.2rem; color: #333; }
+  .g-prog  { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #aaa; }
+  .pbar-wrap { background: #eee; border-radius: 99px; height: 8px; margin-bottom: 14px; overflow: hidden; }
+  .pbar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg,#8b5cf6,#7c3aed); transition: width 0.4s; }
+  .score-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+  .score-label { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #aaa; }
+  .score-val   { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #34d399; }
+
+  .story-map {
+    background: white; border-radius: 20px; padding: 20px 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+  }
+  .story-map h2 { font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: #5b21b6; margin-bottom: 12px; }
+  .story-point { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #f0f0f0; }
+  .story-point:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .sp-emoji { font-size: 1.5rem; min-width: 30px; }
+  .sp-text  { font-size: 0.88rem; font-weight: 700; color: #555; line-height: 1.5; }
+  .sp-label { font-family: 'Fredoka One', cursive; font-size: 0.75rem; color: #7c3aed; }
+
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; background: #f5f5f5; border-radius: 50px; padding: 5px; }
+  .tab { flex: 1; padding: 10px 8px; border-radius: 50px; border: none; font-family: 'Fredoka One', cursive; font-size: 0.88rem; cursor: pointer; background: transparent; color: #aaa; transition: all 0.2s; }
+  .tab.active { background: #8b5cf6; color: white; box-shadow: 0 3px 10px rgba(139,92,246,0.4); }
+
+  .q-card {
+    background: white; border-radius: 20px; padding: 22px 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+    animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .q-card.shake { animation: shake 0.35s ease; }
+  @keyframes popIn { from{opacity:0;transform:scale(0.88)} to{opacity:1;transform:scale(1)} }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+  .q-tag { display: inline-block; padding: 4px 14px; border-radius: 50px; font-size: 0.72rem; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
+  .tag-comp  { background: #ede9fe; color: #5b21b6; }
+  .tag-vocab { background: #fce7f3; color: #9d174d; }
+  .tag-infer { background: #fee2e2; color: #991b1b; }
+  .tag-check { background: #fff7ed; color: #c2410c; }
+  .q-emoji   { font-size: 2.8rem; display: block; text-align: center; margin-bottom: 10px; }
+  .q-text    { font-size: 1.05rem; font-weight: 800; color: #333; margin-bottom: 18px; line-height: 1.5; }
+
+  .opts { display: flex; flex-direction: column; gap: 10px; }
+  .opt-btn { padding: 14px 16px; border-radius: 14px; border: 3px solid #eee; background: #f9f9f9; font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 700; color: #333; cursor: pointer; text-align: left; transition: all 0.15s; }
+  .opt-btn:hover   { border-color: #8b5cf6; background: #f5f3ff; }
+  .opt-btn.correct { background: #d1fae5; border-color: #059669; color: #065f46; }
+  .opt-btn.wrong   { background: #fee2e2; border-color: #dc2626; color: #991b1b; }
+  .opt-btn:disabled { cursor: default; }
+
+  /* Vocab fill */
+  .vf-sentence { font-size: 1.05rem; font-weight: 800; color: #333; line-height: 1.8; margin-bottom: 16px; text-align: center; }
+  .vf-blank { display: inline-block; min-width: 90px; border-bottom: 3px solid #8b5cf6; color: #7c3aed; font-weight: 900; text-align: center; padding: 0 4px; }
+  .vf-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .vf-btn { padding: 12px 10px; border-radius: 14px; border: 3px solid #eee; background: #f9f9f9; font-family: 'Fredoka One', cursive; font-size: 1rem; color: #333; cursor: pointer; text-align: center; transition: all 0.15s; }
+  .vf-btn:hover   { border-color: #8b5cf6; background: #f5f3ff; }
+  .vf-btn.correct { background: #d1fae5; border-color: #059669; color: #065f46; }
+  .vf-btn.wrong   { background: #fee2e2; border-color: #dc2626; color: #991b1b; }
+  .vf-btn:disabled { cursor: default; }
+
+  /* Check all that apply */
+  .check-opts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+  .check-item {
+    display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+    border-radius: 12px; border: 3px solid #eee; background: #f9f9f9;
+    cursor: pointer; transition: all 0.15s; font-size: 0.9rem; font-weight: 700; color: #333;
+  }
+  .check-item:hover { border-color: #8b5cf6; background: #f5f3ff; }
+  .check-item.selected { border-color: #8b5cf6; background: #ede9fe; color: #5b21b6; }
+  .check-item.correct  { border-color: #059669; background: #d1fae5; color: #065f46; }
+  .check-item.wrong    { border-color: #dc2626; background: #fee2e2; color: #991b1b; }
+  .check-box { width: 22px; height: 22px; border-radius: 6px; border: 3px solid #ddd; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+  .check-item.selected .check-box { background: #7c3aed; border-color: #7c3aed; color: white; }
+  .check-item.correct  .check-box { background: #059669; border-color: #059669; color: white; }
+  .check-submit {
+    width: 100%; padding: 13px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.1rem;
+    cursor: pointer; margin-bottom: 10px;
+  }
+
+  /* Write */
+  .write-area { width: 100%; padding: 12px; border: 3px solid #ddd; border-radius: 12px; font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 700; outline: none; resize: none; color: #333; margin-bottom: 12px; }
+  .write-area:focus { border-color: #8b5cf6; }
+  .show-ans-btn { width: 100%; padding: 12px; border-radius: 50px; border: none; background: linear-gradient(135deg,#8b5cf6,#7c3aed); color: white; font-family: 'Fredoka One', cursive; font-size: 1.1rem; cursor: pointer; margin-bottom: 12px; }
+  .sample-ans { background: #ede9fe; border-radius: 12px; padding: 12px 14px; font-size: 0.9rem; font-weight: 700; color: #5b21b6; display: none; line-height: 1.6; }
+  .sample-ans.show { display: block; }
+
+  .dots { display: flex; justify-content: center; gap: 5px; margin-bottom: 12px; flex-wrap: wrap; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #e5e7eb; transition: all 0.3s; }
+  .dot.curr { background: #8b5cf6; transform: scale(1.4); }
+  .dot.ok   { background: #34d399; }
+  .dot.bad  { background: #f87171; }
+
+  .feedback { border-radius: 14px; padding: 12px 16px; margin-bottom: 12px; font-weight: 800; font-size: 0.95rem; display: none; text-align: center; line-height: 1.5; }
+  .feedback.show { display: block; }
+  .feedback.ok  { background: #d1fae5; color: #065f46; border: 3px solid #6ee7b7; }
+  .feedback.bad { background: #fee2e2; color: #991b1b; border: 3px solid #fca5a5; }
+
+  .next-btn { width: 100%; padding: 15px; border-radius: 50px; border: none; background: linear-gradient(135deg,#8b5cf6,#7c3aed); color: white; font-family: 'Fredoka One', cursive; font-size: 1.2rem; cursor: pointer; display: none; box-shadow: 0 4px 14px rgba(124,58,237,0.35); }
+  .next-btn.show { display: block; }
+
+  .final-card { background: white; border-radius: 24px; padding: 30px 22px; text-align: center; box-shadow: 0 8px 28px rgba(0,0,0,0.1); display: none; }
+  .final-card.show { display: block; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  .final-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #7c3aed; margin-bottom: 6px; }
+  .final-score { font-family: 'Fredoka One', cursive; font-size: 3rem; color: #5c6bc0; }
+  .final-stars { font-size: 2.2rem; letter-spacing: 4px; margin: 6px 0 12px; }
+  .final-msg   { font-size: 0.95rem; color: #666; font-weight: 700; margin-bottom: 20px; line-height: 1.6; }
+  .wrong-rev   { background: #ede9fe; border-radius: 12px; padding: 14px; margin-bottom: 18px; text-align: left; }
+  .wr-title    { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #5b21b6; margin-bottom: 8px; }
+  .wr-item     { font-size: 0.82rem; font-weight: 700; color: #555; padding: 4px 0; border-bottom: 1px solid #e0e0e0; line-height: 1.5; }
+  .wr-ans      { color: #059669; font-weight: 900; }
+  .final-btns  { display: flex; flex-direction: column; gap: 10px; }
+  .retry-btn { padding: 14px; border-radius: 50px; border: none; background: linear-gradient(135deg,#8b5cf6,#7c3aed); color: white; font-family: 'Fredoka One',cursive; font-size: 1.1rem; cursor: pointer; }
+  .mode-btn  { padding: 14px; border-radius: 50px; border: none; background: linear-gradient(135deg,#f97316,#f59e0b); color: white; font-family: 'Fredoka One',cursive; font-size: 1.1rem; cursor: pointer; }
+
+  .star-pop { position: fixed; font-size: 1.8rem; pointer-events: none; animation: fly 0.9s ease-out forwards; z-index: 999; }
+  @keyframes fly { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-80px) scale(1.5)} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="g-header">
+    <div class="g-title">🎨 Thumbs Up for Art & Music</div>
+    <div class="g-prog" id="gProg"></div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
+
+  <!-- Story Map -->
+  <div class="story-map">
+    <h2>📖 Text Map — Read this first!</h2>
+    <div class="story-point">
+      <div class="sp-emoji">📝</div>
+      <div class="sp-text">
+        <div class="sp-label">TEXT TYPE</div>
+        "Thumbs Up for Art and Music" is a <b>persuasive text</b> — the author is trying to convince you that art and music are important subjects at school.
+      </div>
+    </div>
+    <div class="story-point">
+      <div class="sp-emoji">🎨</div>
+      <div class="sp-text">
+        <div class="sp-label">REASON 1 — ART</div>
+        Art is important because it makes you <b>think creatively</b>. You learn to use your imagination to make new things.
+      </div>
+    </div>
+    <div class="story-point">
+      <div class="sp-emoji">🎵</div>
+      <div class="sp-text">
+        <div class="sp-label">REASON 2 — MUSIC</div>
+        Music is important because you can <b>play with others and learn about teamwork</b>. It also helps you learn about other cultures.
+      </div>
+    </div>
+    <div class="story-point">
+      <div class="sp-emoji">💡</div>
+      <div class="sp-text">
+        <div class="sp-label">AUTHOR'S OPINION</div>
+        The author believes both art AND music should stay in schools. These subjects help students grow as thinkers and team players.
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="setMode('mc')">📝 Reading</button>
+    <button class="tab" onclick="setMode('vocab')">📖 Vocab</button>
+    <button class="tab" onclick="setMode('write')">✏️ Write</button>
+  </div>
+
+  <div class="score-row">
+    <div class="score-label" id="progLabel">Question 1 / 10</div>
+    <div class="score-val"   id="progScore">✅ 0 ❌ 0</div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill2" style="width:0%;background:linear-gradient(90deg,#8b5cf6,#7c3aed)"></div></div>
+  <div class="dots" id="dots"></div>
+
+  <div id="qArea"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextQ()">Next ➡️</button>
+  <div class="final-card" id="finalCard"></div>
+</div>
+
+<script>
+const MC_QS = [
+  {tag:'tag-comp', tagLabel:'Text Type', emoji:'📝', type:'mc',
+   text:'"Thumbs Up for Art and Music" is a persuasive text because...',
+   opts:['It is fun to read.','The author tells what he thinks and gives reasons.','It is a made-up story.'],
+   ans:1, explain:'A persuasive text shares the author\'s opinion and gives reasons to convince the reader. The author here argues art and music are important!'},
+  {tag:'tag-comp', tagLabel:'Comprehension', emoji:'🎨', type:'mc',
+   text:'Why is art important according to the text?',
+   opts:['You can paint a picture.','It makes you think creatively and use your imagination.','It is an easy subject.'],
+   ans:1, explain:'Art helps you think creatively and use your imagination to make new things — that\'s the author\'s argument!'},
+  {tag:'tag-comp', tagLabel:'Comprehension', emoji:'🎵', type:'mc',
+   text:'Why is music important according to the text?',
+   opts:['You can play with others and learn about teamwork.','You learn to play the drums.','It is quieter than art class.'],
+   ans:0, explain:'Music teaches teamwork because you play WITH others. You also learn about different cultures through music!'},
+  {tag:'tag-infer', tagLabel:'Inference', emoji:'💡', type:'mc',
+   text:'What is the author\'s main opinion in this text?',
+   opts:['Art and music classes are not important.','Art and music should be important parts of school.','Math and reading are the only important subjects.'],
+   ans:1, explain:'The author\'s main opinion is that both art AND music are important school subjects that help students grow.'},
+  {tag:'tag-comp', tagLabel:'Comprehension', emoji:'🤝', type:'mc',
+   text:'According to the text, what life skill does music teach you?',
+   opts:['How to read music notes.','Teamwork — playing music with others.','How to sing loudly.'],
+   ans:1, explain:'Playing music with others teaches teamwork — one of the key reasons the author says music is important!'},
+  {tag:'tag-infer', tagLabel:'Inference', emoji:'🎭', type:'mc',
+   text:'"Thumbs Up for Art and Music" — what does "Thumbs Up" in the title mean?',
+   opts:['It means the author likes art and music.','It means students have their thumbs up in class.','It means art and music are difficult.'],
+   ans:0, explain:'"Thumbs Up" is a way of saying YES, I support this! The title tells us the author is in favour of art and music.'},
+  // Check all that apply (special type)
+  {tag:'tag-check', tagLabel:'Check All That Apply', emoji:'✅', type:'check',
+   text:'Which sentences SUPPORT the author\'s opinion that art and music are important?',
+   correctIdxs:[1,2],
+   opts:[
+     'Some people think art at school is not important.',
+     'Music is important because you can play with others.',
+     'Art is important because you learn to be creative.',
+     'In school, you learn to read and write.',
+   ],
+   explain:'The two supporting reasons are: music teaches playing with others (teamwork), and art teaches creativity. The other two do NOT support the author\'s opinion.'},
+];
+
+const VOCAB_QS = [
+  {emoji:'🎨', type:'vocab',
+   sentence:'My brother makes ____ things in art class.',
+   ans:'creative', opts:['creative','problem','learn','art'],
+   explain:'creative = full of new ideas. Making new things in art class is being creative!'},
+  {emoji:'🧠', type:'vocab',
+   sentence:'I will get some food ____ I am hungry.',
+   ans:'because', opts:['because','always','important','think'],
+   explain:'because = gives a reason. "I\'m hungry BECAUSE I haven\'t eaten."'},
+  {emoji:'🌟', type:'vocab',
+   sentence:'It is ____ to wash your hands before you eat.',
+   ans:'important', opts:['important','creative','problem','school'],
+   explain:'important = really matters. Washing hands before eating is very important!'},
+  {emoji:'🦁', type:'vocab',
+   sentence:'Close your eyes and use your ____ to think of a new animal.',
+   ans:'imagination', opts:['imagination','art','problem','think'],
+   explain:'imagination = picturing things in your mind. Inventing a new animal uses imagination!'},
+  {emoji:'😤', type:'vocab',
+   sentence:'Having a ____ is okay — you just need to find a solution.',
+   ans:'problem', opts:['problem','learn','school','art'],
+   explain:'problem = something wrong that needs to be solved.'},
+  {emoji:'📚', type:'vocab',
+   sentence:'I like going to ____ at KCIS.',
+   ans:'school', opts:['school','art','learn','think'],
+   explain:'school = where you go to study and learn. KCIS is Yunman\'s school!'},
+];
+
+const WRITE_QS = [
+  {emoji:'🎨', type:'write',
+   text:'What class at school do you think is important? Why? Write a complete sentence.',
+   hint:'Start with: "I think ___ is important because..."',
+   sample:'I think art is important because it helps me think creatively and express my feelings.'},
+  {emoji:'💡', type:'write',
+   text:'The author says art and music are important. Do you agree or disagree? Why?',
+   hint:'Start with: "I agree / disagree because..."',
+   sample:'I agree because art helps me use my imagination and music teaches me to work with others as a team.'},
+];
+
+// Selections for "check all that apply"
+let checkSelections = [];
+
+let mode = 'mc';
+let qi = 0, scoreOk = 0, scoreBad = 0, answered = false, wrongList = [];
+let questions = [];
+
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    t.classList.toggle('active', ['mc','vocab','write'][i] === m);
+  });
+  qi = 0; scoreOk = 0; scoreBad = 0; wrongList = []; answered = false;
+  questions = m === 'mc' ? [...MC_QS] : m === 'vocab' ? [...VOCAB_QS] : [...WRITE_QS];
+  document.getElementById('finalCard').classList.remove('show');
+  document.getElementById('nextBtn').className = 'next-btn';
+  buildDots();
+  showQ();
+}
+
+function buildDots() {
+  const c = document.getElementById('dots');
+  c.innerHTML = '';
+  questions.forEach((_,i) => {
+    const d = document.createElement('div');
+    d.className = 'dot'+(i===0?' curr':'');
+    d.id = 'dot'+i;
+    c.appendChild(d);
+  });
+}
+
+function updateUI() {
+  document.getElementById('progLabel').textContent = `Question ${qi+1} / ${questions.length}`;
+  document.getElementById('progScore').textContent = `✅ ${scoreOk} ❌ ${scoreBad}`;
+  document.getElementById('pbarFill').style.width = ((qi/questions.length)*100)+'%';
+  document.getElementById('pbarFill2').style.width = ((qi/questions.length)*100)+'%';
+}
+
+function showQ() {
+  answered = false;
+  checkSelections = [];
+  updateUI();
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('nextBtn').className = 'next-btn';
+  const q = questions[qi];
+  if (q.type === 'mc')    renderMC(q);
+  else if (q.type === 'vocab') renderVocab(q);
+  else if (q.type === 'check') renderCheck(q);
+  else renderWrite(q);
+}
+
+function renderMC(q) {
+  const optsHtml = q.opts.map((o,i) =>
+    `<button class="opt-btn" data-idx="${i}" onclick="pickMC(this)">${o}</button>`
+  ).join('');
+  document.getElementById('qArea').innerHTML = `
+    <div class="q-card" id="qCard">
+      <span class="q-tag ${q.tag}">${q.tagLabel}</span>
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-text">${q.text}</div>
+      <div class="opts">${optsHtml}</div>
+    </div>`;
+}
+
+function pickMC(btn) {
+  if (answered) return; answered = true;
+  const q = questions[qi];
+  const idx = parseInt(btn.dataset.idx);
+  document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === q.ans) {
+    btn.classList.add('correct'); scoreOk++; popStars();
+    fb.innerHTML = '✅ ' + q.explain; fb.className = 'feedback show ok';
+    updateDot(qi,'ok');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelector(`[data-idx="${q.ans}"]`).classList.add('correct');
+    scoreBad++; wrongList.push(q);
+    fb.innerHTML = '❌ ' + q.explain; fb.className = 'feedback show bad';
+    document.getElementById('qCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('qCard')?.classList.remove('shake'), 400);
+    updateDot(qi,'bad');
+  }
+  setNextBtn();
+}
+
+function renderVocab(q) {
+  const sentHtml = q.sentence.replace('____', `<span class="vf-blank">____</span>`);
+  const optsHtml = q.opts.map(o =>
+    `<button class="vf-btn" data-val="${o}" onclick="pickVocab(this)">${o}</button>`
+  ).join('');
+  document.getElementById('qArea').innerHTML = `
+    <div class="q-card" id="qCard">
+      <span class="q-tag tag-vocab">Vocabulary</span>
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="vf-sentence">${sentHtml}</div>
+      <div class="vf-opts">${optsHtml}</div>
+    </div>`;
+}
+
+function pickVocab(btn) {
+  if (answered) return; answered = true;
+  const q = questions[qi];
+  document.querySelectorAll('.vf-btn').forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (btn.dataset.val === q.ans) {
+    btn.classList.add('correct'); scoreOk++; popStars();
+    fb.innerHTML = '✅ ' + q.explain; fb.className = 'feedback show ok';
+    updateDot(qi,'ok');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelector(`[data-val="${q.ans}"]`).classList.add('correct');
+    scoreBad++; wrongList.push(q);
+    fb.innerHTML = '❌ ' + q.explain; fb.className = 'feedback show bad';
+    updateDot(qi,'bad');
+  }
+  setNextBtn();
+}
+
+function renderCheck(q) {
+  const optsHtml = q.opts.map((o,i) => `
+    <div class="check-item" id="ci${i}" data-idx="${i}" onclick="toggleCheck(${i})">
+      <div class="check-box" id="cb${i}"></div>
+      <span>${o}</span>
+    </div>`).join('');
+  document.getElementById('qArea').innerHTML = `
+    <div class="q-card" id="qCard">
+      <span class="q-tag ${q.tag}">${q.tagLabel}</span>
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-text">${q.text}</div>
+      <div class="check-opts">${optsHtml}</div>
+      <button class="check-submit" onclick="submitCheck()">Check My Answers ✅</button>
+    </div>`;
+}
+
+function toggleCheck(idx) {
+  if (answered) return;
+  const el = document.getElementById(`ci${idx}`);
+  const cb = document.getElementById(`cb${idx}`);
+  if (checkSelections.includes(idx)) {
+    checkSelections = checkSelections.filter(i => i !== idx);
+    el.classList.remove('selected');
+    cb.textContent = '';
+  } else {
+    checkSelections.push(idx);
+    el.classList.add('selected');
+    cb.textContent = '✓';
+  }
+}
+
+function submitCheck() {
+  if (answered) return;
+  if (checkSelections.length === 0) {
+    document.getElementById('feedback').innerHTML = '☝️ Please select at least one answer!';
+    document.getElementById('feedback').className = 'feedback show bad';
+    return;
+  }
+  answered = true;
+  const q = questions[qi];
+  const fb = document.getElementById('feedback');
+  document.querySelectorAll('.check-item').forEach(el => el.style.pointerEvents = 'none');
+
+  const selected = checkSelections.sort();
+  const correct = q.correctIdxs.sort();
+  const isCorrect = JSON.stringify(selected) === JSON.stringify(correct);
+
+  q.opts.forEach((_, i) => {
+    const el = document.getElementById(`ci${i}`);
+    const cb = document.getElementById(`cb${i}`);
+    el.classList.remove('selected');
+    if (q.correctIdxs.includes(i)) {
+      el.classList.add('correct');
+      cb.textContent = '✓';
+    } else if (checkSelections.includes(i)) {
+      el.classList.add('wrong');
+      cb.textContent = '✗';
+    }
+  });
+
+  if (isCorrect) {
+    scoreOk++; popStars();
+    fb.innerHTML = '✅ ' + q.explain; fb.className = 'feedback show ok';
+    updateDot(qi,'ok');
+  } else {
+    scoreBad++; wrongList.push(q);
+    fb.innerHTML = '❌ ' + q.explain; fb.className = 'feedback show bad';
+    updateDot(qi,'bad');
+  }
+  setNextBtn();
+}
+
+function renderWrite(q) {
+  document.getElementById('qArea').innerHTML = `
+    <div class="q-card" id="qCard">
+      <span class="q-tag tag-comp">Open Question</span>
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-text">${q.text}</div>
+      <div style="background:#ede9fe;border-radius:10px;padding:10px;font-size:0.82rem;font-weight:700;color:#5b21b6;margin-bottom:12px">💡 ${q.hint}</div>
+      <textarea class="write-area" id="writeInput" rows="4" placeholder="Write your complete sentence here..."></textarea>
+      <button class="show-ans-btn" onclick="showWriteAns()">Show Sample Answer ✅</button>
+      <div class="sample-ans" id="sampleAns">"${q.sample}"</div>
+    </div>`;
+}
+
+function showWriteAns() {
+  if (answered) return;
+  const inp = document.getElementById('writeInput');
+  if (!inp.value.trim()) {
+    document.getElementById('feedback').innerHTML = '✍️ Please write your answer first!';
+    document.getElementById('feedback').className = 'feedback show bad';
+    return;
+  }
+  answered = true;
+  document.getElementById('sampleAns').classList.add('show');
+  document.getElementById('feedback').innerHTML = '✏️ Compare your answer with the sample!';
+  document.getElementById('feedback').className = 'feedback show ok';
+  scoreOk++;
+  updateDot(qi,'ok');
+  setNextBtn();
+}
+
+function setNextBtn() {
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === questions.length-1 ? 'See Results 🎊' : 'Next ➡️';
+  nb.className = 'next-btn show';
+  updateUI();
+}
+
+function nextQ() {
+  qi++;
+  if (qi >= questions.length) showDone();
+  else showQ();
+}
+
+function showDone() {
+  document.getElementById('qArea').innerHTML = '';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('nextBtn').className = 'next-btn';
+  const total = questions.length;
+  const pct = scoreOk / total;
+  const stars = pct===1?'⭐⭐⭐':pct>=0.7?'⭐⭐':'⭐';
+  const msg = pct===1?'You understand persuasive texts perfectly! 🏆':pct>=0.7?'Great work! Almost there!':'Read the Text Map again and try once more!';
+
+  const wrongHtml = wrongList.length > 0 ? `
+    <div class="wrong-rev">
+      <div class="wr-title">📝 Review these:</div>
+      ${wrongList.slice(0,4).map(q => `
+        <div class="wr-item">${q.text?.substring(0,40)}...<br>
+        → <span class="wr-ans">${q.opts?.[q.ans] || q.ans}</span></div>`).join('')}
+    </div>` : '';
+
+  document.getElementById('finalCard').innerHTML = `
+    <div class="final-title">🎨 Quiz Done!</div>
+    <div class="final-score">${scoreOk} / ${total}</div>
+    <div class="final-stars">${stars}</div>
+    <div class="final-msg">${msg}</div>
+    ${wrongHtml}
+    <div class="final-btns">
+      <button class="retry-btn" onclick="setMode('${mode}')">🔄 Try Again!</button>
+      <button class="mode-btn" onclick="setMode('vocab')">📖 Try Vocabulary!</button>
+    </div>`;
+  document.getElementById('finalCard').classList.add('show');
+  for (let i=0;i<4;i++) setTimeout(popStars,i*300);
+}
+
+function updateDot(i, state) {
+  const d = document.getElementById('dot'+i);
+  if (!d) return;
+  d.className = 'dot '+state;
+  const next = document.getElementById('dot'+(i+1));
+  if (next && state!=='curr') next.classList.add('curr');
+}
+
+function popStars() {
+  const emojis = ['⭐','✨','🌟','🎉','🎨','🎵','👍'];
+  for (let i=0;i<4;i++) {
+    setTimeout(() => {
+      const s = document.createElement('div'); s.className = 'star-pop';
+      s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      s.style.left = (15+Math.random()*70)+'vw';
+      s.style.top  = (20+Math.random()*50)+'vh';
+      document.body.appendChild(s);
+      setTimeout(()=>s.remove(),900);
+    },i*110);
+  }
+}
+
+window.onload = () => setMode('mc');
+</script>
+</body>
+</html>
