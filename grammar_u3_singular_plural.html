@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔢 Singular & Plural Nouns!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #fff8f0; font-family: 'Nunito', sans-serif; min-height: 100vh; }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 16px 16px 60px; }
+
+  .g-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .g-title { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #333; }
+  .g-prog  { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #aaa; }
+  .pbar-wrap { background: #eee; border-radius: 99px; height: 8px; margin-bottom: 14px; overflow: hidden; }
+  .pbar-fill { height: 100%; border-radius: 99px; transition: width 0.4s; }
+  .score-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+  .score-label { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #aaa; }
+  .score-val   { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #34d399; }
+
+  .learn-card {
+    background: white; border-radius: 20px; padding: 20px 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+  }
+  .learn-title { font-family: 'Fredoka One', cursive; font-size: 1.1rem; text-align: center; margin-bottom: 14px; }
+  .rule-box {
+    border-radius: 12px; padding: 12px 14px; font-size: 0.88rem;
+    font-weight: 700; line-height: 1.7; margin-bottom: 10px;
+  }
+  .rule-sing { background: #fef3c7; color: #92400e; border-left: 4px solid #f59e0b; }
+  .rule-plur { background: #dbeafe; color: #1e40af; border-left: 4px solid #3b82f6; }
+  .ex-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .ex-chip { padding: 3px 10px; border-radius: 20px; font-size: 0.82rem; font-weight: 800; }
+  .ec-s { background: #fde68a; color: #92400e; }
+  .ec-p { background: #bfdbfe; color: #1e40af; }
+
+  /* SORT game */
+  .sort-instruction {
+    font-size: 0.9rem; font-weight: 700; color: #555; text-align: center; margin-bottom: 14px;
+  }
+  .word-pool { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 16px; min-height: 44px; }
+  .pool-word {
+    padding: 8px 16px; border-radius: 20px; border: 3px solid #ddd;
+    background: #f5f5f5; font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem; color: #333; cursor: pointer; transition: all 0.15s;
+    user-select: none;
+  }
+  .pool-word:hover { border-color: #f59e0b; background: #fffbeb; }
+  .pool-word.used { opacity: 0.3; cursor: default; pointer-events: none; }
+
+  .baskets { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .basket {
+    border-radius: 16px; border: 3px dashed; padding: 12px 10px; min-height: 120px;
+    text-align: center;
+  }
+  .basket-sing { border-color: #f59e0b; background: #fffbeb; }
+  .basket-plur { border-color: #3b82f6; background: #eff6ff; }
+  .basket-title { font-family: 'Fredoka One', cursive; font-size: 0.95rem; margin-bottom: 8px; }
+  .bt-sing { color: #92400e; }
+  .bt-plur { color: #1e40af; }
+  .basket-words { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+  .basket-word {
+    padding: 4px 12px; border-radius: 20px; font-family: 'Fredoka One', cursive;
+    font-size: 0.9rem; cursor: pointer;
+  }
+  .bw-sing { background: #fde68a; color: #92400e; }
+  .bw-plur { background: #bfdbfe; color: #1e40af; }
+  .bw-wrong { background: #fca5a5; color: #991b1b; animation: shake 0.3s ease; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+
+  .check-btn {
+    width: 100%; padding: 14px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.1rem;
+    cursor: pointer; margin-bottom: 12px; display: none;
+  }
+  .check-btn.show { display: block; }
+
+  /* Q card for S/P selection */
+  .q-card {
+    background: white; border-radius: 20px; padding: 22px 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+    animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .q-card.shake { animation: shake 0.35s ease; }
+  @keyframes popIn { from{opacity:0;transform:scale(0.88)} to{opacity:1;transform:scale(1)} }
+  .q-emoji  { font-size: 2.8rem; display: block; text-align: center; margin-bottom: 10px; }
+  .q-word   { font-family: 'Fredoka One', cursive; font-size: 2.2rem; text-align: center; color: #222; margin-bottom: 6px; }
+  .q-hint   { font-size: 0.82rem; color: #aaa; font-weight: 700; text-align: center; margin-bottom: 16px; }
+  .sp-btns  { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .sp-btn {
+    padding: 14px 10px; border-radius: 14px; border: 3px solid #eee;
+    background: #f9f9f9; font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem; cursor: pointer; transition: all 0.15s; text-align: center;
+  }
+  .sp-btn.sing:hover { border-color: #f59e0b; background: #fffbeb; }
+  .sp-btn.plur:hover { border-color: #3b82f6; background: #eff6ff; }
+  .sp-btn.correct { background: #d1fae5; border-color: #34d399; color: #065f46; }
+  .sp-btn.wrong   { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+  .sp-btn:disabled { cursor: default; }
+
+  .phase-label {
+    font-family: 'Fredoka One', cursive; font-size: 0.8rem; letter-spacing: 2px;
+    text-transform: uppercase; border-radius: 20px; padding: 4px 14px;
+    display: inline-block; margin-bottom: 12px;
+  }
+  .pl-sort { background: #fef3c7; color: #92400e; }
+  .pl-sp   { background: #dbeafe; color: #1e40af; }
+
+  .dots { display: flex; justify-content: center; gap: 5px; margin-bottom: 12px; flex-wrap: wrap; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #e5e7eb; transition: all 0.3s; }
+  .dot.curr { background: #f59e0b; transform: scale(1.4); }
+  .dot.ok   { background: #34d399; }
+  .dot.bad  { background: #f87171; }
+
+  .feedback {
+    border-radius: 14px; padding: 12px 16px; margin-bottom: 12px;
+    font-weight: 800; font-size: 0.95rem; display: none; text-align: center; line-height: 1.5;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok  { background: #d1fae5; color: #065f46; border: 3px solid #6ee7b7; }
+  .feedback.bad { background: #fee2e2; color: #991b1b; border: 3px solid #fca5a5; }
+
+  .next-btn {
+    width: 100%; padding: 15px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+    cursor: pointer; display: none; box-shadow: 0 4px 14px rgba(245,158,11,0.35);
+    transition: transform 0.1s;
+  }
+  .next-btn.show { display: block; }
+  .next-btn:active { transform: scale(0.97); }
+
+  .final-card {
+    background: white; border-radius: 24px; padding: 30px 22px;
+    text-align: center; box-shadow: 0 8px 28px rgba(0,0,0,0.1); display: none;
+  }
+  .final-card.show { display: block; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  .final-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #f59e0b; margin-bottom: 6px; }
+  .final-score { font-family: 'Fredoka One', cursive; font-size: 3rem; color: #5c6bc0; }
+  .final-stars { font-size: 2.2rem; letter-spacing: 4px; margin: 6px 0 12px; }
+  .final-msg   { font-size: 0.95rem; color: #666; font-weight: 700; margin-bottom: 20px; line-height: 1.6; }
+  .final-btns  { display: flex; flex-direction: column; gap: 10px; }
+  .retry-btn     { padding: 14px; border-radius: 50px; border: none; background: linear-gradient(135deg,#f59e0b,#f97316); color: white; font-family: 'Fredoka One',cursive; font-size: 1.1rem; cursor: pointer; }
+  .next-part-btn { padding: 14px; border-radius: 50px; border: none; background: linear-gradient(135deg,#a78bfa,#7c3aed); color: white; font-family: 'Fredoka One',cursive; font-size: 1.1rem; cursor: pointer; }
+
+  .star-pop { position: fixed; font-size: 1.8rem; pointer-events: none; animation: fly 0.9s ease-out forwards; z-index: 999; }
+  @keyframes fly { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-80px) scale(1.5)} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="g-header">
+    <div class="g-title" id="gTitle">🔢 Singular & Plural!</div>
+    <div class="g-prog" id="gProg"></div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
+  <div class="score-row">
+    <div class="score-label" id="scoreLabel"></div>
+    <div class="score-val"   id="scoreVal"></div>
+  </div>
+  <div id="content"></div>
+  <div class="dots"    id="dots"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="handleNext()"></button>
+  <div class="final-card" id="finalCard"></div>
+</div>
+
+<script>
+// ===== DATA =====
+
+// Sort game words (from p.52 review)
+const SORT_WORDS = [
+  {word:'lake',     type:'S', emoji:'🏞️'},
+  {word:'kittens',  type:'P', emoji:'🐱🐱'},
+  {word:'houses',   type:'P', emoji:'🏠🏠'},
+  {word:'squirrel', type:'S', emoji:'🐿️'},
+  {word:'boys',     type:'P', emoji:'👦👦'},
+  {word:'teacher',  type:'S', emoji:'👩‍🏫'},
+  {word:'parks',    type:'P', emoji:'🌳🌳'},
+  {word:'home',     type:'S', emoji:'🏠'},
+  {word:'sun',      type:'S', emoji:'☀️'},
+  {word:'cakes',    type:'P', emoji:'🎂🎂'},
+  {word:'dog',      type:'S', emoji:'🐶'},
+  {word:'flowers',  type:'P', emoji:'💐'},
+  {word:'child',    type:'S', emoji:'👦'},
+  {word:'children', type:'P', emoji:'👦👦👦'},
+  {word:'book',     type:'S', emoji:'📚'},
+  {word:'books',    type:'P', emoji:'📚📚'},
+];
+
+// Selection questions
+const SP_QS = [
+  {word:'kittens',  emoji:'🐱🐱', ans:'P', explain:'kittens → more than one kitten → Plural!'},
+  {word:'house',    emoji:'🏠',   ans:'S', explain:'house → just one → Singular!'},
+  {word:'boys',     emoji:'👦👦', ans:'P', explain:'boys → more than one boy → Plural!'},
+  {word:'sun',      emoji:'☀️',   ans:'S', explain:'sun → just one → Singular!'},
+  {word:'parks',    emoji:'🌳🌳', ans:'P', explain:'parks → more than one park → Plural!'},
+  {word:'teacher',  emoji:'👩‍🏫',  ans:'S', explain:'teacher → just one → Singular!'},
+  {word:'cakes',    emoji:'🎂🎂', ans:'P', explain:'cakes → more than one cake → Plural!'},
+  {word:'squirrel', emoji:'🐿️',   ans:'S', explain:'squirrel → just one → Singular!'},
+  {word:'children', emoji:'👦👧👦', ans:'P', explain:'children → more than one child → Plural!'},
+  {word:'flowers',  emoji:'💐',   ans:'P', explain:'flowers → more than one flower → Plural!'},
+  {word:'lake',     emoji:'🏞️',   ans:'S', explain:'lake → just one → Singular!'},
+  {word:'books',    emoji:'📚📚', ans:'P', explain:'books → more than one book → Plural!'},
+  {word:'home',     emoji:'🏠',   ans:'S', explain:'home → just one → Singular!'},
+  {word:'dogs',     emoji:'🐶🐶', ans:'P', explain:'dogs → more than one dog → Plural!'},
+  {word:'bird',     emoji:'🐦',   ans:'S', explain:'bird → just one → Singular!'},
+  {word:'trees',    emoji:'🌳🌳', ans:'P', explain:'trees → more than one tree → Plural!'},
+];
+
+// ===== STATE =====
+let phase = 'learn';
+let qi = 0, score = 0, wrong = [], answered = false;
+let currentQ = [];
+let sortState = { sing: [], plur: [] };
+let sortWords = [];
+
+function setPbar(pct) {
+  document.getElementById('pbarFill').style.background = 'linear-gradient(90deg,#f59e0b,#f97316)';
+  document.getElementById('pbarFill').style.width = pct + '%';
+}
+function clearFb() { document.getElementById('feedback').className = 'feedback'; }
+function fb(msg, type) { const el = document.getElementById('feedback'); el.innerHTML = msg; el.className = 'feedback show ' + type; }
+
+// ===== PART 1: LEARN =====
+function showLearn() {
+  phase = 'learn';
+  clearFb();
+  document.getElementById('gTitle').textContent = '📚 Learn: Singular & Plural';
+  document.getElementById('gProg').textContent = 'Part 1 / 3';
+  document.getElementById('scoreLabel').textContent = '';
+  document.getElementById('scoreVal').textContent = '';
+  document.getElementById('dots').innerHTML = '';
+  document.getElementById('finalCard').classList.remove('show');
+  setPbar(10);
+
+  document.getElementById('nextBtn').textContent = 'Start Part 2: Sort the Words! 🗂️';
+  document.getElementById('nextBtn').className = 'next-btn show';
+
+  document.getElementById('content').innerHTML = `
+    <div class="learn-card">
+      <div class="learn-title" style="color:#92400e">🔢 Singular vs Plural Nouns</div>
+      <div class="rule-box rule-sing">
+        🟡 <b>Singular</b> = 只有 <b>1 個</b><br>
+        <div class="ex-row">
+          <span class="ex-chip ec-s">a cat 🐱</span>
+          <span class="ex-chip ec-s">one book 📚</span>
+          <span class="ex-chip ec-s">the sun ☀️</span>
+        </div>
+      </div>
+      <div class="rule-box rule-plur">
+        🔵 <b>Plural</b> = 有 <b>2個以上</b>，通常加 <b>-s</b> 或 <b>-es</b><br>
+        <div class="ex-row">
+          <span class="ex-chip ec-p">cats 🐱🐱</span>
+          <span class="ex-chip ec-p">books 📚📚</span>
+          <span class="ex-chip ec-p">houses 🏠🏠</span>
+        </div>
+      </div>
+      <div class="rule-box" style="background:#f0fdf4;color:#065f46;border-left:4px solid #10b981">
+        ⚠️ <b>Special plurals:</b><br>
+        <div class="ex-row">
+          <span class="ex-chip ec-p">child → children 👦👧</span>
+          <span class="ex-chip ec-p">mouse → mice 🐭🐭</span>
+        </div>
+      </div>
+      <div class="rule-box" style="background:#eff6ff;color:#1e40af;border-left:4px solid #3b82f6">
+        💡 <b>How to tell:</b><br>
+        看字的最後：通常有 <b>-s</b> 或 <b>-es</b> 結尾 = Plural<br>
+        沒有 → 通常是 Singular
+      </div>
+    </div>`;
+}
+
+// ===== PART 2: SORT GAME =====
+function startSort() {
+  phase = 'sort';
+  score = 0; wrong = [];
+  sortState = { sing: [], plur: [] };
+  // Pick 10 random words
+  sortWords = [...SORT_WORDS].sort(() => Math.random() - 0.5).slice(0, 10);
+
+  document.getElementById('gTitle').textContent = '🗂️ Sort the Words!';
+  document.getElementById('gProg').textContent = 'Part 2 / 3';
+  document.getElementById('dots').innerHTML = '';
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+  document.getElementById('finalCard').classList.remove('show');
+  setPbar(35);
+  document.getElementById('scoreLabel').textContent = 'Sort all 10 words!';
+  document.getElementById('scoreVal').textContent = '';
+  renderSort();
+}
+
+function renderSort() {
+  const remaining = sortWords.filter(w =>
+    !sortState.sing.includes(w.word) && !sortState.plur.includes(w.word)
+  );
+  const poolHtml = remaining.map(w =>
+    `<span class="pool-word" onclick="sortWord('${w.word}', this)">${w.emoji} ${w.word}</span>`
+  ).join('');
+
+  const singHtml = sortState.sing.map(w =>
+    `<span class="basket-word bw-sing" onclick="unsortWord('${w}', 'sing')">${w} ✕</span>`
+  ).join('');
+  const plurHtml = sortState.plur.map(w =>
+    `<span class="basket-word bw-plur" onclick="unsortWord('${w}', 'plur')">${w} ✕</span>`
+  ).join('');
+
+  const allPlaced = remaining.length === 0;
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label pl-sort">🗂️ Sort the Words</div>
+    <div class="sort-instruction">Tap a word, then tap which basket it belongs to!</div>
+    <div class="word-pool" id="wordPool">${poolHtml}</div>
+    <div class="baskets">
+      <div class="basket basket-sing" id="basketSing" onclick="dropInBasket('sing')">
+        <div class="basket-title bt-sing">🟡 Singular<br><small style="font-weight:600;font-family:Nunito">（1個）</small></div>
+        <div class="basket-words">${singHtml}</div>
+      </div>
+      <div class="basket basket-plur" id="basketPlur" onclick="dropInBasket('plur')">
+        <div class="basket-title bt-plur">🔵 Plural<br><small style="font-weight:600;font-family:Nunito">（多個）</small></div>
+        <div class="basket-words">${plurHtml}</div>
+      </div>
+    </div>`;
+
+  if (allPlaced) {
+    document.getElementById('nextBtn').textContent = 'Check Answers ✅';
+    document.getElementById('nextBtn').className = 'next-btn show';
+  }
+}
+
+let selectedWord = null;
+
+function sortWord(word, el) {
+  // Select/deselect
+  document.querySelectorAll('.pool-word').forEach(w => w.style.borderColor = '#ddd');
+  if (selectedWord === word) { selectedWord = null; return; }
+  selectedWord = word;
+  el.style.borderColor = '#f59e0b';
+  fb('Now tap a basket to place "' + word + '"!', 'ok');
+}
+
+function dropInBasket(type) {
+  if (!selectedWord) { fb('Tap a word first, then tap a basket!', 'bad'); return; }
+  const w = sortWords.find(x => x.word === selectedWord);
+  if (!w) return;
+
+  if (type === 'sing') sortState.sing.push(selectedWord);
+  else sortState.plur.push(selectedWord);
+
+  selectedWord = null;
+  clearFb();
+  renderSort();
+}
+
+function unsortWord(word, fromType) {
+  sortState[fromType] = sortState[fromType].filter(w => w !== word);
+  renderSort();
+}
+
+function checkSort() {
+  let correct = 0, errors = [];
+  sortWords.forEach(w => {
+    const inSing = sortState.sing.includes(w.word);
+    const inPlur = sortState.plur.includes(w.word);
+    if ((w.type === 'S' && inSing) || (w.type === 'P' && inPlur)) {
+      correct++;
+    } else {
+      errors.push(w);
+    }
+  });
+
+  score = correct;
+  const total = sortWords.length;
+
+  if (errors.length === 0) {
+    fb('🎉 Perfect! All ' + total + ' words sorted correctly!', 'ok');
+    popStars();
+    document.getElementById('nextBtn').textContent = 'Next: Singular or Plural? ➡️';
+    document.getElementById('nextBtn').className = 'next-btn show';
+    phase = 'sort-done';
+  } else {
+    // Highlight errors in baskets
+    errors.forEach(w => {
+      const wrongType = w.type === 'S' ? 'plur' : 'sing';
+      const els = document.querySelectorAll('.bw-' + (wrongType === 'sing' ? 'sing' : 'plur'));
+      els.forEach(el => { if (el.textContent.includes(w.word)) el.classList.add('bw-wrong'); });
+    });
+    fb('❌ ' + errors.length + ' word(s) in the wrong basket! Red ones need to move.', 'bad');
+    // Allow retry - remove wrong words from baskets
+    setTimeout(() => {
+      errors.forEach(w => {
+        sortState.sing = sortState.sing.filter(x => x !== w.word);
+        sortState.plur = sortState.plur.filter(x => x !== w.word);
+      });
+      clearFb();
+      renderSort();
+    }, 2000);
+  }
+}
+
+// ===== PART 3: SINGULAR OR PLURAL? =====
+function startSP() {
+  phase = 'sp';
+  score = 0; wrong = []; qi = 0; answered = false;
+  currentQ = [...SP_QS].sort(() => Math.random() - 0.5).slice(0, 12);
+  document.getElementById('gTitle').textContent = '🔢 Singular or Plural?';
+  document.getElementById('gProg').textContent = 'Part 3 / 3';
+  buildDots(currentQ.length);
+  showSPQ();
+}
+
+function showSPQ() {
+  answered = false;
+  const q = currentQ[qi];
+  const total = currentQ.length;
+  setPbar(65 + (qi / total) * 30);
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label pl-sp">🔢 Singular or Plural?</div>
+    <div class="q-card" id="qCard">
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-word">${q.word}</div>
+      <div class="q-hint">Is this word singular (1) or plural (more than 1)?</div>
+      <div class="sp-btns">
+        <button class="sp-btn sing" data-val="S" onclick="pickSP(this)">🟡 Singular<br><small>1 個</small></button>
+        <button class="sp-btn plur" data-val="P" onclick="pickSP(this)">🔵 Plural<br><small>多個</small></button>
+      </div>
+    </div>`;
+
+  updateDot(qi, 'curr');
+}
+
+function pickSP(btn) {
+  if (answered) return; answered = true;
+  const q = currentQ[qi];
+  document.querySelectorAll('.sp-btn').forEach(b => b.disabled = true);
+  if (btn.dataset.val === q.ans) {
+    btn.classList.add('correct'); score++;
+    fb('✅ ' + q.explain, 'ok'); popStars();
+    updateDot(qi, 'ok');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelector(`[data-val="${q.ans}"]`).classList.add('correct');
+    wrong.push(q); fb('❌ ' + q.explain, 'bad');
+    document.getElementById('qCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('qCard')?.classList.remove('shake'), 400);
+    updateDot(qi, 'bad');
+  }
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === currentQ.length - 1 ? 'See Results 🎊' : 'Next ➡️';
+  nb.className = 'next-btn show';
+}
+
+// ===== NAVIGATION =====
+function handleNext() {
+  if (phase === 'learn')     { startSort(); return; }
+  if (phase === 'sort')      { checkSort(); return; }
+  if (phase === 'sort-done') { startSP(); return; }
+  if (phase === 'sp') {
+    qi++;
+    if (qi < currentQ.length) showSPQ();
+    else showFinal();
+    return;
+  }
+}
+
+function showFinal() {
+  const total = currentQ.length;
+  const pct = score / total;
+  const stars = pct === 1 ? '⭐⭐⭐' : pct >= 0.7 ? '⭐⭐' : '⭐';
+  const msg = pct === 1 ? 'You are a Noun Master! 🏆' : pct >= 0.7 ? 'Great job! Almost perfect!' : 'Review and try again!';
+
+  document.getElementById('dots').innerHTML = '';
+  clearFb();
+  document.getElementById('content').innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+  setPbar(100);
+  document.getElementById('gProg').textContent = '✅ Done!';
+
+  const wrongHtml = wrong.length > 0 ? `
+    <div style="background:#fffbeb;border-radius:12px;padding:14px;margin-bottom:18px;text-align:left">
+      <div style="font-family:'Fredoka One',cursive;font-size:0.9rem;color:#92400e;margin-bottom:8px">📝 Review these:</div>
+      ${wrong.slice(0,5).map(q => `
+        <div style="font-size:0.85rem;font-weight:700;color:#555;padding:4px 0;border-bottom:1px solid #f5f5f5">
+          ${q.emoji} <b>${q.word}</b> → <span style="color:#059669;font-weight:900">${q.ans === 'S' ? 'Singular' : 'Plural'}</span>
+          <small style="color:#aaa;display:block">${q.explain}</small>
+        </div>`).join('')}
+    </div>` : '';
+
+  document.getElementById('finalCard').innerHTML = `
+    <div class="final-title">🎉 All Done!</div>
+    <div class="final-score">${score} / ${total}</div>
+    <div class="final-stars">${stars}</div>
+    <div class="final-msg">${msg}</div>
+    ${wrongHtml}
+    <div class="final-btns">
+      <button class="retry-btn" onclick="location.reload()">🔄 Play Again!</button>
+      <button class="next-part-btn" onclick="startSP()">🔢 Retry Part 3</button>
+    </div>`;
+  document.getElementById('finalCard').classList.add('show');
+  for (let i = 0; i < 4; i++) setTimeout(popStars, i * 250);
+}
+
+function buildDots(n) {
+  const c = document.getElementById('dots');
+  c.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' curr' : '');
+    d.id = 'dot' + i;
+    c.appendChild(d);
+  }
+}
+
+function updateDot(i, state) {
+  const d = document.getElementById('dot' + i);
+  if (!d) return;
+  d.className = 'dot ' + state;
+  const next = document.getElementById('dot' + (i + 1));
+  if (next && state !== 'curr') next.classList.add('curr');
+}
+
+function popStars() {
+  const emojis = ['⭐','✨','🌟','🎉','🔢','1️⃣','🏆'];
+  for (let i = 0; i < 4; i++) {
+    setTimeout(() => {
+      const s = document.createElement('div'); s.className = 'star-pop';
+      s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      s.style.left = (15 + Math.random() * 70) + 'vw';
+      s.style.top  = (20 + Math.random() * 50) + 'vh';
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }, i * 110);
+  }
+}
+
+window.onload = () => showLearn();
+</script>
+</body>
+</html>
