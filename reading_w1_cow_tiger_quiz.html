@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐮 The Cow and the Tiger — Quiz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #fff8f0; font-family: 'Nunito', sans-serif; min-height: 100vh; }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 16px 16px 60px; }
+
+  .g-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .g-title { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #333; }
+  .g-prog  { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #aaa; }
+  .pbar-wrap { background: #eee; border-radius: 99px; height: 8px; margin-bottom: 14px; overflow: hidden; }
+  .pbar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg,#10b981,#059669); transition: width 0.4s; }
+  .score-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+  .score-label { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #aaa; }
+  .score-val   { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #34d399; }
+
+  /* Story map */
+  .story-map {
+    background: white; border-radius: 20px; padding: 20px 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+  }
+  .story-map h2 { font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: #065f46; margin-bottom: 12px; }
+  .story-point {
+    display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px;
+    padding-bottom: 10px; border-bottom: 1px solid #f0f0f0;
+  }
+  .story-point:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .sp-emoji { font-size: 1.5rem; min-width: 30px; }
+  .sp-text  { font-size: 0.88rem; font-weight: 700; color: #555; line-height: 1.5; }
+  .sp-label { font-family: 'Fredoka One', cursive; font-size: 0.75rem; color: #10b981; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; background: #f5f5f5; border-radius: 50px; padding: 5px; }
+  .tab {
+    flex: 1; padding: 10px 8px; border-radius: 50px; border: none;
+    font-family: 'Fredoka One', cursive; font-size: 0.88rem; cursor: pointer;
+    background: transparent; color: #aaa; transition: all 0.2s;
+  }
+  .tab.active { background: #10b981; color: white; box-shadow: 0 3px 10px rgba(16,185,129,0.4); }
+
+  /* Q card */
+  .q-card {
+    background: white; border-radius: 20px; padding: 22px 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+    animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .q-card.shake { animation: shake 0.35s ease; }
+  @keyframes popIn { from{opacity:0;transform:scale(0.88)} to{opacity:1;transform:scale(1)} }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+  .q-tag {
+    display: inline-block; padding: 4px 14px; border-radius: 50px;
+    font-size: 0.72rem; font-weight: 900; letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 10px;
+  }
+  .tag-comp  { background: #d1fae5; color: #065f46; }
+  .tag-vocab { background: #ede9fe; color: #5b21b6; }
+  .tag-infer { background: #fee2e2; color: #991b1b; }
+  .tag-moral { background: #fef3c7; color: #92400e; }
+  .q-emoji   { font-size: 2.8rem; display: block; text-align: center; margin-bottom: 10px; }
+  .q-text    { font-size: 1.05rem; font-weight: 800; color: #333; margin-bottom: 18px; line-height: 1.5; }
+  .opts { display: flex; flex-direction: column; gap: 10px; }
+  .opt-btn {
+    padding: 14px 16px; border-radius: 14px; border: 3px solid #eee; background: #f9f9f9;
+    font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 700;
+    color: #333; cursor: pointer; text-align: left; transition: all 0.15s;
+  }
+  .opt-btn:hover   { border-color: #10b981; background: #f0fdf4; }
+  .opt-btn.correct { background: #d1fae5; border-color: #059669; color: #065f46; }
+  .opt-btn.wrong   { background: #fee2e2; border-color: #dc2626; color: #991b1b; }
+  .opt-btn:disabled { cursor: default; }
+
+  /* Vocab fill */
+  .vf-sentence {
+    font-size: 1.05rem; font-weight: 800; color: #333; line-height: 1.8;
+    margin-bottom: 16px; text-align: center;
+  }
+  .vf-blank {
+    display: inline-block; min-width: 90px; border-bottom: 3px solid #10b981;
+    color: #10b981; font-weight: 900; text-align: center; padding: 0 4px;
+  }
+  .vf-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .vf-btn {
+    padding: 12px 10px; border-radius: 14px; border: 3px solid #eee; background: #f9f9f9;
+    font-family: 'Fredoka One', cursive; font-size: 1rem; color: #333;
+    cursor: pointer; text-align: center; transition: all 0.15s;
+  }
+  .vf-btn:hover   { border-color: #10b981; background: #f0fdf4; }
+  .vf-btn.correct { background: #d1fae5; border-color: #059669; color: #065f46; }
+  .vf-btn.wrong   { background: #fee2e2; border-color: #dc2626; color: #991b1b; }
+  .vf-btn:disabled { cursor: default; }
+
+  /* Write */
+  .write-area {
+    width: 100%; padding: 12px; border: 3px solid #ddd; border-radius: 12px;
+    font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 700;
+    outline: none; resize: none; color: #333; margin-bottom: 12px;
+  }
+  .write-area:focus { border-color: #10b981; }
+  .show-ans-btn {
+    width: 100%; padding: 12px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.1rem;
+    cursor: pointer; margin-bottom: 12px;
+  }
+  .sample-ans {
+    background: #f0fdf4; border-radius: 12px; padding: 12px 14px;
+    font-size: 0.9rem; font-weight: 700; color: #065f46; display: none; line-height: 1.6;
+  }
+  .sample-ans.show { display: block; }
+
+  .dots { display: flex; justify-content: center; gap: 5px; margin-bottom: 12px; flex-wrap: wrap; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #e5e7eb; transition: all 0.3s; }
+  .dot.curr { background: #10b981; transform: scale(1.4); }
+  .dot.ok   { background: #34d399; }
+  .dot.bad  { background: #f87171; }
+
+  .feedback {
+    border-radius: 14px; padding: 12px 16px; margin-bottom: 12px;
+    font-weight: 800; font-size: 0.95rem; display: none; text-align: center; line-height: 1.5;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok  { background: #d1fae5; color: #065f46; border: 3px solid #6ee7b7; }
+  .feedback.bad { background: #fee2e2; color: #991b1b; border: 3px solid #fca5a5; }
+
+  .next-btn {
+    width: 100%; padding: 15px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+    cursor: pointer; display: none; box-shadow: 0 4px 14px rgba(16,185,129,0.35);
+  }
+  .next-btn.show { display: block; }
+
+  .final-card {
+    background: white; border-radius: 24px; padding: 30px 22px;
+    text-align: center; box-shadow: 0 8px 28px rgba(0,0,0,0.1); display: none;
+  }
+  .final-card.show { display: block; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  .final-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #10b981; margin-bottom: 6px; }
+  .final-score { font-family: 'Fredoka One', cursive; font-size: 3rem; color: #5c6bc0; }
+  .final-stars { font-size: 2.2rem; letter-spacing: 4px; margin: 6px 0 12px; }
+  .final-msg   { font-size: 0.95rem; color: #666; font-weight: 700; margin-bottom: 20px; line-height: 1.6; }
+  .wrong-rev   { background: #f0fdf4; border-radius: 12px; padding: 14px; margin-bottom: 18px; text-align: left; }
+  .wr-title    { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #065f46; margin-bottom: 8px; }
+  .wr-item     { font-size: 0.82rem; font-weight: 700; color: #555; padding: 4px 0; border-bottom: 1px solid #f0f0f0; line-height: 1.5; }
+  .wr-ans      { color: #059669; font-weight: 900; }
+  .final-btns  { display: flex; flex-direction: column; gap: 10px; }
+  .retry-btn { padding: 14px; border-radius: 50px; border: none; background: linear-gradient(135deg,#10b981,#059669); color: white; font-family: 'Fredoka One',cursive; font-size: 1.1rem; cursor: pointer; }
+  .mode-btn  { padding: 14px; border-radius: 50px; border: none; background: linear-gradient(135deg,#a78bfa,#7c3aed); color: white; font-family: 'Fredoka One',cursive; font-size: 1.1rem; cursor: pointer; }
+
+  .star-pop { position: fixed; font-size: 1.8rem; pointer-events: none; animation: fly 0.9s ease-out forwards; z-index: 999; }
+  @keyframes fly { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-80px) scale(1.5)} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="g-header">
+    <div class="g-title">🐮 The Cow and the Tiger</div>
+    <div class="g-prog" id="gProg"></div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
+  <div class="score-row">
+    <div class="score-label" id="scoreLabel"></div>
+    <div class="score-val"   id="scoreVal"></div>
+  </div>
+
+  <!-- Story Map always visible -->
+  <div class="story-map" id="storyMap">
+    <h2>📖 Story Map — Read this first!</h2>
+    <div class="story-point">
+      <div class="sp-emoji">🏠</div>
+      <div class="sp-text">
+        <div class="sp-label">SETTING</div>
+        Bala the cow lives in a <b>shadowy forest</b> — that's her home! Every day she walks to a nearby <b>grassy field</b> to graze (eat grass).
+      </div>
+    </div>
+    <div class="story-point">
+      <div class="sp-emoji">🐯</div>
+      <div class="sp-text">
+        <div class="sp-label">PROBLEM</div>
+        One day, a tiger blocks Bala's path and says: <b>"I will eat your calf!"</b><br>
+        Bala says: "Please wait — let me go feed my calf first. <b>I promise I will come back to the forest.</b>"
+      </div>
+    </div>
+    <div class="story-point">
+      <div class="sp-emoji">🌿</div>
+      <div class="sp-text">
+        <div class="sp-label">WHAT BALA DOES</div>
+        Bala goes to the grassy field, feeds her calf, then <b>returns to the shadowy forest</b> — even though she could have run away! She kept her promise.
+      </div>
+    </div>
+    <div class="story-point">
+      <div class="sp-emoji">😲</div>
+      <div class="sp-text">
+        <div class="sp-label">TURNING POINT</div>
+        The tiger is <b>amazed</b>. He never expected Bala to actually come back. Her honesty and bravery move his heart.
+      </div>
+    </div>
+    <div class="story-point">
+      <div class="sp-emoji">💛</div>
+      <div class="sp-text">
+        <div class="sp-label">MORAL</div>
+        <b>Always keep your promises</b> — even when it's hard or scary. The tiger sets Bala and her calf free because of her honesty.
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="setMode('mc')">📝 Reading</button>
+    <button class="tab" onclick="setMode('vocab')">📖 Vocab</button>
+    <button class="tab" onclick="setMode('write')">✏️ Write</button>
+  </div>
+
+  <div class="score-row">
+    <div class="score-label" id="progLabel">Question 1 / 10</div>
+    <div class="score-val"   id="progScore">✅ 0 ❌ 0</div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill2" style="width:0%;background:linear-gradient(90deg,#10b981,#059669)"></div></div>
+  <div class="dots" id="dots"></div>
+
+  <div id="qArea"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextQ()">Next ➡️</button>
+  <div class="final-card" id="finalCard"></div>
+</div>
+
+<script>
+const MC_QS = [
+  {tag:'tag-comp', tagLabel:'Comprehension', emoji:'🐄', type:'mc',
+   text:'What does Bala do to take care of her calf?',
+   opts:['She feeds her calf.','She takes her calf to the shadowy forest.'],
+   ans:0, explain:'Bala takes her calf to graze, feeds it, and takes care of it. She goes back to feed the calf before returning to the tiger.'},
+  {tag:'tag-comp', tagLabel:'Comprehension', emoji:'🌿', type:'mc',
+   text:'What does Bala like to do in the forest?',
+   opts:['Graze in the grassy field near the forest.','Attack the tiger in the forest.'],
+   ans:0, explain:'Bala loves to graze in the grassy field. She is a cow — eating grass is what she does!'},
+  {tag:'tag-infer', tagLabel:'Inference', emoji:'🐯', type:'mc',
+   text:'Why did Bala go back to the shadowy forest?',
+   opts:['She promised the tiger she\'d come back.','She was very hungry.'],
+   ans:0, explain:'Bala made a promise to the tiger. Even though it was scary, she kept her word and returned.'},
+  {tag:'tag-infer', tagLabel:'Inference', emoji:'💛', type:'mc',
+   text:'What happened to the tiger after Bala came back?',
+   opts:['The tiger was amazed and let them go.','The tiger ate the calf.'],
+   ans:0, explain:'The tiger was so impressed by Bala\'s honesty that he let her and her calf go free!'},
+  {tag:'tag-comp', tagLabel:'Comprehension', emoji:'🌳', type:'mc',
+   text:'Where does Bala live?',
+   opts:['In a shadowy forest.','In a grassy field.'],
+   ans:0, explain:'Bala lives in the shadowy forest with her calf.'},
+  {tag:'tag-moral', tagLabel:'Moral', emoji:'📖', type:'mc',
+   text:'What is the type of text "The Cow and the Tiger"?',
+   opts:['A fable — an animal story with a lesson.','A biography — a true story about a real person.','A persuasive text — trying to convince you of something.'],
+   ans:0, explain:'"The Cow and the Tiger" is a fable. Animal characters teach us a life lesson.'},
+  {tag:'tag-moral', tagLabel:'Moral', emoji:'🤝', type:'mc',
+   text:'What is the moral of "The Cow and the Tiger"?',
+   opts:['Always keep your promises.','Never go into the forest alone.','Cows are stronger than tigers.'],
+   ans:0, explain:'The story teaches us: always keep your promises. Bala\'s promise-keeping moved the tiger\'s heart.'},
+];
+
+const VOCAB_QS = [
+  {emoji:'🌿', type:'vocab',
+   sentence:'The deer and cows ____ in the field and eat grass.',
+   blank:'____', ans:'graze', opts:['graze','catch','promise','angry'],
+   explain:'graze = eat grass in a field. Cows and deer graze!'},
+  {emoji:'🎣', type:'vocab',
+   sentence:'We go fishing because we want to ____ some fish.',
+   blank:'____', ans:'catch', opts:['graze','catch','beautiful','forest'],
+   explain:'catch = grab something. You catch fish when you go fishing.'},
+  {emoji:'🤝', type:'vocab',
+   sentence:'I ____ to bring my homework to class tomorrow.',
+   blank:'____', ans:'promise', opts:['graze','always','promise','catch'],
+   explain:'promise = say you will definitely do something.'},
+  {emoji:'😊', type:'vocab',
+   sentence:'Ben feels ____ after his dog runs away.',
+   blank:'____', ans:'sad', opts:['happy','sad','beautiful','angry'],
+   explain:'sad = not happy. If your dog runs away, you feel sad!'},
+  {emoji:'🌸', type:'vocab',
+   sentence:'That painting is ____. It looks very pretty.',
+   blank:'____', ans:'beautiful', opts:['angry','beautiful','sad','always'],
+   explain:'beautiful = very pretty. Something that looks wonderful is beautiful.'},
+  {emoji:'🌳', type:'vocab',
+   sentence:'Bala and her calf live in the shadowy ____.',
+   blank:'____', ans:'forest', opts:['forest','field','graze','calf'],
+   explain:'forest = a large area full of trees. Bala\'s home!'},
+];
+
+const WRITE_QS = [
+  {emoji:'💛', type:'write',
+   text:'What is the moral of "The Cow and the Tiger"? Write a complete sentence.',
+   hint:'Start with: "The moral of this story is..."',
+   sample:'The moral of this story is that you should always keep your promises, just like Bala the cow.'},
+  {emoji:'🐄', type:'write',
+   text:'How are Bala and the tiger different from each other? Write one difference.',
+   hint:'Think about: who is kind? who is scary at first?',
+   sample:'Bala is a kind and honest cow, but the tiger is scary and wants to eat her calf.'},
+];
+
+let mode = 'mc';
+let qi = 0, scoreOk = 0, scoreBad = 0, answered = false, wrongList = [];
+let questions = [];
+
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    t.classList.toggle('active', ['mc','vocab','write'][i] === m);
+  });
+  qi = 0; scoreOk = 0; scoreBad = 0; wrongList = []; answered = false;
+  if (m === 'mc')    questions = [...MC_QS];
+  else if (m === 'vocab') questions = [...VOCAB_QS];
+  else questions = [...WRITE_QS];
+  document.getElementById('finalCard').classList.remove('show');
+  document.getElementById('nextBtn').className = 'next-btn';
+  buildDots();
+  showQ();
+}
+
+function buildDots() {
+  const c = document.getElementById('dots');
+  c.innerHTML = '';
+  questions.forEach((_,i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i===0?' curr':'');
+    d.id = 'dot'+i;
+    c.appendChild(d);
+  });
+}
+
+function updateUI() {
+  document.getElementById('progLabel').textContent = `Question ${qi+1} / ${questions.length}`;
+  document.getElementById('progScore').textContent = `✅ ${scoreOk} ❌ ${scoreBad}`;
+  document.getElementById('pbarFill').style.width = ((qi/questions.length)*100)+'%';
+}
+
+function showQ() {
+  answered = false;
+  updateUI();
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('nextBtn').className = 'next-btn';
+  const q = questions[qi];
+  if (q.type === 'mc')    renderMC(q);
+  else if (q.type === 'vocab') renderVocab(q);
+  else renderWrite(q);
+}
+
+function renderMC(q) {
+  const optsHtml = q.opts.map((o,i) =>
+    `<button class="opt-btn" data-idx="${i}" onclick="pickMC(this)">${o}</button>`
+  ).join('');
+  document.getElementById('qArea').innerHTML = `
+    <div class="q-card" id="qCard">
+      <span class="q-tag ${q.tag}">${q.tagLabel}</span>
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-text">${q.text}</div>
+      <div class="opts">${optsHtml}</div>
+    </div>`;
+}
+
+function pickMC(btn) {
+  if (answered) return; answered = true;
+  const q = questions[qi];
+  const idx = parseInt(btn.dataset.idx);
+  document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === q.ans) {
+    btn.classList.add('correct'); scoreOk++; popStars();
+    fb.innerHTML = '✅ ' + q.explain; fb.className = 'feedback show ok';
+    updateDot(qi,'ok');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelector(`[data-idx="${q.ans}"]`).classList.add('correct');
+    scoreBad++; wrongList.push(q);
+    fb.innerHTML = '❌ ' + q.explain; fb.className = 'feedback show bad';
+    document.getElementById('qCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('qCard')?.classList.remove('shake'), 400);
+    updateDot(qi,'bad');
+  }
+  setNextBtn();
+}
+
+function renderVocab(q) {
+  const sentHtml = q.sentence.replace('____', `<span class="vf-blank">____</span>`);
+  const optsHtml = q.opts.map(o =>
+    `<button class="vf-btn" data-val="${o}" onclick="pickVocab(this)">${o}</button>`
+  ).join('');
+  document.getElementById('qArea').innerHTML = `
+    <div class="q-card" id="qCard">
+      <span class="q-tag tag-vocab">Vocabulary</span>
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="vf-sentence">${sentHtml}</div>
+      <div class="vf-opts">${optsHtml}</div>
+    </div>`;
+}
+
+function pickVocab(btn) {
+  if (answered) return; answered = true;
+  const q = questions[qi];
+  document.querySelectorAll('.vf-btn').forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (btn.dataset.val === q.ans) {
+    btn.classList.add('correct'); scoreOk++; popStars();
+    fb.innerHTML = '✅ ' + q.explain; fb.className = 'feedback show ok';
+    updateDot(qi,'ok');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelector(`[data-val="${q.ans}"]`).classList.add('correct');
+    scoreBad++; wrongList.push(q);
+    fb.innerHTML = '❌ ' + q.explain; fb.className = 'feedback show bad';
+    updateDot(qi,'bad');
+  }
+  setNextBtn();
+}
+
+function renderWrite(q) {
+  document.getElementById('qArea').innerHTML = `
+    <div class="q-card" id="qCard">
+      <span class="q-tag tag-moral">Open Question</span>
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-text">${q.text}</div>
+      <div style="background:#f0fdf4;border-radius:10px;padding:10px;font-size:0.82rem;font-weight:700;color:#065f46;margin-bottom:12px">
+        💡 ${q.hint}
+      </div>
+      <textarea class="write-area" id="writeInput" rows="4" placeholder="Write your complete sentence here..."></textarea>
+      <button class="show-ans-btn" onclick="showWriteAns()">Show Sample Answer ✅</button>
+      <div class="sample-ans" id="sampleAns">"${q.sample}"</div>
+    </div>`;
+}
+
+function showWriteAns() {
+  if (answered) return;
+  const inp = document.getElementById('writeInput');
+  if (!inp.value.trim()) {
+    document.getElementById('feedback').innerHTML = '✍️ Please write your answer first!';
+    document.getElementById('feedback').className = 'feedback show bad';
+    return;
+  }
+  answered = true;
+  document.getElementById('sampleAns').classList.add('show');
+  document.getElementById('feedback').innerHTML = '✏️ Compare your answer with the sample!';
+  document.getElementById('feedback').className = 'feedback show ok';
+  scoreOk++;
+  updateDot(qi,'ok');
+  setNextBtn();
+}
+
+function setNextBtn() {
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === questions.length-1 ? 'See Results 🎊' : 'Next ➡️';
+  nb.className = 'next-btn show';
+  updateUI();
+}
+
+function nextQ() {
+  qi++;
+  if (qi >= questions.length) showDone();
+  else showQ();
+}
+
+function showDone() {
+  document.getElementById('qArea').innerHTML = '';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('nextBtn').className = 'next-btn';
+  const total = questions.length;
+  const pct = scoreOk / total;
+  const stars = pct===1?'⭐⭐⭐':pct>=0.7?'⭐⭐':'⭐';
+  const msg = pct===1?'Amazing! You know the story perfectly! 🏆':pct>=0.7?'Great work! Almost perfect!':'Read the Story Map again and try once more!';
+
+  const wrongHtml = wrongList.length > 0 ? `
+    <div class="wrong-rev">
+      <div class="wr-title">📝 Review these:</div>
+      ${wrongList.slice(0,4).map(q => `
+        <div class="wr-item">${q.text?.substring(0,40)}...<br>
+        → <span class="wr-ans">${q.opts?.[q.ans] || q.ans}</span></div>`).join('')}
+    </div>` : '';
+
+  document.getElementById('finalCard').innerHTML = `
+    <div class="final-title">🐮 Quiz Done!</div>
+    <div class="final-score">${scoreOk} / ${total}</div>
+    <div class="final-stars">${stars}</div>
+    <div class="final-msg">${msg}</div>
+    ${wrongHtml}
+    <div class="final-btns">
+      <button class="retry-btn" onclick="setMode('${mode}')">🔄 Try Again!</button>
+      <button class="mode-btn" onclick="setMode('vocab')">📖 Try Vocabulary!</button>
+    </div>`;
+  document.getElementById('finalCard').classList.add('show');
+  for (let i=0;i<4;i++) setTimeout(popStars,i*300);
+}
+
+function updateDot(i, state) {
+  const d = document.getElementById('dot'+i);
+  if (!d) return;
+  d.className = 'dot '+state;
+  const next = document.getElementById('dot'+(i+1));
+  if (next && state!=='curr') next.classList.add('curr');
+}
+
+function popStars() {
+  const emojis = ['⭐','✨','🌟','🎉','🐄','🐯','💛'];
+  for (let i=0;i<4;i++) {
+    setTimeout(() => {
+      const s = document.createElement('div'); s.className = 'star-pop';
+      s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      s.style.left = (15+Math.random()*70)+'vw';
+      s.style.top  = (20+Math.random()*50)+'vh';
+      document.body.appendChild(s);
+      setTimeout(()=>s.remove(),900);
+    },i*110);
+  }
+}
+
+window.onload = () => setMode('mc');
+</script>
+</body>
+</html>
