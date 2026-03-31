@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✏️ FET Spelling Quiz Week 1–7</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #fff8f0; font-family: 'Nunito', sans-serif; min-height: 100vh; }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 16px 16px 60px; }
+  .g-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .g-title { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #333; }
+  .g-prog  { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #aaa; }
+  .pbar-wrap { background: #eee; border-radius: 99px; height: 8px; margin-bottom: 14px; overflow: hidden; }
+  .pbar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg,#f97316,#f59e0b); transition: width 0.4s; }
+  .score-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+  .score-label { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #aaa; }
+  .score-val   { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #34d399; }
+
+  /* Week selector */
+  .week-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+  .week-btn {
+    padding: 14px 8px; border-radius: 16px; border: 3px solid #eee;
+    background: white; font-family: 'Fredoka One', cursive; font-size: 0.9rem;
+    color: #333; cursor: pointer; text-align: center; transition: all 0.15s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
+  .week-btn:hover { border-color: #f97316; background: #fff7ed; transform: translateY(-2px); }
+  .week-btn.done { background: #d1fae5; border-color: #34d399; color: #065f46; }
+
+  /* Spelling card */
+  .spell-card {
+    background: white; border-radius: 20px; padding: 28px 20px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+    text-align: center; animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes popIn { from{opacity:0;transform:scale(0.88)} to{opacity:1;transform:scale(1)} }
+  .spell-card.shake { animation: shake 0.35s ease; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+  .spell-emoji { font-size: 3rem; display: block; margin-bottom: 12px; }
+  .spell-meaning { font-family: 'Fredoka One', cursive; font-size: 1.5rem; color: #333; margin-bottom: 6px; }
+  .spell-hint { font-size: 0.82rem; color: #aaa; font-weight: 700; margin-bottom: 20px; }
+  .spell-hint .letter-count {
+    display: inline-block; background: #f3e8ff; color: #7c3aed;
+    border-radius: 20px; padding: 2px 10px; font-family: 'Fredoka One', cursive;
+  }
+
+  /* Letter input area */
+  .letter-boxes { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 18px; }
+  .letter-box {
+    width: 42px; height: 48px; border-radius: 10px; border: 3px solid #ddd;
+    background: #f9f9f9; font-family: 'Fredoka One', cursive;
+    font-size: 1.4rem; text-align: center; outline: none;
+    transition: border-color 0.15s; color: #333; caret-color: transparent;
+  }
+  .letter-box:focus { border-color: #f97316; background: #fff7ed; }
+  .letter-box.correct { background: #d1fae5; border-color: #34d399; color: #065f46; }
+  .letter-box.wrong   { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+
+  /* OR: word input */
+  .word-input {
+    width: 100%; padding: 14px 16px; border-radius: 14px; border: 3px solid #ddd;
+    background: #f9f9f9; font-family: 'Fredoka One', cursive; font-size: 1.5rem;
+    text-align: center; outline: none; color: #333; letter-spacing: 3px;
+    transition: border-color 0.2s;
+  }
+  .word-input:focus { border-color: #f97316; background: #fff7ed; }
+  .word-input.correct { background: #d1fae5; border-color: #34d399; color: #065f46; }
+  .word-input.wrong   { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+
+  .check-btn {
+    width: 100%; padding: 14px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg, #f97316, #f59e0b);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+    cursor: pointer; margin-bottom: 12px; box-shadow: 0 4px 14px rgba(249,115,22,0.3);
+    transition: transform 0.1s;
+  }
+  .check-btn:active { transform: scale(0.97); }
+
+  /* Feedback */
+  .feedback {
+    border-radius: 14px; padding: 12px 16px; margin-bottom: 12px;
+    font-weight: 800; font-size: 0.95rem; display: none; text-align: center; line-height: 1.5;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok  { background: #d1fae5; color: #065f46; border: 3px solid #6ee7b7; }
+  .feedback.bad { background: #fee2e2; color: #991b1b; border: 3px solid #fca5a5; }
+
+  .next-btn {
+    width: 100%; padding: 15px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg, #f97316, #f59e0b);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+    cursor: pointer; display: none; box-shadow: 0 4px 14px rgba(249,115,22,0.3);
+  }
+  .next-btn.show { display: block; }
+
+  /* Fill in Blank 6-button grid */
+  .fill-opts { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 4px; }
+  .fill-btn {
+    padding: 12px 6px; border-radius: 14px; border: 3px solid #eee;
+    background: #f9f9f9; font-family: 'Fredoka One', cursive;
+    font-size: 0.95rem; color: #333; cursor: pointer; transition: all 0.15s; text-align: center;
+  }
+  .fill-btn:hover   { border-color: #8b5cf6; background: #f5f3ff; }
+  .fill-btn.correct { background: #d1fae5; border-color: #34d399; color: #065f46; }
+  .fill-btn.wrong   { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+  .fill-btn:disabled { cursor: default; }
+  /* Dots */
+  .dots { display: flex; justify-content: center; gap: 5px; margin-bottom: 12px; flex-wrap: wrap; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #e5e7eb; transition: all 0.3s; }
+  .dot.curr { background: #f97316; transform: scale(1.4); }
+  .dot.ok   { background: #34d399; }
+  .dot.bad  { background: #f87171; }
+
+  /* Final */
+  .final-card {
+    background: white; border-radius: 24px; padding: 30px 22px;
+    text-align: center; box-shadow: 0 8px 28px rgba(0,0,0,0.1); display: none;
+  }
+  .final-card.show { display: block; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  .final-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #f97316; margin-bottom: 6px; }
+  .final-score { font-family: 'Fredoka One', cursive; font-size: 3rem; color: #5c6bc0; }
+  .final-stars { font-size: 2.2rem; letter-spacing: 4px; margin: 6px 0 12px; }
+  .final-msg   { font-size: 0.95rem; color: #666; font-weight: 700; margin-bottom: 20px; line-height: 1.6; }
+  .wrong-rev   { background: #fff7ed; border-radius: 12px; padding: 14px; margin-bottom: 18px; text-align: left; }
+  .wr-title    { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #c2410c; margin-bottom: 8px; }
+  .wr-item     { font-size: 0.85rem; font-weight: 700; color: #555; padding: 4px 0; border-bottom: 1px solid #f5f5f5; }
+  .wr-ans      { color: #059669; font-weight: 900; }
+  .final-btns  { display: flex; flex-direction: column; gap: 10px; }
+  .retry-btn { padding: 14px; border-radius: 50px; border: none; background: linear-gradient(135deg,#f97316,#f59e0b); color: white; font-family: 'Fredoka One',cursive; font-size: 1.1rem; cursor: pointer; }
+  .back-btn  { padding: 14px; border-radius: 50px; border: none; background: linear-gradient(135deg,#a78bfa,#7c3aed); color: white; font-family: 'Fredoka One',cursive; font-size: 1.1rem; cursor: pointer; }
+
+  .star-pop { position: fixed; font-size: 1.8rem; pointer-events: none; animation: fly 0.9s ease-out forwards; z-index: 999; }
+  @keyframes fly { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-80px) scale(1.5)} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="g-header">
+    <div class="g-title" id="gTitle">✏️ FET Spelling</div>
+    <div class="g-prog" id="gProg"></div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
+  <div class="score-row">
+    <div class="score-label" id="scoreLabel"></div>
+    <div class="score-val"   id="scoreVal"></div>
+  </div>
+  <div id="content"></div>
+  <div class="dots"     id="dots"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="handleNext()"></button>
+  <div class="final-card" id="finalCard"></div>
+</div>
+
+<script>
+// ===== VOCABULARY DATA =====
+const WEEKS = {
+  "Week 1/2": {
+    title: "🐮 The Cow and the Tiger",
+    words: [
+      {word:"calf",      meaning:"小牛",      emoji:"🐄", hint:"baby cow",             sentence:"Bala takes care of her ____ every day.",                          sentHint:"小牛"},
+      {word:"forest",    meaning:"森林",      emoji:"🌳", hint:"trees everywhere",     sentence:"Bala lives in a shadowy ____ with her calf.",                     sentHint:"森林"},
+      {word:"angry",     meaning:"生氣的",    emoji:"😡", hint:"very mad",             sentence:"The tiger was ____ and wanted to eat the calf.",                  sentHint:"生氣的"},
+      {word:"happy",     meaning:"快樂的",    emoji:"😊", hint:"feeling good",         sentence:"Bala was ____ to see her calf safe.",                            sentHint:"快樂的"},
+      {word:"promise",   meaning:"承諾",      emoji:"🤝", hint:"you must keep it",     sentence:"I ____ to bring my homework to class tomorrow.",                  sentHint:"承諾"},
+      {word:"graze",     meaning:"吃草",      emoji:"🌿", hint:"cows do this in fields",sentence:"The deer and cows ____ in the field and eat grass.",             sentHint:"吃草"},
+      {word:"catch",     meaning:"抓住",      emoji:"🎣", hint:"grab something",       sentence:"We go fishing because we want to ____ some fish.",               sentHint:"抓住"},
+      {word:"beautiful", meaning:"美麗的",    emoji:"🌸", hint:"very pretty",          sentence:"That painting is ____. It looks very pretty.",                   sentHint:"美麗的"},
+      {word:"sad",       meaning:"傷心的",    emoji:"😢", hint:"not happy",            sentence:"Ben feels ____ after his dog runs away.",                        sentHint:"傷心的"},
+      {word:"always",    meaning:"總是",      emoji:"♾️", hint:"every single time",    sentence:"Tigers ____ protect their babies from other animals.",           sentHint:"總是"},
+    ]
+  },
+  "Week 3": {
+    title: "🤝 Vocabulary",
+    words: [
+      {word:"agree",     meaning:"同意",      emoji:"👍", hint:"say yes",             sentence:"Our teacher is ____ to help students with their work.",          sentHint:"同意"},
+      {word:"quickly",   meaning:"快速地",    emoji:"⚡", hint:"very fast",           sentence:"Bala feeds her calf ____ and returns to the forest.",            sentHint:"快速地"},
+      {word:"mad",       meaning:"生氣的",    emoji:"😤", hint:"very angry",          sentence:"He was ____ to see his friend for the first time in two years.",  sentHint:"生氣的"},
+      {word:"protect",   meaning:"保護",      emoji:"🛡️", hint:"keep safe",           sentence:"Tigers always ____ their babies from other animals.",            sentHint:"保護"},
+      {word:"truth",     meaning:"真相",      emoji:"💬", hint:"not a lie",           sentence:"It is important to always tell the ____ to other people.",       sentHint:"真相"},
+      {word:"glad",      meaning:"高興的",    emoji:"😄", hint:"pleased, happy",      sentence:"I was ____ to hear the good news.",                             sentHint:"高興的"},
+    ]
+  },
+  "Week 4": {
+    title: "🎨 Thumbs Up for Art and Music",
+    words: [
+      {word:"art",         meaning:"藝術",      emoji:"🎨", hint:"painting, drawing",         sentence:"My brother makes creative things in ____ class.",            sentHint:"藝術"},
+      {word:"learn",       meaning:"學習",      emoji:"📚", hint:"get new knowledge",         sentence:"I like to ____ new things at school every day.",            sentHint:"學習"},
+      {word:"problem",     meaning:"問題",      emoji:"🤔", hint:"something wrong",            sentence:"Having a ____ is okay — you just need to find a solution.",  sentHint:"問題"},
+      {word:"think",       meaning:"思考",      emoji:"💭", hint:"use your brain",             sentence:"Close your eyes and ____ of a new animal.",                 sentHint:"思考"},
+      {word:"creative",    meaning:"有創意的",  emoji:"✨", hint:"full of new ideas",          sentence:"Art helps you be ____ and use your imagination.",           sentHint:"有創意的"},
+      {word:"important",   meaning:"重要的",    emoji:"⭐", hint:"really matters",             sentence:"It is ____ to wash your hands before you eat.",            sentHint:"重要的"},
+      {word:"imagination", meaning:"想像力",    emoji:"🦄", hint:"picturing things in mind",   sentence:"Close your eyes and use your ____ to think of a new animal.", sentHint:"想像力"},
+      {word:"school",      meaning:"學校",      emoji:"🏫", hint:"where you study",            sentence:"I like going to ____ at KCIS.",                             sentHint:"學校"},
+    ]
+  },
+  "Week 5": {
+    title: "📖 Vocabulary",
+    words: [
+      {word:"remember",    meaning:"記住",      emoji:"🧠", hint:"keep in memory",             sentence:"Jerry can't ____ his phone number.",                        sentHint:"記住"},
+      {word:"concentrate", meaning:"專注",      emoji:"🎯", hint:"focus hard",                 sentence:"Please be quiet so everyone can ____ on their work.",       sentHint:"專注"},
+      {word:"reason",      meaning:"原因",      emoji:"❓", hint:"why something happened",     sentence:"The ____ why I fell is that I was running.",                sentHint:"原因"},
+      {word:"amazing",     meaning:"令人驚嘆的",emoji:"🤩", hint:"wow, incredible",            sentence:"Wow! It is ____ to see so many stars in the sky!",         sentHint:"令人驚嘆的"},
+      {word:"persuade",    meaning:"說服",      emoji:"💬", hint:"make someone agree",         sentence:"The author tries to ____ the reader that art is important.", sentHint:"說服"},
+      {word:"opinion",     meaning:"意見",      emoji:"💡", hint:"what you think",             sentence:"In a persuasive text, the author shares his ____.",         sentHint:"意見"},
+    ]
+  },
+  "Week 6": {
+    title: "⚾ Jackie Robinson I",
+    words: [
+      {word:"baseball",  meaning:"棒球",      emoji:"⚾", hint:"bat and ball sport",          sentence:"I like to play ____. What sport do you like?",            sentHint:"棒球"},
+      {word:"cheer",     meaning:"歡呼",      emoji:"📣", hint:"shout for joy",               sentence:"Most baseball fans ____ for Robinson.",                   sentHint:"歡呼"},
+      {word:"college",   meaning:"大學",      emoji:"🎓", hint:"school after high school",    sentence:"Jackie Robinson played four sports in ____.",             sentHint:"大學"},
+      {word:"field",     meaning:"球場/田野", emoji:"🌿", hint:"open area of land",           sentence:"The deer and cows graze in the ____.",                   sentHint:"球場"},
+      {word:"sport",     meaning:"運動",      emoji:"🏅", hint:"game you play",               sentence:"I like to play basketball. What ____ do you like?",      sentHint:"運動"},
+      {word:"meet",      meaning:"見面",      emoji:"🤝", hint:"see someone for first time",  sentence:"Do you want to ____ me at the park tomorrow morning?",   sentHint:"見面"},
+      {word:"team",      meaning:"隊伍",      emoji:"👥", hint:"group working together",      sentence:"We are on the same ____ in PE class.",                   sentHint:"隊伍"},
+      {word:"allowed",   meaning:"被允許的",  emoji:"✅", hint:"permitted to do",             sentence:"We are not ____ to speak Chinese in English class.",      sentHint:"被允許的"},
+      {word:"boo",       meaning:"噓聲",      emoji:"👎", hint:"sound to show disapproval",   sentence:"It is not nice to ____ your classmates.",               sentHint:"噓聲"},
+      {word:"love",      meaning:"愛",        emoji:"❤️", hint:"strong feeling of caring",    sentence:"I ____ my mom very much. She is the best!",             sentHint:"愛"},
+    ]
+  },
+  "Week 7": {
+    title: "⚾ Jackie Robinson II",
+    words: [
+      {word:"admire",   meaning:"敬佩",      emoji:"🌟", hint:"respect and look up to",     sentence:"I ____ Jackie Robinson. He made a difference with his life.", sentHint:"敬佩"},
+      {word:"season",   meaning:"賽季/季節", emoji:"🗓️", hint:"baseball games period",       sentence:"Jackie got MVP in his third ____.",                          sentHint:"賽季"},
+      {word:"become",   meaning:"成為",      emoji:"🦋", hint:"change into something",       sentence:"Jackie Robinson ____ the first African American in the Major League.", sentHint:"成為"},
+      {word:"nasty",    meaning:"惡意的",    emoji:"😤", hint:"mean and hurtful",            sentence:"Some people wrote ____ letters to Jackie Robinson.",          sentHint:"惡意的"},
+      {word:"die",      meaning:"死亡",      emoji:"🕊️", hint:"stop living",                 sentence:"Robinson ____ on October 24. He was 53 years old.",           sentHint:"死亡"},
+      {word:"hard",     meaning:"困難的",    emoji:"💪", hint:"not easy",                    sentence:"It was ____ for Jackie to play when people were unkind.",    sentHint:"困難的"},
+      {word:"stand up", meaning:"站出來",    emoji:"✊", hint:"defend yourself",             sentence:"After a while, Jackie began to ____ for himself.",            sentHint:"站出來"},
+      {word:"teammate", meaning:"隊友",      emoji:"👥", hint:"someone on your team",        sentence:"Jackie's ____ was mean to him at first.",                    sentHint:"隊友"},
+    ]
+  }
+};
+
+// ===== STATE =====
+let currentWeek = null;
+let currentWords = [];
+let qi = 0, score = 0, wrong = [], answered = false;
+const weeksDone = {};
+
+function clearFb() { document.getElementById('feedback').className = 'feedback'; }
+function fb(msg, type) { const el = document.getElementById('feedback'); el.innerHTML = msg; el.className = 'feedback show ' + type; }
+
+// ===== WEEK SELECT =====
+function showWeekSelect() {
+  currentWeek = null;
+  document.getElementById('gTitle').textContent = '✏️ FET Spelling Quiz';
+  document.getElementById('gProg').textContent = '';
+  document.getElementById('scoreLabel').textContent = 'Choose a week to practice!';
+  document.getElementById('scoreVal').textContent = '';
+  document.getElementById('dots').innerHTML = '';
+  document.getElementById('pbarFill').style.width = '0%';
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+  document.getElementById('finalCard').classList.remove('show');
+
+  const spellBtns = Object.keys(WEEKS).map(wk => {
+    const done = weeksDone[wk+'-spell'] ? ' done' : '';
+    return `<button class="week-btn${done}" onclick="beginMode('${wk}','spell')">
+      ${done ? '✅' : '✏️'}<br><b>${wk}</b><br>
+      <small style="font-family:Nunito;font-weight:700;font-size:0.8rem">${WEEKS[wk].title}</small>
+    </button>`;
+  }).join('');
+
+  const fillBtns = Object.keys(WEEKS).map(wk => {
+    const done = weeksDone[wk+'-fill'] ? ' done' : '';
+    return `<button class="week-btn${done}" style="${done ? '' : 'border-color:#8b5cf6'}" onclick="beginMode('${wk}','fill')">
+      ${done ? '✅' : '🔤'}<br><b>${wk}</b><br>
+      <small style="font-family:Nunito;font-weight:700;font-size:0.8rem">${WEEKS[wk].title}</small>
+    </button>`;
+  }).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div style="background:white;border-radius:20px;padding:20px 18px;box-shadow:0 6px 20px rgba(0,0,0,0.08);margin-bottom:14px">
+      <div style="font-family:'Fredoka One',cursive;font-size:1rem;color:#f97316;font-weight:900;margin-bottom:10px">✏️ Spelling — 看中文拼英文</div>
+      <div class="week-grid">${spellBtns}</div>
+    </div>
+    <div style="background:white;border-radius:20px;padding:20px 18px;box-shadow:0 6px 20px rgba(0,0,0,0.08);margin-bottom:14px">
+      <div style="font-family:'Fredoka One',cursive;font-size:1rem;color:#7c3aed;font-weight:900;margin-bottom:10px">🔤 Fill in Blank — 選出正確單字</div>
+      <div class="week-grid">${fillBtns}</div>
+    </div>`;
+}
+
+// ===== MODE: 'spell' or 'fill' =====
+let gameMode = 'spell';
+
+function beginMode(wk, mode) {
+  gameMode = mode;
+  currentWeek = wk;
+  currentWords = [...WEEKS[wk].words].sort(() => Math.random() - 0.5);
+  qi = 0; score = 0; wrong = []; answered = false;
+  document.getElementById('finalCard').classList.remove('show');
+  buildDots(currentWords.length);
+  if (mode === 'spell') showSpellQ();
+  else showFillQ();
+}
+
+// ===== SPELLING QUESTION =====
+function showSpellQ() {
+  answered = false;
+  const q = currentWords[qi];
+  const total = currentWords.length;
+  document.getElementById('pbarFill').style.width = ((qi / total) * 100) + '%';
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  const letterBoxes = q.word.split('').map((_, i) =>
+    `<input class="letter-box" id="lb${i}" maxlength="1" type="text"
+      oninput="handleLetterInput(${i}, ${q.word.length})"
+      onkeydown="handleKeyDown(event, ${i})"
+      autocomplete="off" autocorrect="off" spellcheck="false">`
+  ).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div class="spell-card" id="spellCard">
+      <span class="spell-emoji">${q.emoji}</span>
+      <div class="spell-meaning">${q.meaning}</div>
+      <div class="spell-hint">${q.hint} &nbsp; <span class="letter-count">${q.word.length} letters</span></div>
+      <div class="letter-boxes">${letterBoxes}</div>
+      <button class="check-btn" onclick="checkSpelling()">Check ✅</button>
+    </div>`;
+
+  // Focus first box
+  setTimeout(() => document.getElementById('lb0')?.focus(), 50);
+  updateDot(qi, 'curr');
+}
+
+function handleLetterInput(idx, total) {
+  const el = document.getElementById(`lb${idx}`);
+  el.value = el.value.toUpperCase().slice(-1);
+  if (el.value && idx < total - 1) {
+    document.getElementById(`lb${idx+1}`)?.focus();
+  }
+}
+
+function handleKeyDown(e, idx) {
+  if (e.key === 'Backspace') {
+    const el = document.getElementById(`lb${idx}`);
+    if (!el.value && idx > 0) {
+      document.getElementById(`lb${idx-1}`)?.focus();
+    }
+  }
+  if (e.key === 'Enter') checkSpelling();
+}
+
+function checkSpelling() {
+  if (answered) return;
+  const q = currentWords[qi];
+  const letters = q.word.split('');
+  let typed = '';
+  let allCorrect = true;
+
+  letters.forEach((ch, i) => {
+    const box = document.getElementById(`lb${i}`);
+    const val = (box.value || '').toLowerCase();
+    typed += val;
+    box.classList.remove('correct','wrong');
+    if (val === ch.toLowerCase()) {
+      box.classList.add('correct');
+    } else {
+      box.classList.add('wrong');
+      allCorrect = false;
+    }
+  });
+
+  if (!typed.trim()) {
+    fb('Please type the spelling first!', 'bad');
+    return;
+  }
+
+  answered = true;
+  document.querySelectorAll('.letter-box').forEach(b => b.disabled = true);
+
+  if (allCorrect) {
+    score++;
+    fb(`✅ "${q.word}" — correct! ${q.meaning} 🎉`, 'ok');
+    popStars();
+    updateDot(qi, 'ok');
+  } else {
+    wrong.push(q);
+    fb(`❌ The correct spelling is: <b>${q.word}</b>`, 'bad');
+    // Show correct in boxes
+    letters.forEach((ch, i) => {
+      const box = document.getElementById(`lb${i}`);
+      box.value = ch.toUpperCase();
+      box.className = 'letter-box correct';
+    });
+    updateDot(qi, 'bad');
+    document.getElementById('spellCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('spellCard')?.classList.remove('shake'), 400);
+  }
+
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === currentWords.length - 1 ? 'See Results 🎊' : 'Next Word ➡️';
+  nb.className = 'next-btn show';
+}
+
+// ===== FILL IN BLANK QUESTION =====
+function showFillQ() {
+  answered = false;
+  const q = currentWords[qi];
+  const total = currentWords.length;
+  document.getElementById('pbarFill').style.width = ((qi / total) * 100) + '%';
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  // Build 6 options: correct + 5 random from same week (no duplicates)
+  const allWords = WEEKS[currentWeek].words;
+  const distractors = allWords
+    .filter(w => w.word !== q.word)
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 5);
+  const opts = [...distractors, q].sort(() => Math.random() - 0.5);
+
+  const sentHtml = q.sentence.replace('____', `<span style="display:inline-block;min-width:80px;border-bottom:3px solid #8b5cf6;color:#7c3aed;font-weight:900;text-align:center;padding:0 4px">____</span>`);
+  const optsHtml = opts.map(o =>
+    `<button class="fill-btn" data-val="${o.word}" onclick="pickFill(this)">${o.word}</button>`
+  ).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div style="display:inline-block;background:#f5f3ff;color:#6d28d9;font-family:'Fredoka One',cursive;font-size:0.8rem;letter-spacing:2px;text-transform:uppercase;border-radius:20px;padding:4px 14px;margin-bottom:12px">🔤 Fill in the Blank</div>
+    <div class="spell-card" id="spellCard">
+      <span class="spell-emoji">${q.emoji}</span>
+      <div style="font-size:1.05rem;font-weight:800;color:#333;text-align:center;line-height:1.8;margin-bottom:6px">${sentHtml}</div>
+      <div style="font-size:0.82rem;color:#aaa;font-weight:700;text-align:center;margin-bottom:16px">中文提示：${q.sentHint}</div>
+      <div class="fill-opts">${optsHtml}</div>
+    </div>`;
+
+  updateDot(qi, 'curr');
+}
+
+function pickFill(btn) {
+  if (answered) return; answered = true;
+  const q = currentWords[qi];
+  document.querySelectorAll('.fill-btn').forEach(b => b.disabled = true);
+  if (btn.dataset.val === q.word) {
+    btn.classList.add('correct'); score++;
+    fb(`✅ "${q.word}" — ${q.meaning}! ${q.hint}`, 'ok');
+    popStars(); updateDot(qi, 'ok');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelector(`[data-val="${q.word}"]`)?.classList.add('correct');
+    wrong.push(q);
+    fb(`❌ The answer is "${q.word}" — ${q.meaning}`, 'bad');
+    document.getElementById('spellCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('spellCard')?.classList.remove('shake'), 400);
+    updateDot(qi, 'bad');
+  }
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === currentWords.length - 1 ? 'See Results 🎊' : 'Next Word ➡️';
+  nb.className = 'next-btn show';
+}
+
+function handleNext() {
+  qi++;
+  if (qi < currentWords.length) {
+    if (gameMode === 'spell') showSpellQ();
+    else showFillQ();
+  } else {
+    showFinal();
+  }
+}
+
+function showFinal() {
+  weeksDone[currentWeek + '-' + gameMode] = true;
+  const total = currentWords.length;
+  const pct = score / total;
+  const stars = pct === 1 ? '⭐⭐⭐' : pct >= 0.7 ? '⭐⭐' : '⭐';
+  const msg = pct === 1 ? 'Perfect spelling! You are a spelling master! 🏆' :
+              pct >= 0.7 ? 'Great job! Almost perfect!' :
+              'Keep practicing! You can do it!';
+
+  document.getElementById('dots').innerHTML = '';
+  clearFb();
+  document.getElementById('content').innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+  document.getElementById('pbarFill').style.width = '100%';
+
+  const wrongHtml = wrong.length > 0 ? `
+    <div class="wrong-rev">
+      <div class="wr-title">📝 Practice these spellings:</div>
+      ${wrong.map(q => `
+        <div class="wr-item">
+          ${q.emoji} ${q.meaning} → <span class="wr-ans">${q.word}</span>
+          <small style="color:#aaa"> (${q.hint})</small>
+        </div>`).join('')}
+    </div>` : '';
+
+  document.getElementById('finalCard').innerHTML = `
+    <div class="final-title">✏️ ${currentWeek} Done!</div>
+    <div class="final-score">${score} / ${total}</div>
+    <div class="final-stars">${stars}</div>
+    <div class="final-msg">${msg}</div>
+    ${wrongHtml}
+    <div class="final-btns">
+      <button class="retry-btn" onclick="beginMode(currentWeek, gameMode)">🔄 Retry This Week</button>
+      <button class="back-btn" onclick="showWeekSelect()">📚 Choose Another Week</button>
+    </div>`;
+  document.getElementById('finalCard').classList.add('show');
+  for (let i = 0; i < 4; i++) setTimeout(popStars, i * 250);
+}
+
+function buildDots(n) {
+  const c = document.getElementById('dots');
+  c.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' curr' : '');
+    d.id = 'dot' + i;
+    c.appendChild(d);
+  }
+}
+
+function updateDot(i, state) {
+  const d = document.getElementById('dot' + i);
+  if (!d) return;
+  d.className = 'dot ' + state;
+  const next = document.getElementById('dot' + (i+1));
+  if (next && state !== 'curr') next.classList.add('curr');
+}
+
+function popStars() {
+  const emojis = ['⭐','✨','🌟','🎉','✏️','📝','🏆'];
+  for (let i = 0; i < 4; i++) {
+    setTimeout(() => {
+      const s = document.createElement('div'); s.className = 'star-pop';
+      s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      s.style.left = (15 + Math.random() * 70) + 'vw';
+      s.style.top  = (20 + Math.random() * 50) + 'vh';
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }, i * 110);
+  }
+}
+
+window.onload = () => showWeekSelect();
+</script>
+</body>
+</html>
