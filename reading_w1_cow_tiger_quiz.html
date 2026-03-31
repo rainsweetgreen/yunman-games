@@ -175,7 +175,7 @@
       <div class="sp-emoji">🏠</div>
       <div class="sp-text">
         <div class="sp-label">SETTING</div>
-        Bala the cow lives in a <b>shadowy forest</b> — that's her home! Every day she walks to a nearby <b>grassy field</b> to graze (eat grass).
+        Bala the cow loves to graze in the <b>grassy field</b> every day and take care of her calf. Near the field is a <b>shadowy forest</b> — home to a dangerous tiger!
       </div>
     </div>
     <div class="story-point">
@@ -211,9 +211,9 @@
 
   <!-- Tabs -->
   <div class="tabs">
-    <button class="tab active" onclick="setMode('mc')">📝 Reading</button>
-    <button class="tab" onclick="setMode('vocab')">📖 Vocab</button>
-    <button class="tab" onclick="setMode('write')">✏️ Write</button>
+    <button class="tab active" onclick="setMode(this.dataset.m)" data-m="mc">📝 Reading</button>
+    <button class="tab" onclick="setMode(this.dataset.m)" data-m="vocab">📖 Vocab</button>
+    <button class="tab" onclick="setMode(this.dataset.m)" data-m="write">✏️ Write</button>
   </div>
 
   <div class="score-row">
@@ -240,25 +240,25 @@ const MC_QS = [
    opts:['Graze in the grassy field near the forest.','Attack the tiger in the forest.'],
    ans:0, explain:'Bala loves to graze in the grassy field. She is a cow — eating grass is what she does!'},
   {tag:'tag-infer', tagLabel:'Inference', emoji:'🐯', type:'mc',
-   text:'Why did Bala go back to the shadowy forest?',
-   opts:['She promised the tiger she\'d come back.','She was very hungry.'],
+   text:"Why did Bala go back to the shadowy forest?",
+   opts:["She made a promise to come back to the tiger.","She was very hungry."],
    ans:0, explain:'Bala made a promise to the tiger. Even though it was scary, she kept her word and returned.'},
   {tag:'tag-infer', tagLabel:'Inference', emoji:'💛', type:'mc',
    text:'What happened to the tiger after Bala came back?',
    opts:['The tiger was amazed and let them go.','The tiger ate the calf.'],
-   ans:0, explain:'The tiger was so impressed by Bala\'s honesty that he let her and her calf go free!'},
+   ans:0, explain:'The tiger was amazed by Bala and let her and her calf go free!'},
   {tag:'tag-comp', tagLabel:'Comprehension', emoji:'🌳', type:'mc',
    text:'Where does Bala live?',
-   opts:['In a shadowy forest.','In a grassy field.'],
-   ans:0, explain:'Bala lives in the shadowy forest with her calf.'},
+   opts:['In a grassy field near the shadowy forest.','Deep inside the shadowy forest.'],
+   ans:0, explain:'Bala grazes in the grassy field. The shadowy forest is nearby where the tiger lives!'},
   {tag:'tag-moral', tagLabel:'Moral', emoji:'📖', type:'mc',
    text:'What is the type of text "The Cow and the Tiger"?',
    opts:['A fable — an animal story with a lesson.','A biography — a true story about a real person.','A persuasive text — trying to convince you of something.'],
-   ans:0, explain:'"The Cow and the Tiger" is a fable. Animal characters teach us a life lesson.'},
+   ans:0, explain:'The Cow and the Tiger is a fable — animal characters teach us a life lesson.'},
   {tag:'tag-moral', tagLabel:'Moral', emoji:'🤝', type:'mc',
    text:'What is the moral of "The Cow and the Tiger"?',
    opts:['Always keep your promises.','Never go into the forest alone.','Cows are stronger than tigers.'],
-   ans:0, explain:'The story teaches us: always keep your promises. Bala\'s promise-keeping moved the tiger\'s heart.'},
+   ans:0, explain:'The story teaches us: always keep your promises. Bala kept her word and moved the tiger!'},
 ];
 
 const VOCAB_QS = [
@@ -283,9 +283,9 @@ const VOCAB_QS = [
    blank:'____', ans:'beautiful', opts:['angry','beautiful','sad','always'],
    explain:'beautiful = very pretty. Something that looks wonderful is beautiful.'},
   {emoji:'🌳', type:'vocab',
-   sentence:'Bala and her calf live in the shadowy ____.',
+   sentence:'Bala goes back to the shadowy ____ to keep her promise.',
    blank:'____', ans:'forest', opts:['forest','field','graze','calf'],
-   explain:'forest = a large area full of trees. Bala\'s home!'},
+   explain:'forest = a large area full of trees. Bala bravely returns to the shadowy forest to keep her promise!'},
 ];
 
 const WRITE_QS = [
@@ -300,10 +300,13 @@ const WRITE_QS = [
 ];
 
 let mode = 'mc';
+let currentMode = 'mc';
 let qi = 0, scoreOk = 0, scoreBad = 0, answered = false, wrongList = [];
 let questions = [];
 
+function setModeVocab() { setMode('vocab'); }
 function setMode(m) {
+  currentMode = m;
   mode = m;
   document.querySelectorAll('.tab').forEach((t,i) => {
     t.classList.toggle('active', ['mc','vocab','write'][i] === m);
@@ -483,8 +486,8 @@ function showDone() {
     <div class="final-msg">${msg}</div>
     ${wrongHtml}
     <div class="final-btns">
-      <button class="retry-btn" onclick="setMode('${mode}')">🔄 Try Again!</button>
-      <button class="mode-btn" onclick="setMode('vocab')">📖 Try Vocabulary!</button>
+      <button class="retry-btn" onclick="setMode(currentMode)">🔄 Try Again!</button>
+      <button class="mode-btn" onclick="setMode(this.dataset.m)" data-m="vocab">📖 Try Vocabulary!</button>
     </div>`;
   document.getElementById('finalCard').classList.add('show');
   for (let i=0;i<4;i++) setTimeout(popStars,i*300);
