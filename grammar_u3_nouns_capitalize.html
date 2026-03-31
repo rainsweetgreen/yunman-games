@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📝 Nouns & Capitalize!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #fff8f0; font-family: 'Nunito', sans-serif; min-height: 100vh; }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 16px 16px 60px; }
+
+  .g-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .g-title { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #333; }
+  .g-prog  { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #aaa; }
+  .pbar-wrap { background: #eee; border-radius: 99px; height: 8px; margin-bottom: 14px; overflow: hidden; }
+  .pbar-fill { height: 100%; border-radius: 99px; transition: width 0.4s; }
+  .score-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+  .score-label { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #aaa; }
+  .score-val   { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #34d399; }
+
+  /* Learn card */
+  .learn-card {
+    background: white; border-radius: 20px; padding: 20px 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+  }
+  .learn-title { font-family: 'Fredoka One', cursive; font-size: 1.1rem; text-align: center; margin-bottom: 14px; }
+  .noun-table { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
+  .noun-table th { font-family: 'Fredoka One', cursive; font-size: 0.85rem; padding: 8px 10px; text-align: center; }
+  .th-common { background: #fef3c7; color: #92400e; }
+  .th-proper { background: #dbeafe; color: #1e40af; }
+  .noun-table td { padding: 7px 10px; font-size: 0.9rem; font-weight: 700; border-bottom: 1px solid #f0f0f0; text-align: center; }
+  .td-c { background: #fffbeb; color: #92400e; }
+  .td-p { background: #eff6ff; color: #1d4ed8; }
+  .rule-box {
+    border-radius: 12px; padding: 12px 14px; font-size: 0.88rem; font-weight: 700;
+    line-height: 1.7; margin-bottom: 10px;
+  }
+  .rule-orange { background: #fff7ed; color: #c2410c; border-left: 4px solid #f97316; }
+  .rule-blue   { background: #eff6ff; color: #1e40af; border-left: 4px solid #3b82f6; }
+  .rule-green  { background: #f0fdf4; color: #065f46; border-left: 4px solid #10b981; }
+  .ex-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .ex-chip { padding: 3px 10px; border-radius: 20px; font-size: 0.82rem; font-weight: 800; }
+  .ec-orange { background: #fed7aa; color: #c2410c; }
+  .ec-blue   { background: #bfdbfe; color: #1e40af; }
+  .ec-green  { background: #bbf7d0; color: #065f46; }
+
+  /* Phase label */
+  .phase-label {
+    font-family: 'Fredoka One', cursive; font-size: 0.8rem; letter-spacing: 2px;
+    text-transform: uppercase; border-radius: 20px; padding: 4px 14px;
+    display: inline-block; margin-bottom: 12px;
+  }
+  .pl-cp  { background: #fef3c7; color: #92400e; }
+  .pl-fix { background: #dbeafe; color: #1e40af; }
+  .pl-cap { background: #dcfce7; color: #065f46; }
+  .pl-mix { background: #f3e8ff; color: #6d28d9; }
+
+  /* Q card */
+  .q-card {
+    background: white; border-radius: 20px; padding: 22px 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+    animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .q-card.shake { animation: shake 0.35s ease; }
+  @keyframes popIn { from{opacity:0;transform:scale(0.88)} to{opacity:1;transform:scale(1)} }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+
+  .q-emoji { font-size: 2.8rem; display: block; text-align: center; margin-bottom: 10px; }
+  .q-word  {
+    font-family: 'Fredoka One', cursive; font-size: 2.2rem; color: #222;
+    text-align: center; margin-bottom: 6px; letter-spacing: 2px;
+  }
+  .q-sentence {
+    font-size: 1.05rem; font-weight: 800; color: #222; text-align: center;
+    line-height: 1.8; margin-bottom: 16px; letter-spacing: 0.3px;
+  }
+  .q-hint { font-size: 0.82rem; color: #aaa; font-weight: 700; text-align: center; margin-bottom: 16px; }
+  .q-wrong-word { text-decoration: underline; text-decoration-color: #fca5a5; text-decoration-thickness: 3px; }
+
+  /* C/P buttons */
+  .cp-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 4px; }
+  .cp-btn {
+    padding: 16px 10px; border-radius: 16px; border: 3px solid #eee;
+    background: #f9f9f9; font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem; cursor: pointer; transition: all 0.15s; text-align: center;
+  }
+  .cp-btn.common:hover { border-color: #f59e0b; background: #fffbeb; }
+  .cp-btn.proper:hover { border-color: #3b82f6; background: #eff6ff; }
+  .cp-btn.correct { background: #d1fae5; border-color: #34d399; color: #065f46; }
+  .cp-btn.wrong   { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+  .cp-btn:disabled { cursor: default; transform: none; }
+
+  /* Fix sentence - click the wrong word */
+  .sent-words { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 16px; }
+  .sent-word {
+    padding: 6px 12px; border-radius: 10px; font-size: 1.05rem; font-weight: 800;
+    cursor: pointer; border: 3px solid transparent; transition: all 0.15s;
+    background: #f5f5f5; color: #333;
+  }
+  .sent-word:hover { background: #fef3c7; border-color: #f59e0b; }
+  .sent-word.selected { background: #fef3c7; border-color: #f59e0b; }
+  .sent-word.correct  { background: #d1fae5; border-color: #34d399; color: #065f46; }
+  .sent-word.wrong    { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+  .sent-word.locked   { cursor: default; }
+
+  /* Capitalize fix */
+  .fix-instruction { font-size: 0.85rem; font-weight: 700; color: #aaa; text-align: center; margin-bottom: 12px; }
+  .fixed-sentence {
+    background: #f0fdf4; border-radius: 12px; padding: 12px 14px;
+    font-size: 1rem; font-weight: 800; color: #065f46; text-align: center;
+    margin-top: 10px; display: none; line-height: 1.6;
+  }
+  .fixed-sentence.show { display: block; }
+
+  /* Dots */
+  .dots { display: flex; justify-content: center; gap: 5px; margin-bottom: 12px; flex-wrap: wrap; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #e5e7eb; transition: all 0.3s; }
+  .dot.curr { background: #f59e0b; transform: scale(1.4); }
+  .dot.ok   { background: #34d399; }
+  .dot.bad  { background: #f87171; }
+
+  /* Feedback */
+  .feedback {
+    border-radius: 14px; padding: 12px 16px; margin-bottom: 12px;
+    font-weight: 800; font-size: 0.95rem; display: none; text-align: center; line-height: 1.5;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok  { background: #d1fae5; color: #065f46; border: 3px solid #6ee7b7; }
+  .feedback.bad { background: #fee2e2; color: #991b1b; border: 3px solid #fca5a5; }
+
+  /* Buttons */
+  .next-btn {
+    width: 100%; padding: 15px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+    cursor: pointer; display: none; box-shadow: 0 4px 14px rgba(245,158,11,0.35);
+    transition: transform 0.1s;
+  }
+  .next-btn.show { display: block; }
+  .next-btn:active { transform: scale(0.97); }
+
+  /* Final */
+  .final-card {
+    background: white; border-radius: 24px; padding: 30px 22px;
+    text-align: center; box-shadow: 0 8px 28px rgba(0,0,0,0.1); display: none;
+  }
+  .final-card.show { display: block; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  .final-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #f59e0b; margin-bottom: 6px; }
+  .final-score { font-family: 'Fredoka One', cursive; font-size: 3rem; color: #5c6bc0; }
+  .final-stars { font-size: 2.2rem; letter-spacing: 4px; margin: 6px 0 12px; }
+  .final-msg   { font-size: 0.95rem; color: #666; font-weight: 700; margin-bottom: 20px; line-height: 1.6; }
+  .wrong-rev   { background: #fffbeb; border-radius: 12px; padding: 14px; margin-bottom: 18px; text-align: left; }
+  .wr-title    { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #92400e; margin-bottom: 8px; }
+  .wr-item     { font-size: 0.85rem; font-weight: 700; color: #555; padding: 4px 0; border-bottom: 1px solid #f5f5f5; }
+  .wr-ans      { color: #059669; font-weight: 900; }
+  .final-btns  { display: flex; flex-direction: column; gap: 10px; }
+  .retry-btn {
+    padding: 14px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.1rem; cursor: pointer;
+  }
+  .next-part-btn {
+    padding: 14px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg, #a78bfa, #7c3aed);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.1rem; cursor: pointer;
+  }
+
+  .star-pop {
+    position: fixed; font-size: 1.8rem; pointer-events: none;
+    animation: fly 0.9s ease-out forwards; z-index: 999;
+  }
+  @keyframes fly { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-80px) scale(1.5)} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="g-header">
+    <div class="g-title" id="gTitle">📝 Nouns!</div>
+    <div class="g-prog" id="gProg"></div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
+  <div class="score-row">
+    <div class="score-label" id="scoreLabel"></div>
+    <div class="score-val"   id="scoreVal"></div>
+  </div>
+  <div id="content"></div>
+  <div class="dots"    id="dots"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="handleNext()"></button>
+  <div class="final-card" id="finalCard"></div>
+</div>
+
+<script>
+// ===== DATA =====
+
+// Part 2: Common or Proper? (p.40–43)
+const CP_QS = [
+  {word:'Taipei',   emoji:'🏙️', ans:'P', explain:'Taipei is a specific city name → Proper Noun'},
+  {word:'girl',     emoji:'👧', ans:'C', explain:'girl is a general word → Common Noun'},
+  {word:'zebra',    emoji:'🦓', ans:'C', explain:'zebra is a type of animal → Common Noun'},
+  {word:'Olivia',   emoji:'🙋', ans:'P', explain:'Olivia is a specific person\'s name → Proper Noun'},
+  {word:'Andy',     emoji:'👦', ans:'P', explain:'Andy is a specific name → Proper Noun'},
+  {word:'cat',      emoji:'🐱', ans:'C', explain:'cat is a general animal word → Common Noun'},
+  {word:'Kitty',    emoji:'🐱', ans:'P', explain:'Kitty is a specific pet name → Proper Noun'},
+  {word:'park',     emoji:'🌳', ans:'C', explain:'park is a general place → Common Noun'},
+  {word:'Apple Park',emoji:'🌳', ans:'P', explain:'Apple Park is a specific place name → Proper Noun'},
+  {word:'school',   emoji:'🏫', ans:'C', explain:'school is a general word → Common Noun'},
+  {word:'America',  emoji:'🗺️', ans:'P', explain:'America is a specific country → Proper Noun'},
+  {word:'store',    emoji:'🏪', ans:'C', explain:'store is a general word → Common Noun'},
+  {word:'Kelly',    emoji:'👧', ans:'P', explain:'Kelly is a specific name → Proper Noun'},
+  {word:'friend',   emoji:'🤝', ans:'C', explain:'friend is a general word → Common Noun'},
+  {word:'Hsinchu',  emoji:'🏙️', ans:'P', explain:'Hsinchu is a specific city name → Proper Noun'},
+  {word:'street',   emoji:'🛣️', ans:'C', explain:'street is a general word → Common Noun'},
+  {word:'Navy Street',emoji:'🛣️', ans:'P', explain:'Navy Street is a specific street name → Proper Noun'},
+  {word:'teacher',  emoji:'👩‍🏫', ans:'C', explain:'teacher is a general word → Common Noun'},
+  {word:'January',  emoji:'📅', ans:'P', explain:'January is a specific month name → Proper Noun'},
+  {word:'Sunday',   emoji:'📅', ans:'P', explain:'Sunday is a specific day name → Proper Noun'},
+];
+
+// Part 3: Find and fix the proper noun (click the wrongly lowercase word) (p.49)
+const FIX_QS = [
+  {sentence:'We have a swimming class on sunday.', wrong:'sunday', fixed:'Sunday', emoji:'🏊', explain:'Days of the week always start with a capital letter → Sunday'},
+  {sentence:'My birthday is on march 5th.', wrong:'march', fixed:'March', emoji:'🎂', explain:'Months always start with a capital letter → March'},
+  {sentence:'kelly and I will go camping.', wrong:'kelly', fixed:'Kelly', emoji:'⛺', explain:'People\'s names always start with a capital letter → Kelly'},
+  {sentence:'We have a cat named kitty.', wrong:'kitty', fixed:'Kitty', emoji:'🐱', explain:'Pet names are proper nouns → Kitty'},
+  {sentence:'saturday is my favorite day!', wrong:'saturday', fixed:'Saturday', emoji:'🌟', explain:'Days of the week always start with a capital letter → Saturday'},
+  {sentence:'He played with his dog, spot.', wrong:'spot', fixed:'Spot', emoji:'🐶', explain:'Pet names are proper nouns → Spot'},
+  {sentence:'We will visit the zoo in december.', wrong:'december', fixed:'December', emoji:'🦁', explain:'Months always start with a capital letter → December'},
+  {sentence:'The kids play in green park.', wrong:'green', fixed:'Green', emoji:'🌳', explain:'Green Park is a specific place name → Green Park'},
+  {sentence:'My family lives in hsinchu city.', wrong:'hsinchu', fixed:'Hsinchu', emoji:'🏙️', explain:'City names are proper nouns → Hsinchu City'},
+  {sentence:'His home is on sunset street.', wrong:'sunset', fixed:'Sunset', emoji:'🌇', explain:'Sunset Street is a specific street name → Sunset Street'},
+  {sentence:'My birthday is in january.', wrong:'january', fixed:'January', emoji:'🎂', explain:'Months always start with a capital letter → January'},
+  {sentence:'We see a tiger named diego.', wrong:'diego', fixed:'Diego', emoji:'🐯', explain:'Animal names are proper nouns → Diego'},
+];
+
+// Part 4: Fix the WHOLE sentence (retype correctly) — pick the correct version (p.40, p.52)
+const CORRECT_QS = [
+  {
+    wrong:'we go to hsinchu zoo.',
+    opts:['We go to Hsinchu Zoo.','We go to hsinchu zoo.','we go to Hsinchu Zoo.'],
+    ans:0, emoji:'🦁',
+    explain:'Start of sentence + Hsinchu Zoo (proper noun) both need capitals!'
+  },
+  {
+    wrong:'the zoo is big.',
+    opts:['The zoo is big.','the Zoo is big.','The Zoo is big.'],
+    ans:0, emoji:'🐘',
+    explain:'zoo is a common noun — only the sentence start needs a capital!'
+  },
+  {
+    wrong:'kelly is my best friend.',
+    opts:['kelly is my best friend.','Kelly is my best friend.','Kelly Is My Best Friend.'],
+    ans:1, emoji:'👧',
+    explain:'Kelly is a proper noun (person\'s name) → needs a capital!'
+  },
+  {
+    wrong:'the girl was born in america.',
+    opts:['The girl was born in America.','The Girl was born in america.','the girl was born in America.'],
+    ans:0, emoji:'🗺️',
+    explain:'Sentence start + America (country name) both need capitals!'
+  },
+  {
+    wrong:'our school is on navy street.',
+    opts:['Our school is on Navy Street.','Our School is on Navy Street.','our school is on navy street.'],
+    ans:0, emoji:'🏫',
+    explain:'Sentence start + Navy Street (specific street) both need capitals!'
+  },
+  {
+    wrong:'i am seven years old.',
+    opts:['I am seven years old.','i am seven years old.','I Am Seven Years Old.'],
+    ans:0, emoji:'🙋',
+    explain:'The pronoun I is ALWAYS capitalized!'
+  },
+  {
+    wrong:'my name is coco the cow.',
+    opts:['My name is Coco the cow.','My name is coco the cow.','my name is Coco the Cow.'],
+    ans:0, emoji:'🐄',
+    explain:'Sentence start + Coco (pet name = proper noun) need capitals!'
+  },
+  {
+    wrong:'she was born in february.',
+    opts:['She was born in February.','She was born in february.','she was born in February.'],
+    ans:0, emoji:'📅',
+    explain:'Sentence start + February (month = proper noun) both need capitals!'
+  },
+];
+
+// ===== STATE =====
+let phase = 'learn';
+let qi = 0, score = 0, wrong = [], answered = false;
+let currentQ = [];
+
+const phaseBar = {
+  learn: 'linear-gradient(90deg,#f59e0b,#f97316)',
+  cp:    'linear-gradient(90deg,#f59e0b,#f97316)',
+  fix:   'linear-gradient(90deg,#3b82f6,#1d4ed8)',
+  correct:'linear-gradient(90deg,#10b981,#059669)',
+};
+
+function setPbar(pct, ph) {
+  const el = document.getElementById('pbarFill');
+  el.style.background = phaseBar[ph] || phaseBar.learn;
+  el.style.width = pct + '%';
+}
+
+function clearFb() { document.getElementById('feedback').className = 'feedback'; }
+function fb(msg, type) {
+  const el = document.getElementById('feedback');
+  el.innerHTML = msg; el.className = 'feedback show ' + type;
+}
+
+// ===== PART 1: LEARN =====
+function showLearn() {
+  phase = 'learn';
+  clearFb();
+  document.getElementById('gTitle').textContent = '📚 Learn: Nouns';
+  document.getElementById('gProg').textContent = 'Part 1 / 4';
+  document.getElementById('scoreLabel').textContent = '';
+  document.getElementById('scoreVal').textContent = '';
+  document.getElementById('dots').innerHTML = '';
+  document.getElementById('finalCard').classList.remove('show');
+  setPbar(10, 'learn');
+
+  document.getElementById('nextBtn').textContent = 'Start Part 2: Common or Proper? 🟡';
+  document.getElementById('nextBtn').className = 'next-btn show';
+
+  document.getElementById('content').innerHTML = `
+    <div class="learn-card">
+      <div class="learn-title" style="color:#92400e">📋 Common vs Proper Nouns</div>
+      <table class="noun-table">
+        <tr>
+          <th class="th-common">🟡 Common Noun<br><small style="font-family:Nunito;font-weight:600">一般名詞（小寫）</small></th>
+          <th class="th-proper">🔵 Proper Noun<br><small style="font-family:Nunito;font-weight:600">專有名詞（大寫！）</small></th>
+        </tr>
+        <tr><td class="td-c">girl 👧</td><td class="td-p">Olivia 👧</td></tr>
+        <tr><td class="td-c">city 🏙️</td><td class="td-p">Taipei 🏙️</td></tr>
+        <tr><td class="td-c">cat 🐱</td><td class="td-p">Kitty 🐱</td></tr>
+        <tr><td class="td-c">street 🛣️</td><td class="td-p">Navy Street 🛣️</td></tr>
+        <tr><td class="td-c">month 📅</td><td class="td-p">January 📅</td></tr>
+        <tr><td class="td-c">day 📅</td><td class="td-p">Sunday 📅</td></tr>
+      </table>
+      <div class="rule-box rule-orange">
+        🟡 <b>Common Noun</b> = 一般的人/事/物，<b>小寫</b><br>
+        <div class="ex-row">
+          <span class="ex-chip ec-orange">girl</span>
+          <span class="ex-chip ec-orange">city</span>
+          <span class="ex-chip ec-orange">cat</span>
+          <span class="ex-chip ec-orange">park</span>
+        </div>
+      </div>
+      <div class="rule-box rule-blue">
+        🔵 <b>Proper Noun</b> = 特定的名字，<b>第一個字母大寫！</b><br>
+        <div class="ex-row">
+          <span class="ex-chip ec-blue">Olivia</span>
+          <span class="ex-chip ec-blue">Taipei</span>
+          <span class="ex-chip ec-blue">Kitty</span>
+          <span class="ex-chip ec-blue">Sunday</span>
+          <span class="ex-chip ec-blue">January</span>
+        </div>
+      </div>
+      <div class="rule-box rule-green">
+        ✏️ <b>Always capitalize:</b><br>
+        <div class="ex-row">
+          <span class="ex-chip ec-green">I（代名詞）</span>
+          <span class="ex-chip ec-green">Names of people</span>
+          <span class="ex-chip ec-green">Days</span>
+          <span class="ex-chip ec-green">Months</span>
+          <span class="ex-chip ec-green">Cities / Countries</span>
+          <span class="ex-chip ec-green">Pet names</span>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ===== PART 2: COMMON OR PROPER? =====
+function startCP() {
+  phase = 'cp';
+  score = 0; wrong = []; qi = 0; answered = false;
+  currentQ = [...CP_QS].sort(() => Math.random() - 0.5).slice(0, 12);
+  document.getElementById('gTitle').textContent = '🟡 Common or Proper?';
+  document.getElementById('gProg').textContent = 'Part 2 / 4';
+  buildDots(currentQ.length);
+  showCPQ();
+}
+
+function showCPQ() {
+  answered = false;
+  const q = currentQ[qi];
+  const total = currentQ.length;
+  setPbar(20 + (qi / total) * 25, 'cp');
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label pl-cp">🟡 Common or Proper?</div>
+    <div class="q-card" id="qCard">
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-word">${q.word}</div>
+      <div class="q-hint">Is this a Common Noun or a Proper Noun?</div>
+      <div class="cp-btns">
+        <button class="cp-btn common" data-val="C" onclick="pickCP(this)">🟡 Common Noun<br><small>一般名詞</small></button>
+        <button class="cp-btn proper" data-val="P" onclick="pickCP(this)">🔵 Proper Noun<br><small>專有名詞</small></button>
+      </div>
+    </div>`;
+
+  updateDot(qi, 'curr');
+}
+
+function pickCP(btn) {
+  if (answered) return; answered = true;
+  const q = currentQ[qi];
+  document.querySelectorAll('.cp-btn').forEach(b => b.disabled = true);
+  if (btn.dataset.val === q.ans) {
+    btn.classList.add('correct'); score++;
+    fb('✅ ' + q.explain, 'ok'); popStars();
+    updateDot(qi, 'ok');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelector(`[data-val="${q.ans}"]`).classList.add('correct');
+    wrong.push(q); fb('❌ ' + q.explain, 'bad');
+    document.getElementById('qCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('qCard')?.classList.remove('shake'), 400);
+    updateDot(qi, 'bad');
+  }
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === currentQ.length - 1 ? 'See Results 🎊' : 'Next ➡️';
+  nb.className = 'next-btn show';
+}
+
+// ===== PART 3: FIND THE WRONG WORD =====
+function startFix() {
+  phase = 'fix';
+  score = 0; wrong = []; qi = 0; answered = false;
+  currentQ = [...FIX_QS].sort(() => Math.random() - 0.5).slice(0, 10);
+  document.getElementById('gTitle').textContent = '🔵 Fix the Sentence!';
+  document.getElementById('gProg').textContent = 'Part 3 / 4';
+  buildDots(currentQ.length);
+  showFixQ();
+}
+
+function showFixQ() {
+  answered = false;
+  const q = currentQ[qi];
+  const total = currentQ.length;
+  setPbar(45 + (qi / total) * 25, 'fix');
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  // Build clickable words
+  const words = q.sentence.split(' ');
+  const wordsHtml = words.map((w, i) => {
+    const clean = w.replace(/[.,!?]/g, '');
+    return `<span class="sent-word" data-word="${clean.toLowerCase()}" data-idx="${i}" onclick="pickWord(this)">${w}</span>`;
+  }).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label pl-fix">🔵 Fix the Sentence</div>
+    <div class="q-card" id="qCard">
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="fix-instruction">Tap the word that needs a capital letter!</div>
+      <div class="sent-words">${wordsHtml}</div>
+      <div class="fixed-sentence" id="fixedSent">✅ Correct: "${q.sentence.replace(q.wrong, q.fixed)}"</div>
+    </div>`;
+
+  updateDot(qi, 'curr');
+}
+
+function pickWord(el) {
+  if (answered) return;
+  const q = currentQ[qi];
+  const word = el.dataset.word;
+
+  if (word === q.wrong.toLowerCase()) {
+    answered = true;
+    el.classList.add('correct');
+    document.getElementById('fixedSent').classList.add('show');
+    score++;
+    fb('✅ ' + q.explain, 'ok'); popStars();
+    updateDot(qi, 'ok');
+    const nb = document.getElementById('nextBtn');
+    nb.textContent = qi === currentQ.length - 1 ? 'See Results 🎊' : 'Next ➡️';
+    nb.className = 'next-btn show';
+  } else {
+    el.classList.add('wrong');
+    fb('❌ That\'s not the one! Look for a proper noun that needs a capital letter.', 'bad');
+    setTimeout(() => {
+      el.classList.remove('wrong'); clearFb();
+    }, 1200);
+  }
+}
+
+// ===== PART 4: CHOOSE THE CORRECT VERSION =====
+function startCorrect() {
+  phase = 'correct';
+  score = 0; wrong = []; qi = 0; answered = false;
+  currentQ = [...CORRECT_QS].sort(() => Math.random() - 0.5);
+  document.getElementById('gTitle').textContent = '✅ Pick the Correct Sentence!';
+  document.getElementById('gProg').textContent = 'Part 4 / 4';
+  buildDots(currentQ.length);
+  showCorrectQ();
+}
+
+function showCorrectQ() {
+  answered = false;
+  const q = currentQ[qi];
+  const total = currentQ.length;
+  setPbar(70 + (qi / total) * 25, 'correct');
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  const optsHtml = q.opts.map((o, i) =>
+    `<button class="opt-btn" data-idx="${i}" onclick="pickCorrect(this)" style="width:100%;padding:13px 16px;border-radius:14px;border:3px solid #eee;background:#f9f9f9;font-family:Nunito,sans-serif;font-size:0.95rem;font-weight:700;color:#333;cursor:pointer;text-align:left;margin-bottom:10px;transition:all 0.15s;">${o}</button>`
+  ).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label pl-cap">✅ Correct Sentence</div>
+    <div class="q-card" id="qCard">
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-sentence" style="color:#dc2626;font-size:0.95rem">❌ Wrong: "${q.wrong}"</div>
+      <div class="q-hint">Which sentence has the correct capitalization?</div>
+      <div>${optsHtml}</div>
+    </div>`;
+
+  updateDot(qi, 'curr');
+}
+
+function pickCorrect(btn) {
+  if (answered) return; answered = true;
+  const q = currentQ[qi];
+  const idx = parseInt(btn.dataset.idx);
+  document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+
+  if (idx === q.ans) {
+    btn.style.background = '#d1fae5'; btn.style.borderColor = '#34d399'; btn.style.color = '#065f46';
+    score++;
+    fb('✅ ' + q.explain, 'ok'); popStars();
+    updateDot(qi, 'ok');
+  } else {
+    btn.style.background = '#fee2e2'; btn.style.borderColor = '#fca5a5'; btn.style.color = '#991b1b';
+    const correct = document.querySelectorAll('.opt-btn')[q.ans];
+    correct.style.background = '#d1fae5'; correct.style.borderColor = '#34d399'; correct.style.color = '#065f46';
+    wrong.push(q);
+    fb('❌ ' + q.explain, 'bad');
+    document.getElementById('qCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('qCard')?.classList.remove('shake'), 400);
+    updateDot(qi, 'bad');
+  }
+
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === currentQ.length - 1 ? 'See Final Results! 🎊' : 'Next ➡️';
+  nb.className = 'next-btn show';
+}
+
+// ===== NAVIGATION =====
+function handleNext() {
+  if (phase === 'learn') { startCP(); return; }
+
+  if (phase === 'cp' || phase === 'fix' || phase === 'correct') {
+    qi++;
+    if (qi < currentQ.length) {
+      if (phase === 'cp')      showCPQ();
+      else if (phase === 'fix') showFixQ();
+      else                      showCorrectQ();
+    } else {
+      showPartResult();
+    }
+    return;
+  }
+
+  if (phase === 'result-cp')  { startFix(); return; }
+  if (phase === 'result-fix') { startCorrect(); return; }
+}
+
+function showPartResult() {
+  const prevPhase = phase;
+  phase = 'result-' + prevPhase;
+  const total = currentQ.length;
+  const pct = score / total;
+  const stars = pct === 1 ? '⭐⭐⭐' : pct >= 0.7 ? '⭐⭐' : '⭐';
+  const msg = pct === 1 ? 'Perfect! All correct!' : pct >= 0.7 ? 'Great job!' : 'Keep practicing!';
+
+  const nextLabel =
+    prevPhase === 'cp'      ? 'Next: Fix the Sentence! 🔵' :
+    prevPhase === 'fix'     ? 'Next: Choose the Correct Sentence! ✅' :
+    'All Done!';
+
+  document.getElementById('dots').innerHTML = '';
+  clearFb();
+  document.getElementById('content').innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  const wrongHtml = wrong.length > 0 ? `
+    <div class="wrong-rev">
+      <div class="wr-title">📝 Review these:</div>
+      ${wrong.slice(0,4).map(q => `
+        <div class="wr-item">
+          ${q.word || q.sentence?.substring(0,30) || q.wrong?.substring(0,30)}...
+          → <span class="wr-ans">${q.ans === 'C' ? 'Common Noun' : q.ans === 'P' ? 'Proper Noun' : q.fixed || q.opts?.[q.ans]}</span>
+        </div>`).join('')}
+    </div>` : '';
+
+  document.getElementById('finalCard').innerHTML = `
+    <div class="final-title">${prevPhase === 'cp' ? '🟡' : prevPhase === 'fix' ? '🔵' : '✅'} Part Done!</div>
+    <div class="final-score">${score} / ${total}</div>
+    <div class="final-stars">${stars}</div>
+    <div class="final-msg">${msg}</div>
+    ${wrongHtml}
+    <div class="final-btns">
+      ${prevPhase !== 'correct' ? `<button class="next-part-btn" onclick="handleNext()">${nextLabel}</button>` : `<button class="next-part-btn" onclick="showFinal()">See Final Results! 🎊</button>`}
+      <button class="retry-btn" onclick="retry${prevPhase.charAt(0).toUpperCase()+prevPhase.slice(1)}()">🔄 Retry This Part</button>
+    </div>`;
+  document.getElementById('finalCard').classList.add('show');
+}
+
+function retryCp()      { startCP(); document.getElementById('finalCard').classList.remove('show'); }
+function retryFix()     { startFix(); document.getElementById('finalCard').classList.remove('show'); }
+function retryCorrect() { startCorrect(); document.getElementById('finalCard').classList.remove('show'); }
+
+function showFinal() {
+  const total = currentQ.length;
+  const pct = score / total;
+  const stars = pct === 1 ? '⭐⭐⭐' : pct >= 0.7 ? '⭐⭐' : '⭐';
+  const msg = pct === 1 ? 'You are a Noun Master! 🏆' : pct >= 0.7 ? 'Almost perfect!' : 'Review and try again!';
+
+  document.getElementById('dots').innerHTML = '';
+  clearFb();
+  document.getElementById('content').innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+  setPbar(100, 'correct');
+
+  document.getElementById('finalCard').innerHTML = `
+    <div class="final-title">🎉 All Done!</div>
+    <div class="final-score">${score} / ${total}</div>
+    <div class="final-stars">${stars}</div>
+    <div class="final-msg">${msg}</div>
+    <div class="final-btns">
+      <button class="retry-btn" onclick="location.reload()">🔄 Play Again!</button>
+      <button class="next-part-btn" onclick="startCP()">🟡 Back to Part 2</button>
+    </div>`;
+  document.getElementById('finalCard').classList.add('show');
+  for (let i = 0; i < 4; i++) setTimeout(popStars, i * 250);
+}
+
+// ===== HELPERS =====
+function buildDots(n) {
+  const c = document.getElementById('dots');
+  c.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' curr' : '');
+    d.id = 'dot' + i;
+    c.appendChild(d);
+  }
+}
+
+function updateDot(i, state) {
+  const d = document.getElementById('dot' + i);
+  if (!d) return;
+  d.className = 'dot ' + state;
+  const next = document.getElementById('dot' + (i + 1));
+  if (next && state !== 'curr') next.classList.add('curr');
+}
+
+function popStars() {
+  const emojis = ['⭐','✨','🌟','🎉','📝','✏️','🏆'];
+  for (let i = 0; i < 4; i++) {
+    setTimeout(() => {
+      const s = document.createElement('div'); s.className = 'star-pop';
+      s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      s.style.left = (15 + Math.random() * 70) + 'vw';
+      s.style.top  = (20 + Math.random() * 50) + 'vh';
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }, i * 110);
+  }
+}
+
+window.onload = () => showLearn();
+</script>
+</body>
+</html>
