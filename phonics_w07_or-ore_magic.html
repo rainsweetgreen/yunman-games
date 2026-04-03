@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐴 r-Controlled: or / ore!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #fff8f0; font-family: 'Nunito', sans-serif; min-height: 100vh; }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 16px 16px 60px; }
+
+  .g-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .g-title { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #333; }
+  .g-prog  { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #aaa; }
+  .pbar-wrap { background: #eee; border-radius: 99px; height: 8px; margin-bottom: 14px; overflow: hidden; }
+  .pbar-fill { height: 100%; border-radius: 99px; transition: width 0.4s; background: linear-gradient(90deg,#f97316,#ef4444); }
+  .score-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+  .score-label { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #aaa; }
+  .score-val   { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #34d399; }
+
+  /* Learn card */
+  .learn-card {
+    background: white; border-radius: 20px; padding: 20px 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+  }
+  .learn-title { font-family: 'Fredoka One', cursive; font-size: 1.15rem; text-align: center; margin-bottom: 14px; }
+  .rule-box {
+    border-radius: 12px; padding: 12px 14px; font-size: 0.88rem;
+    font-weight: 700; line-height: 1.7; margin-bottom: 10px;
+  }
+  .rule-or  { background: #fff7ed; color: #c2410c; border-left: 4px solid #f97316; }
+  .rule-ore { background: #fef3c7; color: #92400e; border-left: 4px solid #f59e0b; }
+  .rule-tip { background: #f0fdf4; color: #065f46; border-left: 4px solid #10b981; }
+  .ex-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .ex-chip { padding: 4px 12px; border-radius: 20px; font-size: 0.88rem; font-weight: 800; }
+  .ec-or  { background: #fed7aa; color: #c2410c; }
+  .ec-ore { background: #fde68a; color: #92400e; }
+  .ec-green { background: #bbf7d0; color: #065f46; }
+
+  /* Big word display */
+  .big-word {
+    font-family: 'Fredoka One', cursive; font-size: 3rem; text-align: center;
+    letter-spacing: 3px; margin-bottom: 8px; color: #333;
+  }
+  .hl-or  { color: #f97316; }
+  .hl-ore { color: #f59e0b; }
+
+  /* Q card */
+  .q-card {
+    background: white; border-radius: 20px; padding: 22px 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+    animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .q-card.shake { animation: shake 0.35s ease; }
+  @keyframes popIn { from{opacity:0;transform:scale(0.88)} to{opacity:1;transform:scale(1)} }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+  .q-emoji   { font-size: 3rem; display: block; text-align: center; margin-bottom: 10px; }
+  .q-hint    { font-size: 0.82rem; color: #aaa; font-weight: 700; text-align: center; margin-bottom: 14px; }
+  .phase-label {
+    font-family: 'Fredoka One', cursive; font-size: 0.8rem; letter-spacing: 2px;
+    text-transform: uppercase; border-radius: 20px; padding: 4px 14px;
+    display: inline-block; margin-bottom: 12px;
+  }
+  .pl-or  { background: #fff7ed; color: #c2410c; }
+  .pl-txt { background: #ede9fe; color: #5b21b6; }
+  .pl-spl { background: #f0fdf4; color: #065f46; }
+
+  /* 2-col option buttons */
+  .opts-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .opt-btn {
+    padding: 14px 10px; border-radius: 14px; border: 3px solid #eee;
+    background: #f9f9f9; font-family: 'Fredoka One', cursive;
+    font-size: 1.15rem; cursor: pointer; text-align: center; transition: all 0.15s;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .opt-btn:hover   { border-color: #f97316; background: #fff7ed; }
+  .opt-btn.correct { background: #d1fae5; border-color: #34d399; color: #065f46; }
+  .opt-btn.wrong   { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+  .opt-btn:disabled { cursor: default; }
+  .opt-emoji { font-size: 1.8rem; }
+  .opt-word  { font-size: 1rem; }
+
+  /* Text passage - tap words */
+  .passage {
+    background: #fffbeb; border-radius: 14px; padding: 16px 14px;
+    font-size: 1.1rem; font-weight: 700; line-height: 2.2;
+    color: #333; margin-bottom: 14px; text-align: center;
+  }
+  .tap-word {
+    display: inline-block; padding: 2px 6px; border-radius: 8px;
+    cursor: pointer; transition: all 0.15s; border: 2px solid transparent;
+  }
+  .tap-word:hover    { background: #fef3c7; border-color: #f59e0b; }
+  .tap-word.selected { background: #fde68a; border-color: #f59e0b; color: #92400e; }
+  .tap-word.correct  { background: #d1fae5; border-color: #34d399; color: #065f46; }
+  .tap-word.missed   { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+  .tap-word.wrong    { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+  .tap-instruction   { font-size: 0.85rem; font-weight: 700; color: #aaa; text-align: center; margin-bottom: 10px; }
+  .target-count      { font-family: 'Fredoka One', cursive; font-size: 0.85rem; color: #f97316; text-align: center; margin-bottom: 10px; }
+
+  /* Spelling */
+  .spell-word-display {
+    font-family: 'Fredoka One', cursive; font-size: 1.2rem; color: #aaa;
+    text-align: center; margin-bottom: 6px; letter-spacing: 1px;
+  }
+  .letter-boxes { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .letter-box {
+    width: 42px; height: 48px; border-radius: 10px; border: 3px solid #ddd;
+    background: #f9f9f9; font-family: 'Fredoka One', cursive;
+    font-size: 1.4rem; text-align: center; outline: none; color: #333;
+  }
+  .letter-box.or-box  { border-color: #f97316; background: #fff7ed; }
+  .letter-box.ore-box { border-color: #f59e0b; background: #fffbeb; }
+  .letter-box:focus   { border-color: #f97316; background: #fff7ed; }
+  .letter-box.correct { background: #d1fae5; border-color: #34d399; color: #065f46; }
+  .letter-box.wrong   { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+  .check-btn {
+    width: 100%; padding: 13px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg,#f97316,#ef4444);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.1rem;
+    cursor: pointer; margin-bottom: 12px;
+  }
+  .submit-btn {
+    width: 100%; padding: 13px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg,#8b5cf6,#7c3aed);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.1rem;
+    cursor: pointer; margin-bottom: 12px;
+  }
+
+  /* Dots */
+  .dots { display: flex; justify-content: center; gap: 5px; margin-bottom: 12px; flex-wrap: wrap; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #e5e7eb; transition: all 0.3s; }
+  .dot.curr { background: #f97316; transform: scale(1.4); }
+  .dot.ok   { background: #34d399; }
+  .dot.bad  { background: #f87171; }
+
+  .feedback {
+    border-radius: 14px; padding: 12px 16px; margin-bottom: 12px;
+    font-weight: 800; font-size: 0.95rem; display: none; text-align: center; line-height: 1.5;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok  { background: #d1fae5; color: #065f46; border: 3px solid #6ee7b7; }
+  .feedback.bad { background: #fee2e2; color: #991b1b; border: 3px solid #fca5a5; }
+
+  .next-btn {
+    width: 100%; padding: 15px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg,#f97316,#ef4444);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+    cursor: pointer; display: none; box-shadow: 0 4px 14px rgba(249,115,22,0.35);
+  }
+  .next-btn.show { display: block; }
+
+  .final-card {
+    background: white; border-radius: 24px; padding: 30px 22px;
+    text-align: center; box-shadow: 0 8px 28px rgba(0,0,0,0.1); display: none;
+  }
+  .final-card.show { display: block; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  .final-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #f97316; margin-bottom: 6px; }
+  .final-score { font-family: 'Fredoka One', cursive; font-size: 3rem; color: #5c6bc0; }
+  .final-stars { font-size: 2.2rem; letter-spacing: 4px; margin: 6px 0 12px; }
+  .final-msg   { font-size: 0.95rem; color: #666; font-weight: 700; margin-bottom: 20px; }
+  .final-btns  { display: flex; flex-direction: column; gap: 10px; }
+  .retry-btn { padding: 14px; border-radius: 50px; border: none; background: linear-gradient(135deg,#f97316,#ef4444); color: white; font-family: 'Fredoka One',cursive; font-size: 1.1rem; cursor: pointer; }
+  .next-part-btn { padding: 14px; border-radius: 50px; border: none; background: linear-gradient(135deg,#a78bfa,#7c3aed); color: white; font-family: 'Fredoka One',cursive; font-size: 1.1rem; cursor: pointer; }
+
+  .star-pop { position: fixed; font-size: 1.8rem; pointer-events: none; animation: fly 0.9s ease-out forwards; z-index: 999; }
+  @keyframes fly { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-80px) scale(1.5)} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="g-header">
+    <div class="g-title" id="gTitle">🐴 or / ore!</div>
+    <div class="g-prog"  id="gProg"></div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
+  <div class="score-row">
+    <div class="score-label" id="scoreLabel"></div>
+    <div class="score-val"   id="scoreVal"></div>
+  </div>
+  <div id="content"></div>
+  <div class="dots"     id="dots"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="handleNext()"></button>
+  <div class="final-card" id="finalCard"></div>
+</div>
+
+<script>
+// ===== DATA =====
+
+// Part 2: Which word has the or/ore sound?
+const OR_QS = [
+  {word:'horse', emoji:'🐴', ans:true,  pattern:'or',  explain:'h-OR-se — the OR makes the "or" sound!'},
+  {word:'fork',  emoji:'🍴', ans:true,  pattern:'or',  explain:'f-OR-k — fork has the "or" sound!'},
+  {word:'core',  emoji:'🍎', ans:true,  pattern:'ore', explain:'c-ORE — core has the "or" sound!'},
+  {word:'horn',  emoji:'📯', ans:true,  pattern:'or',  explain:'h-OR-n — horn has the "or" sound!'},
+  {word:'store', emoji:'🏪', ans:true,  pattern:'ore', explain:'st-ORE — store has the "or" sound!'},
+  {word:'more',  emoji:'➕', ans:true,  pattern:'ore', explain:'m-ORE — more has the "or" sound!'},
+  {word:'for',   emoji:'🎁', ans:true,  pattern:'or',  explain:'f-OR — for has the "or" sound!'},
+  {word:'book',  emoji:'📚', ans:false, pattern:'oo',  explain:'book has the "oo" sound, not "or"!'},
+  {word:'cake',  emoji:'🎂', ans:false, pattern:'a-e', explain:'cake has the long A sound, not "or"!'},
+  {word:'bird',  emoji:'🐦', ans:false, pattern:'ir',  explain:'bird has the "ir" sound, not "or"!'},
+  {word:'corn',  emoji:'🌽', ans:true,  pattern:'or',  explain:'c-OR-n — corn has the "or" sound!'},
+  {word:'short', emoji:'📏', ans:true,  pattern:'or',  explain:'sh-OR-t — short has the "or" sound!'},
+  {word:'ship',  emoji:'🚢', ans:false, pattern:'sh',  explain:'ship has the "sh" sound, not "or"!'},
+  {word:'sport', emoji:'⚽', ans:true,  pattern:'or',  explain:'sp-OR-t — sport has the "or" sound!'},
+];
+
+// Part 3: Tap the or/ore words in the passage paragraphs
+const PASSAGES = [
+  {
+    id: 'p1',
+    label: 'Paragraph 1',
+    text: 'Lenore and Sam can\'t play more. It is time to eat. So they go back to their home. They do chores before bedtime.',
+    targets: ['more','chores','before','lenore'],
+    targetCount: 4,
+    instruction: 'Tap the 4 words with the OR sound spelled "ore"!',
+    explain: 'Lenore, more, chores, before — all spelled with -ore!'
+  },
+  {
+    id: 'p2',
+    label: 'Paragraph 3',
+    text: 'Sam can\'t play sports now. So Lenore looks for her backpack. She gets some pens and a notepad. She draws for fun!',
+    targets: ['sports','for','lenore','for'],
+    targetWords: ['sports','for','Lenore'],
+    targetCount: 4,
+    instruction: 'Tap the 4 words with the "or" sound!',
+    explain: 'sports (sp-OR-ts), for (f-OR), Lenore (Len-OR-e), and the second for!'
+  },
+];
+
+// Part 4: Spelling words (see picture, spell the word)
+const SPELL_QS = [
+  {word:'horse', emoji:'🐴', hint:'rides on a farm', blanks:[0,1,2,3,4]},
+  {word:'fork',  emoji:'🍴', hint:'used to eat food', blanks:[0,1,2,3]},
+  {word:'store', emoji:'🏪', hint:'you buy things here', blanks:[0,1,2,3,4]},
+  {word:'horn',  emoji:'📯', hint:'makes a loud sound', blanks:[0,1,2,3]},
+  {word:'core',  emoji:'🍎', hint:'middle of an apple', blanks:[0,1,2,3]},
+  {word:'more',  emoji:'➕', hint:'not less, but ___', blanks:[0,1,2,3]},
+  {word:'corn',  emoji:'🌽', hint:'yellow vegetable', blanks:[0,1,2,3]},
+  {word:'sport', emoji:'⚽', hint:'you play this outside', blanks:[0,1,2,3,4]},
+];
+
+// ===== STATE =====
+let phase = 'learn';
+let qi = 0, score = 0, wrong = [], answered = false;
+let currentQ = [];
+let passageIdx = 0;
+let selectedWords = [];
+
+function clearFb() { document.getElementById('feedback').className = 'feedback'; }
+function fb(msg, type) { const el = document.getElementById('feedback'); el.innerHTML = msg; el.className = 'feedback show ' + type; }
+
+// ===== PART 1: LEARN =====
+function showLearn() {
+  phase = 'learn';
+  clearFb();
+  document.getElementById('gTitle').textContent = '📚 Learn: or / ore';
+  document.getElementById('gProg').textContent = 'Part 1 / 4';
+  document.getElementById('scoreLabel').textContent = '';
+  document.getElementById('scoreVal').textContent = '';
+  document.getElementById('dots').innerHTML = '';
+  document.getElementById('finalCard').classList.remove('show');
+  document.getElementById('pbarFill').style.width = '8%';
+  document.getElementById('nextBtn').textContent = 'Start Part 2: Which has or/ore? 🐴';
+  document.getElementById('nextBtn').className = 'next-btn show';
+
+  document.getElementById('content').innerHTML = `
+    <div class="learn-card">
+      <div class="learn-title" style="color:#c2410c">🐴 The r-Controlled Sound: or / ore</div>
+      <div class="rule-box rule-or">
+        🔴 <b>-or</b> = 在字中間，後面有子音<br>
+        <div class="ex-row">
+          <span class="ex-chip ec-or">h<b>or</b>se 🐴</span>
+          <span class="ex-chip ec-or">f<b>or</b>k 🍴</span>
+          <span class="ex-chip ec-or">h<b>or</b>n 📯</span>
+          <span class="ex-chip ec-or">c<b>or</b>n 🌽</span>
+          <span class="ex-chip ec-or">f<b>or</b> 🎁</span>
+        </div>
+      </div>
+      <div class="rule-box rule-ore">
+        🟡 <b>-ore</b> = 在字尾，e 不發音但讓 or 有聲音<br>
+        <div class="ex-row">
+          <span class="ex-chip ec-ore">c<b>ore</b> 🍎</span>
+          <span class="ex-chip ec-ore">st<b>ore</b> 🏪</span>
+          <span class="ex-chip ec-ore">m<b>ore</b> ➕</span>
+          <span class="ex-chip ec-ore">bef<b>ore</b> ⏰</span>
+          <span class="ex-chip ec-ore">ch<b>ore</b>s 🧹</span>
+        </div>
+      </div>
+      <div class="rule-box rule-tip">
+        🎵 <b>Both sound the same!</b><br>
+        <div class="ex-row">
+          <span class="ex-chip ec-green">or + ore = 都發「歐兒」的聲音！</span>
+        </div>
+        horse 🐴 ＝ core 🍎 ＝ 同一個音！
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+        ${['horse','fork','core','horn','store','for','more','corn'].map(w => {
+          const pattern = w.includes('ore') ? 'ore' : 'or';
+          const hl = w.replace(pattern, `<span class="hl-${pattern}">${pattern}</span>`);
+          return `<div style="background:#f9f9f9;border-radius:12px;padding:10px;text-align:center;font-family:'Fredoka One',cursive;font-size:1.3rem">${hl}</div>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+
+// ===== PART 2: YES OR NO =====
+function startOR() {
+  phase = 'or';
+  score = 0; wrong = []; qi = 0; answered = false;
+  currentQ = [...OR_QS].sort(() => Math.random() - 0.5).slice(0, 10);
+  document.getElementById('gTitle').textContent = '🐴 Has or/ore sound?';
+  document.getElementById('gProg').textContent = 'Part 2 / 4';
+  buildDots(currentQ.length);
+  showORQ();
+}
+
+function showORQ() {
+  answered = false;
+  const q = currentQ[qi];
+  const total = currentQ.length;
+  document.getElementById('pbarFill').style.width = (12 + (qi/total)*22) + '%';
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  // Highlight or/ore in the word
+  let displayWord = q.word;
+  if (q.ans) {
+    const pat = q.pattern;
+    displayWord = q.word.replace(pat, `<span class="hl-${pat === 'ore' ? 'ore' : 'or'}" style="text-decoration:none">${pat}</span>`);
+  }
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label pl-or">🔴 or / ore?</div>
+    <div class="q-card" id="qCard">
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="big-word">${displayWord}</div>
+      <div class="q-hint">Does this word have the "or" sound?</div>
+      <div class="opts-2">
+        <button class="opt-btn" data-val="yes" onclick="pickOR(this)">
+          <span class="opt-emoji">✅</span>
+          <span class="opt-word">Yes!</span>
+        </button>
+        <button class="opt-btn" data-val="no" onclick="pickOR(this)">
+          <span class="opt-emoji">❌</span>
+          <span class="opt-word">No!</span>
+        </button>
+      </div>
+    </div>`;
+
+  updateDot(qi, 'curr');
+}
+
+function pickOR(btn) {
+  if (answered) return; answered = true;
+  const q = currentQ[qi];
+  const val = btn.dataset.val === 'yes';
+  document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  if (val === q.ans) {
+    btn.classList.add('correct'); score++; popStars();
+    fb('✅ ' + q.explain, 'ok');
+    updateDot(qi, 'ok');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelector(`[data-val="${q.ans ? 'yes' : 'no'}"]`).classList.add('correct');
+    wrong.push(q);
+    fb('❌ ' + q.explain, 'bad');
+    document.getElementById('qCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('qCard')?.classList.remove('shake'), 400);
+    updateDot(qi, 'bad');
+  }
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === currentQ.length - 1 ? 'See Results 🎊' : 'Next ➡️';
+  nb.className = 'next-btn show';
+}
+
+// ===== PART 3: PASSAGE TAP =====
+function startPassage() {
+  phase = 'passage';
+  score = 0; qi = 0; answered = false;
+  passageIdx = 0;
+  selectedWords = [];
+  document.getElementById('gTitle').textContent = '📖 What Now? Story';
+  document.getElementById('gProg').textContent = 'Part 3 / 4';
+  document.getElementById('dots').innerHTML = '';
+  clearFb();
+  showPassage();
+}
+
+function showPassage() {
+  answered = false;
+  selectedWords = [];
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+  const p = PASSAGES[passageIdx];
+  document.getElementById('pbarFill').style.width = (35 + passageIdx * 12) + '%';
+  document.getElementById('scoreLabel').textContent = p.label;
+  document.getElementById('scoreVal').textContent = '';
+
+  // Build tappable words
+  const words = p.text.split(' ');
+  const wordSpans = words.map((w, i) => {
+    const clean = w.replace(/[.,!?'']/g, '').toLowerCase();
+    return `<span class="tap-word" data-clean="${clean}" data-idx="${i}" onclick="tapWord(this, ${i})">${w}</span>`;
+  }).join(' ');
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label pl-txt">📖 Tap the Words</div>
+    <div class="q-card" id="qCard">
+      <div class="tap-instruction">${p.instruction}</div>
+      <div class="target-count" id="tapCount">Selected: 0 / ${p.targetCount}</div>
+      <div class="passage" id="passageText">${wordSpans}</div>
+      <button class="submit-btn" onclick="checkPassage()">Check Answers ✅</button>
+    </div>`;
+}
+
+function tapWord(el, idx) {
+  if (answered) return;
+  const i = parseInt(idx);
+  if (el.classList.contains('selected')) {
+    el.classList.remove('selected');
+    selectedWords = selectedWords.filter(x => x !== i);
+  } else {
+    el.classList.add('selected');
+    selectedWords.push(i);
+  }
+  document.getElementById('tapCount').textContent = `Selected: ${selectedWords.length} / ${PASSAGES[passageIdx].targetCount}`;
+}
+
+function checkPassage() {
+  if (answered) return;
+  answered = true;
+  const p = PASSAGES[passageIdx];
+  const words = p.text.split(' ');
+
+  // Build a list of target indices by matching targets in order
+  // This correctly handles duplicate words like 'for' appearing twice
+  const targetQueue = [...p.targets]; // copy of targets array
+  const targetIndices = [];
+  words.forEach((w, i) => {
+    const clean = w.replace(/[.,!?''']/g, '').toLowerCase();
+    const queueIdx = targetQueue.indexOf(clean);
+    if (queueIdx !== -1) {
+      targetIndices.push(i);
+      targetQueue.splice(queueIdx, 1); // remove first match so next 'for' maps to next index
+    }
+  });
+
+  let correctCount = 0;
+  let missedTargets = [];
+
+  document.querySelectorAll('.tap-word').forEach((el, i) => {
+    const isTarget = targetIndices.includes(i);
+    const isSelected = selectedWords.includes(i);
+
+    if (isTarget && isSelected) {
+      el.classList.remove('selected');
+      el.classList.add('correct');
+      correctCount++;
+    } else if (isTarget && !isSelected) {
+      el.classList.add('missed');
+      missedTargets.push(words[i]);
+    } else if (!isTarget && isSelected) {
+      el.classList.remove('selected');
+      el.classList.add('wrong');
+    }
+  });
+
+  const allCorrect = correctCount >= p.targetCount && missedTargets.length === 0;
+  if (allCorrect) {
+    score++; popStars();
+    fb('✅ ' + p.explain, 'ok');
+  } else {
+    fb('❌ ' + p.explain + (missedTargets.length > 0 ? ' Missed: ' + missedTargets.join(', ') : ''), 'bad');
+  }
+
+  const nb = document.getElementById('nextBtn');
+  if (passageIdx < PASSAGES.length - 1) {
+    nb.textContent = 'Next Paragraph ➡️';
+  } else {
+    nb.textContent = 'Next: Spelling! ✏️';
+  }
+  nb.className = 'next-btn show';
+}
+
+// ===== PART 4: SPELLING =====
+function startSpell() {
+  phase = 'spell';
+  score = 0; wrong = []; qi = 0; answered = false;
+  currentQ = [...SPELL_QS].sort(() => Math.random() - 0.5).slice(0, 6);
+  document.getElementById('gTitle').textContent = '✏️ Spell it!';
+  document.getElementById('gProg').textContent = 'Part 4 / 4';
+  buildDots(currentQ.length);
+  showSpellQ();
+}
+
+function showSpellQ() {
+  answered = false;
+  const q = currentQ[qi];
+  const total = currentQ.length;
+  document.getElementById('pbarFill').style.width = (60 + (qi/total)*35) + '%';
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  const pattern = q.word.includes('ore') ? 'ore' : 'or';
+  const patStart = q.word.indexOf(pattern);
+  const boxes = q.word.split('').map((ch, i) => {
+    return `<input class="letter-box" id="lb${i}" maxlength="1" type="text"
+      oninput="handleLetter(${i},${q.word.length})"
+      onkeydown="handleKey(event,${i})"
+      autocomplete="off" autocorrect="off" spellcheck="false">`;
+  }).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label pl-spl">✏️ Spelling</div>
+    <div class="q-card" id="qCard">
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="spell-word-display">${q.hint}</div>
+      <div class="q-hint">Spell the word: <span style="color:#f97316;font-family:'Fredoka One',cursive">${q.word.length} letters</span></div>
+      <div class="letter-boxes">${boxes}</div>
+      <div style="font-family:'Fredoka One',cursive;font-size:0.82rem;color:#f97316;text-align:center;margin-bottom:12px">
+        💡 This word has the <span style="background:#fed7aa;padding:2px 8px;border-radius:10px">${pattern}</span> sound — letters ${patStart+1} to ${patStart+pattern.length}
+      </div>
+      <button class="check-btn" onclick="checkSpell()">Check ✅</button>
+    </div>`;
+
+  setTimeout(() => document.getElementById('lb0')?.focus(), 50);
+  updateDot(qi, 'curr');
+}
+
+function handleLetter(idx, total) {
+  const el = document.getElementById(`lb${idx}`);
+  el.value = el.value.toUpperCase().slice(-1);
+  if (el.value && idx < total - 1) document.getElementById(`lb${idx+1}`)?.focus();
+}
+
+function handleKey(e, idx) {
+  if (e.key === 'Backspace') {
+    const el = document.getElementById(`lb${idx}`);
+    if (!el.value && idx > 0) document.getElementById(`lb${idx-1}`)?.focus();
+  }
+  if (e.key === 'Enter') checkSpell();
+}
+
+function checkSpell() {
+  if (answered) return;
+  const q = currentQ[qi];
+  let allOk = true;
+  q.word.split('').forEach((ch, i) => {
+    const box = document.getElementById(`lb${i}`);
+    const val = (box?.value || '').toLowerCase();
+    box?.classList.remove('correct','wrong');
+    if (val === ch) box?.classList.add('correct');
+    else { box?.classList.add('wrong'); allOk = false; box.value = ch.toUpperCase(); }
+  });
+  if (!allOk) { fb(`❌ The word is <b>${q.word}</b>`, 'bad'); wrong.push(q); updateDot(qi, 'bad'); }
+  else { score++; fb(`✅ "${q.word}" — correct! 🎉`, 'ok'); popStars(); updateDot(qi, 'ok'); }
+  answered = true;
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === currentQ.length-1 ? 'See Final Results! 🎊' : 'Next ➡️';
+  nb.className = 'next-btn show';
+}
+
+// ===== NAVIGATION =====
+function handleNext() {
+  if (phase === 'learn')   { startOR(); return; }
+  if (phase === 'or') {
+    qi++;
+    if (qi < currentQ.length) showORQ();
+    else showPartResult('or');
+    return;
+  }
+  if (phase === 'result-or') { startPassage(); return; }
+  if (phase === 'passage') {
+    passageIdx++;
+    if (passageIdx < PASSAGES.length) showPassage();
+    else startSpell();
+    return;
+  }
+  if (phase === 'spell') {
+    qi++;
+    if (qi < currentQ.length) showSpellQ();
+    else showFinal();
+  }
+}
+
+function showPartResult(prevPhase) {
+  phase = 'result-' + prevPhase;
+  const total = currentQ.length;
+  const pct = score / total;
+  const stars = pct===1?'⭐⭐⭐':pct>=0.7?'⭐⭐':'⭐';
+  const msg = pct===1?'Perfect!':pct>=0.7?'Great job!':'Keep practicing!';
+
+  document.getElementById('dots').innerHTML = '';
+  clearFb();
+  document.getElementById('content').innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  const wrongHtml = wrong.length > 0 ? `
+    <div style="background:#fff7ed;border-radius:12px;padding:12px;margin-bottom:16px;text-align:left">
+      <div style="font-family:'Fredoka One',cursive;color:#c2410c;margin-bottom:6px">📝 Review:</div>
+      ${wrong.map(q => `<div style="font-size:0.85rem;font-weight:700;padding:3px 0">${q.emoji} ${q.word} — ${q.explain}</div>`).join('')}
+    </div>` : '';
+
+  document.getElementById('finalCard').innerHTML = `
+    <div class="final-title">🐴 Part Done!</div>
+    <div class="final-score">${score} / ${total}</div>
+    <div class="final-stars">${stars}</div>
+    <div class="final-msg">${msg}</div>
+    ${wrongHtml}
+    <div class="final-btns">
+      <button class="next-part-btn" onclick="handleNext()">Next: Story Practice! 📖</button>
+      <button class="retry-btn" onclick="startOR(); document.getElementById('finalCard').classList.remove('show')">🔄 Retry</button>
+    </div>`;
+  document.getElementById('finalCard').classList.add('show');
+}
+
+function showFinal() {
+  const total = currentQ.length;
+  const pct = score / total;
+  const stars = pct===1?'⭐⭐⭐':pct>=0.7?'⭐⭐':'⭐';
+  const msg = pct===1?'You are an or/ore master! 🏆':pct>=0.7?'Almost perfect!':'Review and try again!';
+
+  document.getElementById('dots').innerHTML = '';
+  clearFb();
+  document.getElementById('content').innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+  document.getElementById('pbarFill').style.width = '100%';
+
+  const wrongHtml = wrong.length > 0 ? `
+    <div style="background:#fff7ed;border-radius:12px;padding:12px;margin-bottom:16px;text-align:left">
+      <div style="font-family:'Fredoka One',cursive;color:#c2410c;margin-bottom:6px">📝 Spelling Review:</div>
+      ${wrong.map(q => `<div style="font-size:0.85rem;font-weight:700;padding:3px 0">${q.emoji} ${q.word}</div>`).join('')}
+    </div>` : '';
+
+  document.getElementById('finalCard').innerHTML = `
+    <div class="final-title">🐴 All Done!</div>
+    <div class="final-score">${score} / ${total}</div>
+    <div class="final-stars">${stars}</div>
+    <div class="final-msg">${msg}</div>
+    ${wrongHtml}
+    <div class="final-btns">
+      <button class="retry-btn" onclick="location.reload()">🔄 Play Again!</button>
+    </div>`;
+  document.getElementById('finalCard').classList.add('show');
+  for (let i=0;i<4;i++) setTimeout(popStars, i*250);
+}
+
+function buildDots(n) {
+  const c = document.getElementById('dots');
+  c.innerHTML = '';
+  for (let i=0;i<n;i++) {
+    const d = document.createElement('div');
+    d.className = 'dot'+(i===0?' curr':'');
+    d.id = 'dot'+i;
+    c.appendChild(d);
+  }
+}
+
+function updateDot(i, state) {
+  const d = document.getElementById('dot'+i);
+  if (!d) return;
+  d.className = 'dot '+state;
+  const next = document.getElementById('dot'+(i+1));
+  if (next && state !== 'curr') next.classList.add('curr');
+}
+
+function popStars() {
+  const emojis = ['⭐','✨','🌟','🎉','🐴','🏇','🌾'];
+  for (let i=0;i<4;i++) {
+    setTimeout(() => {
+      const s = document.createElement('div'); s.className = 'star-pop';
+      s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      s.style.left = (15+Math.random()*70)+'vw';
+      s.style.top  = (20+Math.random()*50)+'vh';
+      document.body.appendChild(s);
+      setTimeout(()=>s.remove(),900);
+    },i*110);
+  }
+}
+
+window.onload = () => showLearn();
+</script>
+</body>
+</html>

@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧩 Compound Words!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #fff8f0; font-family: 'Nunito', sans-serif; min-height: 100vh; }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 16px 16px 60px; }
+
+  .g-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .g-title { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #333; }
+  .g-prog  { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #aaa; }
+  .pbar-wrap { background: #eee; border-radius: 99px; height: 8px; margin-bottom: 14px; overflow: hidden; }
+  .pbar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg,#8b5cf6,#3b82f6); transition: width 0.4s; }
+  .score-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+  .score-label { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #aaa; }
+  .score-val   { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #34d399; }
+
+  .learn-card {
+    background: white; border-radius: 20px; padding: 20px 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+  }
+  .learn-title { font-family: 'Fredoka One', cursive; font-size: 1.15rem; text-align: center; margin-bottom: 14px; }
+  .rule-box {
+    border-radius: 12px; padding: 12px 14px; font-size: 0.88rem;
+    font-weight: 700; line-height: 1.7; margin-bottom: 10px;
+  }
+  .rule-p { background: #ede9fe; color: #5b21b6; border-left: 4px solid #8b5cf6; }
+  .rule-b { background: #dbeafe; color: #1e40af; border-left: 4px solid #3b82f6; }
+  .rule-tip { background: #f0fdf4; color: #065f46; border-left: 4px solid #10b981; }
+  .ex-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .ex-chip { padding: 4px 12px; border-radius: 20px; font-size: 0.88rem; font-weight: 800; }
+  .ec-p { background: #ede9fe; color: #5b21b6; }
+  .ec-b { background: #dbeafe; color: #1e40af; }
+  .ec-green { background: #bbf7d0; color: #065f46; }
+
+  /* Word split demo */
+  .split-demo {
+    display: flex; align-items: center; gap: 8px; justify-content: center;
+    margin: 10px 0; flex-wrap: wrap;
+  }
+  .split-part1 { font-family:'Fredoka One',cursive; font-size:1.4rem; background:#ede9fe; color:#5b21b6; padding:6px 14px; border-radius:12px; }
+  .split-plus  { font-family:'Fredoka One',cursive; font-size:1.2rem; color:#aaa; }
+  .split-part2 { font-family:'Fredoka One',cursive; font-size:1.4rem; background:#dbeafe; color:#1e40af; padding:6px 14px; border-radius:12px; }
+  .split-eq    { font-family:'Fredoka One',cursive; font-size:1.2rem; color:#aaa; }
+  .split-whole { font-family:'Fredoka One',cursive; font-size:1.4rem; background:#bbf7d0; color:#065f46; padding:6px 14px; border-radius:12px; }
+
+  .phase-label {
+    font-family: 'Fredoka One', cursive; font-size: 0.8rem; letter-spacing: 2px;
+    text-transform: uppercase; border-radius: 20px; padding: 4px 14px;
+    display: inline-block; margin-bottom: 12px;
+  }
+  .pl-seg { background: #ede9fe; color: #5b21b6; }
+  .pl-bld { background: #dbeafe; color: #1e40af; }
+  .pl-txt { background: #f0fdf4; color: #065f46; }
+
+  .q-card {
+    background: white; border-radius: 20px; padding: 22px 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+    animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .q-card.shake { animation: shake 0.35s ease; }
+  @keyframes popIn { from{opacity:0;transform:scale(0.88)} to{opacity:1;transform:scale(1)} }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+  .q-emoji   { font-size: 2.8rem; display: block; text-align: center; margin-bottom: 10px; }
+  .q-word    { font-family: 'Fredoka One', cursive; font-size: 2.2rem; text-align: center; color: #333; margin-bottom: 12px; letter-spacing: 2px; }
+  .q-hint    { font-size: 0.82rem; color: #aaa; font-weight: 700; text-align: center; margin-bottom: 14px; }
+
+  /* SEGMENT: tap where to cut */
+  .seg-word-wrap { display: flex; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; gap: 0; }
+  .seg-char {
+    font-family: 'Fredoka One', cursive; font-size: 2rem; color: #333;
+    padding: 8px 4px; cursor: default; position: relative;
+  }
+  .seg-gap {
+    width: 16px; height: 52px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    border-radius: 8px; transition: all 0.15s; position: relative;
+  }
+  .seg-gap:hover { background: #ede9fe; }
+  .seg-gap::after {
+    content: '|'; font-family: 'Fredoka One', cursive; font-size: 1.4rem;
+    color: #ddd; transition: all 0.15s;
+  }
+  .seg-gap:hover::after { color: #8b5cf6; }
+  .seg-gap.selected { background: #fde68a; }
+  .seg-gap.selected::after { color: #f59e0b; font-size: 1.8rem; }
+  .seg-gap.correct { background: #d1fae5; }
+  .seg-gap.correct::after { color: #10b981; }
+  .seg-gap.wrong { background: #fee2e2; }
+  .seg-gap.wrong::after { color: #ef4444; }
+
+  /* Result split display */
+  .split-result {
+    display: flex; gap: 8px; justify-content: center; margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .sr-part1 { font-family:'Fredoka One',cursive; font-size:1.3rem; background:#ede9fe; color:#5b21b6; padding:5px 12px; border-radius:10px; }
+  .sr-part2 { font-family:'Fredoka One',cursive; font-size:1.3rem; background:#dbeafe; color:#1e40af; padding:5px 12px; border-radius:10px; }
+
+  /* BLEND: match two halves */
+  .blend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .blend-col { display: flex; flex-direction: column; gap: 8px; }
+  .blend-chip {
+    padding: 10px 14px; border-radius: 12px; border: 3px solid #ddd;
+    font-family: 'Fredoka One', cursive; font-size: 1rem; cursor: pointer;
+    text-align: center; transition: all 0.15s; background: #f9f9f9; color: #333;
+  }
+  .blend-chip:hover  { border-color: #8b5cf6; background: #ede9fe; }
+  .blend-chip.sel-a  { background: #ede9fe; border-color: #8b5cf6; color: #5b21b6; }
+  .blend-chip.sel-b  { background: #dbeafe; border-color: #3b82f6; color: #1e40af; }
+  .blend-chip.matched-ok { background: #d1fae5; border-color: #34d399; color: #065f46; opacity: 0.7; cursor: default; }
+  .blend-chip.wrong  { background: #fee2e2; border-color: #fca5a5; animation: shake 0.3s ease; }
+  .blend-result-area {
+    background: #f0fdf4; border-radius: 12px; padding: 10px 14px;
+    margin-top: 10px; min-height: 44px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+  }
+  .blend-matched-word {
+    font-family: 'Fredoka One', cursive; font-size: 1rem;
+    background: #bbf7d0; color: #065f46; padding: 4px 12px; border-radius: 20px;
+  }
+
+  /* Passage */
+  .passage {
+    background: #fffbeb; border-radius: 14px; padding: 16px 14px;
+    font-size: 1.05rem; font-weight: 700; line-height: 2.4;
+    color: #333; margin-bottom: 14px; text-align: center;
+  }
+  .tap-word {
+    display: inline-block; padding: 2px 6px; border-radius: 8px;
+    cursor: pointer; transition: all 0.15s; border: 2px solid transparent;
+  }
+  .tap-word:hover    { background: #ede9fe; border-color: #8b5cf6; }
+  .tap-word.selected { background: #ddd6fe; border-color: #8b5cf6; color: #5b21b6; }
+  .tap-word.correct  { background: #d1fae5; border-color: #34d399; color: #065f46; }
+  .tap-word.missed   { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+  .tap-word.wrong    { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+  .submit-btn {
+    width: 100%; padding: 13px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg,#8b5cf6,#3b82f6);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.1rem;
+    cursor: pointer; margin-bottom: 12px;
+  }
+
+  .dots { display: flex; justify-content: center; gap: 5px; margin-bottom: 12px; flex-wrap: wrap; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #e5e7eb; transition: all 0.3s; }
+  .dot.curr { background: #8b5cf6; transform: scale(1.4); }
+  .dot.ok   { background: #34d399; }
+  .dot.bad  { background: #f87171; }
+
+  .feedback {
+    border-radius: 14px; padding: 12px 16px; margin-bottom: 12px;
+    font-weight: 800; font-size: 0.95rem; display: none; text-align: center; line-height: 1.5;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok  { background: #d1fae5; color: #065f46; border: 3px solid #6ee7b7; }
+  .feedback.bad { background: #fee2e2; color: #991b1b; border: 3px solid #fca5a5; }
+
+  .next-btn {
+    width: 100%; padding: 15px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg,#8b5cf6,#3b82f6);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+    cursor: pointer; display: none; box-shadow: 0 4px 14px rgba(139,92,246,0.35);
+  }
+  .next-btn.show { display: block; }
+
+  .final-card {
+    background: white; border-radius: 24px; padding: 30px 22px;
+    text-align: center; box-shadow: 0 8px 28px rgba(0,0,0,0.1); display: none;
+  }
+  .final-card.show { display: block; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  .final-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #8b5cf6; margin-bottom: 6px; }
+  .final-score { font-family: 'Fredoka One', cursive; font-size: 3rem; color: #5c6bc0; }
+  .final-stars { font-size: 2.2rem; letter-spacing: 4px; margin: 6px 0 12px; }
+  .final-msg   { font-size: 0.95rem; color: #666; font-weight: 700; margin-bottom: 20px; line-height: 1.6; }
+  .final-btns  { display: flex; flex-direction: column; gap: 10px; }
+  .retry-btn { padding: 14px; border-radius: 50px; border: none; background: linear-gradient(135deg,#8b5cf6,#3b82f6); color: white; font-family:'Fredoka One',cursive; font-size:1.1rem; cursor:pointer; }
+  .next-part-btn { padding: 14px; border-radius: 50px; border: none; background: linear-gradient(135deg,#f97316,#ef4444); color: white; font-family:'Fredoka One',cursive; font-size:1.1rem; cursor:pointer; }
+
+  .star-pop { position: fixed; font-size: 1.8rem; pointer-events: none; animation: fly 0.9s ease-out forwards; z-index: 999; }
+  @keyframes fly { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-80px) scale(1.5)} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="g-header">
+    <div class="g-title" id="gTitle">🧩 Compound Words!</div>
+    <div class="g-prog"  id="gProg"></div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
+  <div class="score-row">
+    <div class="score-label" id="scoreLabel"></div>
+    <div class="score-val"   id="scoreVal"></div>
+  </div>
+  <div id="content"></div>
+  <div class="dots"     id="dots"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="handleNext()"></button>
+  <div class="final-card" id="finalCard"></div>
+</div>
+
+<script>
+// ===== DATA =====
+const WORDS = [
+  {word:'backpack',  part1:'back',  part2:'pack',  emoji:'🎒', split:4},
+  {word:'pinecone',  part1:'pine',  part2:'cone',  emoji:'🌲', split:4},
+  {word:'sunset',    part1:'sun',   part2:'set',   emoji:'🌅', split:3},
+  {word:'rainbow',   part1:'rain',  part2:'bow',   emoji:'🌈', split:4},
+  {word:'snowman',   part1:'snow',  part2:'man',   emoji:'⛄', split:4},
+  {word:'keyboard',  part1:'key',   part2:'board', emoji:'⌨️', split:3},
+  {word:'bedtime',   part1:'bed',   part2:'time',  emoji:'🛏️', split:3},
+  {word:'sidewalk',  part1:'side',  part2:'walk',  emoji:'🚶', split:4},
+  {word:'sandbox',   part1:'sand',  part2:'box',   emoji:'🏖️', split:4},
+  {word:'homemade',  part1:'home',  part2:'made',  emoji:'🏠', split:4},
+  {word:'notepad',   part1:'note',  part2:'pad',   emoji:'📝', split:4},
+  {word:'baseball',  part1:'base',  part2:'ball',  emoji:'⚾', split:4},
+  {word:'treetop',   part1:'tree',  part2:'top',   emoji:'🌳', split:4},
+  {word:'bathtub',   part1:'bath',  part2:'tub',   emoji:'🛁', split:4},
+  {word:'pancake',   part1:'pan',   part2:'cake',  emoji:'🥞', split:3},
+];
+
+// Passage for Part 4
+const PASSAGE_DATA = {
+  text: 'What can Lenore do this weekend? She goes to play in the sunshine. No one is there by the hillside.',
+  targets: ['sunshine', 'hillside', 'weekend'],
+  targetCount: 3,
+  instruction: 'Tap the 3 compound words!',
+  explain: 'weekend (week + end), sunshine (sun + shine), hillside (hill + side) are all compound words!'
+};
+
+// ===== STATE =====
+let phase = 'learn';
+let qi = 0, score = 0, wrong = [], answered = false;
+let currentQ = [];
+let selectedGap = null;
+let blendSelA = null, blendSelB = null;
+let blendMatched = [];
+let blendPairs = [];
+let passageSelected = [];
+
+function clearFb() { document.getElementById('feedback').className = 'feedback'; }
+function fb(msg, type) { const el = document.getElementById('feedback'); el.innerHTML = msg; el.className = 'feedback show ' + type; }
+
+// ===== PART 1: LEARN =====
+function showLearn() {
+  phase = 'learn';
+  clearFb();
+  document.getElementById('gTitle').textContent = '📚 Compound Words';
+  document.getElementById('gProg').textContent = 'Part 1 / 4';
+  document.getElementById('scoreLabel').textContent = '';
+  document.getElementById('scoreVal').textContent = '';
+  document.getElementById('dots').innerHTML = '';
+  document.getElementById('finalCard').classList.remove('show');
+  document.getElementById('pbarFill').style.width = '8%';
+  document.getElementById('nextBtn').textContent = 'Start Part 2: Segment! ✂️';
+  document.getElementById('nextBtn').className = 'next-btn show';
+
+  document.getElementById('content').innerHTML = `
+    <div class="learn-card">
+      <div class="learn-title" style="color:#5b21b6">🧩 What is a Compound Word?</div>
+      <div class="rule-box rule-p">
+        🟣 <b>Compound Word</b> = 兩個單字合在一起，變成新的詞！<br>
+        Two smaller words joined together = one new word!
+      </div>
+      <div style="margin-bottom:12px">
+        <div class="split-demo">
+          <span class="split-part1">back 🎒</span>
+          <span class="split-plus">+</span>
+          <span class="split-part2">pack 📦</span>
+          <span class="split-eq">=</span>
+          <span class="split-whole">backpack 🎒</span>
+        </div>
+        <div class="split-demo">
+          <span class="split-part1">sun ☀️</span>
+          <span class="split-plus">+</span>
+          <span class="split-part2">set 🌅</span>
+          <span class="split-eq">=</span>
+          <span class="split-whole">sunset 🌅</span>
+        </div>
+        <div class="split-demo">
+          <span class="split-part1">rain 🌧️</span>
+          <span class="split-plus">+</span>
+          <span class="split-part2">bow 🌈</span>
+          <span class="split-eq">=</span>
+          <span class="split-whole">rainbow 🌈</span>
+        </div>
+      </div>
+      <div class="rule-box rule-b">
+        ✂️ <b>Segment</b> = 把複合詞切成兩半<br>
+        backpack → <b>back</b> + <b>pack</b>
+      </div>
+      <div class="rule-box rule-tip">
+        🔗 <b>Blend</b> = 把兩個小字連起來<br>
+        snow + man → <b>snowman</b> ⛄
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+        ${WORDS.slice(0,8).map(w => `
+          <div style="background:#f9f9f9;border-radius:12px;padding:8px;text-align:center">
+            <div style="font-size:1.3rem">${w.emoji}</div>
+            <div style="font-family:'Fredoka One',cursive;font-size:1rem;color:#5b21b6">${w.part1}</div>
+            <div style="font-family:'Fredoka One',cursive;font-size:0.8rem;color:#aaa">+</div>
+            <div style="font-family:'Fredoka One',cursive;font-size:1rem;color:#1e40af">${w.part2}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+// ===== PART 2: SEGMENT =====
+function startSegment() {
+  phase = 'seg';
+  score = 0; wrong = []; qi = 0; answered = false;
+  currentQ = [...WORDS].sort(() => Math.random() - 0.5).slice(0, 8);
+  document.getElementById('gTitle').textContent = '✂️ Segment!';
+  document.getElementById('gProg').textContent = 'Part 2 / 4';
+  buildDots(currentQ.length);
+  showSegQ();
+}
+
+function showSegQ() {
+  answered = false;
+  selectedGap = null;
+  const q = currentQ[qi];
+  const total = currentQ.length;
+  document.getElementById('pbarFill').style.width = (12 + (qi/total)*23) + '%';
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  // Build letter spans with clickable gaps between them
+  const chars = q.word.split('');
+  let html = '';
+  chars.forEach((ch, i) => {
+    html += `<span class="seg-char">${ch}</span>`;
+    if (i < chars.length - 1) {
+      html += `<span class="seg-gap" id="gap${i}" data-pos="${i+1}" onclick="selectGap(this, ${i+1}, ${q.split})"></span>`;
+    }
+  });
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label pl-seg">✂️ Segment</div>
+    <div class="q-card" id="qCard">
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-hint">Tap between the letters to cut this compound word in two!</div>
+      <div class="seg-word-wrap">${html}</div>
+      <div class="split-result" id="splitResult"></div>
+    </div>`;
+
+  updateDot(qi, 'curr');
+}
+
+function selectGap(el, pos, correctSplit) {
+  if (answered) return;
+
+  // Deselect previous
+  document.querySelectorAll('.seg-gap').forEach(g => g.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedGap = pos;
+
+  const q = currentQ[qi];
+  const part1 = q.word.slice(0, pos);
+  const part2 = q.word.slice(pos);
+
+  // Show live preview
+  document.getElementById('splitResult').innerHTML = `
+    <span class="sr-part1">${part1}</span>
+    <span style="font-family:'Fredoka One',cursive;color:#aaa">+</span>
+    <span class="sr-part2">${part2}</span>`;
+
+  // Auto-check
+  if (pos === correctSplit) {
+    answered = true;
+    el.classList.remove('selected');
+    el.classList.add('correct');
+    score++; popStars();
+    fb(`✅ ${q.part1} + ${q.part2} = ${q.word} ${q.emoji}`, 'ok');
+    updateDot(qi, 'ok');
+    const nb = document.getElementById('nextBtn');
+    nb.textContent = qi === currentQ.length-1 ? 'See Results 🎊' : 'Next ➡️';
+    nb.className = 'next-btn show';
+  } else {
+    el.classList.remove('selected');
+    el.classList.add('wrong');
+    setTimeout(() => {
+      el.classList.remove('wrong');
+      document.getElementById('splitResult').innerHTML = '';
+      selectedGap = null;
+    }, 800);
+    fb(`Try again! Where does ${q.word} split?`, 'bad');
+    setTimeout(() => clearFb(), 1500);
+  }
+}
+
+// ===== PART 3: BLEND (MATCH) =====
+function startBlend() {
+  phase = 'blend';
+  score = 0; qi = 0; answered = false;
+  blendMatched = []; blendSelA = null; blendSelB = null;
+  document.getElementById('gTitle').textContent = '🔗 Blend!';
+  document.getElementById('gProg').textContent = 'Part 3 / 4';
+  document.getElementById('dots').innerHTML = '';
+  clearFb();
+  showBlend();
+}
+
+function showBlend() {
+  answered = false;
+  blendMatched = []; blendSelA = null; blendSelB = null;
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  // Pick 5 random pairs
+  const selected = [...WORDS].sort(() => Math.random() - 0.5).slice(0, 5);
+  blendPairs = selected;
+
+  // Shuffle part1s and part2s independently
+  const part1s = selected.map((w,i) => ({text:w.part1, idx:i, emoji:w.emoji})).sort(()=>Math.random()-0.5);
+  const part2s = selected.map((w,i) => ({text:w.part2, idx:i, emoji:w.emoji})).sort(()=>Math.random()-0.5);
+
+  document.getElementById('pbarFill').style.width = '48%';
+  document.getElementById('scoreLabel').textContent = 'Match the pairs!';
+  document.getElementById('scoreVal').textContent = `Matched: 0 / ${selected.length}`;
+
+  const part1Html = part1s.map((p,i) =>
+    `<div class="blend-chip" id="a${i}" data-pair="${p.idx}" data-side="a" onclick="selectBlend(this,'a')">${p.text}</div>`
+  ).join('');
+  const part2Html = part2s.map((p,i) =>
+    `<div class="blend-chip" id="b${i}" data-pair="${p.idx}" data-side="b" onclick="selectBlend(this,'b')">${p.text}</div>`
+  ).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label pl-bld">🔗 Blend</div>
+    <div class="q-card" id="qCard">
+      <div class="q-hint">Tap a word from each column to make a compound word!</div>
+      <div class="blend-grid">
+        <div class="blend-col">${part1Html}</div>
+        <div class="blend-col">${part2Html}</div>
+      </div>
+      <div class="blend-result-area" id="blendResults">
+        <span style="color:#aaa;font-family:'Fredoka One',cursive;font-size:0.85rem">Matched words appear here...</span>
+      </div>
+    </div>`;
+}
+
+function selectBlend(el, side) {
+  const pairIdx = parseInt(el.dataset.pair);
+  if (el.classList.contains('matched-ok')) return;
+
+  if (side === 'a') {
+    document.querySelectorAll('[data-side="a"]').forEach(e => e.classList.remove('sel-a'));
+    el.classList.add('sel-a');
+    blendSelA = {el, pairIdx};
+  } else {
+    document.querySelectorAll('[data-side="b"]').forEach(e => e.classList.remove('sel-b'));
+    el.classList.add('sel-b');
+    blendSelB = {el, pairIdx};
+  }
+
+  if (blendSelA && blendSelB) {
+    const w = blendPairs[blendSelA.pairIdx];
+    if (blendSelA.pairIdx === blendSelB.pairIdx) {
+      // Correct match!
+      blendSelA.el.classList.remove('sel-a'); blendSelA.el.classList.add('matched-ok');
+      blendSelB.el.classList.remove('sel-b'); blendSelB.el.classList.add('matched-ok');
+      blendMatched.push(w.word);
+      score++;
+
+      // Update results area
+      const resultsEl = document.getElementById('blendResults');
+      if (resultsEl.querySelector('span')) resultsEl.innerHTML = '';
+      resultsEl.innerHTML += `<span class="blend-matched-word">${w.emoji} ${w.word}</span>`;
+      document.getElementById('scoreVal').textContent = `Matched: ${blendMatched.length} / ${blendPairs.length}`;
+
+      fb(`✅ ${w.part1} + ${w.part2} = ${w.word} ${w.emoji}`, 'ok');
+      popStars();
+      blendSelA = null; blendSelB = null;
+
+      if (blendMatched.length === blendPairs.length) {
+        setTimeout(() => {
+          const nb = document.getElementById('nextBtn');
+          nb.textContent = 'Next: Story Practice! 📖';
+          nb.className = 'next-btn show';
+        }, 500);
+      }
+    } else {
+      // Wrong match
+      blendSelA.el.classList.remove('sel-a'); blendSelA.el.classList.add('wrong');
+      blendSelB.el.classList.remove('sel-b'); blendSelB.el.classList.add('wrong');
+      fb(`❌ ${blendSelA.el.textContent} + ${blendSelB.el.textContent} = not a word! Try again.`, 'bad');
+      setTimeout(() => {
+        blendSelA.el.classList.remove('wrong');
+        blendSelB.el.classList.remove('wrong');
+        clearFb();
+        blendSelA = null; blendSelB = null;
+      }, 1000);
+    }
+  }
+}
+
+// ===== PART 4: PASSAGE =====
+function startPassage() {
+  phase = 'passage';
+  passageSelected = [];
+  answered = false;
+  clearFb();
+  document.getElementById('gTitle').textContent = '📖 What Now? Story';
+  document.getElementById('gProg').textContent = 'Part 4 / 4';
+  document.getElementById('dots').innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+  document.getElementById('pbarFill').style.width = '72%';
+  document.getElementById('scoreLabel').textContent = 'Find the compound words!';
+  document.getElementById('scoreVal').textContent = '';
+
+  const p = PASSAGE_DATA;
+  const words = p.text.split(' ');
+  const wordSpans = words.map((w, i) => {
+    const clean = w.replace(/[.,!?]/g, '').toLowerCase();
+    return `<span class="tap-word" data-clean="${clean}" data-idx="${i}" onclick="tapPassage(this)">${w}</span>`;
+  }).join(' ');
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label pl-txt">📖 Story Practice</div>
+    <div class="q-card" id="qCard">
+      <div class="q-hint">${p.instruction}</div>
+      <div style="font-family:'Fredoka One',cursive;font-size:0.85rem;color:#8b5cf6;text-align:center;margin-bottom:10px">Selected: <span id="tapCount">0</span> / ${p.targetCount}</div>
+      <div class="passage">${wordSpans}</div>
+      <button class="submit-btn" onclick="checkPassage()">Check Answers ✅</button>
+    </div>`;
+}
+
+function tapPassage(el) {
+  if (answered) return;
+  const i = parseInt(el.dataset.idx);
+  if (el.classList.contains('selected')) {
+    el.classList.remove('selected');
+    passageSelected = passageSelected.filter(x => x !== i);
+  } else {
+    el.classList.add('selected');
+    passageSelected.push(i);
+  }
+  document.getElementById('tapCount').textContent = passageSelected.length;
+}
+
+function checkPassage() {
+  if (answered) return;
+  answered = true;
+  const p = PASSAGE_DATA;
+  const words = p.text.split(' ');
+  let correct = 0;
+  let missed = [];
+
+  document.querySelectorAll('.tap-word').forEach((el, i) => {
+    const clean = words[i].replace(/[.,!?]/g,'').toLowerCase();
+    const isTarget = p.targets.includes(clean);
+    const isSelected = passageSelected.includes(i);
+    if (isTarget && isSelected) { el.classList.remove('selected'); el.classList.add('correct'); correct++; }
+    else if (isTarget && !isSelected) { el.classList.add('missed'); missed.push(words[i]); }
+    else if (!isTarget && isSelected) { el.classList.remove('selected'); el.classList.add('wrong'); }
+  });
+
+  if (missed.length === 0 && correct === p.targetCount) {
+    score++; popStars();
+    fb('✅ ' + p.explain, 'ok');
+  } else {
+    fb('❌ ' + p.explain + (missed.length > 0 ? ` Missed: ${missed.join(', ')}` : ''), 'bad');
+  }
+
+  document.getElementById('nextBtn').textContent = 'See Final Results! 🎊';
+  document.getElementById('nextBtn').className = 'next-btn show';
+}
+
+// ===== NAVIGATION =====
+function handleNext() {
+  if (phase === 'learn')        { startSegment(); return; }
+  if (phase === 'seg') {
+    qi++;
+    if (qi < currentQ.length) showSegQ();
+    else showPartResult();
+    return;
+  }
+  if (phase === 'result-seg')   { startBlend(); return; }
+  if (phase === 'blend')        { startPassage(); return; }
+  if (phase === 'passage')      { showFinal(); return; }
+}
+
+function showPartResult() {
+  phase = 'result-seg';
+  const total = currentQ.length;
+  const pct = score / total;
+  const stars = pct===1?'⭐⭐⭐':pct>=0.7?'⭐⭐':'⭐';
+  document.getElementById('dots').innerHTML = '';
+  clearFb();
+  document.getElementById('content').innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  const wrongHtml = wrong.length > 0 ? `
+    <div style="background:#ede9fe;border-radius:12px;padding:12px;margin-bottom:16px;text-align:left">
+      <div style="font-family:'Fredoka One',cursive;color:#5b21b6;margin-bottom:6px">📝 Review:</div>
+      ${wrong.map(q => `<div style="font-size:0.85rem;font-weight:700;padding:3px 0">${q.emoji} ${q.part1} + ${q.part2} = ${q.word}</div>`).join('')}
+    </div>` : '';
+
+  document.getElementById('finalCard').innerHTML = `
+    <div class="final-title">✂️ Segment Done!</div>
+    <div class="final-score">${score} / ${total}</div>
+    <div class="final-stars">${stars}</div>
+    <div class="final-msg">${pct===1?'Perfect!':pct>=0.7?'Great job!':'Keep practicing!'}</div>
+    ${wrongHtml}
+    <div class="final-btns">
+      <button class="next-part-btn" onclick="handleNext()">Next: Blend! 🔗</button>
+      <button class="retry-btn" onclick="startSegment(); document.getElementById('finalCard').classList.remove('show')">🔄 Retry</button>
+    </div>`;
+  document.getElementById('finalCard').classList.add('show');
+}
+
+function showFinal() {
+  document.getElementById('dots').innerHTML = '';
+  clearFb();
+  document.getElementById('content').innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+  document.getElementById('pbarFill').style.width = '100%';
+  document.getElementById('gProg').textContent = '✅ Done!';
+
+  document.getElementById('finalCard').innerHTML = `
+    <div class="final-title">🧩 All Done!</div>
+    <div class="final-stars">⭐⭐⭐</div>
+    <div class="final-msg">You can segment AND blend compound words! Amazing! 🏆</div>
+    <div style="background:#ede9fe;border-radius:12px;padding:14px;margin-bottom:18px;text-align:left">
+      <div style="font-family:'Fredoka One',cursive;color:#5b21b6;margin-bottom:8px">📝 All the words you learned:</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        ${WORDS.map(w => `<span style="font-family:'Fredoka One',cursive;background:#f5f3ff;color:#5b21b6;padding:3px 10px;border-radius:20px;font-size:0.85rem">${w.emoji} ${w.word}</span>`).join('')}
+      </div>
+    </div>
+    <div class="final-btns">
+      <button class="retry-btn" onclick="location.reload()">🔄 Play Again!</button>
+    </div>`;
+  document.getElementById('finalCard').classList.add('show');
+  for (let i=0;i<4;i++) setTimeout(popStars, i*250);
+}
+
+function buildDots(n) {
+  const c = document.getElementById('dots');
+  c.innerHTML = '';
+  for (let i=0;i<n;i++) {
+    const d = document.createElement('div');
+    d.className = 'dot'+(i===0?' curr':'');
+    d.id = 'dot'+i;
+    c.appendChild(d);
+  }
+}
+
+function updateDot(i, state) {
+  const d = document.getElementById('dot'+i);
+  if (!d) return;
+  d.className = 'dot '+state;
+  const next = document.getElementById('dot'+(i+1));
+  if (next && state !== 'curr') next.classList.add('curr');
+}
+
+function popStars() {
+  const emojis = ['⭐','✨','🌟','🎉','🧩','🌈','⛄'];
+  for (let i=0;i<4;i++) {
+    setTimeout(() => {
+      const s = document.createElement('div'); s.className = 'star-pop';
+      s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      s.style.left = (15+Math.random()*70)+'vw';
+      s.style.top  = (20+Math.random()*50)+'vh';
+      document.body.appendChild(s);
+      setTimeout(()=>s.remove(),900);
+    },i*110);
+  }
+}
+
+window.onload = () => showLearn();
+</script>
+</body>
+</html>
