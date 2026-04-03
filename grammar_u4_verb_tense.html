@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⏰ Verb Tense Challenge!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #fff8f0; font-family: 'Nunito', sans-serif; min-height: 100vh; }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 16px 16px 60px; }
+
+  .g-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .g-title { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #333; }
+  .g-prog  { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #aaa; }
+  .pbar-wrap { background: #eee; border-radius: 99px; height: 8px; margin-bottom: 14px; overflow: hidden; }
+  .pbar-fill { height: 100%; border-radius: 99px; transition: width 0.4s; }
+  .score-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+  .score-label { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #aaa; }
+  .score-val   { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #34d399; }
+
+  /* Learn */
+  .learn-card {
+    background: white; border-radius: 20px; padding: 20px 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+  }
+  .learn-title { font-family: 'Fredoka One', cursive; font-size: 1.1rem; text-align: center; margin-bottom: 14px; }
+  .rule-box {
+    border-radius: 12px; padding: 12px 14px; font-size: 0.88rem;
+    font-weight: 700; line-height: 1.7; margin-bottom: 10px;
+  }
+  .rule-pres { background: #f0fdf4; color: #065f46; border-left: 4px solid #10b981; }
+  .rule-past { background: #fef3c7; color: #92400e; border-left: 4px solid #f59e0b; }
+  .rule-fut  { background: #eff6ff; color: #1e40af; border-left: 4px solid #3b82f6; }
+  .ex-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .ex-chip { padding: 3px 10px; border-radius: 20px; font-size: 0.82rem; font-weight: 800; }
+  .ec-p { background: #bbf7d0; color: #065f46; }
+  .ec-pa { background: #fde68a; color: #92400e; }
+  .ec-f  { background: #bfdbfe; color: #1e40af; }
+
+  /* Phase label */
+  .phase-label {
+    font-family: 'Fredoka One', cursive; font-size: 0.8rem; letter-spacing: 2px;
+    text-transform: uppercase; border-radius: 20px; padding: 4px 14px;
+    display: inline-block; margin-bottom: 12px;
+  }
+  .pl-id   { background: #dcfce7; color: #065f46; }
+  .pl-past { background: #fef3c7; color: #92400e; }
+  .pl-fut  { background: #dbeafe; color: #1e40af; }
+  .pl-rw   { background: #f3e8ff; color: #6d28d9; }
+
+  /* Q card */
+  .q-card {
+    background: white; border-radius: 20px; padding: 22px 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+    animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .q-card.shake { animation: shake 0.35s ease; }
+  @keyframes popIn { from{opacity:0;transform:scale(0.88)} to{opacity:1;transform:scale(1)} }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+
+  .q-emoji   { font-size: 2.6rem; display: block; text-align: center; margin-bottom: 10px; }
+  .q-sentence {
+    font-size: 1.05rem; font-weight: 800; color: #222;
+    text-align: center; line-height: 1.8; margin-bottom: 14px;
+  }
+  .q-hint { font-size: 0.82rem; color: #aaa; font-weight: 700; text-align: center; margin-bottom: 14px; }
+  .q-verb-hl {
+    display: inline-block; background: #fef3c7; border-radius: 6px;
+    padding: 0 4px; color: #92400e; font-weight: 900;
+  }
+  .q-blank {
+    display: inline-block; min-width: 70px; border-bottom: 3px solid #f59e0b;
+    color: #f59e0b; font-weight: 900; text-align: center; padding: 0 4px;
+  }
+
+  /* Tense 3-button row */
+  .tense-btns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .tense-btn {
+    padding: 12px 6px; border-radius: 14px; border: 3px solid #eee;
+    background: #f9f9f9; font-family: 'Fredoka One', cursive;
+    font-size: 0.95rem; cursor: pointer; transition: all 0.15s; text-align: center;
+  }
+  .tense-btn.past:hover    { border-color: #f59e0b; background: #fffbeb; }
+  .tense-btn.present:hover { border-color: #10b981; background: #f0fdf4; }
+  .tense-btn.future:hover  { border-color: #3b82f6; background: #eff6ff; }
+  .tense-btn.correct { background: #d1fae5; border-color: #34d399; color: #065f46; }
+  .tense-btn.wrong   { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+  .tense-btn:disabled { cursor: default; transform: none; }
+
+  /* Options (2-col for past/future fill) */
+  .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .opt-btn {
+    padding: 13px 10px; border-radius: 14px; border: 3px solid #eee;
+    background: #f9f9f9; font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem; cursor: pointer; transition: all 0.15s; text-align: center;
+  }
+  .opt-btn:hover   { border-color: #f59e0b; background: #fffbeb; }
+  .opt-btn.correct { background: #d1fae5; border-color: #34d399; color: #065f46; }
+  .opt-btn.wrong   { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+  .opt-btn:disabled { cursor: default; }
+
+  /* Rewrite options (full width) */
+  .rw-opts { display: flex; flex-direction: column; gap: 10px; }
+  .rw-btn {
+    padding: 13px 16px; border-radius: 14px; border: 3px solid #eee;
+    background: #f9f9f9; font-family: 'Nunito', sans-serif; font-size: 0.95rem;
+    font-weight: 700; color: #333; cursor: pointer; transition: all 0.15s; text-align: left;
+  }
+  .rw-btn:hover   { border-color: #a78bfa; background: #f3e8ff; }
+  .rw-btn.correct { background: #d1fae5; border-color: #34d399; color: #065f46; }
+  .rw-btn.wrong   { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+  .rw-btn:disabled { cursor: default; }
+
+  /* Dots */
+  .dots { display: flex; justify-content: center; gap: 5px; margin-bottom: 12px; flex-wrap: wrap; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #e5e7eb; transition: all 0.3s; }
+  .dot.curr { background: #f59e0b; transform: scale(1.4); }
+  .dot.ok   { background: #34d399; }
+  .dot.bad  { background: #f87171; }
+
+  /* Feedback */
+  .feedback {
+    border-radius: 14px; padding: 12px 16px; margin-bottom: 12px;
+    font-weight: 800; font-size: 0.95rem; display: none; text-align: center; line-height: 1.5;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok  { background: #d1fae5; color: #065f46; border: 3px solid #6ee7b7; }
+  .feedback.bad { background: #fee2e2; color: #991b1b; border: 3px solid #fca5a5; }
+
+  .next-btn {
+    width: 100%; padding: 15px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+    cursor: pointer; display: none; box-shadow: 0 4px 14px rgba(245,158,11,0.35);
+    transition: transform 0.1s;
+  }
+  .next-btn.show { display: block; }
+  .next-btn:active { transform: scale(0.97); }
+
+  /* Final */
+  .final-card {
+    background: white; border-radius: 24px; padding: 30px 22px;
+    text-align: center; box-shadow: 0 8px 28px rgba(0,0,0,0.1); display: none;
+  }
+  .final-card.show { display: block; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  .final-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #f59e0b; margin-bottom: 6px; }
+  .final-score { font-family: 'Fredoka One', cursive; font-size: 3rem; color: #5c6bc0; }
+  .final-stars { font-size: 2.2rem; letter-spacing: 4px; margin: 6px 0 12px; }
+  .final-msg   { font-size: 0.95rem; color: #666; font-weight: 700; margin-bottom: 20px; line-height: 1.6; }
+  .wrong-rev   { background: #fffbeb; border-radius: 12px; padding: 14px; margin-bottom: 18px; text-align: left; }
+  .wr-title    { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #92400e; margin-bottom: 8px; }
+  .wr-item     { font-size: 0.82rem; font-weight: 700; color: #555; padding: 4px 0; border-bottom: 1px solid #f5f5f5; line-height: 1.5; }
+  .wr-ans      { color: #059669; font-weight: 900; }
+  .final-btns  { display: flex; flex-direction: column; gap: 10px; }
+  .retry-btn     { padding: 14px; border-radius: 50px; border: none; background: linear-gradient(135deg,#f59e0b,#f97316); color: white; font-family: 'Fredoka One',cursive; font-size: 1.1rem; cursor: pointer; }
+  .next-part-btn { padding: 14px; border-radius: 50px; border: none; background: linear-gradient(135deg,#a78bfa,#7c3aed); color: white; font-family: 'Fredoka One',cursive; font-size: 1.1rem; cursor: pointer; }
+
+  .star-pop { position: fixed; font-size: 1.8rem; pointer-events: none; animation: fly 0.9s ease-out forwards; z-index: 999; }
+  @keyframes fly { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-80px) scale(1.5)} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="g-header">
+    <div class="g-title" id="gTitle">⏰ Verb Tense!</div>
+    <div class="g-prog" id="gProg"></div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
+  <div class="score-row">
+    <div class="score-label" id="scoreLabel"></div>
+    <div class="score-val"   id="scoreVal"></div>
+  </div>
+  <div id="content"></div>
+  <div class="dots"     id="dots"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="handleNext()"></button>
+  <div class="final-card" id="finalCard"></div>
+</div>
+
+<script>
+// ===== DATA =====
+
+// Part 2: Identify the tense (from p.55 + exam paper)
+const ID_QS = [
+  // From exam paper
+  {sentence:'We will go to see a movie tomorrow.', verb:'will go', ans:'Future', emoji:'🎬', explain:'will go → Future tense! Key word: tomorrow'},
+  {sentence:'The man runs in the park every day.', verb:'runs', ans:'Present', emoji:'🏃', explain:'runs → Present tense! Key word: every day'},
+  {sentence:'I played basketball with my good friends.', verb:'played', ans:'Past', emoji:'🏀', explain:'played → Past tense! -ed ending'},
+  {sentence:'My sister and I brush our teeth every morning.', verb:'brush', ans:'Present', emoji:'🪥', explain:'brush → Present tense! Key word: every morning'},
+  {sentence:'My grandparents will move to Taipei.', verb:'will move', ans:'Future', emoji:'📦', explain:'will move → Future tense! will + verb'},
+  // From p.55
+  {sentence:'Grandpa called me on the phone yesterday.', verb:'called', ans:'Past', emoji:'📞', explain:'called → Past tense! Key word: yesterday + -ed ending'},
+  {sentence:'Tim sings a song every day.', verb:'sings', ans:'Present', emoji:'🎵', explain:'sings → Present tense! Key word: every day'},
+  {sentence:'Ava will run tomorrow.', verb:'will run', ans:'Future', emoji:'🏃‍♀️', explain:'will run → Future tense! Key word: tomorrow + will'},
+  {sentence:'We watched TV last night.', verb:'watched', ans:'Past', emoji:'📺', explain:'watched → Past tense! Key word: last night + -ed ending'},
+  {sentence:'It will rain next week.', verb:'will rain', ans:'Future', emoji:'🌧️', explain:'will rain → Future tense! Key word: next week + will'},
+  {sentence:'Mark paints the wall today.', verb:'paints', ans:'Present', emoji:'🎨', explain:'paints → Present tense! Key word: today (happening now)'},
+  {sentence:'Sam rides the bike.', verb:'rides', ans:'Present', emoji:'🚲', explain:'rides → Present tense! No time words = happening now'},
+  {sentence:'Mom cooked some eggs.', verb:'cooked', ans:'Past', emoji:'🍳', explain:'cooked → Past tense! -ed ending'},
+  {sentence:'He will go home soon.', verb:'will go', ans:'Future', emoji:'🏠', explain:'will go → Future tense! Key word: soon + will'},
+  // From p.70 review
+  {sentence:'He reads a book today.', verb:'reads', ans:'Present', emoji:'📚', explain:'reads → Present tense! Key word: today'},
+  {sentence:'She talked to me yesterday.', verb:'talked', ans:'Past', emoji:'💬', explain:'talked → Past tense! Key word: yesterday + -ed ending'},
+  {sentence:'Soon we will have a test.', verb:'will have', ans:'Future', emoji:'📝', explain:'will have → Future tense! Key word: Soon + will'},
+  {sentence:'We watched a movie last week.', verb:'watched', ans:'Past', emoji:'🍿', explain:'watched → Past tense! Key word: last week + -ed ending'},
+  {sentence:'They will clean the room later.', verb:'will clean', ans:'Future', emoji:'🧹', explain:'will clean → Future tense! Key word: later + will'},
+];
+
+// Part 3: Fill in past tense -ed (from p.58)
+const PAST_QS = [
+  {sentence:'Ryan ____ (walk) to school yesterday.', base:'walk', ans:'walked', emoji:'🚶', explain:'walk + ed = walked'},
+  {sentence:'Peter ____ (ask) me a question last week.', base:'ask', ans:'asked', emoji:'🙋', explain:'ask + ed = asked'},
+  {sentence:'I ____ (finish) my homework last night.', base:'finish', ans:'finished', emoji:'📓', explain:'finish + ed = finished'},
+  {sentence:'He ____ (open) the door one minute ago.', base:'open', ans:'opened', emoji:'🚪', explain:'open + ed = opened'},
+  {sentence:'We ____ (wash) our hands earlier.', base:'wash', ans:'washed', emoji:'🧼', explain:'wash + ed = washed'},
+  {sentence:'They ____ (talk) to me yesterday.', base:'talk', ans:'talked', emoji:'💬', explain:'talk + ed = talked'},
+  {sentence:'The boys ____ (shout) last night.', base:'shout', ans:'shouted', emoji:'📢', explain:'shout + ed = shouted'},
+  {sentence:'We ____ (cook) the rice last week.', base:'cook', ans:'cooked', emoji:'🍚', explain:'cook + ed = cooked'},
+  {sentence:'Max ____ (play) soccer with his friends yesterday.', base:'play', ans:'played', emoji:'⚽', explain:'play + ed = played'},
+  {sentence:'They ____ (join) a soccer team last year.', base:'join', ans:'joined', emoji:'🏆', explain:'join + ed = joined'},
+  {sentence:'Lena ____ (talk) to the coach yesterday.', base:'talk', ans:'talked', emoji:'👩‍🏫', explain:'talk + ed = talked'},
+  {sentence:'We ____ (watch) the game last night.', base:'watch', ans:'watched', emoji:'📺', explain:'watch + ed = watched'},
+];
+
+// Part 4: Fill in future tense will + verb (from p.61-62)
+const FUT_QS = [
+  {sentence:'He ____ (eat) the cake later.', base:'eat', ans:'will eat', emoji:'🎂', explain:'will + eat = will eat'},
+  {sentence:'We ____ (play) baseball tomorrow.', base:'play', ans:'will play', emoji:'⚾', explain:'will + play = will play'},
+  {sentence:'I ____ (draw) a lion next week.', base:'draw', ans:'will draw', emoji:'🦁', explain:'will + draw = will draw'},
+  {sentence:'Dad ____ (wash) his car soon.', base:'wash', ans:'will wash', emoji:'🚗', explain:'will + wash = will wash'},
+  {sentence:'We ____ (read) a book next month.', base:'read', ans:'will read', emoji:'📚', explain:'will + read = will read'},
+  {sentence:'Tracy ____ (go) to the park later.', base:'go', ans:'will go', emoji:'🌳', explain:'will + go = will go'},
+  {sentence:'Dan ____ (call) you later.', base:'call', ans:'will call', emoji:'📱', explain:'will + call = will call'},
+  {sentence:'My grandparents ____ (move) to Taipei.', base:'move', ans:'will move', emoji:'📦', explain:'will + move = will move'},
+  {sentence:'They ____ (ride) a bike later.', base:'ride', ans:'will ride', emoji:'🚲', explain:'will + ride = will ride'},
+  {sentence:'We ____ (swim) in the lake next month.', base:'swim', ans:'will swim', emoji:'🏊', explain:'will + swim = will swim'},
+];
+
+// Part 5: Rewrite the sentence correctly (from p.71)
+const RW_QS = [
+  {
+    prompt:'We have a party tomorrow.',
+    instruction:'Change to Future tense (add "will"):',
+    opts:['We will have a party tomorrow.','We haved a party tomorrow.','We having a party tomorrow.'],
+    ans:0, emoji:'🎉',
+    explain:'tomorrow → Future → add "will": We will have a party tomorrow.'
+  },
+  {
+    prompt:'They cook dinner three hours ago.',
+    instruction:'Change to Past tense (add -ed):',
+    opts:['They will cook dinner three hours ago.','They cooking dinner three hours ago.','They cooked dinner three hours ago.'],
+    ans:2, emoji:'🍳',
+    explain:'three hours ago → Past → add -ed: They cooked dinner three hours ago.'
+  },
+  {
+    prompt:'I water the plant last night.',
+    instruction:'Change to Past tense (add -ed):',
+    opts:['I will water the plant last night.','I watered the plant last night.','I watering the plant last night.'],
+    ans:1, emoji:'🌱',
+    explain:'last night → Past → add -ed: I watered the plant last night.'
+  },
+  {
+    prompt:'Sue and Meg tell me a story next week.',
+    instruction:'Change to Future tense (add "will"):',
+    opts:['Sue and Meg told me a story next week.','Sue and Meg telling me a story next week.','Sue and Meg will tell me a story next week.'],
+    ans:2, emoji:'📖',
+    explain:'next week → Future → add "will": Sue and Meg will tell me a story next week.'
+  },
+  {
+    prompt:'Dad and I walk to the park every Tuesday.',
+    instruction:'What tense is this? Pick the correct label:',
+    opts:['Past tense (walked)','Present tense (walk — every Tuesday!)','Future tense (will walk)'],
+    ans:1, emoji:'🌳',
+    explain:'every Tuesday = habit/routine → Present tense! walk stays as walk.'
+  },
+  {
+    prompt:'My grandparents move to Taipei next year.',
+    instruction:'Change to Future tense (add "will"):',
+    opts:['My grandparents moved to Taipei next year.','My grandparents moving to Taipei next year.','My grandparents will move to Taipei next year.'],
+    ans:2, emoji:'🏠',
+    explain:'next year → Future → add "will": My grandparents will move to Taipei next year.'
+  },
+];
+
+// ===== STATE =====
+let phase = 'learn';
+let qi = 0, score = 0, wrong = [], answered = false;
+let currentQ = [];
+
+const pbarColors = {
+  learn: 'linear-gradient(90deg,#10b981,#059669)',
+  id:    'linear-gradient(90deg,#10b981,#059669)',
+  past:  'linear-gradient(90deg,#f59e0b,#f97316)',
+  fut:   'linear-gradient(90deg,#3b82f6,#1d4ed8)',
+  rw:    'linear-gradient(90deg,#a78bfa,#7c3aed)',
+};
+
+function setPbar(pct, ph) {
+  const el = document.getElementById('pbarFill');
+  el.style.background = pbarColors[ph] || pbarColors.id;
+  el.style.width = pct + '%';
+}
+function clearFb() { document.getElementById('feedback').className = 'feedback'; }
+function fb(msg, type) { const el = document.getElementById('feedback'); el.innerHTML = msg; el.className = 'feedback show ' + type; }
+
+// ===== PART 1: LEARN =====
+function showLearn() {
+  phase = 'learn';
+  clearFb();
+  document.getElementById('gTitle').textContent = '📚 Learn: Verb Tenses';
+  document.getElementById('gProg').textContent = 'Part 1 / 5';
+  document.getElementById('scoreLabel').textContent = '';
+  document.getElementById('scoreVal').textContent = '';
+  document.getElementById('dots').innerHTML = '';
+  document.getElementById('finalCard').classList.remove('show');
+  setPbar(8, 'learn');
+
+  document.getElementById('nextBtn').textContent = 'Start Part 2: Identify the Tense! ⏰';
+  document.getElementById('nextBtn').className = 'next-btn show';
+
+  document.getElementById('content').innerHTML = `
+    <div class="learn-card">
+      <div class="learn-title" style="color:#065f46">⏰ Three Verb Tenses</div>
+      <div class="rule-box rule-pres">
+        🟢 <b>Present Tense</b> — 現在發生的事 / 習慣<br>
+        <b>動詞原形</b>（或加 -s/-es）<br>
+        <div class="ex-row">
+          <span class="ex-chip ec-p">She <b>sings</b>.</span>
+          <span class="ex-chip ec-p">I <b>run</b> every day.</span>
+        </div>
+        <div style="font-size:0.8rem;margin-top:4px;color:#047857">
+          關鍵字：every day / now / today / always
+        </div>
+      </div>
+      <div class="rule-box rule-past">
+        🟡 <b>Past Tense</b> — 過去已經發生的事<br>
+        <b>動詞 + -ed</b><br>
+        <div class="ex-row">
+          <span class="ex-chip ec-pa">She <b>sang</b>.</span>
+          <span class="ex-chip ec-pa">I <b>walked</b> to school.</span>
+        </div>
+        <div style="font-size:0.8rem;margin-top:4px;color:#92400e">
+          關鍵字：yesterday / last night / ago / before / earlier
+        </div>
+      </div>
+      <div class="rule-box rule-fut">
+        🔵 <b>Future Tense</b> — 將來要發生的事<br>
+        <b>will + 動詞原形</b><br>
+        <div class="ex-row">
+          <span class="ex-chip ec-f">She <b>will sing</b>.</span>
+          <span class="ex-chip ec-f">I <b>will go</b> tomorrow.</span>
+        </div>
+        <div style="font-size:0.8rem;margin-top:4px;color:#1e40af">
+          關鍵字：tomorrow / next week / later / soon
+        </div>
+      </div>
+    </div>`;
+}
+
+// ===== PART 2: IDENTIFY TENSE =====
+function startID() {
+  phase = 'id';
+  score = 0; wrong = []; qi = 0; answered = false;
+  currentQ = [...ID_QS].sort(() => Math.random() - 0.5).slice(0, 12);
+  document.getElementById('gTitle').textContent = '⏰ What tense is it?';
+  document.getElementById('gProg').textContent = 'Part 2 / 5';
+  buildDots(currentQ.length);
+  showIDQ();
+}
+
+function showIDQ() {
+  answered = false;
+  const q = currentQ[qi];
+  const total = currentQ.length;
+  setPbar(12 + (qi / total) * 20, 'id');
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  const sentHTML = q.sentence.replace(q.verb, `<span class="q-verb-hl">${q.verb}</span>`);
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label pl-id">⏰ Identify the Tense</div>
+    <div class="q-card" id="qCard">
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-sentence">${sentHTML}</div>
+      <div class="q-hint">What tense is the highlighted verb?</div>
+      <div class="tense-btns">
+        <button class="tense-btn past"    data-val="Past"    onclick="pickTense(this)">🟡 Past<br><small>過去式</small></button>
+        <button class="tense-btn present" data-val="Present" onclick="pickTense(this)">🟢 Present<br><small>現在式</small></button>
+        <button class="tense-btn future"  data-val="Future"  onclick="pickTense(this)">🔵 Future<br><small>未來式</small></button>
+      </div>
+    </div>`;
+
+  updateDot(qi, 'curr');
+}
+
+function pickTense(btn) {
+  if (answered) return; answered = true;
+  const q = currentQ[qi];
+  document.querySelectorAll('.tense-btn').forEach(b => b.disabled = true);
+  if (btn.dataset.val === q.ans) {
+    btn.classList.add('correct'); score++;
+    fb('✅ ' + q.explain, 'ok'); popStars();
+    updateDot(qi, 'ok');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelector(`[data-val="${q.ans}"]`).classList.add('correct');
+    wrong.push(q); fb('❌ ' + q.explain, 'bad');
+    document.getElementById('qCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('qCard')?.classList.remove('shake'), 400);
+    updateDot(qi, 'bad');
+  }
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === currentQ.length - 1 ? 'See Results 🎊' : 'Next ➡️';
+  nb.className = 'next-btn show';
+}
+
+// ===== PART 3: PAST TENSE -ED =====
+function startPast() {
+  phase = 'past';
+  score = 0; wrong = []; qi = 0; answered = false;
+  currentQ = [...PAST_QS].sort(() => Math.random() - 0.5).slice(0, 10);
+  document.getElementById('gTitle').textContent = '🟡 Past Tense (-ed)';
+  document.getElementById('gProg').textContent = 'Part 3 / 5';
+  buildDots(currentQ.length);
+  showPastQ();
+}
+
+function showPastQ() {
+  answered = false;
+  const q = currentQ[qi];
+  const total = currentQ.length;
+  setPbar(32 + (qi / total) * 20, 'past');
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  const sentHTML = q.sentence.replace('____', `<span class="q-blank">____</span>`);
+  // Generate options: correct + 2 wrong
+  const wrong1 = q.base;             // bare verb
+  const wrong2 = q.base + 'ing';     // -ing form
+  const shuffled = [q.ans, wrong1, wrong2, q.base + 's']
+    .filter((v, i, a) => a.indexOf(v) === i)
+    .sort(() => Math.random() - 0.5).slice(0, 4);
+
+  const optsHTML = shuffled.map(o =>
+    `<button class="opt-btn" data-val="${o}" onclick="pickPast(this)">${o}</button>`
+  ).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label pl-past">🟡 Past Tense</div>
+    <div class="q-card" id="qCard">
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-sentence">${sentHTML}</div>
+      <div class="q-hint">Fill in the past tense of: <b>${q.base}</b></div>
+      <div class="opts">${optsHTML}</div>
+    </div>`;
+
+  updateDot(qi, 'curr');
+}
+
+function pickPast(btn) {
+  if (answered) return; answered = true;
+  const q = currentQ[qi];
+  document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  if (btn.dataset.val === q.ans) {
+    btn.classList.add('correct'); score++;
+    fb('✅ ' + q.explain, 'ok'); popStars();
+    updateDot(qi, 'ok');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelector(`[data-val="${q.ans}"]`)?.classList.add('correct');
+    wrong.push(q); fb('❌ ' + q.explain, 'bad');
+    document.getElementById('qCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('qCard')?.classList.remove('shake'), 400);
+    updateDot(qi, 'bad');
+  }
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === currentQ.length - 1 ? 'See Results 🎊' : 'Next ➡️';
+  nb.className = 'next-btn show';
+}
+
+// ===== PART 4: FUTURE TENSE WILL =====
+function startFut() {
+  phase = 'fut';
+  score = 0; wrong = []; qi = 0; answered = false;
+  currentQ = [...FUT_QS].sort(() => Math.random() - 0.5).slice(0, 10);
+  document.getElementById('gTitle').textContent = '🔵 Future Tense (will)';
+  document.getElementById('gProg').textContent = 'Part 4 / 5';
+  buildDots(currentQ.length);
+  showFutQ();
+}
+
+function showFutQ() {
+  answered = false;
+  const q = currentQ[qi];
+  const total = currentQ.length;
+  setPbar(52 + (qi / total) * 20, 'fut');
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  const sentHTML = q.sentence.replace('____', `<span class="q-blank">____</span>`);
+  const opts = [q.ans, q.base, q.base + 'ed', 'will ' + q.base + 'ed']
+    .filter((v, i, a) => a.indexOf(v) === i && v !== q.ans || v === q.ans)
+    .sort(() => Math.random() - 0.5).slice(0, 4);
+  // Ensure correct answer is in there
+  if (!opts.includes(q.ans)) opts[0] = q.ans;
+
+  const optsHTML = opts.map(o =>
+    `<button class="opt-btn" data-val="${o}" onclick="pickFut(this)">${o}</button>`
+  ).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label pl-fut">🔵 Future Tense</div>
+    <div class="q-card" id="qCard">
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-sentence">${sentHTML}</div>
+      <div class="q-hint">Fill in the future tense of: <b>${q.base}</b></div>
+      <div class="opts">${optsHTML}</div>
+    </div>`;
+
+  updateDot(qi, 'curr');
+}
+
+function pickFut(btn) {
+  if (answered) return; answered = true;
+  const q = currentQ[qi];
+  document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  if (btn.dataset.val === q.ans) {
+    btn.classList.add('correct'); score++;
+    fb('✅ ' + q.explain, 'ok'); popStars();
+    updateDot(qi, 'ok');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelector(`[data-val="${q.ans}"]`)?.classList.add('correct');
+    wrong.push(q); fb('❌ ' + q.explain, 'bad');
+    document.getElementById('qCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('qCard')?.classList.remove('shake'), 400);
+    updateDot(qi, 'bad');
+  }
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === currentQ.length - 1 ? 'See Results 🎊' : 'Next ➡️';
+  nb.className = 'next-btn show';
+}
+
+// ===== PART 5: REWRITE =====
+function startRW() {
+  phase = 'rw';
+  score = 0; wrong = []; qi = 0; answered = false;
+  currentQ = [...RW_QS].sort(() => Math.random() - 0.5);
+  document.getElementById('gTitle').textContent = '✏️ Rewrite!';
+  document.getElementById('gProg').textContent = 'Part 5 / 5';
+  buildDots(currentQ.length);
+  showRWQ();
+}
+
+function showRWQ() {
+  answered = false;
+  const q = currentQ[qi];
+  const total = currentQ.length;
+  setPbar(72 + (qi / total) * 24, 'rw');
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  const shuffled = q.opts
+    .map((o, i) => ({o, i}))
+    .sort(() => Math.random() - 0.5);
+
+  const optsHTML = shuffled.map(({o, i}) =>
+    `<button class="rw-btn" data-idx="${i}" onclick="pickRW(this)">${o}</button>`
+  ).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label pl-rw">✏️ Rewrite</div>
+    <div class="q-card" id="qCard">
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-sentence" style="color:#dc2626;font-size:0.95rem">❌ Original: "${q.prompt}"</div>
+      <div class="q-hint">${q.instruction}</div>
+      <div class="rw-opts">${optsHTML}</div>
+    </div>`;
+
+  updateDot(qi, 'curr');
+}
+
+function pickRW(btn) {
+  if (answered) return; answered = true;
+  const q = currentQ[qi];
+  const idx = parseInt(btn.dataset.idx);
+  document.querySelectorAll('.rw-btn').forEach(b => b.disabled = true);
+  if (idx === q.ans) {
+    btn.classList.add('correct'); score++;
+    fb('✅ ' + q.explain, 'ok'); popStars();
+    updateDot(qi, 'ok');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelector(`[data-idx="${q.ans}"]`)?.classList.add('correct');
+    wrong.push(q); fb('❌ ' + q.explain, 'bad');
+    document.getElementById('qCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('qCard')?.classList.remove('shake'), 400);
+    updateDot(qi, 'bad');
+  }
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === currentQ.length - 1 ? 'See Final Results! 🎊' : 'Next ➡️';
+  nb.className = 'next-btn show';
+}
+
+// ===== NAVIGATION =====
+function handleNext() {
+  if (phase === 'learn') { startID(); return; }
+
+  qi++;
+  if (qi < currentQ.length) {
+    if (phase === 'id')   showIDQ();
+    else if (phase === 'past') showPastQ();
+    else if (phase === 'fut')  showFutQ();
+    else if (phase === 'rw')   showRWQ();
+  } else {
+    showPartResult();
+  }
+}
+
+function showPartResult() {
+  const prevPhase = phase;
+  const total = currentQ.length;
+  const pct = score / total;
+  const stars = pct === 1 ? '⭐⭐⭐' : pct >= 0.7 ? '⭐⭐' : '⭐';
+  const msg = pct === 1 ? 'Perfect!' : pct >= 0.7 ? 'Great job!' : 'Keep practicing!';
+
+  const nextMap = {
+    id:   { label: 'Next: Past Tense (-ed)! 🟡', fn: 'startPast()' },
+    past: { label: 'Next: Future Tense (will)! 🔵', fn: 'startFut()' },
+    fut:  { label: 'Next: Rewrite! ✏️', fn: 'startRW()' },
+    rw:   { label: null, fn: null },
+  };
+  const next = nextMap[prevPhase];
+
+  document.getElementById('dots').innerHTML = '';
+  clearFb();
+  document.getElementById('content').innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  const wrongHtml = wrong.length > 0 ? `
+    <div class="wrong-rev">
+      <div class="wr-title">📝 Review these:</div>
+      ${wrong.slice(0,4).map(q => `
+        <div class="wr-item">
+          ${q.sentence || q.prompt}
+          → <span class="wr-ans">${q.ans || q.opts?.[q.ans]}</span>
+          <small style="color:#aaa;display:block">${q.explain}</small>
+        </div>`).join('')}
+    </div>` : '';
+
+  document.getElementById('finalCard').innerHTML = `
+    <div class="final-title">
+      ${{id:'⏰', past:'🟡', fut:'🔵', rw:'✏️'}[prevPhase]} Part Done!
+    </div>
+    <div class="final-score">${score} / ${total}</div>
+    <div class="final-stars">${stars}</div>
+    <div class="final-msg">${msg}</div>
+    ${wrongHtml}
+    <div class="final-btns">
+      ${next.label ? `<button class="next-part-btn" onclick="${next.fn}; document.getElementById('finalCard').classList.remove('show')">${next.label}</button>` : `<button class="next-part-btn" onclick="showFinal()">See Final Results! 🎊</button>`}
+      <button class="retry-btn" onclick="retry_${prevPhase}(); document.getElementById('finalCard').classList.remove('show')">🔄 Retry This Part</button>
+    </div>`;
+  document.getElementById('finalCard').classList.add('show');
+}
+
+function retry_id()   { startID(); }
+function retry_past() { startPast(); }
+function retry_fut()  { startFut(); }
+function retry_rw()   { startRW(); }
+
+function showFinal() {
+  const total = currentQ.length;
+  const pct = score / total;
+  const stars = pct === 1 ? '⭐⭐⭐' : pct >= 0.7 ? '⭐⭐' : '⭐';
+  const msg = pct === 1 ? 'You are a Tense Master! 🏆' : pct >= 0.7 ? 'Almost perfect!' : 'Review and try again!';
+
+  document.getElementById('dots').innerHTML = '';
+  clearFb();
+  document.getElementById('content').innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+  setPbar(100, 'rw');
+  document.getElementById('gProg').textContent = '✅ Done!';
+
+  const wrongHtml = wrong.length > 0 ? `
+    <div class="wrong-rev">
+      <div class="wr-title">📝 Review these:</div>
+      ${wrong.slice(0,5).map(q => `
+        <div class="wr-item">
+          ${q.sentence || q.prompt}
+          → <span class="wr-ans">${q.ans || q.opts?.[q.ans]}</span>
+          <small style="color:#aaa;display:block">${q.explain}</small>
+        </div>`).join('')}
+    </div>` : '';
+
+  document.getElementById('finalCard').innerHTML = `
+    <div class="final-title">🎉 All Done!</div>
+    <div class="final-score">${score} / ${total}</div>
+    <div class="final-stars">${stars}</div>
+    <div class="final-msg">${msg}</div>
+    ${wrongHtml}
+    <div class="final-btns">
+      <button class="retry-btn" onclick="location.reload()">🔄 Play Again!</button>
+      <button class="next-part-btn" onclick="startID(); document.getElementById('finalCard').classList.remove('show')">⏰ Back to Part 2</button>
+    </div>`;
+  document.getElementById('finalCard').classList.add('show');
+  for (let i = 0; i < 4; i++) setTimeout(popStars, i * 250);
+}
+
+function buildDots(n) {
+  const c = document.getElementById('dots');
+  c.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' curr' : '');
+    d.id = 'dot' + i;
+    c.appendChild(d);
+  }
+}
+
+function updateDot(i, state) {
+  const d = document.getElementById('dot' + i);
+  if (!d) return;
+  d.className = 'dot ' + state;
+  const next = document.getElementById('dot' + (i + 1));
+  if (next && state !== 'curr') next.classList.add('curr');
+}
+
+function popStars() {
+  const emojis = ['⭐','✨','🌟','🎉','⏰','🟢','🟡','🔵'];
+  for (let i = 0; i < 4; i++) {
+    setTimeout(() => {
+      const s = document.createElement('div'); s.className = 'star-pop';
+      s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      s.style.left = (15 + Math.random() * 70) + 'vw';
+      s.style.top  = (20 + Math.random() * 50) + 'vh';
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }, i * 110);
+  }
+}
+
+window.onload = () => showLearn();
+</script>
+</body>
+</html>
