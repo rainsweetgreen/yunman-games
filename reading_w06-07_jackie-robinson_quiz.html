@@ -261,7 +261,8 @@
 
   <!-- TABS -->
   <div class="tabs">
-    <button class="tab active" onclick="setMode('mc')">📝 Multiple Choice</button>
+    <button class="tab active" onclick="setMode('mc')">📝 Reading</button>
+    <button class="tab" onclick="setMode('vocab')">📖 Vocab</button>
     <button class="tab" onclick="setMode('timeline')">📅 Timeline</button>
     <button class="tab" onclick="setMode('write')">✏️ Write</button>
   </div>
@@ -365,6 +366,39 @@ const mcQuestions = [
   }
 ];
 
+
+const vocabQuestions = [
+  {tag:"tag-vocab", tagLabel:"Vocabulary", emoji:"📣", type:"mc",
+   text:'The fans ____ for Jackie Robinson when he ran to first base.',
+   opts:["a. booed", "b. cheered", "c. ignored", "d. left"],
+   answer:1,
+   explain:"cheered = shouted with joy and excitement!"},
+  {tag:"tag-vocab", tagLabel:"Vocabulary", emoji:"🎓", type:"mc",
+   text:'Before the Major League, Jackie Robinson played sports in ____.',
+   opts:["a. college", "b. elementary school", "c. the Minor League", "d. Canada"],
+   answer:0,
+   explain:"college = university. Jackie played four sports in college!"},
+  {tag:"tag-vocab", tagLabel:"Vocabulary", emoji:"😤", type:"mc",
+   text:'Some people wrote ____ letters to Jackie. The letters were mean and hurtful.',
+   opts:["a. nasty", "b. kind", "c. funny", "d. short"],
+   answer:0,
+   explain:"nasty = mean and hurtful. Some people were very unkind to Jackie."},
+  {tag:"tag-vocab", tagLabel:"Vocabulary", emoji:"🌟", type:"mc",
+   text:'I ____ Jackie Robinson. He made a big difference with his life.',
+   opts:["a. ignore", "b. boo", "c. admire", "d. forget"],
+   answer:2,
+   explain:"admire = respect and look up to someone. Jackie Robinson is admirable!"},
+  {tag:"tag-vocab", tagLabel:"Vocabulary", emoji:"✅", type:"mc",
+   text:'Jackie was not ____ to play in the Major League at first.',
+   opts:["a. allowed", "b. asked", "c. paid", "d. ready"],
+   answer:0,
+   explain:"allowed = permitted. He was NOT allowed — but he broke that barrier!"},
+  {tag:"tag-vocab", tagLabel:"Vocabulary", emoji:"⚾", type:"mc",
+   text:'Which sentence uses the word \"field\" correctly?',
+   opts:["a. The players ran across the baseball field.", "b. I field my homework every day.", "c. She fielded a sandwich for lunch.", "d. The field was very loud."],
+   answer:0,
+   explain:"field = an open area where baseball is played. The players ran across the field!"},
+];
 const timelineQ = {
   tag:"tag-time", tagLabel:"Timeline",
   emoji:"📅", type:"timeline",
@@ -394,11 +428,12 @@ let questions = [];
 function setMode(m) {
   mode = m;
   document.querySelectorAll('.tab').forEach((t,i) => {
-    t.classList.toggle('active', ['mc','timeline','write'][i] === m);
+    t.classList.toggle('active', ['mc','vocab','timeline','write'][i] === m);
   });
   qi = 0; scoreOk = 0; scoreBad = 0; wrongList = []; answered = false;
 
   if (m === 'mc') questions = [...mcQuestions];
+  else if (m === 'vocab') questions = [...vocabQuestions];
   else if (m === 'timeline') questions = [timelineQ];
   else questions = [writeQ];
 
@@ -645,4 +680,15 @@ function popStars() {
 setMode('mc');
 </script>
 </body>
-</html>
+</html>,
+  {tag:"tag-moral", tagLabel:"Main Idea", emoji:"💡", type:"mc",
+   text:"What is the MAIN message of the biography 'Jackie Robinson'?",
+   opts:["a. Baseball is the most popular sport in America.", "b. One person can make a difference and change history.", "c. African Americans were not allowed to play sports.", "d. Branch Rickey was a kind man."],
+   answer:1,
+   explain:"The main message: one person with courage can change history for everyone!"},
+  {tag:"tag-moral", tagLabel:"Evidence", emoji:"🔍", type:"mc",
+   text:"Which sentence from the text BEST supports that Jackie Robinson was brave?",
+   opts:["a. 'Jackie Robinson was born on January 31, 1919.'", "b. 'He stood up for himself after a while.'", "c. 'Robinson played his last season in 1956.'", "d. 'Branch Rickey asked Robinson to join the Dodgers.'"],
+   answer:1,
+   explain:"'He stood up for himself' shows his bravery — he faced unkindness but kept going!"}
+

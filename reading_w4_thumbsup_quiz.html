@@ -192,11 +192,11 @@ const MC_QS = [
   {tag:'tag-comp', tagLabel:'Text Type', emoji:'📝', type:'mc',
    text:'"Thumbs Up for Art and Music" is a persuasive text because...',
    opts:['It is fun to read.','The author tells what he thinks and gives reasons.','It is a made-up story.'],
-   ans:1, explain:'A persuasive text shares the author\'s opinion and gives reasons to convince the reader. The author here argues art and music are important!'},
+   ans:1, explain:"A persuasive text shares the author's opinion and gives reasons to convince the reader. The author here argues art and music are important!"},
   {tag:'tag-comp', tagLabel:'Comprehension', emoji:'🎨', type:'mc',
    text:'Why is art important according to the text?',
    opts:['You can paint a picture.','It makes you think creatively and use your imagination.','It is an easy subject.'],
-   ans:1, explain:'Art helps you think creatively and use your imagination to make new things — that\'s the author\'s argument!'},
+   ans:1, explain:"Art helps you think creatively and use your imagination to make new things — that's the author's argument!"},
   {tag:'tag-comp', tagLabel:'Comprehension', emoji:'🎵', type:'mc',
    text:'Why is music important according to the text?',
    opts:['You can play with others and learn about teamwork.','You learn to play the drums.','It is quieter than art class.'],
@@ -204,7 +204,7 @@ const MC_QS = [
   {tag:'tag-infer', tagLabel:'Inference', emoji:'💡', type:'mc',
    text:'What is the author\'s main opinion in this text?',
    opts:['Art and music classes are not important.','Art and music should be important parts of school.','Math and reading are the only important subjects.'],
-   ans:1, explain:'The author\'s main opinion is that both art AND music are important school subjects that help students grow.'},
+   ans:1, explain:"The author's main opinion is that both art AND music are important school subjects that help students grow."},
   {tag:'tag-comp', tagLabel:'Comprehension', emoji:'🤝', type:'mc',
    text:'According to the text, what life skill does music teach you?',
    opts:['How to read music notes.','Teamwork — playing music with others.','How to sing loudly.'],
@@ -223,7 +223,18 @@ const MC_QS = [
      'Art is important because you learn to be creative.',
      'In school, you learn to read and write.',
    ],
-   explain:'The two supporting reasons are: music teaches playing with others (teamwork), and art teaches creativity. The other two do NOT support the author\'s opinion.'},
+   explain:"The two supporting reasons are: music teaches playing with others (teamwork), and art teaches creativity. The other two do NOT support the author's opinion."},
+,
+  {tag:"tag-comp", tagLabel:"Text Type", emoji:"📝", type:"mc",
+   text:"What TYPE of text is 'Thumbs Up for Art and Music'?",
+   opts:["a. A fable — an animal story with a lesson.", "b. A biography — a true story about a real person.", "c. A persuasive text — the author shares an opinion and tries to convince the reader.", "d. A narrative — a made-up story."],
+   answer:2,
+   explain:"It is a PERSUASIVE TEXT! The author shares opinions about art and music and gives reasons to convince you they are important."},
+  {tag:"tag-moral", tagLabel:"Evidence", emoji:"🔍", type:"mc",
+   text:"Which sentence from the text is EVIDENCE that supports the author's opinion?",
+   opts:["a. 'Some people think art at school is not important.'", "b. 'Music is important because you can play with others and learn about teamwork.'", "c. 'In school, you learn to read and write.'", "d. 'Art class is on Tuesday.'"],
+   answer:1,
+   explain:"'Music teaches teamwork' is evidence that SUPPORTS the author's view that music is important in school!"}
 ];
 
 const VOCAB_QS = [
@@ -234,7 +245,7 @@ const VOCAB_QS = [
   {emoji:'🧠', type:'vocab',
    sentence:'I will get some food ____ I am hungry.',
    ans:'because', opts:['because','always','important','think'],
-   explain:'because = gives a reason. "I\'m hungry BECAUSE I haven\'t eaten."'},
+   explain:"because = gives a reason. I am hungry BECAUSE I have not eaten!"},
   {emoji:'🌟', type:'vocab',
    sentence:'It is ____ to wash your hands before you eat.',
    ans:'important', opts:['important','creative','problem','school'],
@@ -250,7 +261,7 @@ const VOCAB_QS = [
   {emoji:'📚', type:'vocab',
    sentence:'I like going to ____ at KCIS.',
    ans:'school', opts:['school','art','learn','think'],
-   explain:'school = where you go to study and learn. KCIS is Yunman\'s school!'},
+   explain:"school = where you go to study and learn. KCIS is Yunman school!"},
 ];
 
 const WRITE_QS = [
