@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✨ VCe · Long e · Ending -ed!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #fff8f0; font-family: 'Nunito', sans-serif; min-height: 100vh; }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 16px 16px 60px; }
+  .g-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .g-title { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #333; }
+  .g-prog  { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #aaa; }
+  .pbar-wrap { background: #eee; border-radius: 99px; height: 8px; margin-bottom: 14px; overflow: hidden; }
+  .pbar-fill { height: 100%; border-radius: 99px; transition: width 0.4s; }
+  .score-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+  .score-label { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #aaa; }
+  .score-val   { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #34d399; }
+
+  .learn-card { background: white; border-radius: 20px; padding: 20px 18px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px; }
+  .learn-title { font-family: 'Fredoka One', cursive; font-size: 1.1rem; text-align: center; margin-bottom: 14px; }
+  .rule-box { border-radius: 12px; padding: 12px 14px; font-size: 0.88rem; font-weight: 700; line-height: 1.7; margin-bottom: 10px; }
+  .rule-vce { background: #fff7ed; color: #c2410c; border-left: 4px solid #f97316; }
+  .rule-ee  { background: #fef3c7; color: #92400e; border-left: 4px solid #f59e0b; }
+  .rule-ed  { background: #eff6ff; color: #1e40af; border-left: 4px solid #3b82f6; }
+  .rule-tip { background: #f0fdf4; color: #065f46; border-left: 4px solid #10b981; }
+  .ex-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .ex-chip { padding: 4px 12px; border-radius: 20px; font-size: 0.88rem; font-weight: 800; }
+  .ec-or { background: #fed7aa; color: #c2410c; }
+  .ec-ee { background: #fde68a; color: #92400e; }
+  .ec-ed { background: #bfdbfe; color: #1e40af; }
+
+  .phase-label { font-family: 'Fredoka One', cursive; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; border-radius: 20px; padding: 4px 14px; display: inline-block; margin-bottom: 12px; }
+  .pl-vce { background: #fff7ed; color: #c2410c; }
+  .pl-ee  { background: #fef3c7; color: #92400e; }
+  .pl-ed  { background: #eff6ff; color: #1e40af; }
+  .pl-mix { background: #f3e8ff; color: #6d28d9; }
+
+  .q-card { background: white; border-radius: 20px; padding: 22px 18px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px; animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+  .q-card.shake { animation: shake 0.35s ease; }
+  @keyframes popIn { from{opacity:0;transform:scale(0.88)} to{opacity:1;transform:scale(1)} }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+  .q-emoji { font-size: 2.8rem; display: block; text-align: center; margin-bottom: 10px; }
+  .q-word  { font-family: 'Fredoka One', cursive; font-size: 2.2rem; text-align: center; color: #333; margin-bottom: 6px; letter-spacing: 2px; }
+  .q-sentence { font-size: 1.05rem; font-weight: 800; color: #333; text-align: center; line-height: 1.8; margin-bottom: 14px; }
+  .q-hint  { font-size: 0.82rem; color: #aaa; font-weight: 700; text-align: center; margin-bottom: 14px; }
+  .q-blank { display: inline-block; min-width: 80px; border-bottom: 3px solid #f97316; color: #f97316; font-weight: 900; text-align: center; padding: 0 4px; }
+
+  .opts-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .opts-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .opt-btn { padding: 13px 8px; border-radius: 14px; border: 3px solid #eee; background: #f9f9f9; font-family: 'Fredoka One', cursive; font-size: 1.05rem; cursor: pointer; text-align: center; transition: all 0.15s; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .opt-btn:hover   { border-color: #f97316; background: #fff7ed; transform: translateY(-2px); }
+  .opt-btn.correct { background: #d1fae5; border-color: #34d399; color: #065f46; }
+  .opt-btn.wrong   { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+  .opt-btn:disabled { cursor: default; transform: none; }
+
+  /* Long-short picker */
+  .ls-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .ls-btn  { padding: 16px 10px; border-radius: 14px; border: 3px solid #eee; background: #f9f9f9; font-family: 'Fredoka One', cursive; font-size: 1.05rem; cursor: pointer; text-align: center; transition: all 0.15s; }
+  .ls-btn.long:hover  { border-color: #f97316; background: #fff7ed; }
+  .ls-btn.short:hover { border-color: #3b82f6; background: #eff6ff; }
+  .ls-btn.correct { background: #d1fae5; border-color: #34d399; color: #065f46; }
+  .ls-btn.wrong   { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+  .ls-btn:disabled { cursor: default; }
+
+  /* Word tap (sentence highlight) */
+  .sent-wrap { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 14px; }
+  .sent-word { padding: 6px 12px; border-radius: 10px; font-size: 1.05rem; font-weight: 800; cursor: pointer; border: 3px solid transparent; transition: all 0.15s; background: #f5f5f5; color: #333; }
+  .sent-word:hover   { background: #fff7ed; border-color: #f97316; }
+  .sent-word.selected { background: #fde68a; border-color: #f59e0b; }
+  .sent-word.correct  { background: #d1fae5; border-color: #34d399; color: #065f46; }
+  .sent-word.missed   { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+  .sent-word.wrong-tap{ background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+  .submit-btn { width: 100%; padding: 13px; border-radius: 50px; border: none; background: linear-gradient(135deg,#f97316,#f59e0b); color: white; font-family: 'Fredoka One', cursive; font-size: 1.1rem; cursor: pointer; margin-bottom: 12px; }
+
+  .dots { display: flex; justify-content: center; gap: 5px; margin-bottom: 12px; flex-wrap: wrap; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #e5e7eb; transition: all 0.3s; }
+  .dot.curr { background: #f97316; transform: scale(1.4); }
+  .dot.ok   { background: #34d399; }
+  .dot.bad  { background: #f87171; }
+
+  .feedback { border-radius: 14px; padding: 12px 16px; margin-bottom: 12px; font-weight: 800; font-size: 0.95rem; display: none; text-align: center; line-height: 1.5; }
+  .feedback.show { display: block; }
+  .feedback.ok  { background: #d1fae5; color: #065f46; border: 3px solid #6ee7b7; }
+  .feedback.bad { background: #fee2e2; color: #991b1b; border: 3px solid #fca5a5; }
+
+  .next-btn { width: 100%; padding: 15px; border-radius: 50px; border: none; background: linear-gradient(135deg,#f97316,#f59e0b); color: white; font-family: 'Fredoka One', cursive; font-size: 1.2rem; cursor: pointer; display: none; box-shadow: 0 4px 14px rgba(249,115,22,0.35); }
+  .next-btn.show { display: block; }
+
+  .final-card { background: white; border-radius: 24px; padding: 30px 22px; text-align: center; box-shadow: 0 8px 28px rgba(0,0,0,0.1); display: none; }
+  .final-card.show { display: block; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  .final-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #f97316; margin-bottom: 6px; }
+  .final-score { font-family: 'Fredoka One', cursive; font-size: 3rem; color: #5c6bc0; }
+  .final-stars { font-size: 2.2rem; letter-spacing: 4px; margin: 6px 0 12px; }
+  .final-msg   { font-size: 0.95rem; color: #666; font-weight: 700; margin-bottom: 20px; line-height: 1.6; }
+  .wrong-rev   { background: #fff7ed; border-radius: 12px; padding: 14px; margin-bottom: 18px; text-align: left; }
+  .wr-title    { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #c2410c; margin-bottom: 8px; }
+  .wr-item     { font-size: 0.82rem; font-weight: 700; color: #555; padding: 4px 0; border-bottom: 1px solid #f5f5f5; line-height: 1.5; }
+  .wr-ans      { color: #059669; font-weight: 900; }
+  .final-btns  { display: flex; flex-direction: column; gap: 10px; }
+  .retry-btn { padding: 14px; border-radius: 50px; border: none; background: linear-gradient(135deg,#f97316,#f59e0b); color: white; font-family:'Fredoka One',cursive; font-size:1.1rem; cursor:pointer; }
+  .next-part-btn { padding: 14px; border-radius: 50px; border: none; background: linear-gradient(135deg,#a78bfa,#7c3aed); color: white; font-family:'Fredoka One',cursive; font-size:1.1rem; cursor:pointer; }
+
+  .star-pop { position: fixed; font-size: 1.8rem; pointer-events: none; animation: fly 0.9s ease-out forwards; z-index: 999; }
+  @keyframes fly { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-80px) scale(1.5)} }
+
+  /* Tab navigation */
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; background: #f5f5f5; border-radius: 50px; padding: 5px; }
+  .tab { flex: 1; padding: 9px 6px; border-radius: 50px; border: none; font-family: 'Fredoka One', cursive; font-size: 0.78rem; cursor: pointer; background: transparent; color: #aaa; transition: all 0.2s; }
+  .tab.active { background: #f97316; color: white; box-shadow: 0 3px 10px rgba(249,115,22,0.4); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="g-header">
+    <div class="g-title" id="gTitle">✨ VCe · ee · -ed</div>
+    <div class="g-prog"  id="gProg"></div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
+  <div class="score-row">
+    <div class="score-label" id="scoreLabel"></div>
+    <div class="score-val"   id="scoreVal"></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="setSection('vce')">✨ VCe</button>
+    <button class="tab" onclick="setSection('ee')">🐝 Long e</button>
+    <button class="tab" onclick="setSection('ed')">📝 -ed</button>
+    <button class="tab" onclick="setSection('mix')">🌈 Mix</button>
+  </div>
+
+  <div id="content"></div>
+  <div class="dots"     id="dots"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="handleNext()"></button>
+  <div class="final-card" id="finalCard"></div>
+</div>
+
+<script>
+// ===== DATA =====
+
+// Part 1: VCe — Long or Short? (Week 1/2)
+const VCE_QS = [
+  {word:'rope', emoji:'🪢', ans:'long', pattern:'o-e', explain:'r-O-pe → silent e makes O long!'},
+  {word:'hop',  emoji:'🐸', ans:'short', pattern:'o',  explain:'hop → short o, no silent e'},
+  {word:'cube', emoji:'🎲', ans:'long', pattern:'u-e', explain:'c-U-be → silent e makes U long!'},
+  {word:'tub',  emoji:'🛁', ans:'short', pattern:'u',  explain:'tub → short u, no silent e'},
+  {word:'these',emoji:'👆', ans:'long', pattern:'e-e', explain:'th-E-se → silent e makes E long!'},
+  {word:'pet',  emoji:'🐹', ans:'short', pattern:'e',  explain:'pet → short e, no silent e'},
+  {word:'tone', emoji:'🔔', ans:'long', pattern:'o-e', explain:'t-O-ne → silent e makes O long!'},
+  {word:'rude', emoji:'😤', ans:'long', pattern:'u-e', explain:'r-U-de → silent e makes U long!'},
+  {word:'stun', emoji:'😲', ans:'short', pattern:'u',  explain:'stun → short u, no silent e'},
+  {word:'prune',emoji:'🍇', ans:'long', pattern:'u-e', explain:'pr-U-ne → silent e makes U long!'},
+  {word:'mete', emoji:'⚖️', ans:'long', pattern:'e-e', explain:'m-E-te → silent e makes E long!'},
+  {word:'dud',  emoji:'💣', ans:'short', pattern:'u',  explain:'dud → short u, no silent e'},
+  {word:'rode', emoji:'🚲', ans:'long', pattern:'o-e', explain:'r-O-de → silent e makes O long!'},
+  {word:'home', emoji:'🏠', ans:'long', pattern:'o-e', explain:'h-O-me → silent e makes O long!'},
+  {word:'bike', emoji:'🚴', ans:'long', pattern:'i-e', explain:'b-I-ke → silent e makes I long!'},
+  {word:'use',  emoji:'🔧', ans:'long', pattern:'u-e', explain:'U-se → silent e makes U long!'},
+  {word:'note', emoji:'📝', ans:'long', pattern:'o-e', explain:'n-O-te → silent e makes O long!'},
+  {word:'huge', emoji:'🐘', ans:'long', pattern:'u-e', explain:'h-U-ge → silent e makes U long!'},
+];
+
+// Part 2: Long e spelled e or ee (Week 3)
+const EE_QS = [
+  {word:'we',    emoji:'👫', ans:'e',  explain:'we — ends in vowel E → just e!'},
+  {word:'keep',  emoji:'🔒', ans:'ee', explain:'keep — long e in the MIDDLE → ee!'},
+  {word:'she',   emoji:'👧', ans:'e',  explain:'she — ends in vowel E → just e!'},
+  {word:'queen', emoji:'👑', ans:'ee', explain:'queen — long e in the MIDDLE → ee!'},
+  {word:'feet',  emoji:'🦶', ans:'ee', explain:'feet — long e in the MIDDLE → ee!'},
+  {word:'be',    emoji:'🐝', ans:'e',  explain:'be — ends in vowel E → just e!'},
+  {word:'me',    emoji:'🙋', ans:'e',  explain:'me — ends in vowel E → just e!'},
+  {word:'feel',  emoji:'❤️', ans:'ee', explain:'feel — long e in the MIDDLE → ee!'},
+  {word:'sheep', emoji:'🐑', ans:'ee', explain:'sheep — long e in the MIDDLE → ee!'},
+  {word:'tree',  emoji:'🌳', ans:'ee', explain:'tree — long e at the END → ee!'},
+  {word:'he',    emoji:'👦', ans:'e',  explain:'he — ends in vowel E → just e!'},
+  {word:'bee',   emoji:'🐝', ans:'ee', explain:'bee — long e at the END → ee!'},
+];
+
+// Part 3: -ed ending — does it have -ed? (Week 4)
+const ED_QS = [
+  {word:'missed',  emoji:'😢', ans:'yes', base:'miss', explain:'miss + ed = missed (/t/ sound)'},
+  {word:'tested',  emoji:'📋', ans:'yes', base:'test', explain:'test + ed = tested (/id/ sound)'},
+  {word:'fix',     emoji:'🔧', ans:'no',  base:'fix',  explain:'fix — no -ed! It is the base form.'},
+  {word:'filled',  emoji:'🪣', ans:'yes', base:'fill', explain:'fill + ed = filled (/d/ sound)'},
+  {word:'rant',    emoji:'😠', ans:'no',  base:'rant', explain:'rant — no -ed! It is the base form.'},
+  {word:'wished',  emoji:'⭐', ans:'yes', base:'wish', explain:'wish + ed = wished (/t/ sound)'},
+  {word:'kicked',  emoji:'⚽', ans:'yes', base:'kick', explain:'kick + ed = kicked (/t/ sound)'},
+  {word:'greet',   emoji:'🤝', ans:'no',  base:'greet',explain:'greet — no -ed! That is the base form.'},
+  {word:'yells',   emoji:'📢', ans:'no',  base:'yell', explain:'yells has -s, not -ed! Base = yell.'},
+  {word:'greeted', emoji:'👋', ans:'yes', base:'greet',explain:'greet + ed = greeted (/id/ sound)'},
+  {word:'lift',    emoji:'🏋️', ans:'no',  base:'lift', explain:'lift — no -ed! It is the base form.'},
+  {word:'smiled',  emoji:'😊', ans:'yes', base:'smile',explain:'smile + d = smiled (/d/ sound)'},
+  {word:'helped',  emoji:'🤝', ans:'yes', base:'help', explain:'help + ed = helped (/t/ sound)'},
+  {word:'moved',   emoji:'📦', ans:'yes', base:'move', explain:'move + d = moved (/d/ sound)'},
+];
+
+// Part 4: Mixed — VCe identify (sentence tap)
+const MIX_SENTS = [
+  {
+    sentence: 'I rode home on my bike after class.',
+    targets: ['rode','home','bike'],
+    emoji: '🚲',
+    explain: 'rode (o-e), home (o-e), bike (i-e) — all VCe!'
+  },
+  {
+    sentence: 'Hey you cant use my cup. How rude!',
+    targets: ['use','rude'],
+    emoji: '😤',
+    explain: 'use (u-e) and rude (u-e) — both VCe!'
+  },
+  {
+    sentence: 'Sam has a note he wrote in his bag.',
+    targets: ['note','wrote'],
+    emoji: '📝',
+    explain: 'note (o-e) and wrote (o-e) — both VCe!'
+  },
+  {
+    sentence: 'Steve has two of those and three of these.',
+    targets: ['steve','those','these'],
+    emoji: '👆',
+    explain: 'Steve (e-e), those (o-e), these (e-e) — all VCe!'
+  },
+  {
+    sentence: 'Zeke will choke on the huge mule.',
+    targets: ['zeke','choke','huge','mule'],
+    emoji: '🫏',
+    explain: 'Zeke (e-e), choke (o-e), huge (u-e), mule (u-e) — all VCe!'
+  },
+];
+
+// ===== STATE =====
+let section = 'vce';
+let qi = 0, score = 0, wrong = [], answered = false;
+let currentQ = [];
+let mixSel = [], mixIdx = 0, mixScore = 0;
+
+const pbarColors = {
+  vce: 'linear-gradient(90deg,#f97316,#ef4444)',
+  ee:  'linear-gradient(90deg,#f59e0b,#f97316)',
+  ed:  'linear-gradient(90deg,#3b82f6,#6366f1)',
+  mix: 'linear-gradient(90deg,#a78bfa,#7c3aed)',
+};
+
+function setPbar(pct) {
+  document.getElementById('pbarFill').style.background = pbarColors[section];
+  document.getElementById('pbarFill').style.width = pct + '%';
+}
+function clearFb() { document.getElementById('feedback').className = 'feedback'; }
+function fb(msg, type) { const el = document.getElementById('feedback'); el.innerHTML = msg; el.className = 'feedback show ' + type; }
+
+// ===== SECTION SWITCH =====
+function setSection(s) {
+  section = s;
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    t.classList.toggle('active', ['vce','ee','ed','mix'][i] === s);
+  });
+  document.getElementById('finalCard').classList.remove('show');
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+  if (s === 'vce')  startVCE();
+  else if (s === 'ee')   startEE();
+  else if (s === 'ed')   startED();
+  else startMix();
+}
+
+// ===== PART 1: VCe LONG/SHORT =====
+function startVCE() {
+  qi = 0; score = 0; wrong = []; answered = false;
+  currentQ = [...VCE_QS].sort(() => Math.random() - 0.5).slice(0, 12);
+  document.getElementById('gTitle').textContent = '✨ VCe: Long or Short?';
+  document.getElementById('gProg').textContent = 'Week 1/2';
+  buildDots(currentQ.length);
+  showVCEQ();
+}
+
+function showVCEQ() {
+  answered = false;
+  const q = currentQ[qi];
+  const total = currentQ.length;
+  setPbar((qi / total) * 100);
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label pl-vce">✨ VCe Pattern</div>
+    <div class="q-card" id="qCard">
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-word">${q.word}</div>
+      <div class="q-hint">Is the vowel LONG or SHORT?</div>
+      <div class="ls-btns">
+        <button class="ls-btn long" data-val="long" onclick="pickVCE(this)">
+          🔵 Long vowel<br><small style="font-family:Nunito;font-weight:700;font-size:0.8rem">長母音 (VCe)</small>
+        </button>
+        <button class="ls-btn short" data-val="short" onclick="pickVCE(this)">
+          🔴 Short vowel<br><small style="font-family:Nunito;font-weight:700;font-size:0.8rem">短母音 (no e)</small>
+        </button>
+      </div>
+    </div>`;
+  updateDot(qi, 'curr');
+}
+
+function pickVCE(btn) {
+  if (answered) return; answered = true;
+  const q = currentQ[qi];
+  document.querySelectorAll('.ls-btn').forEach(b => b.disabled = true);
+  if (btn.dataset.val === q.ans) {
+    btn.classList.add('correct'); score++; popStars();
+    fb('✅ ' + q.explain, 'ok');
+    updateDot(qi, 'ok');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelector(`[data-val="${q.ans}"]`).classList.add('correct');
+    wrong.push(q);
+    fb('❌ ' + q.explain, 'bad');
+    document.getElementById('qCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('qCard')?.classList.remove('shake'), 400);
+    updateDot(qi, 'bad');
+  }
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === currentQ.length - 1 ? 'See Results 🎊' : 'Next ➡️';
+  nb.className = 'next-btn show';
+}
+
+// ===== PART 2: Long e spelled e or ee =====
+function startEE() {
+  qi = 0; score = 0; wrong = []; answered = false;
+  currentQ = [...EE_QS].sort(() => Math.random() - 0.5);
+  document.getElementById('gTitle').textContent = '🐝 Long e: e or ee?';
+  document.getElementById('gProg').textContent = 'Week 3';
+  buildDots(currentQ.length);
+  showEEQ();
+}
+
+function showEEQ() {
+  answered = false;
+  const q = currentQ[qi];
+  const total = currentQ.length;
+  setPbar((qi / total) * 100);
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label pl-ee">🐝 Long e Spelling</div>
+    <div class="q-card" id="qCard">
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-word">${q.word}</div>
+      <div class="q-hint">How is the long e sound spelled?</div>
+      <div class="opts-2">
+        <button class="opt-btn" data-val="e" onclick="pickEE(this)">
+          <span style="font-size:1.5rem">e</span>
+          <span style="font-size:0.8rem;font-family:Nunito;font-weight:700">字尾 one e</span>
+          <span style="font-size:0.8rem">we, she, he</span>
+        </button>
+        <button class="opt-btn" data-val="ee" onclick="pickEE(this)">
+          <span style="font-size:1.5rem">ee</span>
+          <span style="font-size:0.8rem;font-family:Nunito;font-weight:700">字中/尾 double ee</span>
+          <span style="font-size:0.8rem">keep, tree</span>
+        </button>
+      </div>
+    </div>`;
+  updateDot(qi, 'curr');
+}
+
+function pickEE(btn) {
+  if (answered) return; answered = true;
+  const q = currentQ[qi];
+  document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  if (btn.dataset.val === q.ans) {
+    btn.classList.add('correct'); score++; popStars();
+    fb('✅ ' + q.explain, 'ok');
+    updateDot(qi, 'ok');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelector(`[data-val="${q.ans}"]`).classList.add('correct');
+    wrong.push(q);
+    fb('❌ ' + q.explain, 'bad');
+    document.getElementById('qCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('qCard')?.classList.remove('shake'), 400);
+    updateDot(qi, 'bad');
+  }
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === currentQ.length - 1 ? 'See Results 🎊' : 'Next ➡️';
+  nb.className = 'next-btn show';
+}
+
+// ===== PART 3: -ed ending yes/no =====
+function startED() {
+  qi = 0; score = 0; wrong = []; answered = false;
+  currentQ = [...ED_QS].sort(() => Math.random() - 0.5).slice(0, 12);
+  document.getElementById('gTitle').textContent = '📝 Has -ed ending?';
+  document.getElementById('gProg').textContent = 'Week 4';
+  buildDots(currentQ.length);
+  showEDQ();
+}
+
+function showEDQ() {
+  answered = false;
+  const q = currentQ[qi];
+  const total = currentQ.length;
+  setPbar((qi / total) * 100);
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  // Highlight -ed in the word if present
+  let displayWord = q.word;
+  if (q.ans === 'yes') {
+    const edIdx = q.word.lastIndexOf('ed');
+    if (edIdx >= 0) {
+      displayWord = q.word.slice(0, edIdx) + '<span style="color:#3b82f6">ed</span>';
+    } else {
+      // words like smiled, moved (just d added)
+      displayWord = q.word.slice(0, q.word.length-1) + '<span style="color:#3b82f6">d</span>';
+    }
+  }
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label pl-ed">📝 Ending -ed</div>
+    <div class="q-card" id="qCard">
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-word">${displayWord}</div>
+      <div class="q-hint">Does this word have an -ed inflectional ending?</div>
+      <div class="opts-2">
+        <button class="opt-btn" data-val="yes" onclick="pickED(this)">
+          <span style="font-size:1.5rem">✅</span>
+          <span>Yes! Has -ed</span>
+        </button>
+        <button class="opt-btn" data-val="no" onclick="pickED(this)">
+          <span style="font-size:1.5rem">❌</span>
+          <span>No -ed ending</span>
+        </button>
+      </div>
+    </div>`;
+  updateDot(qi, 'curr');
+}
+
+function pickED(btn) {
+  if (answered) return; answered = true;
+  const q = currentQ[qi];
+  document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  if (btn.dataset.val === q.ans) {
+    btn.classList.add('correct'); score++; popStars();
+    fb('✅ ' + q.explain, 'ok');
+    updateDot(qi, 'ok');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelector(`[data-val="${q.ans}"]`).classList.add('correct');
+    wrong.push(q);
+    fb('❌ ' + q.explain, 'bad');
+    document.getElementById('qCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('qCard')?.classList.remove('shake'), 400);
+    updateDot(qi, 'bad');
+  }
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === currentQ.length - 1 ? 'See Results 🎊' : 'Next ➡️';
+  nb.className = 'next-btn show';
+}
+
+// ===== PART 4: Mix — tap VCe words in sentences =====
+function startMix() {
+  mixIdx = 0; mixScore = 0; wrong = [];
+  currentQ = [...MIX_SENTS].sort(() => Math.random() - 0.5);
+  document.getElementById('gTitle').textContent = '🌈 Find the VCe Words!';
+  document.getElementById('gProg').textContent = 'Week 8';
+  document.getElementById('dots').innerHTML = '';
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+  document.getElementById('finalCard').classList.remove('show');
+  showMixQ();
+}
+
+function showMixQ() {
+  mixSel = [];
+  answered = false;
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+  const q = currentQ[mixIdx];
+  setPbar((mixIdx / currentQ.length) * 100);
+  document.getElementById('scoreLabel').textContent = `Sentence ${mixIdx+1} / ${currentQ.length}`;
+  document.getElementById('scoreVal').textContent = `✅ ${mixScore}`;
+
+  const words = q.sentence.split(' ');
+  const spans = words.map((w, i) => {
+    const clean = w.replace(/[.,!?'']/g, '').toLowerCase();
+    return `<span class="sent-word" data-clean="${clean}" data-idx="${i}" onclick="tapMix(this)">${w}</span>`;
+  }).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label pl-mix">🌈 Tap VCe Words</div>
+    <div class="q-card" id="qCard">
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-hint">Tap all the VCe words! (${q.targets.length} words)</div>
+      <div class="sent-wrap">${spans}</div>
+      <button class="submit-btn" onclick="checkMix()">Check ✅</button>
+    </div>`;
+}
+
+function tapMix(el) {
+  if (answered) return;
+  const i = parseInt(el.dataset.idx);
+  if (el.classList.contains('selected')) {
+    el.classList.remove('selected');
+    mixSel = mixSel.filter(x => x !== i);
+  } else {
+    el.classList.add('selected');
+    mixSel.push(i);
+  }
+}
+
+function checkMix() {
+  if (answered) return; answered = true;
+  const q = currentQ[mixIdx];
+  const words = q.sentence.split(' ');
+
+  // Build target indices
+  const targetQ = [...q.targets.map(t => t.toLowerCase())];
+  const targetIndices = [];
+  words.forEach((w, i) => {
+    const clean = w.replace(/[.,!?'']/g, '').toLowerCase();
+    const idx = targetQ.indexOf(clean);
+    if (idx !== -1) { targetIndices.push(i); targetQ.splice(idx, 1); }
+  });
+
+  let correct = 0, missed = [];
+  document.querySelectorAll('.sent-word').forEach((el, i) => {
+    const isTarget = targetIndices.includes(i);
+    const isSel = mixSel.includes(i);
+    if (isTarget && isSel) { el.classList.remove('selected'); el.classList.add('correct'); correct++; }
+    else if (isTarget && !isSel) { el.classList.add('missed'); missed.push(words[i]); }
+    else if (!isTarget && isSel) { el.classList.remove('selected'); el.classList.add('wrong-tap'); }
+  });
+
+  const ok = correct >= q.targets.length && missed.length === 0;
+  if (ok) { mixScore++; popStars(); fb('✅ ' + q.explain, 'ok'); }
+  else fb('❌ ' + q.explain + (missed.length ? ' Missed: ' + missed.join(', ') : ''), 'bad');
+
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = mixIdx === currentQ.length - 1 ? 'See Results 🎊' : 'Next ➡️';
+  nb.className = 'next-btn show';
+}
+
+// ===== NAVIGATION =====
+function handleNext() {
+  if (section === 'vce' || section === 'ee' || section === 'ed') {
+    qi++;
+    if (qi < currentQ.length) {
+      if (section === 'vce') showVCEQ();
+      else if (section === 'ee') showEEQ();
+      else showEDQ();
+    } else showFinal();
+  } else {
+    mixIdx++;
+    if (mixIdx < currentQ.length) showMixQ();
+    else showFinal();
+  }
+}
+
+function showFinal() {
+  const isMix = section === 'mix';
+  const total = currentQ.length;
+  const s = isMix ? mixScore : score;
+  const w = wrong;
+  const pct = s / total;
+  const stars = pct===1?'⭐⭐⭐':pct>=0.7?'⭐⭐':'⭐';
+  const msg = pct===1?'Perfect! You are a phonics master! 🏆':pct>=0.7?'Great job! Almost perfect!':'Review and try again!';
+
+  document.getElementById('dots').innerHTML = '';
+  clearFb();
+  document.getElementById('content').innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+  setPbar(100);
+
+  const wrongHtml = w.length > 0 ? `
+    <div class="wrong-rev">
+      <div class="wr-title">📝 Review these:</div>
+      ${w.slice(0,5).map(q => `
+        <div class="wr-item">
+          ${q.emoji||''} <b>${q.word||q.sentence?.substring(0,25)+'...'||''}</b>
+          → <span class="wr-ans">${q.ans==='long'?'Long vowel (VCe)':q.ans==='short'?'Short vowel':q.ans==='e'?'spell: e':q.ans==='ee'?'spell: ee':q.ans==='yes'?'Has -ed':q.ans==='no'?'No -ed':q.ans||''}</span>
+          <small style="color:#aaa;display:block">${q.explain||''}</small>
+        </div>`).join('')}
+    </div>` : '';
+
+  document.getElementById('finalCard').innerHTML = `
+    <div class="final-title">✨ Done!</div>
+    <div class="final-score">${s} / ${total}</div>
+    <div class="final-stars">${stars}</div>
+    <div class="final-msg">${msg}</div>
+    ${wrongHtml}
+    <div class="final-btns">
+      <button class="retry-btn" onclick="setSection('${section}')">🔄 Try Again!</button>
+      <button class="next-part-btn" onclick="setSection('${section==='vce'?'ee':section==='ee'?'ed':section==='ed'?'mix':'vce'}')">
+        ${section==='vce'?'Next: Long e 🐝':section==='ee'?'Next: -ed 📝':section==='ed'?'Next: Mix! 🌈':'Back to VCe ✨'}
+      </button>
+    </div>`;
+  document.getElementById('finalCard').classList.add('show');
+  for (let i=0;i<4;i++) setTimeout(popStars, i*250);
+}
+
+function buildDots(n) {
+  const c = document.getElementById('dots');
+  c.innerHTML = '';
+  for (let i=0;i<n;i++) {
+    const d = document.createElement('div');
+    d.className = 'dot'+(i===0?' curr':'');
+    d.id = 'dot'+i;
+    c.appendChild(d);
+  }
+}
+function updateDot(i, state) {
+  const d = document.getElementById('dot'+i);
+  if (!d) return;
+  d.className = 'dot '+state;
+  const next = document.getElementById('dot'+(i+1));
+  if (next && state !== 'curr') next.classList.add('curr');
+}
+function popStars() {
+  const emojis = ['⭐','✨','🌟','🎉','✏️','📝','🏆'];
+  for (let i=0;i<4;i++) {
+    setTimeout(() => {
+      const s = document.createElement('div'); s.className = 'star-pop';
+      s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      s.style.left = (15+Math.random()*70)+'vw';
+      s.style.top  = (20+Math.random()*50)+'vh';
+      document.body.appendChild(s);
+      setTimeout(()=>s.remove(),900);
+    },i*110);
+  }
+}
+window.onload = () => setSection('vce');
+</script>
+</body>
+</html>
