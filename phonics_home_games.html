@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎯 Phonics Home Games!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800;900&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#fff8f0;font-family:'Nunito',sans-serif;min-height:100vh;padding-bottom:60px;}
+
+  /* ===== HOME SCREEN ===== */
+  .home{max-width:520px;margin:0 auto;padding:20px 16px;}
+  .home-title{font-family:'Fredoka One',cursive;font-size:2rem;color:#333;text-align:center;margin-bottom:4px;}
+  .home-sub{font-size:.85rem;font-weight:700;color:#aaa;text-align:center;margin-bottom:24px;}
+  .game-card{background:white;border-radius:22px;padding:20px 18px;margin-bottom:14px;box-shadow:0 4px 20px rgba(0,0,0,.07);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:16px;border:3px solid transparent;}
+  .game-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.12);}
+  .game-icon{font-size:2.8rem;flex-shrink:0;}
+  .game-info{flex:1;}
+  .game-name{font-family:'Fredoka One',cursive;font-size:1.2rem;margin-bottom:3px;}
+  .game-desc{font-size:.8rem;font-weight:700;color:#888;line-height:1.4;}
+  .gc1{border-color:#f97316;} .gc1 .game-name{color:#c2410c;}
+  .gc2{border-color:#10b981;} .gc2 .game-name{color:#065f46;}
+  .gc3{border-color:#3b82f6;} .gc3 .game-name{color:#1e40af;}
+  .gc4{border-color:#8b5cf6;} .gc4 .game-name{color:#5b21b6;}
+
+  /* ===== SHARED GAME LAYOUT ===== */
+  .game-wrap{max-width:520px;margin:0 auto;padding:14px 16px 60px;display:none;}
+  .game-wrap.active{display:block;}
+  .g-topbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+  .back-btn{padding:7px 14px;border-radius:50px;border:2px solid #eee;background:white;font-family:'Fredoka One',cursive;font-size:.82rem;color:#aaa;cursor:pointer;transition:all .15s;flex-shrink:0;}
+  .back-btn:hover{border-color:#f97316;color:#f97316;}
+  .g-title{font-family:'Fredoka One',cursive;font-size:1.2rem;color:#333;flex:1;}
+  .score-chip{font-family:'Fredoka One',cursive;font-size:.9rem;color:white;padding:4px 14px;border-radius:50px;flex-shrink:0;}
+  .sc-or{background:linear-gradient(135deg,#f97316,#ef4444);}
+  .sc-gr{background:linear-gradient(135deg,#10b981,#06b6d4);}
+  .sc-bl{background:linear-gradient(135deg,#3b82f6,#6366f1);}
+  .sc-pu{background:linear-gradient(135deg,#8b5cf6,#ec4899);}
+  .pbar-wrap{background:#eee;border-radius:99px;height:7px;margin-bottom:16px;overflow:hidden;}
+  .pbar-fill{height:100%;border-radius:99px;transition:width .4s;}
+  .pb-or{background:linear-gradient(90deg,#f97316,#ef4444);}
+  .pb-gr{background:linear-gradient(90deg,#10b981,#06b6d4);}
+  .pb-bl{background:linear-gradient(90deg,#3b82f6,#6366f1);}
+  .pb-pu{background:linear-gradient(90deg,#8b5cf6,#ec4899);}
+
+  /* SHARED CARD */
+  .q-card{background:white;border-radius:20px;padding:22px 18px;box-shadow:0 5px 20px rgba(0,0,0,.08);margin-bottom:14px;animation:popIn .35s cubic-bezier(.34,1.56,.64,1);}
+  .q-card.shake{animation:shake .35s ease;}
+  @keyframes popIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .q-num{font-family:'Fredoka One',cursive;font-size:.8rem;color:#aaa;margin-bottom:8px;}
+  .q-label{display:inline-block;padding:4px 14px;border-radius:50px;font-family:'Fredoka One',cursive;font-size:.75rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
+
+  /* SHARED OPTS */
+  .opts-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .opts-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+  .opts-4{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .opt-btn{padding:13px 8px;border-radius:14px;border:3px solid #eee;background:#f9f9f9;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;text-align:center;transition:all .15s;line-height:1.4;}
+  .opt-btn:hover{transform:translateY(-2px);}
+  .opt-btn.correct{background:#d1fae5;border-color:#34d399;color:#065f46;}
+  .opt-btn.wrong  {background:#fee2e2;border-color:#fca5a5;color:#991b1b;}
+  .opt-btn:disabled{cursor:default;transform:none;}
+
+  /* FEEDBACK */
+  .feedback{border-radius:14px;padding:12px 16px;margin-bottom:12px;font-weight:800;font-size:.95rem;display:none;text-align:center;line-height:1.5;}
+  .feedback.show{display:block;}
+  .feedback.ok {background:#d1fae5;color:#065f46;border:3px solid #6ee7b7;}
+  .feedback.bad{background:#fee2e2;color:#991b1b;border:3px solid #fca5a5;}
+
+  /* DOTS */
+  .dots{display:flex;justify-content:center;gap:5px;margin-bottom:12px;flex-wrap:wrap;}
+  .dot{width:10px;height:10px;border-radius:50%;background:#e5e7eb;transition:all .3s;}
+  .dot.curr{transform:scale(1.4);}
+  .dot.ok  {background:#34d399;}
+  .dot.bad {background:#f87171;}
+
+  /* NEXT BTN */
+  .next-btn{width:100%;padding:14px;border-radius:50px;border:none;color:white;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;display:none;transition:all .15s;}
+  .next-btn.show{display:block;}
+  .nb-or{background:linear-gradient(135deg,#f97316,#ef4444);}
+  .nb-gr{background:linear-gradient(135deg,#10b981,#06b6d4);}
+  .nb-bl{background:linear-gradient(135deg,#3b82f6,#6366f1);}
+  .nb-pu{background:linear-gradient(135deg,#8b5cf6,#ec4899);}
+
+  /* FINAL */
+  .final-card{background:white;border-radius:24px;padding:30px 22px;text-align:center;box-shadow:0 8px 28px rgba(0,0,0,.1);display:none;}
+  .final-card.show{display:block;animation:popIn .5s cubic-bezier(.34,1.56,.64,1);}
+  .final-title{font-family:'Fredoka One',cursive;font-size:2rem;margin-bottom:6px;}
+  .final-score{font-family:'Fredoka One',cursive;font-size:3rem;color:#5c6bc0;}
+  .final-stars{font-size:2.2rem;letter-spacing:4px;margin:6px 0 12px;}
+  .final-msg  {font-size:.95rem;color:#666;font-weight:700;margin-bottom:20px;line-height:1.6;}
+  .final-btns {display:flex;flex-direction:column;gap:10px;}
+  .retry-btn{padding:14px;border-radius:50px;border:none;color:white;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;}
+  .home-btn  {padding:12px;border-radius:50px;border:2px solid #eee;background:white;font-family:'Fredoka One',cursive;font-size:1rem;color:#aaa;cursor:pointer;}
+
+  /* ===== GAME 1: I SPY ===== */
+  .spy-clue{background:linear-gradient(135deg,#fff7ed,#fef3c7);border-radius:16px;padding:18px 16px;margin-bottom:16px;text-align:center;border:2px solid #fed7aa;}
+  .spy-clue-label{font-size:.78rem;font-weight:700;color:#c2410c;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+  .spy-clue-text{font-family:'Fredoka One',cursive;font-size:1.5rem;color:#c2410c;line-height:1.3;}
+  .spy-clue-hint{font-size:.8rem;font-weight:700;color:#aaa;margin-top:6px;}
+  .spy-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .spy-opt{padding:16px 10px;border-radius:16px;border:3px solid #eee;background:#f9f9f9;text-align:center;cursor:pointer;transition:all .15s;font-family:'Fredoka One',cursive;}
+  .spy-opt .spy-emoji{font-size:2.2rem;display:block;margin-bottom:4px;}
+  .spy-opt .spy-word {font-size:.95rem;color:#333;}
+  .spy-opt:hover   {border-color:#f97316;background:#fff7ed;transform:translateY(-2px);}
+  .spy-opt.correct {background:#d1fae5;border-color:#34d399;}
+  .spy-opt.wrong   {background:#fee2e2;border-color:#fca5a5;}
+  .spy-opt:disabled{cursor:default;transform:none;}
+
+  /* ===== GAME 2: PHONICS HUNT ===== */
+  .hunt-passage{background:#fffbeb;border-radius:14px;padding:16px 14px;font-size:1.05rem;font-weight:800;color:#333;line-height:2.4;margin-bottom:14px;text-align:center;}
+  .hunt-word{display:inline-block;padding:2px 6px;border-radius:8px;cursor:pointer;transition:all .15s;border:2px solid transparent;}
+  .hunt-word:hover  {background:#fff7ed;border-color:#f97316;}
+  .hunt-word.sel    {background:#fde68a;border-color:#f59e0b;color:#92400e;}
+  .hunt-word.correct{background:#d1fae5;border-color:#34d399;color:#065f46;}
+  .hunt-word.missed {background:#fee2e2;border-color:#fca5a5;color:#991b1b;}
+  .hunt-word.wrong  {background:#fee2e2;border-color:#fca5a5;color:#991b1b;}
+  .hunt-target{font-family:'Fredoka One',cursive;font-size:.85rem;color:#f97316;text-align:center;margin-bottom:10px;}
+  .submit-btn{width:100%;padding:13px;border-radius:50px;border:none;background:linear-gradient(135deg,#10b981,#06b6d4);color:white;font-family:'Fredoka One',cursive;font-size:1.05rem;cursor:pointer;margin-bottom:12px;}
+
+  /* ===== GAME 3: HOLD UP THE CARD ===== */
+  .card-word-display{font-family:'Fredoka One',cursive;font-size:3rem;text-align:center;color:#333;margin:14px 0 8px;letter-spacing:2px;}
+  .card-word-emoji  {font-size:2.8rem;display:block;text-align:center;margin-bottom:6px;}
+  .card-rule-hint   {font-size:.8rem;font-weight:700;color:#aaa;text-align:center;margin-bottom:16px;}
+  .card-opts{display:flex;flex-direction:column;gap:10px;}
+  .card-opt{padding:16px 18px;border-radius:16px;border:3px solid #eee;background:#f9f9f9;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;text-align:left;transition:all .15s;display:flex;align-items:center;gap:12px;}
+  .card-opt:hover  {border-color:#3b82f6;background:#eff6ff;}
+  .card-opt.correct{background:#d1fae5;border-color:#34d399;color:#065f46;}
+  .card-opt.wrong  {background:#fee2e2;border-color:#fca5a5;color:#991b1b;}
+  .card-opt:disabled{cursor:default;}
+  .card-opt-icon{font-size:1.5rem;flex-shrink:0;}
+  .card-opt-text{flex:1;}
+  .card-opt-main{font-size:1rem;display:block;}
+  .card-opt-ex  {font-size:.75rem;font-weight:700;color:#aaa;display:block;margin-top:1px;}
+
+  /* ===== GAME 4: TEST THE TEACHER ===== */
+  .teacher-intro{background:#f3e8ff;border-radius:14px;padding:14px 16px;margin-bottom:14px;font-size:.85rem;font-weight:700;color:#5b21b6;line-height:1.5;text-align:center;}
+  .wrong-words{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px;}
+  .t-word{padding:8px 16px;border-radius:50px;font-family:'Fredoka One',cursive;font-size:1.05rem;cursor:pointer;border:3px solid #eee;background:#f9f9f9;transition:all .15s;}
+  .t-word:hover   {border-color:#8b5cf6;background:#f3e8ff;}
+  .t-word.bug     {border-color:#8b5cf6;background:#f3e8ff;color:#5b21b6;}
+  .t-word.found   {background:#d1fae5;border-color:#34d399;color:#065f46;text-decoration:line-through;}
+  .t-word.correct-pick{background:#d1fae5;border-color:#34d399;color:#065f46;}
+  .t-word.missed  {background:#fee2e2;border-color:#fca5a5;color:#991b1b;}
+  .t-word.not-bug {background:#fee2e2;border-color:#fca5a5;color:#991b1b;}
+  .t-submit-btn{width:100%;padding:13px;border-radius:50px;border:none;background:linear-gradient(135deg,#8b5cf6,#ec4899);color:white;font-family:'Fredoka One',cursive;font-size:1.05rem;cursor:pointer;margin-bottom:12px;}
+  .bug-count{font-family:'Fredoka One',cursive;font-size:.85rem;color:#8b5cf6;text-align:center;margin-bottom:12px;}
+
+  /* STAR POP */
+  .star-pop{position:fixed;font-size:2rem;pointer-events:none;animation:fly .9s ease-out forwards;z-index:999;}
+  @keyframes fly{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-80px) scale(1.5)}}
+</style>
+</head>
+<body>
+
+<!-- ===== HOME ===== -->
+<div class="home" id="homeScreen">
+  <div style="text-align:center;font-size:3rem;margin-bottom:8px">🎯</div>
+  <div class="home-title">Phonics Home Games!</div>
+  <div class="home-sub">老師說在家也可以練習 — 來玩吧！</div>
+
+  <div class="game-card gc1" onclick="startGame('spy')">
+    <div class="game-icon">🔍</div>
+    <div class="game-info">
+      <div class="game-name">I Spy! 我發現了...</div>
+      <div class="game-desc">電腦給一個 phonics 聲音線索，你來猜是哪個物品！</div>
+    </div>
+  </div>
+  <div class="game-card gc2" onclick="startGame('hunt')">
+    <div class="game-icon">🏹</div>
+    <div class="game-info">
+      <div class="game-name">Phonics Hunt 拼音大獵人</div>
+      <div class="game-desc">在一段文字裡找出所有符合規則的字！</div>
+    </div>
+  </div>
+  <div class="game-card gc3" onclick="startGame('card')">
+    <div class="game-icon">🃏</div>
+    <div class="game-info">
+      <div class="game-name">Hold Up the Card! 舉牌遊戲</div>
+      <div class="game-desc">看到一個字，快速選出正確的 phonics 規則牌！</div>
+    </div>
+  </div>
+  <div class="game-card gc4" onclick="startGame('teacher')">
+    <div class="game-icon">🧑‍🏫</div>
+    <div class="game-info">
+      <div class="game-name">Test the Teacher! 考倒老師</div>
+      <div class="game-desc">老師故意拼錯了幾個字，你能找出來嗎？</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GAME 1: I SPY ===== -->
+<div class="game-wrap" id="g-spy">
+  <div class="g-topbar">
+    <button class="back-btn" onclick="goHome()">← Back</button>
+    <div class="g-title">🔍 I Spy!</div>
+    <div class="score-chip sc-or" id="spy-score">0 ⭐</div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill pb-or" id="spy-pbar" style="width:0%"></div></div>
+  <div class="dots" id="spy-dots"></div>
+  <div id="spy-content"></div>
+  <div class="feedback" id="spy-fb"></div>
+  <button class="next-btn nb-or" id="spy-next" onclick="spyNext()">Next ➡️</button>
+  <div class="final-card" id="spy-final"></div>
+</div>
+
+<!-- ===== GAME 2: PHONICS HUNT ===== -->
+<div class="game-wrap" id="g-hunt">
+  <div class="g-topbar">
+    <button class="back-btn" onclick="goHome()">← Back</button>
+    <div class="g-title">🏹 Phonics Hunt</div>
+    <div class="score-chip sc-gr" id="hunt-score">0 ⭐</div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill pb-gr" id="hunt-pbar" style="width:0%"></div></div>
+  <div class="dots" id="hunt-dots"></div>
+  <div id="hunt-content"></div>
+  <div class="feedback" id="hunt-fb"></div>
+  <button class="next-btn nb-gr" id="hunt-next" onclick="huntNext()">Next ➡️</button>
+  <div class="final-card" id="hunt-final"></div>
+</div>
+
+<!-- ===== GAME 3: HOLD UP THE CARD ===== -->
+<div class="game-wrap" id="g-card">
+  <div class="g-topbar">
+    <button class="back-btn" onclick="goHome()">← Back</button>
+    <div class="g-title">🃏 Hold Up the Card!</div>
+    <div class="score-chip sc-bl" id="card-score">0 ⭐</div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill pb-bl" id="card-pbar" style="width:0%"></div></div>
+  <div class="dots" id="card-dots"></div>
+  <div id="card-content"></div>
+  <div class="feedback" id="card-fb"></div>
+  <button class="next-btn nb-bl" id="card-next" onclick="cardNext()">Next ➡️</button>
+  <div class="final-card" id="card-final"></div>
+</div>
+
+<!-- ===== GAME 4: TEST THE TEACHER ===== -->
+<div class="game-wrap" id="g-teacher">
+  <div class="g-topbar">
+    <button class="back-btn" onclick="goHome()">← Back</button>
+    <div class="g-title">🧑‍🏫 Test the Teacher!</div>
+    <div class="score-chip sc-pu" id="teacher-score">0 ⭐</div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill pb-pu" id="teacher-pbar" style="width:0%"></div></div>
+  <div class="dots" id="teacher-dots"></div>
+  <div id="teacher-content"></div>
+  <div class="feedback" id="teacher-fb"></div>
+  <button class="next-btn nb-pu" id="teacher-next" onclick="teacherNext()">Next ➡️</button>
+  <div class="final-card" id="teacher-final"></div>
+</div>
+
+<script>
+// ===== UTILITY =====
+function goHome() {
+  document.querySelectorAll('.game-wrap').forEach(g => g.classList.remove('active'));
+  document.getElementById('homeScreen').style.display = '';
+}
+function startGame(g) {
+  document.getElementById('homeScreen').style.display = 'none';
+  document.querySelectorAll('.game-wrap').forEach(w => w.classList.remove('active'));
+  document.getElementById('g-' + g).classList.add('active');
+  if (g === 'spy')     initSpy();
+  if (g === 'hunt')    initHunt();
+  if (g === 'card')    initCard();
+  if (g === 'teacher') initTeacher();
+}
+function clearFb(id) { document.getElementById(id).className = 'feedback'; }
+function showFb(id, msg, type) { const el = document.getElementById(id); el.innerHTML = msg; el.className = 'feedback show ' + type; }
+function popStars(colors) {
+  const e = ['⭐','✨','🌟','🎉','🏆'];
+  for (let i=0;i<5;i++) setTimeout(()=>{
+    const s = document.createElement('div'); s.className = 'star-pop';
+    s.textContent = e[Math.floor(Math.random()*e.length)];
+    s.style.left = (10+Math.random()*80)+'vw';
+    s.style.top  = (20+Math.random()*50)+'vh';
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),900);
+  },i*130);
+}
+function buildDots(id, n, color) {
+  const c = document.getElementById(id);
+  c.innerHTML = '';
+  for (let i=0;i<n;i++){
+    const d = document.createElement('div');
+    d.className = 'dot'+(i===0?' curr':'');
+    d.id = id+'-'+i;
+    if (i===0) d.style.background = color;
+    c.appendChild(d);
+  }
+}
+function updateDot(dotsId, i, state, color) {
+  const d = document.getElementById(dotsId+'-'+i);
+  if (!d) return;
+  d.className = 'dot '+state;
+  if (state==='ok') d.style.background='';
+  if (state==='bad') { d.style.background=''; }
+  if (state==='curr') d.style.background = color;
+  const next = document.getElementById(dotsId+'-'+(i+1));
+  if (next && state!=='curr') { next.classList.add('curr'); next.style.background=color; }
+}
+function showFinal(id, score, total, retryFn, color) {
+  const pct = score/total;
+  const stars = pct===1?'⭐⭐⭐':pct>=0.7?'⭐⭐':'⭐';
+  const msg = pct===1?'Perfect! You are amazing! 🏆':pct>=0.7?'Great job! Almost perfect!':'Keep practicing! Try again!';
+  document.getElementById(id).innerHTML = `
+    <div class="final-title" style="color:${color}">🎉 Done!</div>
+    <div class="final-score">${score} / ${total}</div>
+    <div class="final-stars">${stars}</div>
+    <div class="final-msg">${msg}</div>
+    <div class="final-btns">
+      <button class="retry-btn" style="background:linear-gradient(135deg,${color},${color}cc)" onclick="${retryFn}">🔄 Play Again!</button>
+      <button class="home-btn" onclick="goHome()">🏠 Home</button>
+    </div>`;
+  document.getElementById(id).classList.add('show');
+  for (let i=0;i<4;i++) setTimeout(popStars,i*250);
+}
+
+// ===================================================
+// ===== GAME 1: I SPY =====
+// ===================================================
+const SPY_QS = [
+  {clue:'something with a /l-o-ng o/ sound (like "bone")', hint:'VCe rule — silent e makes the vowel long!',
+   opts:[{emoji:'🍎',word:'apple'},{emoji:'🦢',word:'rope'},{emoji:'📦',word:'box'},{emoji:'⛺',word:'tent'}], ans:1,
+   explain:'rope = r-O-pe! The silent e makes O long 🪢'},
+  {clue:'something with a /l-o-ng u/ sound (like "cute")', hint:'VCe rule — listen for the long u!',
+   opts:[{emoji:'🍇',word:'grape'},{emoji:'🧊',word:'cube'},{emoji:'🐟',word:'fish'},{emoji:'🎩',word:'hat'}], ans:1,
+   explain:'cube = c-U-be! The silent e makes U long 🎲'},
+  {clue:'something with a short /a/ sound (like "cat")', hint:'Short vowel — no silent e, vowel in the middle',
+   opts:[{emoji:'🦢',word:'lake'},{emoji:'🎒',word:'bag'},{emoji:'🍎',word:'bite'},{emoji:'🏠',word:'home'}], ans:1,
+   explain:'bag = b-A-g! Short a sound, no silent e 🎒'},
+  {clue:'something with an /ee/ sound (long e)', hint:'Spelled e or ee — like "tree" or "she"',
+   opts:[{emoji:'🌳',word:'tree'},{emoji:'🐟',word:'fish'},{emoji:'🎩',word:'hat'},{emoji:'📦',word:'box'}], ans:0,
+   explain:'tree = tr-EE! Double ee makes the long e sound 🌳'},
+  {clue:'something with a /sh/ sound', hint:'sh = two letters that make ONE sound!',
+   opts:[{emoji:'🐱',word:'cat'},{emoji:'👟',word:'shoe'},{emoji:'🌙',word:'moon'},{emoji:'🐸',word:'frog'}], ans:1,
+   explain:'shoe starts with the /sh/ sound — sh-oe! 👟'},
+  {clue:'something with an /or/ sound (like "fork")', hint:'r-controlled vowel — or/ore',
+   opts:[{emoji:'🎩',word:'hat'},{emoji:'🌙',word:'moon'},{emoji:'🍴',word:'fork'},{emoji:'🐱',word:'cat'}], ans:2,
+   explain:'fork = f-OR-k! The or makes the r-controlled vowel sound 🍴'},
+  {clue:'something with a /-nk/ sound at the end', hint:'-nk ending — like tank or pink!',
+   opts:[{emoji:'🎀',word:'pink bow'},{emoji:'🌳',word:'tree'},{emoji:'🐸',word:'frog'},{emoji:'🍎',word:'apple'}], ans:0,
+   explain:'pink has the -NK ending — pi-NK! 💗'},
+  {clue:'something with a long /i/ sound (like "kite")', hint:'VCe or vowel-y — 1 syllable y = long i',
+   opts:[{emoji:'🐱',word:'cat'},{emoji:'📦',word:'box'},{emoji:'🪁',word:'kite'},{emoji:'🧦',word:'sock'}], ans:2,
+   explain:'kite = k-I-te! Silent e makes I long 🪁'},
+  {clue:'something with a /ch/ sound', hint:'ch = two letters, one /ch/ sound!',
+   opts:[{emoji:'🚌',word:'bus'},{emoji:'🐦',word:'bird'},{emoji:'🪑',word:'chair'},{emoji:'🌙',word:'moon'}], ans:2,
+   explain:'chair starts with the /ch/ sound — ch-air! 🪑'},
+  {clue:'something with a short /o/ sound (like "dot")', hint:'Short vowel — no silent e!',
+   opts:[{emoji:'📦',word:'box'},{emoji:'🌳',word:'tree'},{emoji:'🪁',word:'kite'},{emoji:'🎀',word:'bow'}], ans:0,
+   explain:'box = b-O-x! Short o sound 📦'},
+  {clue:'something with a /oo/ sound (like "moon")', hint:'oo vowel team — two letters, one long sound',
+   opts:[{emoji:'🐸',word:'frog'},{emoji:'🌙',word:'moon'},{emoji:'🎒',word:'bag'},{emoji:'🍴',word:'fork'}], ans:1,
+   explain:'moon = m-OO-n! The oo makes the long "oo" sound 🌙'},
+  {clue:'something with a compound word (two words joined!)', hint:'Two real words put together = compound!',
+   opts:[{emoji:'📦',word:'box'},{emoji:'🎒',word:'backpack'},{emoji:'🐸',word:'frog'},{emoji:'🍎',word:'apple'}], ans:1,
+   explain:'backpack = BACK + PACK! Two real words joined together 🎒'},
+];
+
+let spyQi=0, spySc=0, spyQs=[];
+
+function initSpy() {
+  spyQi=0; spySc=0;
+  spyQs = [...SPY_QS].sort(()=>Math.random()-.5).slice(0,8);
+  document.getElementById('spy-final').classList.remove('show');
+  document.getElementById('spy-next').className = 'next-btn nb-or';
+  clearFb('spy-fb');
+  buildDots('spy-dots', spyQs.length, '#f97316');
+  showSpyQ();
+}
+
+function showSpyQ() {
+  const q = spyQs[spyQi];
+  document.getElementById('spy-pbar').style.width = ((spyQi/spyQs.length)*100)+'%';
+  document.getElementById('spy-score').textContent = spySc + ' ⭐';
+  clearFb('spy-fb');
+  document.getElementById('spy-next').className = 'next-btn nb-or';
+
+  const optsHtml = q.opts.map((o,i) =>
+    `<button class="spy-opt" data-idx="${i}" onclick="pickSpy(this)" ${''}>
+      <span class="spy-emoji">${o.emoji}</span>
+      <span class="spy-word">${o.word}</span>
+    </button>`
+  ).join('');
+
+  document.getElementById('spy-content').innerHTML = `
+    <div class="spy-clue">
+      <div class="spy-clue-label">👁️ I spy with my little eye...</div>
+      <div class="spy-clue-text">${q.clue}</div>
+      <div class="spy-clue-hint">💡 ${q.hint}</div>
+    </div>
+    <div class="spy-opts">${optsHtml}</div>`;
+  updateDot('spy-dots', spyQi, 'curr', '#f97316');
+}
+
+function pickSpy(btn) {
+  const q = spyQs[spyQi];
+  const idx = parseInt(btn.dataset.idx);
+  document.querySelectorAll('.spy-opt').forEach(b=>{b.disabled=true;});
+  if (idx === q.ans) {
+    btn.classList.add('correct'); spySc++; popStars();
+    showFb('spy-fb','✅ '+q.explain,'ok');
+    updateDot('spy-dots',spyQi,'ok','#f97316');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelector(`[data-idx="${q.ans}"]`).classList.add('correct');
+    showFb('spy-fb','❌ '+q.explain,'bad');
+    updateDot('spy-dots',spyQi,'bad','#f97316');
+  }
+  const nb = document.getElementById('spy-next');
+  nb.textContent = spyQi===spyQs.length-1?'See Results 🎊':'Next ➡️';
+  nb.className = 'next-btn nb-or show';
+}
+
+function spyNext() {
+  spyQi++;
+  if (spyQi < spyQs.length) showSpyQ();
+  else {
+    document.getElementById('spy-content').innerHTML='';
+    document.getElementById('spy-next').className='next-btn nb-or';
+    clearFb('spy-fb');
+    document.getElementById('spy-dots').innerHTML='';
+    showFinal('spy-final',spySc,spyQs.length,'initSpy()','#f97316');
+  }
+}
+
+// ===================================================
+// ===== GAME 2: PHONICS HUNT =====
+// ===================================================
+const HUNT_QS = [
+  {rule:'VCe (silent e)', target:'Find all 4 VCe words!', count:4,
+   text:'I rode home on my bike after class.',
+   targets:['rode','home','bike','class'], realTargets:['rode','home','bike'],
+   explain:'rode (o-e), home (o-e), bike (i-e) — all have silent e!'},
+  {rule:'long e (ee or e)', target:'Find all 4 words with the long e sound!', count:4,
+   text:'She and he like to see the big green tree.',
+   targets:['she','he','see','green','tree'],
+   realTargets:['she','he','see','green','tree'],
+   count:5,
+   explain:'she, he, see, green, tree — all have the long e sound!'},
+  {rule:'-ed ending', target:'Find all 5 words with an -ed ending!', count:5,
+   text:'Rose hoped to make a huge slide. Luke smiled and helped her. They moved the blocks and tried to make a slope.',
+   targets:['hoped','smiled','helped','moved','tried'],
+   realTargets:['hoped','smiled','helped','moved','tried'],
+   explain:'hoped, smiled, helped, moved, tried — all past tense with -ed!'},
+  {rule:'-ng or -nk ending', target:'Find all 5 words with -ng or -nk!', count:5,
+   text:'The king likes to sing a song. Link and Tony drink and think together.',
+   targets:['king','sing','song','drink','think'],
+   realTargets:['king','sing','song','drink','think'],
+   explain:'king(-ng), sing(-ng), song(-ng), drink(-nk), think(-nk)!'},
+  {rule:'or / ore sound', target:'Find all 4 words with the or/ore sound!', count:4,
+   text:'Lenore and Sam play sports. They go to the store for more corn.',
+   targets:['lenore','sports','store','more','corn'],
+   realTargets:['Lenore','sports','store','more','corn'],
+   count:5,
+   explain:'Lenore, sports, store, more, corn — all have the or/ore sound!'},
+  {rule:'Vowel Y (long i or long e)', target:'Find all 5 words where -y makes a vowel sound!', count:5,
+   text:'It is sunny. Kim and Dan feel happy. Kim has a funny hat. Dan is silly. What a crazy day!',
+   targets:['sunny','happy','funny','silly','crazy'],
+   realTargets:['sunny','happy','funny','silly','crazy'],
+   explain:'sunny, happy, funny, silly, crazy — all end in -y making long e!'},
+  {rule:'Compound Words', target:'Find all 4 compound words!', count:4,
+   text:'She looks for her backpack. She gets a notepad and some sunshine. Then they play in the sandbox.',
+   targets:['backpack','notepad','sunshine','sandbox'],
+   realTargets:['backpack','notepad','sunshine','sandbox'],
+   explain:'backpack(back+pack), notepad(note+pad), sunshine(sun+shine), sandbox(sand+box)!'},
+];
+
+let huntQi=0, huntSc=0, huntQs=[], huntSel=[];
+
+function initHunt() {
+  huntQi=0; huntSc=0;
+  huntQs = [...HUNT_QS].sort(()=>Math.random()-.5).slice(0,5);
+  document.getElementById('hunt-final').classList.remove('show');
+  document.getElementById('hunt-next').className = 'next-btn nb-gr';
+  clearFb('hunt-fb');
+  buildDots('hunt-dots', huntQs.length, '#10b981');
+  showHuntQ();
+}
+
+function showHuntQ() {
+  huntSel = [];
+  const q = huntQs[huntQi];
+  document.getElementById('hunt-pbar').style.width = ((huntQi/huntQs.length)*100)+'%';
+  document.getElementById('hunt-score').textContent = huntSc + ' ⭐';
+  clearFb('hunt-fb');
+  document.getElementById('hunt-next').className = 'next-btn nb-gr';
+
+  const words = q.text.split(' ');
+  const spans = words.map((w,i) => {
+    const clean = w.replace(/[.,!?]/g,'').toLowerCase();
+    return `<span class="hunt-word" data-clean="${clean}" data-idx="${i}" onclick="tapHunt(this)">${w}</span>`;
+  }).join(' ');
+
+  const cnt = q.count || q.realTargets.length;
+  document.getElementById('hunt-content').innerHTML = `
+    <div class="q-card">
+      <div class="q-label" style="background:#dcfce7;color:#065f46">🏹 Rule: ${q.rule}</div>
+      <div class="hunt-target">Tap ${cnt} words with this rule!</div>
+      <div class="hunt-passage">${spans}</div>
+      <div style="font-family:'Fredoka One',cursive;font-size:.82rem;color:#10b981;text-align:center;margin-bottom:10px">
+        Selected: <span id="hunt-sel-count">0</span> / ${cnt}
+      </div>
+      <button class="submit-btn" onclick="checkHunt()">Check ✅</button>
+    </div>`;
+  updateDot('hunt-dots',huntQi,'curr','#10b981');
+}
+
+function tapHunt(el) {
+  const i = parseInt(el.dataset.idx);
+  if (el.classList.contains('sel')) {
+    el.classList.remove('sel');
+    huntSel = huntSel.filter(x=>x!==i);
+  } else {
+    el.classList.add('sel');
+    huntSel.push(i);
+  }
+  document.getElementById('hunt-sel-count').textContent = huntSel.length;
+}
+
+function checkHunt() {
+  const q = huntQs[huntQi];
+  const words = q.text.split(' ');
+  // Build target indices
+  const tq = [...q.targets];
+  const ti = [];
+  words.forEach((w,i) => {
+    const clean = w.replace(/[.,!?]/g,'').toLowerCase();
+    const idx = tq.indexOf(clean);
+    if (idx!==-1) { ti.push(i); tq.splice(idx,1); }
+  });
+
+  let correct=0, missed=[];
+  document.querySelectorAll('.hunt-word').forEach((el,i)=>{
+    const isT = ti.includes(i), isSel = huntSel.includes(i);
+    if (isT&&isSel)  {el.classList.remove('sel');el.classList.add('correct');correct++;}
+    else if (isT&&!isSel) {el.classList.add('missed');missed.push(words[i]);}
+    else if (!isT&&isSel) {el.classList.remove('sel');el.classList.add('wrong');}
+  });
+
+  const cnt = q.count || q.realTargets.length;
+  if (correct>=cnt && missed.length===0) {
+    huntSc++; popStars();
+    showFb('hunt-fb','✅ '+q.explain,'ok');
+  } else {
+    showFb('hunt-fb','❌ '+q.explain+(missed.length?'<br>Missed: '+missed.join(', '):''),'bad');
+  }
+  document.querySelector('.submit-btn').disabled=true;
+  const nb = document.getElementById('hunt-next');
+  nb.textContent = huntQi===huntQs.length-1?'See Results 🎊':'Next ➡️';
+  nb.className = 'next-btn nb-gr show';
+  updateDot('hunt-dots',huntQi,correct>=cnt&&missed.length===0?'ok':'bad','#10b981');
+}
+
+function huntNext() {
+  huntQi++;
+  if (huntQi < huntQs.length) showHuntQ();
+  else {
+    document.getElementById('hunt-content').innerHTML='';
+    document.getElementById('hunt-next').className='next-btn nb-gr';
+    clearFb('hunt-fb');
+    document.getElementById('hunt-dots').innerHTML='';
+    showFinal('hunt-final',huntSc,huntQs.length,'initHunt()','#10b981');
+  }
+}
+
+// ===================================================
+// ===== GAME 3: HOLD UP THE CARD =====
+// ===================================================
+const RULES = [
+  {id:'long-vowel-vce', label:'🔵 Long Vowel VCe', sub:'rope, bike, cube, home', color:'#f97316'},
+  {id:'short-vowel',    label:'🔴 Short Vowel',     sub:'hop, bit, tub, pet',    color:'#ef4444'},
+  {id:'long-e-ee',      label:'🟡 Long e (ee/e)',    sub:'tree, keep, she, he',   color:'#f59e0b'},
+  {id:'ed-ending',      label:'📝 Past -ed',         sub:'kicked, helped, moved', color:'#3b82f6'},
+  {id:'ng-ending',      label:'🎵 Ending -ng',       sub:'sing, ring, thing',     color:'#10b981'},
+  {id:'nk-ending',      label:'💙 Ending -nk',       sub:'tank, pink, drink',     color:'#6366f1'},
+  {id:'vowel-y-e',      label:'🌟 Vowel Y = long e', sub:'happy, silly, sunny',   color:'#8b5cf6'},
+  {id:'vowel-y-i',      label:'⭐ Vowel Y = long i', sub:'cry, fly, my, sky',     color:'#ec4899'},
+  {id:'or-ore',         label:'🐴 r-Controlled or',  sub:'fork, horse, store',    color:'#9d174d'},
+  {id:'compound',       label:'🧩 Compound Word',    sub:'backpack, rainbow',     color:'#0891b2'},
+];
+
+const CARD_QS = [
+  {emoji:'🪢',word:'rope',rule:'long-vowel-vce',explain:'rope = r-O-pe, silent e makes O long!'},
+  {emoji:'🐸',word:'hop', rule:'short-vowel',   explain:'hop = h-O-p, short o vowel!'},
+  {emoji:'🌳',word:'tree',rule:'long-e-ee',      explain:'tree = tr-EE, double ee = long e!'},
+  {emoji:'⚽',word:'kicked',rule:'ed-ending',    explain:'kicked = kick + ed, past tense!'},
+  {emoji:'🎵',word:'sing',rule:'ng-ending',      explain:'sing = si-NG, the -ng ending!'},
+  {emoji:'🪖',word:'tank',rule:'nk-ending',      explain:'tank = ta-NK, the -nk ending!'},
+  {emoji:'😊',word:'happy',rule:'vowel-y-e',     explain:'happy = hap-PY, 2 syllables → y = long e!'},
+  {emoji:'🌙',word:'sky', rule:'vowel-y-i',      explain:'sky = 1 syllable → y = long i!'},
+  {emoji:'🍴',word:'fork',rule:'or-ore',         explain:'fork = f-OR-k, r-controlled or!'},
+  {emoji:'🎒',word:'backpack',rule:'compound',   explain:'backpack = BACK + PACK, compound word!'},
+  {emoji:'🎲',word:'cube',rule:'long-vowel-vce', explain:'cube = c-U-be, silent e makes U long!'},
+  {emoji:'🐹',word:'pet', rule:'short-vowel',    explain:'pet = p-E-t, short e vowel!'},
+  {emoji:'👑',word:'queen',rule:'long-e-ee',     explain:'queen = qu-EE-n, ee in the middle!'},
+  {emoji:'😊',word:'smiled',rule:'ed-ending',    explain:'smiled = smile + d, past tense!'},
+  {emoji:'💭',word:'think',rule:'nk-ending',     explain:'think = thi-NK, the -nk ending!'},
+  {emoji:'💗',word:'ring',rule:'ng-ending',      explain:'ring = ri-NG, the -ng ending!'},
+  {emoji:'🏙️',word:'city',rule:'vowel-y-e',     explain:'city = ci-TY, 2 syllables → y = long e!'},
+  {emoji:'😢',word:'cry', rule:'vowel-y-i',      explain:'cry = 1 syllable → y = long i!'},
+  {emoji:'🏪',word:'store',rule:'or-ore',        explain:'store = st-ORE, r-controlled ore!'},
+  {emoji:'🌈',word:'rainbow',rule:'compound',    explain:'rainbow = RAIN + BOW, compound word!'},
+  {emoji:'🏠',word:'home',rule:'long-vowel-vce', explain:'home = h-O-me, silent e makes O long!'},
+  {emoji:'🧦',word:'sock',rule:'short-vowel',    explain:'sock = s-O-ck, short o vowel!'},
+  {emoji:'👧',word:'she', rule:'long-e-ee',      explain:'she = sh-E, single e at the end = long e!'},
+  {emoji:'📦',word:'moved',rule:'ed-ending',     explain:'moved = move + d, past tense!'},
+];
+
+let cardQi=0, cardSc=0, cardQs=[];
+
+function initCard() {
+  cardQi=0; cardSc=0;
+  cardQs = [...CARD_QS].sort(()=>Math.random()-.5).slice(0,12);
+  document.getElementById('card-final').classList.remove('show');
+  document.getElementById('card-next').className = 'next-btn nb-bl';
+  clearFb('card-fb');
+  buildDots('card-dots', cardQs.length, '#3b82f6');
+  showCardQ();
+}
+
+function showCardQ() {
+  const q = cardQs[cardQi];
+  document.getElementById('card-pbar').style.width = ((cardQi/cardQs.length)*100)+'%';
+  document.getElementById('card-score').textContent = cardSc + ' ⭐';
+  clearFb('card-fb');
+  document.getElementById('card-next').className = 'next-btn nb-bl';
+
+  // Pick 3 wrong rules + 1 correct rule, shuffle
+  const correct = RULES.find(r=>r.id===q.rule);
+  const wrongs = RULES.filter(r=>r.id!==q.rule).sort(()=>Math.random()-.5).slice(0,3);
+  const opts = [...wrongs, correct].sort(()=>Math.random()-.5);
+
+  const optsHtml = opts.map(r =>
+    `<button class="card-opt" data-id="${r.id}" onclick="pickCard(this)">
+      <span class="card-opt-icon" style="color:${r.color}">📋</span>
+      <span class="card-opt-text">
+        <span class="card-opt-main">${r.label}</span>
+        <span class="card-opt-ex">${r.sub}</span>
+      </span>
+    </button>`
+  ).join('');
+
+  document.getElementById('card-content').innerHTML = `
+    <div class="q-card">
+      <div class="q-num">Question ${cardQi+1} / ${cardQs.length}</div>
+      <span class="card-word-emoji">${q.emoji}</span>
+      <div class="card-word-display">${q.word}</div>
+      <div class="card-rule-hint">Which phonics rule does this word follow?</div>
+      <div class="card-opts">${optsHtml}</div>
+    </div>`;
+  updateDot('card-dots',cardQi,'curr','#3b82f6');
+}
+
+function pickCard(btn) {
+  const q = cardQs[cardQi];
+  document.querySelectorAll('.card-opt').forEach(b=>b.disabled=true);
+  if (btn.dataset.id === q.rule) {
+    btn.classList.add('correct'); cardSc++; popStars();
+    showFb('card-fb','✅ '+q.explain,'ok');
+    updateDot('card-dots',cardQi,'ok','#3b82f6');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelector(`[data-id="${q.rule}"]`).classList.add('correct');
+    showFb('card-fb','❌ '+q.explain,'bad');
+    updateDot('card-dots',cardQi,'bad','#3b82f6');
+  }
+  const nb = document.getElementById('card-next');
+  nb.textContent = cardQi===cardQs.length-1?'See Results 🎊':'Next ➡️';
+  nb.className = 'next-btn nb-bl show';
+}
+
+function cardNext() {
+  cardQi++;
+  if (cardQi < cardQs.length) showCardQ();
+  else {
+    document.getElementById('card-content').innerHTML='';
+    document.getElementById('card-next').className='next-btn nb-bl';
+    clearFb('card-fb');
+    document.getElementById('card-dots').innerHTML='';
+    showFinal('card-final',cardSc,cardQs.length,'initCard()','#3b82f6');
+  }
+}
+
+// ===================================================
+// ===== GAME 4: TEST THE TEACHER =====
+// ===================================================
+const TEACHER_QS = [
+  {
+    title:'The teacher wrote these VCe words. Find the 2 mistakes!',
+    words:['rope','hoome','cube','tub','theze','bike'],
+    bugs:[1,4],
+    corrections:['home','these'],
+    explain:'home (not "hoome") and these (not "theze") — VCe rule: vowel + ONE consonant + silent e!'
+  },
+  {
+    title:'The teacher wrote these long e words. Find the 2 mistakes!',
+    words:['she','treee','keep','hee','feet','we'],
+    bugs:[1,3],
+    corrections:['tree','he'],
+    explain:'tree (not "treee") and he (not "hee") — tree ends in double ee, he ends in single e!'
+  },
+  {
+    title:'The teacher wrote these -ed words. Find the 2 mistakes!',
+    words:['kicked','helpt','moved','smiled','testid','filled'],
+    bugs:[1,4],
+    corrections:['helped','tested'],
+    explain:'helped (not "helpt") and tested (not "testid") — past tense always uses -ed!'
+  },
+  {
+    title:'The teacher wrote these -ng / -nk words. Find the 2 mistakes!',
+    words:['sing','tannk','thing','drink','rign','pink'],
+    bugs:[1,4],
+    corrections:['tank','ring'],
+    explain:'tank (not "tannk") and ring (not "rign") — -nk has one n, -ng letters stay in order!'
+  },
+  {
+    title:'The teacher wrote these Vowel Y words. Find the 2 mistakes!',
+    words:['happy','ciity','cry','funny','skee','puppy'],
+    bugs:[1,4],
+    corrections:['city','sky'],
+    explain:'city (not "ciity") and sky (not "skee") — city ends in -y, sky ends in -y not ee!'
+  },
+  {
+    title:'The teacher wrote these or/ore words. Find the 2 mistakes!',
+    words:['fork','stoore','horn','more','harse','corn'],
+    bugs:[1,4],
+    corrections:['store','horse'],
+    explain:'store (not "stoore") and horse (not "harse") — store ends in -ore, horse has or!'
+  },
+  {
+    title:'The teacher wrote these compound words. Find the 2 mistakes!',
+    words:['backpack','sunsett','rainbow','notpad','bedtime','sandbox'],
+    bugs:[1,3],
+    corrections:['sunset','notepad'],
+    explain:'sunset (not "sunsett") and notepad (not "notpad") — both words keep their full spelling!'
+  },
+];
+
+let teacherQi=0, teacherSc=0, teacherQs=[], teacherPicked=[];
+
+function initTeacher() {
+  teacherQi=0; teacherSc=0;
+  teacherQs = [...TEACHER_QS].sort(()=>Math.random()-.5);
+  document.getElementById('teacher-final').classList.remove('show');
+  document.getElementById('teacher-next').className = 'next-btn nb-pu';
+  clearFb('teacher-fb');
+  buildDots('teacher-dots', teacherQs.length, '#8b5cf6');
+  showTeacherQ();
+}
+
+function showTeacherQ() {
+  teacherPicked = [];
+  const q = teacherQs[teacherQi];
+  document.getElementById('teacher-pbar').style.width = ((teacherQi/teacherQs.length)*100)+'%';
+  document.getElementById('teacher-score').textContent = teacherSc + ' ⭐';
+  clearFb('teacher-fb');
+  document.getElementById('teacher-next').className = 'next-btn nb-pu';
+
+  const wordsHtml = q.words.map((w,i) =>
+    `<button class="t-word" data-idx="${i}" onclick="tapTeacher(this)">${w}</button>`
+  ).join('');
+
+  document.getElementById('teacher-content').innerHTML = `
+    <div class="teacher-intro">🧑‍🏫 ${q.title}<br>
+      <span style="color:#9d174d">Tap the ${q.bugs.length} misspelled words!</span>
+    </div>
+    <div class="bug-count" id="teacher-bug-count">Found: 0 / ${q.bugs.length}</div>
+    <div class="wrong-words">${wordsHtml}</div>
+    <button class="t-submit-btn" onclick="checkTeacher()">Check My Answers ✅</button>`;
+  updateDot('teacher-dots',teacherQi,'curr','#8b5cf6');
+}
+
+function tapTeacher(btn) {
+  const i = parseInt(btn.dataset.idx);
+  if (btn.classList.contains('bug')) {
+    btn.classList.remove('bug');
+    teacherPicked = teacherPicked.filter(x=>x!==i);
+  } else {
+    btn.classList.add('bug');
+    teacherPicked.push(i);
+  }
+  document.getElementById('teacher-bug-count').textContent = `Found: ${teacherPicked.length} / ${teacherQs[teacherQi].bugs.length}`;
+}
+
+function checkTeacher() {
+  const q = teacherQs[teacherQi];
+  let correct = 0;
+
+  document.querySelectorAll('.t-word').forEach((btn,i) => {
+    btn.disabled = true;
+    const isBug = q.bugs.includes(i);
+    const isPicked = teacherPicked.includes(i);
+
+    if (isBug && isPicked)   { btn.classList.remove('bug'); btn.classList.add('found'); correct++; }
+    else if (isBug && !isPicked) { btn.classList.add('missed'); btn.title = '→ Should be: '+q.corrections[q.bugs.indexOf(i)]; }
+    else if (!isBug && isPicked) { btn.classList.remove('bug'); btn.classList.add('not-bug'); }
+  });
+
+  document.querySelector('.t-submit-btn').disabled = true;
+  const allOk = correct === q.bugs.length && teacherPicked.length === q.bugs.length;
+  if (allOk) {
+    teacherSc++; popStars();
+    showFb('teacher-fb','✅ Excellent! You found all the mistakes! '+q.explain,'ok');
+    updateDot('teacher-dots',teacherQi,'ok','#8b5cf6');
+  } else {
+    showFb('teacher-fb','❌ '+q.explain,'bad');
+    updateDot('teacher-dots',teacherQi,'bad','#8b5cf6');
+  }
+  const nb = document.getElementById('teacher-next');
+  nb.textContent = teacherQi===teacherQs.length-1?'See Results 🎊':'Next ➡️';
+  nb.className = 'next-btn nb-pu show';
+}
+
+function teacherNext() {
+  teacherQi++;
+  if (teacherQi < teacherQs.length) showTeacherQ();
+  else {
+    document.getElementById('teacher-content').innerHTML='';
+    document.getElementById('teacher-next').className='next-btn nb-pu';
+    clearFb('teacher-fb');
+    document.getElementById('teacher-dots').innerHTML='';
+    showFinal('teacher-final',teacherSc,teacherQs.length,'initTeacher()','#8b5cf6');
+  }
+}
+</script>
+</body>
+</html>
