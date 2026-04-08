@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏆 Phonics Review: Week 1–7!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#fff8f0;font-family:'Nunito',sans-serif;min-height:100vh;}
+  .wrap{max-width:520px;margin:0 auto;padding:16px 16px 60px;}
+  .g-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .g-title{font-family:'Fredoka One',cursive;font-size:1.3rem;color:#333;}
+  .g-prog {font-family:'Fredoka One',cursive;font-size:1rem;color:#aaa;}
+  .pbar-wrap{background:#eee;border-radius:99px;height:8px;margin-bottom:14px;overflow:hidden;}
+  .pbar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#6366f1,#8b5cf6);transition:width .4s;}
+  .score-row{display:flex;justify-content:space-between;margin-bottom:10px;}
+  .score-label{font-family:'Fredoka One',cursive;font-size:.9rem;color:#aaa;}
+  .score-val  {font-family:'Fredoka One',cursive;font-size:.9rem;color:#34d399;}
+
+  .q-card{background:white;border-radius:20px;padding:22px 18px;box-shadow:0 6px 20px rgba(0,0,0,.08);margin-bottom:14px;animation:popIn .35s cubic-bezier(.34,1.56,.64,1);}
+  .q-card.shake{animation:shake .35s ease;}
+  @keyframes popIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+  .q-tag{display:inline-block;padding:4px 14px;border-radius:50px;font-size:.72rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
+  .tag-vce{background:#fff7ed;color:#c2410c;}
+  .tag-ee {background:#fef3c7;color:#92400e;}
+  .tag-ed {background:#eff6ff;color:#1e40af;}
+  .tag-ng {background:#dcfce7;color:#065f46;}
+  .tag-y  {background:#f3e8ff;color:#6d28d9;}
+  .tag-or {background:#fce7f3;color:#9d174d;}
+  .tag-cw {background:#e0f2fe;color:#075985;}
+
+  .q-emoji   {font-size:2.8rem;display:block;text-align:center;margin-bottom:10px;}
+  .q-sentence{font-size:1.05rem;font-weight:800;color:#333;text-align:center;line-height:1.8;margin-bottom:14px;}
+
+  .opts-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .opts-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+  .opt-btn{padding:14px 8px;border-radius:14px;border:3px solid #eee;background:#f9f9f9;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;text-align:center;transition:all .15s;line-height:1.4;}
+  .opt-btn:hover  {border-color:#6366f1;background:#eef2ff;transform:translateY(-2px);}
+  .opt-btn.correct{background:#d1fae5;border-color:#34d399;color:#065f46;}
+  .opt-btn.wrong  {background:#fee2e2;border-color:#fca5a5;color:#991b1b;}
+  .opt-btn:disabled{cursor:default;transform:none;}
+
+  .dots{display:flex;justify-content:center;gap:5px;margin-bottom:12px;flex-wrap:wrap;}
+  .dot{width:10px;height:10px;border-radius:50%;background:#e5e7eb;transition:all .3s;}
+  .dot.curr{background:#6366f1;transform:scale(1.4);}
+  .dot.ok  {background:#34d399;}
+  .dot.bad {background:#f87171;}
+
+  .feedback{border-radius:14px;padding:12px 16px;margin-bottom:12px;font-weight:800;font-size:.95rem;display:none;text-align:center;line-height:1.5;}
+  .feedback.show{display:block;}
+  .feedback.ok {background:#d1fae5;color:#065f46;border:3px solid #6ee7b7;}
+  .feedback.bad{background:#fee2e2;color:#991b1b;border:3px solid #fca5a5;}
+
+  .next-btn{width:100%;padding:15px;border-radius:50px;border:none;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;font-family:'Fredoka One',cursive;font-size:1.2rem;cursor:pointer;display:none;box-shadow:0 4px 14px rgba(99,102,241,.35);}
+  .next-btn.show{display:block;}
+
+  .final-card{background:white;border-radius:24px;padding:30px 22px;text-align:center;box-shadow:0 8px 28px rgba(0,0,0,.1);display:none;}
+  .final-card.show{display:block;animation:popIn .5s cubic-bezier(.34,1.56,.64,1);}
+  .final-title{font-family:'Fredoka One',cursive;font-size:2rem;color:#6366f1;margin-bottom:6px;}
+  .final-score{font-family:'Fredoka One',cursive;font-size:3rem;color:#5c6bc0;}
+  .final-stars{font-size:2.2rem;letter-spacing:4px;margin:6px 0 12px;}
+  .final-msg  {font-size:.95rem;color:#666;font-weight:700;margin-bottom:20px;line-height:1.6;}
+  .wrong-rev  {background:#eef2ff;border-radius:12px;padding:14px;margin-bottom:18px;text-align:left;}
+  .wr-title   {font-family:'Fredoka One',cursive;font-size:.9rem;color:#4338ca;margin-bottom:8px;}
+  .wr-item    {font-size:.82rem;font-weight:700;color:#555;padding:4px 0;border-bottom:1px solid #f0f0f0;line-height:1.5;}
+  .wr-ans     {color:#059669;font-weight:900;}
+  .retry-btn  {width:100%;padding:14px;border-radius:50px;border:none;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;}
+
+  /* topic summary grid */
+  .topic-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;}
+  .topic-pill{padding:8px 6px;border-radius:12px;text-align:center;font-family:'Fredoka One',cursive;font-size:.72rem;cursor:pointer;border:2px solid transparent;transition:all .15s;}
+  .topic-pill.active{transform:scale(1.05);}
+  .tp-all {background:#eef2ff;color:#4338ca;}
+  .tp-vce {background:#fff7ed;color:#c2410c;}
+  .tp-ee  {background:#fef3c7;color:#92400e;}
+  .tp-ed  {background:#eff6ff;color:#1e40af;}
+  .tp-ng  {background:#dcfce7;color:#065f46;}
+  .tp-y   {background:#f3e8ff;color:#6d28d9;}
+  .tp-or  {background:#fce7f3;color:#9d174d;}
+  .tp-cw  {background:#e0f2fe;color:#075985;}
+  .filter-label{font-family:'Fredoka One',cursive;font-size:.82rem;color:#aaa;margin-bottom:8px;}
+
+  .star-pop{position:fixed;font-size:1.8rem;pointer-events:none;animation:fly .9s ease-out forwards;z-index:999;}
+  @keyframes fly{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-80px) scale(1.5)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="g-header">
+    <div class="g-title" id="gTitle">🏆 Phonics Review!</div>
+    <div class="g-prog"  id="gProg">Week 1–7 Mix</div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
+  <div class="score-row">
+    <div class="score-label" id="scoreLabel"></div>
+    <div class="score-val"   id="scoreVal"></div>
+  </div>
+  <div id="filterArea"></div>
+  <div id="content"></div>
+  <div class="dots"     id="dots"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="handleNext()"></button>
+  <div class="final-card" id="finalCard"></div>
+</div>
+<script>
+const REVIEW_QS = [
+  // ===== VCe — Week 1/2 (8 questions) =====
+  {tag:'tag-vce', tagLabel:'VCe — Week 1/2', emoji:'🪢',
+   question:'Which word has a LONG vowel?',
+   opts:['hop','rope','rod','hot'], ans:1,
+   explain:'rope = r-O-pe, the silent e makes O long! hop / rod / hot have short vowels.'},
+  {tag:'tag-vce', tagLabel:'VCe — Week 1/2', emoji:'🎲',
+   question:'Pick the word with a LONG u vowel (VCe)!',
+   opts:['tub','mud','cube','cut'], ans:2,
+   explain:'cube = c-U-be, the silent e makes U long! tub / mud / cut are short vowels.'},
+  {tag:'tag-vce', tagLabel:'VCe — Week 1/2', emoji:'👆',
+   question:'What is the vowel sound in "these"?',
+   opts:['Short e (pet)','Long e (meet)','Long a (cake)','Short i (sit)'], ans:1,
+   explain:'these = th-E-se, the silent e makes E say its name = long e!'},
+  {tag:'tag-vce', tagLabel:'VCe — Week 1/2', emoji:'🚲',
+   question:'Which word follows the VCe pattern?',
+   opts:['bit','big','bike','bin'], ans:2,
+   explain:'bike = b-I-ke, the silent e makes I long! bit / big / bin have short i.'},
+  {tag:'tag-vce', tagLabel:'VCe — Week 1/2', emoji:'🏠',
+   question:'Which word has a long vowel sound?',
+   opts:['hop','hot','hog','home'], ans:3,
+   explain:'home = h-O-me, silent e makes O long!'},
+  {tag:'tag-vce', tagLabel:'VCe — Week 1/2', emoji:'😤',
+   question:'"rude" — what does the silent e do?',
+   opts:['It makes the vowel SHORT','It makes the vowel LONG','It adds a new sound','Nothing'], ans:1,
+   explain:'r-U-de: the silent e makes U say its name = long u! That is the VCe rule.'},
+  {tag:'tag-vce', tagLabel:'VCe — Week 1/2', emoji:'🔔',
+   question:'Which word is spelled with VCe (long vowel)?',
+   opts:['ton','tone','top','tot'], ans:1,
+   explain:'tone = t-O-ne, silent e makes O long. ton / top / tot have short o.'},
+  {tag:'tag-vce', tagLabel:'VCe — Week 1/2', emoji:'🍇',
+   question:'Which word has a long u sound?',
+   opts:['tug','tub','tune','tun'], ans:2,
+   explain:'tune = t-U-ne, silent e makes U long!'},
+
+  // ===== Long e (e / ee) — Week 3 (7 questions) =====
+  {tag:'tag-ee', tagLabel:'Long e — Week 3', emoji:'👑',
+   question:'How is the long e spelled in "queen"?',
+   opts:['e','ee','ea','ie'], ans:1,
+   explain:'queen = qu-EE-n, long e in the MIDDLE of the word = ee!'},
+  {tag:'tag-ee', tagLabel:'Long e — Week 3', emoji:'👧',
+   question:'How is the long e spelled in "she"?',
+   opts:['ee','e','ea','y'], ans:1,
+   explain:'she = sh-E, long e at the END of a 1-syllable word = single e!'},
+  {tag:'tag-ee', tagLabel:'Long e — Week 3', emoji:'🌳',
+   question:'Which spelling makes the word "tree"?',
+   opts:['tre','trea','tree','trey'], ans:2,
+   explain:'tree = tr-EE, double ee at the end!'},
+  {tag:'tag-ee', tagLabel:'Long e — Week 3', emoji:'🦶',
+   question:'Which word uses "ee" for the long e?',
+   opts:['be','me','feet','she'], ans:2,
+   explain:'feet = f-EE-t, ee in the middle! be / me / she end in single e.'},
+  {tag:'tag-ee', tagLabel:'Long e — Week 3', emoji:'👫',
+   question:'How is the long e spelled in "we"?',
+   opts:['ee','e','ea','i'], ans:1,
+   explain:'we = w-E, it is a 1-syllable word ending in a vowel = single e!'},
+  {tag:'tag-ee', tagLabel:'Long e — Week 3', emoji:'🐑',
+   question:'Which word has "ee" for the long e?',
+   opts:['he','be','sheep','me'], ans:2,
+   explain:'sheep = sh-EE-p, the ee is in the middle!'},
+  {tag:'tag-ee', tagLabel:'Long e — Week 3', emoji:'🔒',
+   question:'Which word uses "ee" to spell the long e sound?',
+   opts:['she','we','keep','he'], ans:2,  // keep
+   explain:'keep = k-EE-p, the ee is in the middle!'},
+
+  // ===== Ending -ed — Week 4 (7 questions) =====
+  {tag:'tag-ed', tagLabel:'Ending -ed — Week 4', emoji:'😢',
+   question:'"missed" — what sound does -ed make?',
+   opts:['/id/ (wanted)','/t/ (kicked)','/d/ (filled)'], ans:1,
+   explain:'missed = miss + ed → /t/ sound. After a voiceless sound (s) → ed says /t/!'},
+  {tag:'tag-ed', tagLabel:'Ending -ed — Week 4', emoji:'👋',
+   question:'"greeted" — what sound does -ed make?',
+   opts:['/id/ (wanted)','/t/ (kicked)','/d/ (filled)'], ans:0,
+   explain:'greeted = greet + ed → /id/ sound. After t or d → ed says /id/!'},
+  {tag:'tag-ed', tagLabel:'Ending -ed — Week 4', emoji:'🪣',
+   question:'"filled" — what sound does -ed make?',
+   opts:['/id/ (wanted)','/t/ (kicked)','/d/ (filled)'], ans:2,
+   explain:'filled = fill + ed → /d/ sound. After a voiced sound (l) → ed says /d/!'},
+  {tag:'tag-ed', tagLabel:'Ending -ed — Week 4', emoji:'🔧',
+   question:'Which word has an -ed past tense ending?',
+   opts:['fix','fixed','fixing','fixes'], ans:1,
+   explain:'fixed = fix + ed. It is past tense!'},
+  {tag:'tag-ed', tagLabel:'Ending -ed — Week 4', emoji:'⚽',
+   question:'"kicked" — what sound does -ed make?',
+   opts:['/id/ (wanted)','/t/ (kicked)','/d/ (filled)'], ans:1,
+   explain:'kicked = kick + ed → /t/ sound. After ck (voiceless) → ed says /t/!'},
+  {tag:'tag-ed', tagLabel:'Ending -ed — Week 4', emoji:'📋',
+   question:'"tested" — what sound does -ed make?',
+   opts:['/id/ (wanted)','/t/ (kicked)','/d/ (filled)'], ans:0,
+   explain:'tested = test + ed → /id/ sound. After t → ed says /id/!'},
+  {tag:'tag-ed', tagLabel:'Ending -ed — Week 4', emoji:'🤝',
+   question:'"helped" — what sound does -ed make?',
+   opts:['/id/ (wanted)','/t/ (kicked)','/d/ (filled)'], ans:1,
+   explain:'helped = help + ed → /t/ sound. After p (voiceless) → ed says /t/!'},
+
+  // ===== Vowel Y — Week 5 (6 questions) =====
+  {tag:'tag-y', tagLabel:'Vowel Y — Week 5', emoji:'🏙️',
+   question:'What sound does -y make in "city"?',
+   opts:['Long i（ㄞ）fly','Long e（一）happy','Short i  sit'], ans:1,
+   explain:'city = ci-TY, 2 syllables → -y makes long e（一）!'},
+  {tag:'tag-y', tagLabel:'Vowel Y — Week 5', emoji:'😢',
+   question:'What sound does -y make in "cry"?',
+   opts:['Long i（ㄞ）fly','Long e（一）happy','Short i  sit'], ans:0,
+   explain:'cry = 1 syllable → -y makes long i（ㄞ）!'},
+  {tag:'tag-y', tagLabel:'Vowel Y — Week 5', emoji:'🐶',
+   question:'What sound does -y make in "puppy"?',
+   opts:['Long i（ㄞ）fly','Long e（一）happy','Short i  sit'], ans:1,
+   explain:'puppy = pup-PY, 2 syllables → -y makes long e（一）!'},
+  {tag:'tag-y', tagLabel:'Vowel Y — Week 5', emoji:'☁️',
+   question:'What sound does -y make in "sky"?',
+   opts:['Long i（ㄞ）fly','Long e（一）happy','Short i  sit'], ans:0,
+   explain:'sky = 1 syllable → -y makes long i（ㄞ）!'},
+  {tag:'tag-y', tagLabel:'Vowel Y — Week 5', emoji:'😁',
+   question:'What sound does -y make in "funny"?',
+   opts:['Long i（ㄞ）fly','Long e（一）happy','Short i  sit'], ans:1,
+   explain:'funny = fun-NY, 2 syllables → -y makes long e（一）!'},
+  {tag:'tag-y', tagLabel:'Vowel Y — Week 5', emoji:'🌙',
+   question:'What sound does -y make in "my"?',
+   opts:['Long i（ㄞ）fly','Long e（一）happy','Short i  sit'], ans:0,
+   explain:'my = 1 syllable → -y makes long i（ㄞ）!'},
+
+  // ===== -ng / -nk — Week 6 (7 questions) =====
+  {tag:'tag-ng', tagLabel:'-ng / -nk — Week 6', emoji:'🎵',
+   question:'Which ending does "sing" have?',
+   opts:['-ng','-nk','-n','-nt'], ans:0,
+   explain:'sing = si-NG! The -ng makes a nasal sound. You cannot hear the g alone!'},
+  {tag:'tag-ng', tagLabel:'-ng / -nk — Week 6', emoji:'🪖',
+   question:'Which ending does "tank" have?',
+   opts:['-ng','-nk','-n','-nt'], ans:1,
+   explain:'tank = ta-NK! The -nk has a k sound at the end.'},
+  {tag:'tag-ng', tagLabel:'-ng / -nk — Week 6', emoji:'💭',
+   question:'The word has -ng. Which is it?',
+   opts:['think','drink','thing','thank'], ans:2,
+   explain:'thing = thi-NG! No k sound = -ng. think / drink / thank all have -nk.'},
+  {tag:'tag-ng', tagLabel:'-ng / -nk — Week 6', emoji:'🧠',
+   question:'The word has -nk. Which is it?',
+   opts:['sing','thing','ring','think'], ans:3,
+   explain:'think = thi-NK! Has a k sound at the end = -nk. The others all use -ng.'},
+  {tag:'tag-ng', tagLabel:'-ng / -nk — Week 6', emoji:'💗',
+   question:'Which word ends in -nk?',
+   opts:['bang','sang','rang','rank'], ans:3,
+   explain:'rank = ra-NK! The others (bang / sang / rang) all end in -ng.'},
+  {tag:'tag-ng', tagLabel:'-ng / -nk — Week 6', emoji:'🎤',
+   question:'Which word ends in -ng?',
+   opts:['pink','sink','bunk','ring'], ans:3,
+   explain:'ring = ri-NG! The others (pink / sink / bunk) all end in -nk.'},
+  {tag:'tag-ng', tagLabel:'-ng / -nk — Week 6', emoji:'🐚',
+   question:'Which spelling is correct?',
+   opts:['bink','bink','bing','bring'], ans:3,
+   explain:'bring = bri-NG! The correct spelling uses -ng.'},
+
+  // ===== r-Controlled or/ore — Week 7 (6 questions) =====
+  {tag:'tag-or', tagLabel:'r-Controlled — Week 7', emoji:'🐴',
+   question:'Which spelling completes "horse"?',
+   opts:['h-a-se','h-or-se','h-er-se','h-ur-se'], ans:1,
+   explain:'horse = h-OR-se! The "or" is r-controlled and makes the "or" sound.'},
+  {tag:'tag-or', tagLabel:'r-Controlled — Week 7', emoji:'🍎',
+   question:'Which spelling is "core" (middle of apple)?',
+   opts:['c-or-e','c-ar-e','c-er-e','c-ur-e'], ans:0,
+   explain:'core = c-ORE! The "ore" pattern makes the r-controlled "or" sound.'},
+  {tag:'tag-or', tagLabel:'r-Controlled — Week 7', emoji:'🍴',
+   question:'Which word is spelled correctly?',
+   opts:['fark','fork','furk','ferk'], ans:1,
+   explain:'fork = f-OR-k! The r-controlled "or" makes the "or" sound.'},
+  {tag:'tag-or', tagLabel:'r-Controlled — Week 7', emoji:'➕',
+   question:'Which word uses the "ore" spelling?',
+   opts:['mor','mare','more','moar'], ans:2,
+   explain:'more = m-ORE! The -ore at the end makes the r-controlled "or" sound.'},
+  {tag:'tag-or', tagLabel:'r-Controlled — Week 7', emoji:'🏪',
+   question:'Which word has the "or" sound spelled with "ore"?',
+   opts:['star','sport','store','storm'], ans:2,
+   explain:'store = st-ORE! It ends in -ore. The others use "or" in the middle.'},
+  {tag:'tag-or', tagLabel:'r-Controlled — Week 7', emoji:'📯',
+   question:'Which word has the "or" sound spelled with "or"?',
+   opts:['more','core','shore','horn'], ans:3,
+   explain:'horn = h-OR-n! It uses "or" in the middle. more / core / shore use -ore.'},
+
+  // ===== Compound Words — Week 7 (5 questions) =====
+  {tag:'tag-cw', tagLabel:'Compound Words — Week 7', emoji:'🎒',
+   question:'How do you split "backpack"?',
+   opts:['bac + kpack','back + pack','ba + ckpack','backp + ack'], ans:1,
+   explain:'backpack = BACK + PACK. Two real words joined together!'},
+  {tag:'tag-cw', tagLabel:'Compound Words — Week 7', emoji:'🌈',
+   question:'What two words make "rainbow"?',
+   opts:['rai + nbow','rain + bow','rainb + ow','ra + inbow'], ans:1,
+   explain:'rainbow = RAIN + BOW. Two real words!'},
+  {tag:'tag-cw', tagLabel:'Compound Words — Week 7', emoji:'📝',
+   question:'What two words make "notepad"?',
+   opts:['not + epad','note + pad','n + otepad','notep + ad'], ans:1,
+   explain:'notepad = NOTE + PAD. Both are real words!'},
+  {tag:'tag-cw', tagLabel:'Compound Words — Week 7', emoji:'⛄',
+   question:'What two words make "snowman"?',
+   opts:['sno + wman','snow + man','s + nowman','snowm + an'], ans:1,
+   explain:'snowman = SNOW + MAN. Both are real words!'},
+  {tag:'tag-cw', tagLabel:'Compound Words — Week 7', emoji:'🛁',
+   question:'What two words make "bathtub"?',
+   opts:['bat + htub','bath + tub','b + athtub','batht + ub'], ans:1,
+   explain:'bathtub = BATH + TUB. Both are real words!'},
+];
+
+// State
+let qi = 0, score = 0, wrong = [], answered = false;
+let questions = [];
+let filterTag = 'all';
+
+function clearFb() { document.getElementById('feedback').className = 'feedback'; }
+function fb(msg, type) { const el = document.getElementById('feedback'); el.innerHTML = msg; el.className = 'feedback show ' + type; }
+
+// Topic filter
+const TOPICS = [
+  {tag:'all',  label:'🏆 All',   cls:'tp-all'},
+  {tag:'tag-vce', label:'✨ VCe',  cls:'tp-vce'},
+  {tag:'tag-ee',  label:'🐝 Long e',cls:'tp-ee'},
+  {tag:'tag-ed',  label:'📝 -ed',  cls:'tp-ed'},
+  {tag:'tag-ng',  label:'🎵 -ng/-nk',cls:'tp-ng'},
+  {tag:'tag-y',   label:'🌟 -y',   cls:'tp-y'},
+  {tag:'tag-or',  label:'🐴 or/ore',cls:'tp-or'},
+  {tag:'tag-cw',  label:'🧩 Compound',cls:'tp-cw'},
+];
+
+function buildFilter() {
+  const html = `<div class="filter-label">Pick a topic to practice:</div>
+    <div class="topic-grid">
+      ${TOPICS.map(t => `<button class="topic-pill ${t.cls}${filterTag===t.tag?' active':''}"
+        onclick="setFilter('${t.tag}')">${t.label}</button>`).join('')}
+    </div>`;
+  document.getElementById('filterArea').innerHTML = html;
+}
+
+function setFilter(tag) {
+  filterTag = tag;
+  startGame();
+}
+
+function startGame() {
+  qi = 0; score = 0; wrong = []; answered = false;
+  const pool = filterTag === 'all' ? REVIEW_QS : REVIEW_QS.filter(q => q.tag === filterTag);
+  questions = [...pool].sort(() => Math.random() - 0.5);
+  document.getElementById('finalCard').classList.remove('show');
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+  document.getElementById('gProg').textContent = filterTag === 'all' ? 'Week 1–7 Mix' : TOPICS.find(t=>t.tag===filterTag)?.label||'';
+  buildFilter();
+  buildDots(questions.length);
+  showQ();
+}
+
+function showQ() {
+  answered = false;
+  const q = questions[qi];
+  const total = questions.length;
+  document.getElementById('pbarFill').style.width = ((qi/total)*100) + '%';
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  const numOpts = q.opts.length;
+  const gridClass = numOpts <= 2 ? 'opts-2' : numOpts === 3 ? 'opts-3' : 'opts-2';
+  const optsHtml = q.opts.map((o, i) =>
+    `<button class="opt-btn" data-idx="${i}" onclick="pick(this)">${o}</button>`
+  ).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div class="q-card" id="qCard">
+      <span class="q-tag ${q.tag}">${q.tagLabel}</span>
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-sentence">${q.question}</div>
+      <div class="${gridClass}">${optsHtml}</div>
+    </div>`;
+  updateDot(qi, 'curr');
+}
+
+function pick(btn) {
+  if (answered) return; answered = true;
+  const q = questions[qi];
+  const idx = parseInt(btn.dataset.idx);
+  document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  if (idx === q.ans) {
+    btn.classList.add('correct'); score++; popStars();
+    fb('✅ ' + q.explain, 'ok');
+    updateDot(qi, 'ok');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelector(`[data-idx="${q.ans}"]`).classList.add('correct');
+    wrong.push(q);
+    fb('❌ ' + q.explain, 'bad');
+    document.getElementById('qCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('qCard')?.classList.remove('shake'), 400);
+    updateDot(qi, 'bad');
+  }
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === questions.length - 1 ? 'See Final Results! 🎊' : 'Next ➡️';
+  nb.className = 'next-btn show';
+}
+
+function handleNext() {
+  qi++;
+  if (qi < questions.length) showQ();
+  else showFinal();
+}
+
+function showFinal() {
+  const total = questions.length;
+  const pct = score / total;
+  const stars = pct === 1 ? '⭐⭐⭐' : pct >= 0.8 ? '⭐⭐⭐' : pct >= 0.6 ? '⭐⭐' : '⭐';
+  const msg = pct === 1 ? 'PERFECT! You are a Phonics Champion! 🏆🎉' :
+              pct >= 0.8 ? 'Amazing! You are ready for the exam! 🌟' :
+              pct >= 0.6 ? 'Good work! Review the mistakes and try again!' :
+              'Keep practicing! Review the rules and try again!';
+
+  document.getElementById('dots').innerHTML = '';
+  clearFb();
+  document.getElementById('content').innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+  document.getElementById('pbarFill').style.width = '100%';
+
+  // Group wrong answers by topic
+  const wrongByTopic = {};
+  wrong.forEach(q => {
+    const t = q.tagLabel;
+    if (!wrongByTopic[t]) wrongByTopic[t] = [];
+    wrongByTopic[t].push(q);
+  });
+
+  const wrongHtml = wrong.length > 0 ? `
+    <div class="wrong-rev">
+      <div class="wr-title">📝 Review these:</div>
+      ${Object.entries(wrongByTopic).map(([topic, qs]) => `
+        <div style="margin-bottom:10px">
+          <div style="font-family:'Fredoka One',cursive;font-size:.8rem;color:#6366f1;margin-bottom:4px">${topic} (${qs.length} wrong)</div>
+          ${qs.map(q => `
+            <div class="wr-item">${q.emoji} ${q.question.substring(0,40)}...
+              → <span class="wr-ans">${q.opts[q.ans]}</span>
+              <small style="color:#aaa;display:block;margin-top:2px">${q.explain}</small>
+            </div>`).join('')}
+        </div>`).join('')}
+    </div>` : '<div style="color:#059669;font-weight:700;margin-bottom:16px">🎉 No mistakes — Perfect!</div>';
+
+  document.getElementById('finalCard').innerHTML = `
+    <div class="final-title">🏆 Review Done!</div>
+    <div class="final-score">${score} / ${total}</div>
+    <div class="final-stars">${stars}</div>
+    <div class="final-msg">${msg}</div>
+    ${wrongHtml}
+    <button class="retry-btn" onclick="startGame()">🔄 Play Again!</button>`;
+  document.getElementById('finalCard').classList.add('show');
+  for (let i = 0; i < 4; i++) setTimeout(popStars, i * 250);
+}
+
+function buildDots(n) {
+  const c = document.getElementById('dots');
+  c.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' curr' : '');
+    d.id = 'dot' + i;
+    c.appendChild(d);
+  }
+}
+function updateDot(i, state) {
+  const d = document.getElementById('dot' + i);
+  if (!d) return;
+  d.className = 'dot ' + state;
+  const next = document.getElementById('dot' + (i + 1));
+  if (next && state !== 'curr') next.classList.add('curr');
+}
+function popStars() {
+  const e = ['⭐','✨','🌟','🎉','📝','🏆','🎊'];
+  for (let i = 0; i < 4; i++) setTimeout(() => {
+    const s = document.createElement('div'); s.className = 'star-pop';
+    s.textContent = e[Math.floor(Math.random() * e.length)];
+    s.style.left = (15 + Math.random() * 70) + 'vw';
+    s.style.top  = (20 + Math.random() * 50) + 'vh';
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 900);
+  }, i * 110);
+}
+
+window.onload = () => { buildFilter(); startGame(); };
+</script>
+</body>
+</html>
