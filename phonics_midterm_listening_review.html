@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎧 Phonics Listening Homework</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#fff8f0;font-family:'Nunito',sans-serif;min-height:100vh;padding-bottom:80px;}
+
+  /* TOP BAR */
+  .top-bar{background:linear-gradient(135deg,#f97316,#ef4444);color:white;padding:16px 20px 12px;text-align:center;box-shadow:0 4px 16px rgba(249,115,22,.3);}
+  .top-title{font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:3px;}
+  .top-sub{font-size:.82rem;font-weight:700;opacity:.88;}
+
+  /* WEEK TABS */
+  .week-nav{display:flex;overflow-x:auto;gap:6px;padding:12px 16px;background:white;box-shadow:0 2px 8px rgba(0,0,0,.06);position:sticky;top:0;z-index:50;scrollbar-width:none;}
+  .week-nav::-webkit-scrollbar{display:none;}
+  .week-tab{flex-shrink:0;padding:7px 15px;border-radius:50px;border:none;font-family:'Fredoka One',cursive;font-size:.82rem;cursor:pointer;background:#f0f0f0;color:#aaa;white-space:nowrap;transition:all .2s;}
+  .week-tab.active{color:white;}
+  .t12.active{background:linear-gradient(135deg,#ef4444,#f97316);}
+  .t3.active{background:linear-gradient(135deg,#f97316,#f59e0b);}
+  .t4.active{background:linear-gradient(135deg,#f59e0b,#10b981);}
+  .t5.active{background:linear-gradient(135deg,#10b981,#06b6d4);}
+  .t6.active{background:linear-gradient(135deg,#3b82f6,#6366f1);}
+  .t7.active{background:linear-gradient(135deg,#8b5cf6,#ec4899);}
+  .t8.active{background:linear-gradient(135deg,#6366f1,#8b5cf6);}
+
+  .content-area{max-width:560px;margin:0 auto;padding:16px;}
+  .week-panel{display:none;} .week-panel.active{display:block;}
+
+  /* WEEK HEADER */
+  .week-hdr{border-radius:16px;padding:14px 16px;color:white;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+  .wh-week{font-family:'Fredoka One',cursive;font-size:1.2rem;}
+  .wh-topic{font-size:.82rem;font-weight:700;opacity:.9;margin-top:2px;}
+  .hdr12{background:linear-gradient(135deg,#ef4444,#f97316);}
+  .hdr3{background:linear-gradient(135deg,#f97316,#f59e0b);}
+  .hdr4{background:linear-gradient(135deg,#f59e0b,#84cc16);}
+  .hdr5{background:linear-gradient(135deg,#10b981,#06b6d4);}
+  .hdr6{background:linear-gradient(135deg,#3b82f6,#6366f1);}
+  .hdr7{background:linear-gradient(135deg,#8b5cf6,#ec4899);}
+  .hdr8{background:linear-gradient(135deg,#6366f1,#8b5cf6);}
+
+  /* SECTION CARD */
+  .sec-card{background:white;border-radius:18px;padding:0;box-shadow:0 4px 16px rgba(0,0,0,.06);margin-bottom:14px;overflow:hidden;}
+  .sec-head{padding:14px 16px 0;}
+  .sec-label{font-family:'Fredoka One',cursive;font-size:1rem;margin-bottom:4px;}
+  .c12{color:#ef4444;} .c3{color:#f97316;} .c4{color:#f59e0b;}
+  .c5{color:#10b981;} .c6{color:#3b82f6;} .c7{color:#8b5cf6;} .c8{color:#6366f1;}
+
+  /* AUDIO GATE */
+  .audio-gate{margin:12px 16px 16px;background:#fff8f0;border:2px dashed #fed7aa;border-radius:14px;padding:16px;text-align:center;transition:all .3s;}
+  .audio-gate.opened{background:#f0fdf4;border-color:#6ee7b7;border-style:solid;}
+  .gate-emoji{font-size:2rem;margin-bottom:6px;}
+  .gate-title{font-family:'Fredoka One',cursive;font-size:.95rem;color:#c2410c;margin-bottom:3px;}
+  .gate-sub{font-size:.78rem;font-weight:700;color:#aaa;margin-bottom:10px;line-height:1.5;}
+  .play-btn{display:inline-flex;align-items:center;gap:7px;padding:11px 22px;border-radius:50px;border:none;cursor:pointer;font-family:'Fredoka One',cursive;font-size:.95rem;color:white;text-decoration:none;box-shadow:0 3px 12px rgba(0,0,0,.12);transition:all .15s;}
+  .play-btn:hover{transform:scale(1.04);}
+  .pb12{background:linear-gradient(135deg,#ef4444,#f97316);}
+  .pb3{background:linear-gradient(135deg,#f97316,#f59e0b);}
+  .pb4{background:linear-gradient(135deg,#f59e0b,#10b981);}
+  .pb5{background:linear-gradient(135deg,#10b981,#06b6d4);}
+  .pb6{background:linear-gradient(135deg,#3b82f6,#6366f1);}
+  .pb7{background:linear-gradient(135deg,#8b5cf6,#ec4899);}
+  .pb8{background:linear-gradient(135deg,#6366f1,#8b5cf6);}
+  .unlock-btn{display:none;width:100%;margin-top:10px;padding:10px;border-radius:50px;border:none;background:#059669;color:white;font-family:'Fredoka One',cursive;font-size:.92rem;cursor:pointer;}
+  .unlock-btn:hover{background:#047857;}
+
+  /* QUESTIONS AREA */
+  .q-area{display:none;padding:0 16px 16px;}
+  .q-area.open{display:block;animation:fadeIn .4s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+  .q-instruction{font-size:.8rem;font-weight:700;color:#888;background:#f9f9f9;border-radius:10px;padding:8px 12px;margin-bottom:12px;line-height:1.5;}
+
+  /* Part A: Add "e" or not */
+  .add-e-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+  .add-e-num{font-family:'Fredoka One',cursive;font-size:.9rem;color:#aaa;min-width:22px;}
+  .add-e-word{font-family:'Fredoka One',cursive;font-size:1.3rem;color:#333;min-width:60px;}
+  .add-e-opts{display:flex;gap:6px;}
+  .ae-btn{padding:8px 16px;border-radius:50px;border:3px solid #eee;background:#f9f9f9;font-family:'Fredoka One',cursive;font-size:.9rem;cursor:pointer;transition:all .15s;}
+  .ae-btn:hover{border-color:#f97316;background:#fff7ed;}
+  .ae-btn.selected{border-color:#f97316;background:#fff7ed;color:#c2410c;}
+  .ae-btn.correct{border-color:#34d399;background:#d1fae5;color:#065f46;}
+  .ae-btn.wrong{border-color:#fca5a5;background:#fee2e2;color:#991b1b;}
+  .ae-btn:disabled{cursor:default;}
+
+  /* Part B: 2-choice per question */
+  .choice-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+  .choice-num{font-family:'Fredoka One',cursive;font-size:.9rem;color:#aaa;min-width:22px;}
+  .choice-opts{display:flex;gap:8px;flex:1;flex-wrap:wrap;}
+  .choice-btn{flex:1;min-width:90px;padding:11px 8px;border-radius:14px;border:3px solid #eee;background:#f9f9f9;font-family:'Fredoka One',cursive;font-size:1.05rem;cursor:pointer;text-align:center;transition:all .15s;}
+  .choice-btn:hover{border-color:#6366f1;background:#eef2ff;transform:translateY(-1px);}
+  .choice-btn.selected{border-color:#6366f1;background:#eef2ff;color:#4338ca;}
+  .choice-btn.correct{border-color:#34d399;background:#d1fae5;color:#065f46;}
+  .choice-btn.wrong{border-color:#fca5a5;background:#fee2e2;color:#991b1b;}
+  .choice-btn:disabled{cursor:default;}
+
+  /* Part A Week5: long-i or long-e */
+  .yi-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+  .yi-word{font-family:'Fredoka One',cursive;font-size:1.1rem;color:#333;min-width:72px;}
+  .yi-opts{display:flex;gap:6px;}
+  .yi-btn{padding:8px 14px;border-radius:50px;border:3px solid #eee;background:#f9f9f9;font-family:'Fredoka One',cursive;font-size:.85rem;cursor:pointer;transition:all .15s;}
+  .yi-btn:hover{border-color:#10b981;background:#ecfdf5;}
+  .yi-btn.selected{border-color:#10b981;background:#ecfdf5;color:#065f46;}
+  .yi-btn.correct{border-color:#34d399;background:#d1fae5;color:#065f46;}
+  .yi-btn.wrong{border-color:#fca5a5;background:#fee2e2;color:#991b1b;}
+
+  /* Part A fill ng/nk */
+  .ngnk-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+  .ngnk-num{font-family:'Fredoka One',cursive;font-size:.9rem;color:#aaa;min-width:22px;}
+  .ngnk-word{font-family:'Fredoka One',cursive;font-size:1.2rem;color:#333;}
+  .ngnk-opts{display:flex;gap:6px;}
+  .ngnk-btn{padding:7px 16px;border-radius:50px;border:3px solid #eee;background:#f9f9f9;font-family:'Fredoka One',cursive;font-size:.9rem;cursor:pointer;transition:all .15s;}
+  .ngnk-btn:hover{border-color:#3b82f6;background:#eff6ff;}
+  .ngnk-btn.selected{border-color:#3b82f6;background:#eff6ff;color:#1e40af;}
+  .ngnk-btn.correct{border-color:#34d399;background:#d1fae5;color:#065f46;}
+  .ngnk-btn.wrong{border-color:#fca5a5;background:#fee2e2;color:#991b1b;}
+  .ngnk-emoji{font-size:.85rem;color:#aaa;font-weight:700;}
+
+  /* CHECK button */
+  .check-btn{width:100%;padding:12px;border-radius:50px;border:none;color:white;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;margin-top:8px;transition:all .15s;}
+  .check-btn:hover{opacity:.9;}
+  .cb12{background:linear-gradient(135deg,#ef4444,#f97316);}
+  .cb3{background:linear-gradient(135deg,#f97316,#f59e0b);}
+  .cb4{background:linear-gradient(135deg,#f59e0b,#10b981);}
+  .cb5{background:linear-gradient(135deg,#10b981,#06b6d4);}
+  .cb6{background:linear-gradient(135deg,#3b82f6,#6366f1);}
+  .cb7{background:linear-gradient(135deg,#8b5cf6,#ec4899);}
+  .cb8{background:linear-gradient(135deg,#6366f1,#8b5cf6);}
+
+  /* RESULT BANNER */
+  .result-banner{border-radius:14px;padding:12px 16px;font-family:'Fredoka One',cursive;font-size:1rem;text-align:center;margin-top:10px;display:none;}
+  .result-banner.show{display:block;animation:fadeIn .3s ease;}
+  .rb-ok{background:#d1fae5;color:#065f46;border:3px solid #6ee7b7;}
+  .rb-bad{background:#fee2e2;color:#991b1b;border:3px solid #fca5a5;}
+  .retry-link{display:inline-block;margin-top:6px;font-size:.82rem;color:#6366f1;cursor:pointer;text-decoration:underline;}
+
+  .divider{height:1px;background:#f0f0f0;margin:12px 0;}
+  .sub-label{font-family:'Fredoka One',cursive;font-size:.85rem;color:#888;margin-bottom:8px;margin-top:4px;}
+
+  /* STAR POP */
+  .star-pop{position:fixed;font-size:2rem;pointer-events:none;animation:fly .9s ease-out forwards;z-index:999;}
+  @keyframes fly{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-80px) scale(1.6)}}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-title">🎧 Phonics Listening Homework</div>
+  <div class="top-sub">Week 1–8 ｜ 聽音檔，再作答！</div>
+</div>
+
+<div class="week-nav">
+  <button class="week-tab t12 active" onclick="showWeek('w12',this)">Week 1/2</button>
+  <button class="week-tab t3"  onclick="showWeek('w3',this)">Week 3</button>
+  <button class="week-tab t4"  onclick="showWeek('w4',this)">Week 4</button>
+  <button class="week-tab t5"  onclick="showWeek('w5',this)">Week 5</button>
+  <button class="week-tab t6"  onclick="showWeek('w6',this)">Week 6</button>
+  <button class="week-tab t7"  onclick="showWeek('w7',this)">Week 7</button>
+  <button class="week-tab t8"  onclick="showWeek('w8',this)">Week 8</button>
+</div>
+
+<div class="content-area">
+
+<!-- ===== WEEK 1/2 ===== -->
+<div class="week-panel active" id="panel-w12">
+  <div class="week-hdr hdr12">
+    <div><div class="wh-week">📖 Week 1 / 2</div><div class="wh-topic">Long o / u / e — VCe Pattern</div></div>
+  </div>
+
+  <!-- Part A -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c12">Part A — Long or Short? Add "e" if long vowel.</div></div>
+    <div class="audio-gate" id="gate-12a">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 1/2 Part A — 聽完再解鎖題目</div>
+      <a class="play-btn pb12" href="https://drive.google.com/file/d/1fwZ7SVZrHXz5QL7VPWwhlB7XfIbxRpY3/view" target="_blank" onclick="markPlayed('12a')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-12a" onclick="unlock('12a')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-12a">
+      <div class="q-instruction">聽音檔的字：長母音加 <b>e</b>，短母音不用加。每題選一個！</div>
+      <!-- 1. rope -->
+      <div class="add-e-row"><div class="add-e-num">1.</div><div class="add-e-word">rop___</div><div class="add-e-opts">
+        <button class="ae-btn" data-q="12a-1" data-ans="e" onclick="pickAE(this,'12a-1','e')">+ e 🔵 長母音</button>
+        <button class="ae-btn" data-q="12a-1" data-ans="no" onclick="pickAE(this,'12a-1','no')">不加 🔴 短母音</button>
+      </div></div>
+      <!-- 2. dud -->
+      <div class="add-e-row"><div class="add-e-num">2.</div><div class="add-e-word">dud___</div><div class="add-e-opts">
+        <button class="ae-btn" data-q="12a-2" data-ans="e" onclick="pickAE(this,'12a-2','e')">+ e 🔵 長母音</button>
+        <button class="ae-btn" data-q="12a-2" data-ans="no" onclick="pickAE(this,'12a-2','no')">不加 🔴 短母音</button>
+      </div></div>
+      <!-- 3. pope -->
+      <div class="add-e-row"><div class="add-e-num">3.</div><div class="add-e-word">pop___</div><div class="add-e-opts">
+        <button class="ae-btn" data-q="12a-3" data-ans="e" onclick="pickAE(this,'12a-3','e')">+ e 🔵 長母音</button>
+        <button class="ae-btn" data-q="12a-3" data-ans="no" onclick="pickAE(this,'12a-3','no')">不加 🔴 短母音</button>
+      </div></div>
+      <!-- 4. mete -->
+      <div class="add-e-row"><div class="add-e-num">4.</div><div class="add-e-word">met___</div><div class="add-e-opts">
+        <button class="ae-btn" data-q="12a-4" data-ans="e" onclick="pickAE(this,'12a-4','e')">+ e 🔵 長母音</button>
+        <button class="ae-btn" data-q="12a-4" data-ans="no" onclick="pickAE(this,'12a-4','no')">不加 🔴 短母音</button>
+      </div></div>
+      <!-- 5. tub -->
+      <div class="add-e-row"><div class="add-e-num">5.</div><div class="add-e-word">tub___</div><div class="add-e-opts">
+        <button class="ae-btn" data-q="12a-5" data-ans="e" onclick="pickAE(this,'12a-5','e')">+ e 🔵 長母音</button>
+        <button class="ae-btn" data-q="12a-5" data-ans="no" onclick="pickAE(this,'12a-5','no')">不加 🔴 短母音</button>
+      </div></div>
+      <button class="check-btn cb12" onclick="checkSection('12a', {1:'e',2:'no',3:'e',4:'e',5:'no'})">Check ✅</button>
+      <div class="result-banner" id="rb-12a"></div>
+    </div>
+  </div>
+
+  <!-- Part B -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c12">Part B — Circle the word you hear. (每題選一個)</div></div>
+    <div class="audio-gate" id="gate-12b">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 1/2 Part B — 聽完再解鎖題目</div>
+      <a class="play-btn pb12" href="https://drive.google.com/file/d/1vyG5OgOQ1ggypnqByaLp_LLYcuWJnUDJ/view" target="_blank" onclick="markPlayed('12b')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-12b" onclick="unlock('12b')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-12b">
+      <div class="q-instruction">每題聽到哪個字？選一個！</div>
+      <div class="choice-row"><div class="choice-num">1.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="12b-1" data-val="stun" onclick="pickChoice(this,'12b-1')">stun</button>
+        <button class="choice-btn" data-q="12b-1" data-val="stone" onclick="pickChoice(this,'12b-1')">stone</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">2.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="12b-2" data-val="rude" onclick="pickChoice(this,'12b-2')">rude</button>
+        <button class="choice-btn" data-q="12b-2" data-val="rod" onclick="pickChoice(this,'12b-2')">rod</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">3.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="12b-3" data-val="these" onclick="pickChoice(this,'12b-3')">these</button>
+        <button class="choice-btn" data-q="12b-3" data-val="those" onclick="pickChoice(this,'12b-3')">those</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">4.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="12b-4" data-val="tone" onclick="pickChoice(this,'12b-4')">tone</button>
+        <button class="choice-btn" data-q="12b-4" data-val="bone" onclick="pickChoice(this,'12b-4')">bone</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">5.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="12b-5" data-val="prune" onclick="pickChoice(this,'12b-5')">prune</button>
+        <button class="choice-btn" data-q="12b-5" data-val="prone" onclick="pickChoice(this,'12b-5')">prone</button>
+      </div></div>
+      <button class="check-btn cb12" onclick="checkSection('12b', {1:'stun',2:'rude',3:'these',4:'tone',5:'prune'})">Check ✅</button>
+      <div class="result-banner" id="rb-12b"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WEEK 3 ===== -->
+<div class="week-panel" id="panel-w3">
+  <div class="week-hdr hdr3">
+    <div><div class="wh-week">📖 Week 3</div><div class="wh-topic">Long e (e / ee) + Ending -ed</div></div>
+  </div>
+
+  <!-- Part A: e or ee -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c3">Part A — Write the long e word. (字尾 e 或 ee？)</div></div>
+    <div class="audio-gate" id="gate-3a">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 3 Part A</div>
+      <a class="play-btn pb3" href="https://drive.google.com/file/d/1WJgKmQP3TvUEQoVj3ySkI0m3o7u1vhBI/view" target="_blank" onclick="markPlayed('3a')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-3a" onclick="unlock('3a')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-3a">
+      <div class="q-instruction">聽到的字，長 e 是用 <b>e</b> 還是 <b>ee</b> 拼寫？</div>
+      <!-- 1. we -->
+      <div class="choice-row"><div class="choice-num">1.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="3a-1" data-val="e" onclick="pickChoice(this,'3a-1')">字尾 e<br><small style="font-family:Nunito;font-size:.75rem;font-weight:700">(we, she)</small></button>
+        <button class="choice-btn" data-q="3a-1" data-val="ee" onclick="pickChoice(this,'3a-1')">ee<br><small style="font-family:Nunito;font-size:.75rem;font-weight:700">(keep, tree)</small></button>
+      </div></div>
+      <!-- 2. keep -->
+      <div class="choice-row"><div class="choice-num">2.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="3a-2" data-val="e" onclick="pickChoice(this,'3a-2')">字尾 e</button>
+        <button class="choice-btn" data-q="3a-2" data-val="ee" onclick="pickChoice(this,'3a-2')">ee</button>
+      </div></div>
+      <!-- 3. she -->
+      <div class="choice-row"><div class="choice-num">3.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="3a-3" data-val="e" onclick="pickChoice(this,'3a-3')">字尾 e</button>
+        <button class="choice-btn" data-q="3a-3" data-val="ee" onclick="pickChoice(this,'3a-3')">ee</button>
+      </div></div>
+      <!-- 4. queen -->
+      <div class="choice-row"><div class="choice-num">4.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="3a-4" data-val="e" onclick="pickChoice(this,'3a-4')">字尾 e</button>
+        <button class="choice-btn" data-q="3a-4" data-val="ee" onclick="pickChoice(this,'3a-4')">ee</button>
+      </div></div>
+      <!-- 5. feet -->
+      <div class="choice-row"><div class="choice-num">5.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="3a-5" data-val="e" onclick="pickChoice(this,'3a-5')">字尾 e</button>
+        <button class="choice-btn" data-q="3a-5" data-val="ee" onclick="pickChoice(this,'3a-5')">ee</button>
+      </div></div>
+      <button class="check-btn cb3" onclick="checkSection('3a', {1:'e',2:'ee',3:'e',4:'ee',5:'ee'})">Check ✅</button>
+      <div class="result-banner" id="rb-3a"></div>
+    </div>
+  </div>
+
+  <!-- Part B -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c3">Part B — Circle the word you hear. (每題選一個)</div></div>
+    <div class="audio-gate" id="gate-3b">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 3 Part B</div>
+      <a class="play-btn pb3" href="https://drive.google.com/file/d/1Fmdr-WgPIKPLC-m4f8aYSJnqB3e2Cw5b/view" target="_blank" onclick="markPlayed('3b')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-3b" onclick="unlock('3b')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-3b">
+      <div class="choice-row"><div class="choice-num">1.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="3b-1" data-val="Todd" onclick="pickChoice(this,'3b-1')">Todd</button>
+        <button class="choice-btn" data-q="3b-1" data-val="toad" onclick="pickChoice(this,'3b-1')">toad</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">2.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="3b-2" data-val="bet" onclick="pickChoice(this,'3b-2')">bet</button>
+        <button class="choice-btn" data-q="3b-2" data-val="beat" onclick="pickChoice(this,'3b-2')">beat</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">3.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="3b-3" data-val="see" onclick="pickChoice(this,'3b-3')">see</button>
+        <button class="choice-btn" data-q="3b-3" data-val="sea" onclick="pickChoice(this,'3b-3')">sea</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">4.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="3b-4" data-val="fee" onclick="pickChoice(this,'3b-4')">fee</button>
+        <button class="choice-btn" data-q="3b-4" data-val="feet" onclick="pickChoice(this,'3b-4')">feet</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">5.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="3b-5" data-val="she" onclick="pickChoice(this,'3b-5')">she</button>
+        <button class="choice-btn" data-q="3b-5" data-val="bee" onclick="pickChoice(this,'3b-5')">bee</button>
+      </div></div>
+      <button class="check-btn cb3" onclick="checkSection('3b', {1:'Todd',2:'bet',3:'see',4:'fee',5:'she'})">Check ✅</button>
+      <div class="result-banner" id="rb-3b"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WEEK 4 ===== -->
+<div class="week-panel" id="panel-w4">
+  <div class="week-hdr hdr4">
+    <div><div class="wh-week">📖 Week 4</div><div class="wh-topic">Inflectional Ending -ed</div></div>
+  </div>
+
+  <!-- Part A: has -ed or not -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c4">Part A — Add "ed" if it has an inflectional ending.</div></div>
+    <div class="audio-gate" id="gate-4a">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 4 Part A</div>
+      <a class="play-btn pb4" href="https://drive.google.com/file/d/1znhwuycvASmEQCzAlK7sMsseFxRJb_2F/view" target="_blank" onclick="markPlayed('4a')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-4a" onclick="unlock('4a')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-4a">
+      <div class="q-instruction">聽音檔，判斷有沒有 <b>-ed</b> 字尾（過去式）！</div>
+      <div class="add-e-row"><div class="add-e-num">1.</div><div class="add-e-word">miss___</div><div class="add-e-opts">
+        <button class="ae-btn" data-q="4a-1" data-ans="ed" onclick="pickAE(this,'4a-1','ed')">+ ed ✅</button>
+        <button class="ae-btn" data-q="4a-1" data-ans="no" onclick="pickAE(this,'4a-1','no')">不加 ❌</button>
+      </div></div>
+      <div class="add-e-row"><div class="add-e-num">2.</div><div class="add-e-word">test___</div><div class="add-e-opts">
+        <button class="ae-btn" data-q="4a-2" data-ans="ed" onclick="pickAE(this,'4a-2','ed')">+ ed ✅</button>
+        <button class="ae-btn" data-q="4a-2" data-ans="no" onclick="pickAE(this,'4a-2','no')">不加 ❌</button>
+      </div></div>
+      <div class="add-e-row"><div class="add-e-num">3.</div><div class="add-e-word">fix___</div><div class="add-e-opts">
+        <button class="ae-btn" data-q="4a-3" data-ans="ed" onclick="pickAE(this,'4a-3','ed')">+ ed ✅</button>
+        <button class="ae-btn" data-q="4a-3" data-ans="no" onclick="pickAE(this,'4a-3','no')">不加 ❌</button>
+      </div></div>
+      <div class="add-e-row"><div class="add-e-num">4.</div><div class="add-e-word">fill___</div><div class="add-e-opts">
+        <button class="ae-btn" data-q="4a-4" data-ans="ed" onclick="pickAE(this,'4a-4','ed')">+ ed ✅</button>
+        <button class="ae-btn" data-q="4a-4" data-ans="no" onclick="pickAE(this,'4a-4','no')">不加 ❌</button>
+      </div></div>
+      <div class="add-e-row"><div class="add-e-num">5.</div><div class="add-e-word">rant___</div><div class="add-e-opts">
+        <button class="ae-btn" data-q="4a-5" data-ans="ed" onclick="pickAE(this,'4a-5','ed')">+ ed ✅</button>
+        <button class="ae-btn" data-q="4a-5" data-ans="no" onclick="pickAE(this,'4a-5','no')">不加 ❌</button>
+      </div></div>
+      <button class="check-btn cb4" onclick="checkSection('4a', {1:'ed',2:'ed',3:'no',4:'ed',5:'no'})">Check ✅</button>
+      <div class="result-banner" id="rb-4a"></div>
+    </div>
+  </div>
+
+  <!-- Part B: 3 choices -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c4">Part B — Circle the word you hear. (每題選一個)</div></div>
+    <div class="audio-gate" id="gate-4b">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 4 Part B — 原形 / -s / -ed 三選一</div>
+      <a class="play-btn pb4" href="https://drive.google.com/file/d/1oBY_toZ1iCpgbcYZxtAiFlz3DYYWRnT8/view" target="_blank" onclick="markPlayed('4b')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-4b" onclick="unlock('4b')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-4b">
+      <div class="q-instruction">三個字選一個你聽到的！</div>
+      <div class="choice-row"><div class="choice-num">1.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="4b-1" data-val="wish" onclick="pickChoice(this,'4b-1')">wish</button>
+        <button class="choice-btn" data-q="4b-1" data-val="wishes" onclick="pickChoice(this,'4b-1')">wishes</button>
+        <button class="choice-btn" data-q="4b-1" data-val="wished" onclick="pickChoice(this,'4b-1')">wished</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">2.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="4b-2" data-val="kick" onclick="pickChoice(this,'4b-2')">kick</button>
+        <button class="choice-btn" data-q="4b-2" data-val="kicks" onclick="pickChoice(this,'4b-2')">kicks</button>
+        <button class="choice-btn" data-q="4b-2" data-val="kicked" onclick="pickChoice(this,'4b-2')">kicked</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">3.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="4b-3" data-val="greet" onclick="pickChoice(this,'4b-3')">greet</button>
+        <button class="choice-btn" data-q="4b-3" data-val="greets" onclick="pickChoice(this,'4b-3')">greets</button>
+        <button class="choice-btn" data-q="4b-3" data-val="greeted" onclick="pickChoice(this,'4b-3')">greeted</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">4.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="4b-4" data-val="yell" onclick="pickChoice(this,'4b-4')">yell</button>
+        <button class="choice-btn" data-q="4b-4" data-val="yells" onclick="pickChoice(this,'4b-4')">yells</button>
+        <button class="choice-btn" data-q="4b-4" data-val="yelled" onclick="pickChoice(this,'4b-4')">yelled</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">5.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="4b-5" data-val="lift" onclick="pickChoice(this,'4b-5')">lift</button>
+        <button class="choice-btn" data-q="4b-5" data-val="lifts" onclick="pickChoice(this,'4b-5')">lifts</button>
+        <button class="choice-btn" data-q="4b-5" data-val="lifted" onclick="pickChoice(this,'4b-5')">lifted</button>
+      </div></div>
+      <button class="check-btn cb4" onclick="checkSection('4b', {1:'wishes',2:'kicked',3:'greeted',4:'yells',5:'lift'})">Check ✅</button>
+      <div class="result-banner" id="rb-4b"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WEEK 5 ===== -->
+<div class="week-panel" id="panel-w5">
+  <div class="week-hdr hdr5">
+    <div><div class="wh-week">📖 Week 5</div><div class="wh-topic">Vowel -y + Syllable VCCV</div></div>
+  </div>
+
+  <!-- Part A: VCCV -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c5">Part A — Fill in the VCCV word you hear.</div></div>
+    <div class="audio-gate" id="gate-5a">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 5 Part A</div>
+      <a class="play-btn pb5" href="https://drive.google.com/file/d/17zkMVb-1tscqLKwTeNZcTf1iw97dAJf8/view" target="_blank" onclick="markPlayed('5a')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-5a" onclick="unlock('5a')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-5a">
+      <div class="q-instruction">每題聽到哪個 VCCV 字？選一個！</div>
+      <div class="choice-row"><div class="choice-num">1.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="5a-1" data-val="rabbit" onclick="pickChoice(this,'5a-1')">rabbit 🐰</button>
+        <button class="choice-btn" data-q="5a-1" data-val="napkin" onclick="pickChoice(this,'5a-1')">napkin 🧻</button>
+        <button class="choice-btn" data-q="5a-1" data-val="basket" onclick="pickChoice(this,'5a-1')">basket 🧺</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">2.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="5a-2" data-val="rabbit" onclick="pickChoice(this,'5a-2')">rabbit 🐰</button>
+        <button class="choice-btn" data-q="5a-2" data-val="napkin" onclick="pickChoice(this,'5a-2')">napkin 🧻</button>
+        <button class="choice-btn" data-q="5a-2" data-val="basket" onclick="pickChoice(this,'5a-2')">basket 🧺</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">3.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="5a-3" data-val="basket" onclick="pickChoice(this,'5a-3')">basket 🧺</button>
+        <button class="choice-btn" data-q="5a-3" data-val="combat" onclick="pickChoice(this,'5a-3')">combat ⚔️</button>
+        <button class="choice-btn" data-q="5a-3" data-val="nutmeg" onclick="pickChoice(this,'5a-3')">nutmeg 🌿</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">4.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="5a-4" data-val="basket" onclick="pickChoice(this,'5a-4')">basket 🧺</button>
+        <button class="choice-btn" data-q="5a-4" data-val="combat" onclick="pickChoice(this,'5a-4')">combat ⚔️</button>
+        <button class="choice-btn" data-q="5a-4" data-val="nutmeg" onclick="pickChoice(this,'5a-4')">nutmeg 🌿</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">5.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="5a-5" data-val="rabbit" onclick="pickChoice(this,'5a-5')">rabbit 🐰</button>
+        <button class="choice-btn" data-q="5a-5" data-val="combat" onclick="pickChoice(this,'5a-5')">combat ⚔️</button>
+        <button class="choice-btn" data-q="5a-5" data-val="nutmeg" onclick="pickChoice(this,'5a-5')">nutmeg 🌿</button>
+      </div></div>
+      <button class="check-btn cb5" onclick="checkSection('5a', {1:'rabbit',2:'napkin',3:'basket',4:'combat',5:'nutmeg'})">Check ✅</button>
+      <div class="result-banner" id="rb-5a"></div>
+    </div>
+  </div>
+
+  <!-- Part B: long i or long e -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c5">Part B — Vowel -y: Long i or Long e?</div></div>
+    <div class="audio-gate" id="gate-5b">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 5 Part B</div>
+      <a class="play-btn pb5" href="https://drive.google.com/file/d/1jyeCr9jJjQTlT03ei61Volc9VK097eeo/view" target="_blank" onclick="markPlayed('5b')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-5b" onclick="unlock('5b')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-5b">
+      <div class="q-instruction">字尾 -y 的發音：1音節 → long i（ㄞ），2音節 → long e（一）</div>
+      <div class="yi-row"><div class="add-e-num">1.</div><div class="yi-word">city</div><div class="yi-opts">
+        <button class="yi-btn" data-q="5b-1" data-val="i" onclick="pickYI(this,'5b-1')">Long i（ㄞ）</button>
+        <button class="yi-btn" data-q="5b-1" data-val="e" onclick="pickYI(this,'5b-1')">Long e（一）</button>
+      </div></div>
+      <div class="yi-row"><div class="add-e-num">2.</div><div class="yi-word">happy</div><div class="yi-opts">
+        <button class="yi-btn" data-q="5b-2" data-val="i" onclick="pickYI(this,'5b-2')">Long i（ㄞ）</button>
+        <button class="yi-btn" data-q="5b-2" data-val="e" onclick="pickYI(this,'5b-2')">Long e（一）</button>
+      </div></div>
+      <div class="yi-row"><div class="add-e-num">3.</div><div class="yi-word">my</div><div class="yi-opts">
+        <button class="yi-btn" data-q="5b-3" data-val="i" onclick="pickYI(this,'5b-3')">Long i（ㄞ）</button>
+        <button class="yi-btn" data-q="5b-3" data-val="e" onclick="pickYI(this,'5b-3')">Long e（一）</button>
+      </div></div>
+      <div class="yi-row"><div class="add-e-num">4.</div><div class="yi-word">cry</div><div class="yi-opts">
+        <button class="yi-btn" data-q="5b-4" data-val="i" onclick="pickYI(this,'5b-4')">Long i（ㄞ）</button>
+        <button class="yi-btn" data-q="5b-4" data-val="e" onclick="pickYI(this,'5b-4')">Long e（一）</button>
+      </div></div>
+      <div class="yi-row"><div class="add-e-num">5.</div><div class="yi-word">puppy</div><div class="yi-opts">
+        <button class="yi-btn" data-q="5b-5" data-val="i" onclick="pickYI(this,'5b-5')">Long i（ㄞ）</button>
+        <button class="yi-btn" data-q="5b-5" data-val="e" onclick="pickYI(this,'5b-5')">Long e（一）</button>
+      </div></div>
+      <button class="check-btn cb5" onclick="checkSection('5b', {1:'e',2:'e',3:'i',4:'i',5:'e'})">Check ✅</button>
+      <div class="result-banner" id="rb-5b"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WEEK 6 ===== -->
+<div class="week-panel" id="panel-w6">
+  <div class="week-hdr hdr6">
+    <div><div class="wh-week">📖 Week 6</div><div class="wh-topic">-ng / -nk + Open Syllables</div></div>
+  </div>
+
+  <!-- Part A: ng or nk -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c6">Part A — Fill in -ng or -nk.</div></div>
+    <div class="audio-gate" id="gate-6a">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 6 Part A</div>
+      <a class="play-btn pb6" href="https://drive.google.com/file/d/12R0_PtMUDdFKkjVXu2IRe3tbFWeWTtmw/view" target="_blank" onclick="markPlayed('6a')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-6a" onclick="unlock('6a')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-6a">
+      <div class="q-instruction">字尾是 <b>-ng</b> 還是 <b>-nk</b>？</div>
+      <div class="ngnk-row"><div class="ngnk-num">1.</div><div class="ngnk-word">si___</div><div class="ngnk-opts">
+        <button class="ngnk-btn" data-q="6a-1" data-val="ng" onclick="pickNGNK(this,'6a-1')">-ng</button>
+        <button class="ngnk-btn" data-q="6a-1" data-val="nk" onclick="pickNGNK(this,'6a-1')">-nk</button>
+      </div><div class="ngnk-emoji">🎵</div></div>
+      <div class="ngnk-row"><div class="ngnk-num">2.</div><div class="ngnk-word">to___</div><div class="ngnk-opts">
+        <button class="ngnk-btn" data-q="6a-2" data-val="ng" onclick="pickNGNK(this,'6a-2')">-ng</button>
+        <button class="ngnk-btn" data-q="6a-2" data-val="nk" onclick="pickNGNK(this,'6a-2')">-nk</button>
+      </div><div class="ngnk-emoji">🔔</div></div>
+      <div class="ngnk-row"><div class="ngnk-num">3.</div><div class="ngnk-word">thi___</div><div class="ngnk-opts">
+        <button class="ngnk-btn" data-q="6a-3" data-val="ng" onclick="pickNGNK(this,'6a-3')">-ng</button>
+        <button class="ngnk-btn" data-q="6a-3" data-val="nk" onclick="pickNGNK(this,'6a-3')">-nk</button>
+      </div><div class="ngnk-emoji">💭</div></div>
+      <div class="ngnk-row"><div class="ngnk-num">4.</div><div class="ngnk-word">wi___</div><div class="ngnk-opts">
+        <button class="ngnk-btn" data-q="6a-4" data-val="ng" onclick="pickNGNK(this,'6a-4')">-ng</button>
+        <button class="ngnk-btn" data-q="6a-4" data-val="nk" onclick="pickNGNK(this,'6a-4')">-nk</button>
+      </div><div class="ngnk-emoji">😉</div></div>
+      <div class="ngnk-row"><div class="ngnk-num">5.</div><div class="ngnk-word">ta___</div><div class="ngnk-opts">
+        <button class="ngnk-btn" data-q="6a-5" data-val="ng" onclick="pickNGNK(this,'6a-5')">-ng</button>
+        <button class="ngnk-btn" data-q="6a-5" data-val="nk" onclick="pickNGNK(this,'6a-5')">-nk</button>
+      </div><div class="ngnk-emoji">🪖</div></div>
+      <button class="check-btn cb6" onclick="checkSection('6a', {1:'ng',2:'nk',3:'ng',4:'nk',5:'nk'})">Check ✅</button>
+      <div class="result-banner" id="rb-6a"></div>
+    </div>
+  </div>
+
+  <!-- Part B -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c6">Part B — Circle the word you hear. (每題選一個)</div></div>
+    <div class="audio-gate" id="gate-6b">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 6 Part B</div>
+      <a class="play-btn pb6" href="https://drive.google.com/file/d/1tLlLGowMxe_YcN-eNlg4onXMDovseb4N/view" target="_blank" onclick="markPlayed('6b')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-6b" onclick="unlock('6b')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-6b">
+      <div class="choice-row"><div class="choice-num">1.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="6b-1" data-val="bang" onclick="pickChoice(this,'6b-1')">bang</button>
+        <button class="choice-btn" data-q="6b-1" data-val="bank" onclick="pickChoice(this,'6b-1')">bank</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">2.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="6b-2" data-val="rank" onclick="pickChoice(this,'6b-2')">rank</button>
+        <button class="choice-btn" data-q="6b-2" data-val="rang" onclick="pickChoice(this,'6b-2')">rang</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">3.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="6b-3" data-val="pin" onclick="pickChoice(this,'6b-3')">pin</button>
+        <button class="choice-btn" data-q="6b-3" data-val="ping" onclick="pickChoice(this,'6b-3')">ping</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">4.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="6b-4" data-val="sand" onclick="pickChoice(this,'6b-4')">sand</button>
+        <button class="choice-btn" data-q="6b-4" data-val="sang" onclick="pickChoice(this,'6b-4')">sang</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">5.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="6b-5" data-val="ding" onclick="pickChoice(this,'6b-5')">ding</button>
+        <button class="choice-btn" data-q="6b-5" data-val="dink" onclick="pickChoice(this,'6b-5')">dink</button>
+      </div></div>
+      <button class="check-btn cb6" onclick="checkSection('6b', {1:'bang',2:'rank',3:'pin',4:'sand',5:'ding'})">Check ✅</button>
+      <div class="result-banner" id="rb-6b"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WEEK 7 ===== -->
+<div class="week-panel" id="panel-w7">
+  <div class="week-hdr hdr7">
+    <div><div class="wh-week">📖 Week 7</div><div class="wh-topic">r-Controlled or/ore + Compound Words</div></div>
+  </div>
+
+  <!-- Part A: or vs ore -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c7">Part A — Spell with "or" or "ore"?</div></div>
+    <div class="audio-gate" id="gate-7a">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 7 Part A</div>
+      <a class="play-btn pb7" href="https://drive.google.com/file/d/1B_SY17i01OUD3et69hO4hNWXhtM6OZtv/view" target="_blank" onclick="markPlayed('7a')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-7a" onclick="unlock('7a')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-7a">
+      <div class="sub-label">聽到的字，用 <b>or</b> 拼（1-3）還是 <b>ore</b> 拼（4-6）？</div>
+      <div class="q-instruction">Section 1：Spell with "or"</div>
+      <div class="choice-row"><div class="choice-num">1.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="7a-1" data-val="fork" onclick="pickChoice(this,'7a-1')">fork 🍴</button>
+        <button class="choice-btn" data-q="7a-1" data-val="form" onclick="pickChoice(this,'7a-1')">form 📋</button>
+        <button class="choice-btn" data-q="7a-1" data-val="fort" onclick="pickChoice(this,'7a-1')">fort 🏰</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">2.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="7a-2" data-val="born" onclick="pickChoice(this,'7a-2')">born 👶</button>
+        <button class="choice-btn" data-q="7a-2" data-val="corn" onclick="pickChoice(this,'7a-2')">corn 🌽</button>
+        <button class="choice-btn" data-q="7a-2" data-val="horn" onclick="pickChoice(this,'7a-2')">horn 📯</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">3.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="7a-3" data-val="thorn" onclick="pickChoice(this,'7a-3')">thorn 🌵</button>
+        <button class="choice-btn" data-q="7a-3" data-val="torn" onclick="pickChoice(this,'7a-3')">torn 😖</button>
+        <button class="choice-btn" data-q="7a-3" data-val="sort" onclick="pickChoice(this,'7a-3')">sort 🔢</button>
+      </div></div>
+      <div class="divider"></div>
+      <div class="q-instruction">Section 2：Spell with "ore"</div>
+      <div class="choice-row"><div class="choice-num">4.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="7a-4" data-val="more" onclick="pickChoice(this,'7a-4')">more ➕</button>
+        <button class="choice-btn" data-q="7a-4" data-val="bore" onclick="pickChoice(this,'7a-4')">bore 😴</button>
+        <button class="choice-btn" data-q="7a-4" data-val="sore" onclick="pickChoice(this,'7a-4')">sore 🤕</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">5.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="7a-5" data-val="core" onclick="pickChoice(this,'7a-5')">core 🍎</button>
+        <button class="choice-btn" data-q="7a-5" data-val="gore" onclick="pickChoice(this,'7a-5')">gore</button>
+        <button class="choice-btn" data-q="7a-5" data-val="wore" onclick="pickChoice(this,'7a-5')">wore 👔</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">6.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="7a-6" data-val="shore" onclick="pickChoice(this,'7a-6')">shore 🏖️</button>
+        <button class="choice-btn" data-q="7a-6" data-val="store" onclick="pickChoice(this,'7a-6')">store 🏪</button>
+        <button class="choice-btn" data-q="7a-6" data-val="score" onclick="pickChoice(this,'7a-6')">score 🏆</button>
+      </div></div>
+      <button class="check-btn cb7" onclick="checkSection('7a', {1:'fork',2:'born',3:'thorn',4:'more',5:'core',6:'shore'})">Check ✅</button>
+      <div class="result-banner" id="rb-7a"></div>
+    </div>
+  </div>
+
+  <!-- Part B: Compound words -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c7">Part B — Compound Words 複合詞配對</div></div>
+    <div class="audio-gate" id="gate-7b">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 7 Part B</div>
+      <a class="play-btn pb7" href="https://drive.google.com/file/d/1bIVwYDnOXamLIZqHn-3a3GjsGG2V1V6b/view" target="_blank" onclick="markPlayed('7b')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-7b" onclick="unlock('7b')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-7b">
+      <div class="q-instruction">聽到的複合詞是哪個？選一個！</div>
+      <div class="choice-row"><div class="choice-num">1.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="7b-1" data-val="notepad" onclick="pickChoice(this,'7b-1')">notepad 📝</button>
+        <button class="choice-btn" data-q="7b-1" data-val="notebook" onclick="pickChoice(this,'7b-1')">notebook 📓</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">2.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="7b-2" data-val="bathroom" onclick="pickChoice(this,'7b-2')">bathroom 🛁</button>
+        <button class="choice-btn" data-q="7b-2" data-val="bedroom" onclick="pickChoice(this,'7b-2')">bedroom 🛏️</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">3.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="7b-3" data-val="Sunday" onclick="pickChoice(this,'7b-3')">Sunday ☀️</button>
+        <button class="choice-btn" data-q="7b-3" data-val="Monday" onclick="pickChoice(this,'7b-3')">Monday 🌙</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">4.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="7b-4" data-val="backpack" onclick="pickChoice(this,'7b-4')">backpack 🎒</button>
+        <button class="choice-btn" data-q="7b-4" data-val="backyard" onclick="pickChoice(this,'7b-4')">backyard 🌳</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">5.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="7b-5" data-val="handmade" onclick="pickChoice(this,'7b-5')">handmade 🤲</button>
+        <button class="choice-btn" data-q="7b-5" data-val="homemade" onclick="pickChoice(this,'7b-5')">homemade 🏠</button>
+      </div></div>
+      <button class="check-btn cb7" onclick="checkSection('7b', {1:'notepad',2:'bathroom',3:'Sunday',4:'backpack',5:'handmade'})">Check ✅</button>
+      <div class="result-banner" id="rb-7b"></div>
+    </div>
+  </div>
+
+  <!-- Part C -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c7">Part C — Circle the word you hear. (每題選一個)</div></div>
+    <div class="audio-gate" id="gate-7c">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 7 Part C</div>
+      <a class="play-btn pb7" href="https://drive.google.com/file/d/1wVzcUMfy_NSZmQsgwWX7w5XvTDHmehiE/view" target="_blank" onclick="markPlayed('7c')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-7c" onclick="unlock('7c')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-7c">
+      <div class="choice-row"><div class="choice-num">1.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="7c-1" data-val="fort" onclick="pickChoice(this,'7c-1')">fort</button>
+        <button class="choice-btn" data-q="7c-1" data-val="fore" onclick="pickChoice(this,'7c-1')">fore</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">2.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="7c-2" data-val="born" onclick="pickChoice(this,'7c-2')">born</button>
+        <button class="choice-btn" data-q="7c-2" data-val="bore" onclick="pickChoice(this,'7c-2')">bore</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">3.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="7c-3" data-val="corn" onclick="pickChoice(this,'7c-3')">corn</button>
+        <button class="choice-btn" data-q="7c-3" data-val="core" onclick="pickChoice(this,'7c-3')">core</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">4.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="7c-4" data-val="sore" onclick="pickChoice(this,'7c-4')">sore</button>
+        <button class="choice-btn" data-q="7c-4" data-val="sort" onclick="pickChoice(this,'7c-4')">sort</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">5.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="7c-5" data-val="coke" onclick="pickChoice(this,'7c-5')">coke</button>
+        <button class="choice-btn" data-q="7c-5" data-val="cork" onclick="pickChoice(this,'7c-5')">cork</button>
+      </div></div>
+      <button class="check-btn cb7" onclick="checkSection('7c', {1:'fort',2:'born',3:'corn',4:'sore',5:'coke'})">Check ✅</button>
+      <div class="result-banner" id="rb-7c"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WEEK 8 ===== -->
+<div class="week-panel" id="panel-w8">
+  <div class="week-hdr hdr8">
+    <div><div class="wh-week">📖 Week 8</div><div class="wh-topic">Review: -ng/-nk + VCe + -y ending</div></div>
+  </div>
+
+  <!-- Part A: ng or nk -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c8">Part A — Fill in -ng or -nk.</div></div>
+    <div class="audio-gate" id="gate-8a">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 8 Part A</div>
+      <a class="play-btn pb8" href="https://drive.google.com/file/d/1_mHFNq7WuRhR7MRYcw0uOXudfxw4nRGz/view" target="_blank" onclick="markPlayed('8a')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-8a" onclick="unlock('8a')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-8a">
+      <div class="ngnk-row"><div class="ngnk-num">1.</div><div class="ngnk-word">wi___</div><div class="ngnk-opts">
+        <button class="ngnk-btn" data-q="8a-1" data-val="ng" onclick="pickNGNK(this,'8a-1')">-ng</button>
+        <button class="ngnk-btn" data-q="8a-1" data-val="nk" onclick="pickNGNK(this,'8a-1')">-nk</button>
+      </div><div class="ngnk-emoji">🪶</div></div>
+      <div class="ngnk-row"><div class="ngnk-num">2.</div><div class="ngnk-word">thi___</div><div class="ngnk-opts">
+        <button class="ngnk-btn" data-q="8a-2" data-val="ng" onclick="pickNGNK(this,'8a-2')">-ng</button>
+        <button class="ngnk-btn" data-q="8a-2" data-val="nk" onclick="pickNGNK(this,'8a-2')">-nk</button>
+      </div><div class="ngnk-emoji">💭</div></div>
+      <div class="ngnk-row"><div class="ngnk-num">3.</div><div class="ngnk-word">si___</div><div class="ngnk-opts">
+        <button class="ngnk-btn" data-q="8a-3" data-val="ng" onclick="pickNGNK(this,'8a-3')">-ng</button>
+        <button class="ngnk-btn" data-q="8a-3" data-val="nk" onclick="pickNGNK(this,'8a-3')">-nk</button>
+      </div><div class="ngnk-emoji">🎵</div></div>
+      <div class="ngnk-row"><div class="ngnk-num">4.</div><div class="ngnk-word">bri___</div><div class="ngnk-opts">
+        <button class="ngnk-btn" data-q="8a-4" data-val="ng" onclick="pickNGNK(this,'8a-4')">-ng</button>
+        <button class="ngnk-btn" data-q="8a-4" data-val="nk" onclick="pickNGNK(this,'8a-4')">-nk</button>
+      </div><div class="ngnk-emoji">📦</div></div>
+      <button class="check-btn cb8" onclick="checkSection('8a', {1:'ng',2:'nk',3:'ng',4:'ng'})">Check ✅</button>
+      <div class="result-banner" id="rb-8a"></div>
+    </div>
+  </div>
+
+  <!-- Part B -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c8">Part B — Circle the word you hear. (每題選一個)</div></div>
+    <div class="audio-gate" id="gate-8b">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 8 Part B</div>
+      <a class="play-btn pb8" href="https://drive.google.com/file/d/1fYxD-vJU8ZsmCrmQNObP5yXWfZdkgrNX/view" target="_blank" onclick="markPlayed('8b')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-8b" onclick="unlock('8b')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-8b">
+      <div class="choice-row"><div class="choice-num">1.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="8b-1" data-val="need" onclick="pickChoice(this,'8b-1')">need</button>
+        <button class="choice-btn" data-q="8b-1" data-val="weed" onclick="pickChoice(this,'8b-1')">weed</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">2.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="8b-2" data-val="wet" onclick="pickChoice(this,'8b-2')">wet</button>
+        <button class="choice-btn" data-q="8b-2" data-val="weed" onclick="pickChoice(this,'8b-2')">weed</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">3.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="8b-3" data-val="shy" onclick="pickChoice(this,'8b-3')">shy</button>
+        <button class="choice-btn" data-q="8b-3" data-val="she" onclick="pickChoice(this,'8b-3')">she</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">4.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="8b-4" data-val="fleet" onclick="pickChoice(this,'8b-4')">fleet</button>
+        <button class="choice-btn" data-q="8b-4" data-val="flat" onclick="pickChoice(this,'8b-4')">flat</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">5.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="8b-5" data-val="my" onclick="pickChoice(this,'8b-5')">my</button>
+        <button class="choice-btn" data-q="8b-5" data-val="me" onclick="pickChoice(this,'8b-5')">me</button>
+      </div></div>
+      <button class="check-btn cb8" onclick="checkSection('8b', {1:'need',2:'wet',3:'shy',4:'fleet',5:'my'})">Check ✅</button>
+      <div class="result-banner" id="rb-8b"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- content-area -->
+
+<script>
+// ===== WEEK NAV =====
+function showWeek(id, tab) {
+  document.querySelectorAll('.week-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.week-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  tab.classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ===== AUDIO GATE =====
+function markPlayed(id) {
+  setTimeout(() => {
+    const gate = document.getElementById('gate-' + id);
+    const ub   = document.getElementById('ub-' + id);
+    if (gate) gate.classList.add('opened');
+    if (ub)   ub.style.display = 'block';
+    const title = gate?.querySelector('.gate-title');
+    if (title) title.textContent = '音檔頁面已開啟！聽完再解鎖 👇';
+  }, 500);
+}
+
+function unlock(id) {
+  const gate = document.getElementById('gate-' + id);
+  const qa   = document.getElementById('qa-'   + id);
+  if (gate) gate.style.display = 'none';
+  if (qa)   qa.classList.add('open');
+}
+
+// ===== PICK FUNCTIONS =====
+// selected state tracking
+const picks = {}; // {qId: value}
+
+function pickAE(btn, qId, val) {
+  document.querySelectorAll(`[data-q="${qId}"]`).forEach(b => {
+    b.classList.remove('selected');
+  });
+  btn.classList.add('selected');
+  picks[qId] = val;
+}
+
+function pickChoice(btn, qId) {
+  document.querySelectorAll(`[data-q="${qId}"]`).forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  picks[qId] = btn.dataset.val;
+}
+
+function pickYI(btn, qId) {
+  document.querySelectorAll(`[data-q="${qId}"]`).forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  picks[qId] = btn.dataset.val;
+}
+
+function pickNGNK(btn, qId) {
+  document.querySelectorAll(`[data-q="${qId}"]`).forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  picks[qId] = btn.dataset.val;
+}
+
+// ===== CHECK SECTION =====
+function checkSection(secId, answers) {
+  const rb = document.getElementById('rb-' + secId);
+  let correct = 0, total = Object.keys(answers).length, unanswered = 0;
+
+  Object.entries(answers).forEach(([qNum, correctAns]) => {
+    const qId = secId + '-' + qNum;
+    const userAns = picks[qId];
+    const btns = document.querySelectorAll(`[data-q="${qId}"]`);
+
+    if (!userAns) { unanswered++; return; }
+
+    const isCorrect = userAns === correctAns;
+    if (isCorrect) correct++;
+    btns.forEach(b => {
+      b.disabled = true;
+      b.classList.remove('selected');
+      const bVal = b.dataset.val || b.dataset.ans;
+      if (bVal === correctAns) b.classList.add('correct');
+      if (bVal === userAns && !isCorrect) b.classList.add('wrong');
+    });
+  });
+
+  if (unanswered > 0) {
+    rb.className = 'result-banner show rb-bad';
+    rb.innerHTML = `⚠️ 還有 ${unanswered} 題沒有作答！<span class="retry-link" onclick="resetSection('${secId}')">重新作答</span>`;
+    return;
+  }
+
+  rb.className = 'result-banner show ' + (correct === total ? 'rb-ok' : 'rb-bad');
+  if (correct === total) {
+    rb.innerHTML = `🎉 全對！${correct} / ${total} — Perfect! ⭐⭐⭐`;
+    popStars();
+  } else {
+    rb.innerHTML = `${correct} / ${total} 答對<br><span class="retry-link" onclick="resetSection('${secId}')">🔄 再試一次</span>`;
+  }
+}
+
+function resetSection(secId) {
+  // Clear picks for this section
+  Object.keys(picks).forEach(k => { if (k.startsWith(secId + '-')) delete picks[k]; });
+  // Re-enable buttons, clear state
+  document.querySelectorAll(`[data-q^="${secId}-"]`).forEach(b => {
+    b.disabled = false;
+    b.classList.remove('selected','correct','wrong');
+  });
+  const rb = document.getElementById('rb-' + secId);
+  if (rb) rb.className = 'result-banner';
+}
+
+// ===== STARS =====
+function popStars() {
+  const e = ['⭐','✨','🌟','🎉','🏆'];
+  for (let i=0;i<5;i++) setTimeout(()=>{
+    const s = document.createElement('div');
+    s.className = 'star-pop';
+    s.textContent = e[Math.floor(Math.random()*e.length)];
+    s.style.left = (10+Math.random()*80)+'vw';
+    s.style.top  = (20+Math.random()*50)+'vh';
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),900);
+  }, i*150);
+}
+</script>
+</body>
+</html>
