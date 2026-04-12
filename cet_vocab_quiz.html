@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📘 CET Vocabulary Quiz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#f0f7ff;font-family:'Nunito',sans-serif;min-height:100vh;}
+  .wrap{max-width:560px;margin:0 auto;padding:16px 16px 80px;}
+
+  /* HEADER */
+  .g-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .g-title{font-family:'Fredoka One',cursive;font-size:1.3rem;color:#1e3a5f;}
+  .g-prog {font-family:'Fredoka One',cursive;font-size:1rem;color:#94a3b8;}
+  .pbar-wrap{background:#e2e8f0;border-radius:99px;height:8px;margin-bottom:14px;overflow:hidden;}
+  .pbar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#3b82f6,#6366f1);transition:width .4s;}
+  .score-row{display:flex;justify-content:space-between;margin-bottom:12px;}
+  .score-label{font-family:'Fredoka One',cursive;font-size:.9rem;color:#94a3b8;}
+  .score-val  {font-family:'Fredoka One',cursive;font-size:.9rem;color:#22c55e;}
+
+  /* WORD BANK */
+  .wordbank-wrap{background:white;border-radius:18px;padding:16px;box-shadow:0 3px 16px rgba(59,130,246,.1);margin-bottom:14px;border:2px solid #bfdbfe;}
+  .wordbank-label{font-family:'Fredoka One',cursive;font-size:.85rem;color:#3b82f6;margin-bottom:10px;letter-spacing:.5px;}
+  .wordbank{display:flex;flex-wrap:wrap;gap:8px;}
+  .wb-chip{padding:6px 14px;border-radius:50px;background:#eff6ff;border:2px solid #93c5fd;font-family:'Fredoka One',cursive;font-size:.95rem;color:#1d4ed8;cursor:default;transition:all .2s;user-select:none;}
+  .wb-chip.used{background:#f1f5f9;border-color:#cbd5e1;color:#94a3b8;text-decoration:line-through;}
+
+  /* QUESTION CARD */
+  .q-card{background:white;border-radius:20px;padding:22px 18px;box-shadow:0 5px 20px rgba(59,130,246,.12);margin-bottom:14px;animation:popIn .35s cubic-bezier(.34,1.56,.64,1);}
+  .q-card.shake{animation:shake .35s ease;}
+  @keyframes popIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .q-num{font-family:'Fredoka One',cursive;font-size:.82rem;color:#94a3b8;margin-bottom:8px;}
+  .q-week{display:inline-block;padding:3px 12px;border-radius:20px;background:#eff6ff;color:#3b82f6;font-family:'Fredoka One',cursive;font-size:.75rem;margin-bottom:12px;}
+  .q-sentence{font-size:1.1rem;font-weight:800;color:#1e293b;line-height:2;text-align:center;margin-bottom:16px;}
+  .blank{display:inline-block;min-width:100px;border-bottom:3px solid #3b82f6;padding:0 8px;color:transparent;background:#eff6ff;border-radius:6px;cursor:default;font-weight:900;text-align:center;vertical-align:middle;}
+  .blank.filled{color:#1d4ed8;}
+  .blank.correct{color:#15803d;background:#dcfce7;border-color:#22c55e;}
+  .blank.wrong  {color:#b91c1c;background:#fee2e2;border-color:#f87171;}
+
+  /* OPTIONS */
+  .opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .opt-btn{padding:13px 10px;border-radius:14px;border:3px solid #e2e8f0;background:#f8fafc;font-family:'Fredoka One',cursive;font-size:1.05rem;cursor:pointer;text-align:center;color:#334155;transition:all .15s;}
+  .opt-btn:hover  {border-color:#3b82f6;background:#eff6ff;color:#1d4ed8;transform:translateY(-2px);}
+  .opt-btn.correct{background:#dcfce7;border-color:#22c55e;color:#15803d;}
+  .opt-btn.wrong  {background:#fee2e2;border-color:#f87171;color:#b91c1c;}
+  .opt-btn:disabled{cursor:default;transform:none;}
+
+  /* DOTS */
+  .dots{display:flex;justify-content:center;gap:5px;margin-bottom:12px;flex-wrap:wrap;}
+  .dot{width:10px;height:10px;border-radius:50%;background:#e2e8f0;transition:all .3s;}
+  .dot.curr{background:#3b82f6;transform:scale(1.4);}
+  .dot.ok  {background:#22c55e;}
+  .dot.bad {background:#f87171;}
+
+  /* FEEDBACK */
+  .feedback{border-radius:14px;padding:12px 16px;margin-bottom:12px;font-weight:800;font-size:.92rem;display:none;line-height:1.5;}
+  .feedback.show{display:block;}
+  .feedback.ok {background:#dcfce7;color:#15803d;border:3px solid #86efac;}
+  .feedback.bad{background:#fee2e2;color:#b91c1c;border:3px solid #fca5a5;}
+
+  /* NEXT BTN */
+  .next-btn{width:100%;padding:15px;border-radius:50px;border:none;background:linear-gradient(135deg,#3b82f6,#6366f1);color:white;font-family:'Fredoka One',cursive;font-size:1.2rem;cursor:pointer;display:none;box-shadow:0 4px 14px rgba(59,130,246,.35);transition:all .15s;}
+  .next-btn.show{display:block;}
+  .next-btn:hover{transform:translateY(-2px);}
+
+  /* FINAL */
+  .final-card{background:white;border-radius:24px;padding:30px 22px;text-align:center;box-shadow:0 8px 28px rgba(59,130,246,.15);display:none;}
+  .final-card.show{display:block;animation:popIn .5s cubic-bezier(.34,1.56,.64,1);}
+  .final-title{font-family:'Fredoka One',cursive;font-size:2rem;color:#3b82f6;margin-bottom:6px;}
+  .final-score{font-family:'Fredoka One',cursive;font-size:3rem;color:#6366f1;}
+  .final-stars{font-size:2.2rem;letter-spacing:4px;margin:8px 0 12px;}
+  .final-msg  {font-size:.95rem;color:#64748b;font-weight:700;margin-bottom:20px;line-height:1.6;}
+  .wrong-list {background:#f8fafc;border-radius:14px;padding:14px;margin-bottom:18px;text-align:left;}
+  .wl-title   {font-family:'Fredoka One',cursive;font-size:.9rem;color:#3b82f6;margin-bottom:8px;}
+  .wl-item    {font-size:.85rem;font-weight:700;color:#475569;padding:5px 0;border-bottom:1px solid #f1f5f9;line-height:1.5;}
+  .wl-ans     {color:#15803d;font-weight:900;}
+  .final-btns {display:flex;flex-direction:column;gap:10px;}
+  .retry-btn  {padding:14px;border-radius:50px;border:none;background:linear-gradient(135deg,#3b82f6,#6366f1);color:white;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;}
+  .filter-btn {padding:12px;border-radius:50px;border:2px solid #e2e8f0;background:white;font-family:'Fredoka One',cursive;font-size:.95rem;color:#94a3b8;cursor:pointer;}
+
+  /* WEEK FILTER */
+  .filter-wrap{background:white;border-radius:16px;padding:14px 16px;box-shadow:0 3px 12px rgba(0,0,0,.06);margin-bottom:14px;}
+  .filter-label{font-family:'Fredoka One',cursive;font-size:.82rem;color:#94a3b8;margin-bottom:8px;}
+  .filter-chips{display:flex;flex-wrap:wrap;gap:6px;}
+  .fc{padding:6px 14px;border-radius:50px;border:2px solid #e2e8f0;background:white;font-family:'Fredoka One',cursive;font-size:.8rem;color:#94a3b8;cursor:pointer;transition:all .15s;}
+  .fc.active{background:#eff6ff;border-color:#3b82f6;color:#1d4ed8;}
+
+  /* STAR POP */
+  .star-pop{position:fixed;font-size:2rem;pointer-events:none;animation:fly .9s ease-out forwards;z-index:999;}
+  @keyframes fly{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-80px) scale(1.5)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="g-header">
+    <div class="g-title" id="gTitle">📘 CET Vocab Quiz</div>
+    <div class="g-prog"  id="gProg">Week 1–7</div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
+  <div class="score-row">
+    <div class="score-label" id="scoreLabel">Choose a week to start!</div>
+    <div class="score-val"   id="scoreVal"></div>
+  </div>
+
+  <!-- Week Filter -->
+  <div class="filter-wrap" id="filterWrap">
+    <div class="filter-label">Practice by week:</div>
+    <div class="filter-chips">
+      <button class="fc active" data-week="all"  onclick="setWeek('all',this)">🌟 All Weeks</button>
+      <button class="fc" data-week="1"  onclick="setWeek('1',this)">Week 1/2</button>
+      <button class="fc" data-week="3"  onclick="setWeek('3',this)">Week 3</button>
+      <button class="fc" data-week="4"  onclick="setWeek('4',this)">Week 4</button>
+      <button class="fc" data-week="5"  onclick="setWeek('5',this)">Week 5</button>
+      <button class="fc" data-week="6"  onclick="setWeek('6',this)">Week 6</button>
+      <button class="fc" data-week="7"  onclick="setWeek('7',this)">Week 7/8</button>
+    </div>
+  </div>
+
+  <!-- Word Bank -->
+  <div class="wordbank-wrap" id="wordbankWrap" style="display:none">
+    <div class="wordbank-label">📋 Word Bank — choose the right word!</div>
+    <div class="wordbank" id="wordbank"></div>
+  </div>
+
+  <div id="content"></div>
+  <div class="dots" id="dots"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="handleNext()"></button>
+  <div class="final-card" id="finalCard"></div>
+</div>
+
+<script>
+// ===== ALL QUESTIONS =====
+// Format: {week, word, sentence (with ___), opts[4], ans(index), hint}
+const ALL_QS = [
+  // ===== WEEK 1/2 =====
+  {week:'1', word:'cool',
+   sent:'The new playground looks really ___! I love playing there.',
+   opts:['cool','boring','small','dark'], ans:0,
+   hint:'cool = 很棒的、涼的'},
+  {week:'1', word:'fun',
+   sent:'Playing with my friends is so ___. We laugh all the time!',
+   opts:['scary','sad','fun','quiet'], ans:2,
+   hint:'fun = 有趣的、好玩的'},
+  {week:'1', word:'world',
+   sent:'The Eiffel Tower is one of the most famous buildings in the ___.',
+   opts:['mall','world','basket','park'], ans:1,
+   hint:'world = 世界'},
+  {week:'1', word:'mall',
+   sent:'Mom and I went to the ___ to buy new shoes.',
+   opts:['school','office','mall','garden'], ans:2,
+   hint:'mall = 購物中心'},
+  {week:'1', word:'picnic',
+   sent:'We put sandwiches and fruit in a basket for our ___ in the park.',
+   opts:['party','picnic','office','class'], ans:1,
+   hint:'picnic = 野餐'},
+  {week:'1', word:'basket',
+   sent:'She put all the apples in a big ___.',
+   opts:['box','bag','basket','bowl'], ans:2,
+   hint:'basket = 籃子'},
+  {week:'1', word:'office',
+   sent:'My dad works in a tall building. His ___ is on the 10th floor.',
+   opts:['office','house','room','mall'], ans:0,
+   hint:'office = 辦公室'},
+  {week:'1', word:'shop',
+   sent:'I went to the ___ to buy some candy and a book.',
+   opts:['park','school','shop','library'], ans:2,
+   hint:'shop = 商店'},
+  {week:'1', word:'fold',
+   sent:'Please ___ the paper in half before you put it in the envelope.',
+   opts:['cut','fold','drop','open'], ans:1,
+   hint:'fold = 折疊'},
+  {week:'1', word:'cross',
+   sent:'Look both ways before you ___ the street.',
+   opts:['jump','cross','run','stop'], ans:1,
+   hint:'cross = 穿越'},
+
+  // ===== WEEK 3 =====
+  {week:'3', word:'piano',
+   sent:'She plays the ___ beautifully. I love listening to her music.',
+   opts:['piano','guitar','drum','violin'], ans:0,
+   hint:'piano = 鋼琴'},
+  {week:'3', word:'violin',
+   sent:'He practices the ___ every day after school.',
+   opts:['piano','flute','violin','drum'], ans:2,
+   hint:'violin = 小提琴'},
+  {week:'3', word:'music',
+   sent:'I listen to ___ when I do my homework. It helps me focus.',
+   opts:['music','noise','talk','sound'], ans:0,
+   hint:'music = 音樂'},
+  {week:'3', word:'building',
+   sent:'The new ___ downtown has 50 floors and a glass roof.',
+   opts:['park','building','road','bridge'], ans:1,
+   hint:'building = 建築物'},
+  {week:'3', word:'cover',
+   sent:'It is raining! Put a ___ over the picnic basket.',
+   opts:['cover','bowl','bottle','bag'], ans:0,
+   hint:'cover = 蓋子、封面'},
+  {week:'3', word:'glass',
+   sent:'The big windows are made of ___. You can see right through them!',
+   opts:['wood','metal','plastic','glass'], ans:3,
+   hint:'glass = 玻璃'},
+  {week:'3', word:'stair',
+   sent:'I walk up the ___ to get to my classroom on the second floor.',
+   opts:['door','window','stair','wall'], ans:2,
+   hint:'stair = 樓梯'},
+  {week:'3', word:'shell',
+   sent:'We found a pretty pink ___ on the beach.',
+   opts:['rock','leaf','shell','stick'], ans:2,
+   hint:'shell = 貝殼'},
+  {week:'3', word:'sink',
+   sent:'Please wash your hands in the ___ before dinner.',
+   opts:['sink','bath','pool','bowl'], ans:0,
+   hint:'sink = 水槽'},
+  {week:'3', word:'come',
+   sent:'Please ___ and look at this cool butterfly!',
+   opts:['go','come','run','stop'], ans:1,
+   hint:'come = 來'},
+
+  // ===== WEEK 4 =====
+  {week:'4', word:'visit',
+   sent:'We are going to ___ the museum this Saturday.',
+   opts:['buy','visit','build','sell'], ans:1,
+   hint:'visit = 參觀'},
+  {week:'4', word:'bookshelf',
+   sent:'I put my new book on the ___ next to my desk.',
+   opts:['table','bookshelf','drawer','box'], ans:1,
+   hint:'bookshelf = 書架'},
+  {week:'4', word:'library',
+   sent:'You can borrow books for free from the ___.',
+   opts:['mall','office','library','school'], ans:2,
+   hint:'library = 圖書館'},
+  {week:'4', word:'real',
+   sent:'Is that a ___ dinosaur bone? It looks so big!',
+   opts:['fake','toy','real','small'], ans:2,
+   hint:'real = 真實的'},
+  {week:'4', word:'front',
+   sent:'Please stand at the ___ of the line.',
+   opts:['back','side','top','front'], ans:3,
+   hint:'front = 前面'},
+  {week:'4', word:'garage',
+   sent:'Dad parks his car in the ___ at night.',
+   opts:['park','house','garage','garden'], ans:2,
+   hint:'garage = 車庫'},
+  {week:'4', word:'create',
+   sent:'We used clay to ___ little animals in art class.',
+   opts:['find','eat','create','break'], ans:2,
+   hint:'create = 創造'},
+  {week:'4', word:'elephant',
+   sent:'The ___ at the zoo used its long nose to pick up fruit.',
+   opts:['lion','elephant','monkey','giraffe'], ans:1,
+   hint:'elephant = 大象'},
+  {week:'4', word:'climb',
+   sent:'The little cat loves to ___ up the big tree in the garden.',
+   opts:['swim','run','climb','jump'], ans:2,
+   hint:'climb = 爬'},
+
+  // ===== WEEK 5 =====
+  {week:'5', word:'country',
+   sent:'Donna Mouse grew up in the ___. It was quiet and green.',
+   opts:['city','country','school','mall'], ans:1,
+   hint:'country = 鄉下'},
+  {week:'5', word:'quiet',
+   sent:'Please be ___. The baby is sleeping.',
+   opts:['loud','quiet','busy','happy'], ans:1,
+   hint:'quiet = 安靜的'},
+  {week:'5', word:'mouse',
+   sent:'A tiny ___ ran across the kitchen floor.',
+   opts:['cat','mouse','bird','fish'], ans:1,
+   hint:'mouse = 老鼠'},
+  {week:'5', word:'letter',
+   sent:'Donna received a ___ from her cousin in the city.',
+   opts:['call','letter','gift','book'], ans:1,
+   hint:'letter = 信'},
+  {week:'5', word:'cousin',
+   sent:'My ___ Sam lives far away, but we write to each other.',
+   opts:['brother','teacher','cousin','friend'], ans:2,
+   hint:'cousin = 表/堂兄弟姊妹'},
+  {week:'5', word:'pick',
+   sent:'We ___ fresh strawberries from the farm every summer.',
+   opts:['pick','cook','eat','grow'], ans:0,
+   hint:'pick = 摘、挑選'},
+  {week:'5', word:'excited',
+   sent:'Donna was so ___ to visit the big city for the first time!',
+   opts:['scared','bored','excited','tired'], ans:2,
+   hint:'excited = 興奮的'},
+  {week:'5', word:'phone',
+   sent:'Mom called me on the ___ to say she would be home late.',
+   opts:['door','phone','window','table'], ans:1,
+   hint:'phone = 電話'},
+  {week:'5', word:'hear',
+   sent:'Can you ___ that bird singing outside the window?',
+   opts:['see','touch','hear','smell'], ans:2,
+   hint:'hear = 聽到'},
+
+  // ===== WEEK 6 =====
+  {week:'6', word:'scary',
+   sent:'The big dog barked loudly. It was very ___ !',
+   opts:['cute','scary','quiet','funny'], ans:1,
+   hint:'scary = 可怕的'},
+  {week:'6', word:'street',
+   sent:'The cars zoom fast on the busy ___ in the city.',
+   opts:['park','street','house','mall'], ans:1,
+   hint:'street = 街道'},
+  {week:'6', word:'zoom',
+   sent:'A skateboarder came ___ past us really fast!',
+   opts:['walk','zoom','stop','fall'], ans:1,
+   hint:'zoom = 飛速移動'},
+  {week:'6', word:'shout',
+   sent:'Do not ___ in the library. Please speak quietly.',
+   opts:['whisper','shout','sing','laugh'], ans:1,
+   hint:'shout = 大喊'},
+  {week:'6', word:'behind',
+   sent:'Hide ___ the big tree and I will try to find you!',
+   opts:['in front of','behind','next to','on top of'], ans:1,
+   hint:'behind = 在⋯後面'},
+  {week:'6', word:'jump',
+   sent:'The frog can ___ very high and land in the pond.',
+   opts:['swim','fly','jump','run'], ans:2,
+   hint:'jump = 跳'},
+  {week:'6', word:'garbage',
+   sent:'Please throw your banana peel in the ___ can.',
+   opts:['garbage','picnic','basket','box'], ans:0,
+   hint:'garbage = 垃圾'},
+  {week:'6', word:'feet',
+   sent:'My ___ hurt after walking all day at the zoo.',
+   opts:['hands','feet','eyes','ears'], ans:1,
+   hint:'feet = 腳（複數）'},
+
+  // ===== WEEK 7/8 =====
+  {week:'7', word:'hospital',
+   sent:'My grandma is sick, so we went to the ___ to see the doctor.',
+   opts:['school','hospital','library','mall'], ans:1,
+   hint:'hospital = 醫院'},
+  {week:'7', word:'city',
+   sent:'Sam lives in a big ___ with lots of tall buildings and busy streets.',
+   opts:['farm','village','city','forest'], ans:2,
+   hint:'city = 城市'},
+  {week:'7', word:'busy',
+   sent:'Mom is very ___ today. She has lots of work to do.',
+   opts:['quiet','bored','busy','sleepy'], ans:2,
+   hint:'busy = 忙碌的'},
+  {week:'7', word:'loud',
+   sent:'The music from the concert was so ___ that I could hear it from far away.',
+   opts:['quiet','soft','loud','low'], ans:2,
+   hint:'loud = 吵鬧的'},
+  {week:'7', word:'sick',
+   sent:'I feel ___ today. My throat hurts and I have a fever.',
+   opts:['happy','sick','excited','bored'], ans:1,
+   hint:'sick = 生病的'},
+  {week:'7', word:'tomorrow',
+   sent:'Today is Sunday. ___ is Monday and I go back to school.',
+   opts:['yesterday','today','tomorrow','now'], ans:2,
+   hint:'tomorrow = 明天'},
+  {week:'7', word:'soon',
+   sent:'Dinner is almost ready. It will be done very ___.',
+   opts:['never','soon','late','slowly'], ans:1,
+   hint:'soon = 不久'},
+  {week:'7', word:'later',
+   sent:'I cannot play now, but I will come back ___.',
+   opts:['never','before','later','early'], ans:2,
+   hint:'later = 之後'},
+];
+
+// State
+let currentQ = [];
+let qi = 0, score = 0, wrong = [], answered = false;
+let weekFilter = 'all';
+
+function clearFb() { document.getElementById('feedback').className = 'feedback'; }
+function fb(msg, type) { const el = document.getElementById('feedback'); el.innerHTML = msg; el.className = 'feedback show ' + type; }
+
+function setWeek(w, btn) {
+  weekFilter = w;
+  document.querySelectorAll('.fc').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  startGame();
+}
+
+function startGame() {
+  qi = 0; score = 0; wrong = []; answered = false;
+  const pool = weekFilter === 'all'
+    ? ALL_QS
+    : ALL_QS.filter(q => q.week === weekFilter);
+  // Shuffle and take 10
+  currentQ = [...pool].sort(() => Math.random() - 0.5).slice(0, 10);
+
+  document.getElementById('finalCard').classList.remove('show');
+  document.getElementById('wordbankWrap').style.display = '';
+  document.getElementById('filterWrap').style.display = '';
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+  document.getElementById('gProg').textContent = weekFilter === 'all' ? 'Week 1–7 Mix' :
+    weekFilter === '1' ? 'Week 1/2' : weekFilter === '7' ? 'Week 7/8' : `Week ${weekFilter}`;
+  buildDots(currentQ.length);
+  showQ();
+}
+
+function buildWordBank() {
+  // Show all 4 options for current question in the word bank
+  const q = currentQ[qi];
+  const wb = document.getElementById('wordbank');
+  wb.innerHTML = q.opts.map(w =>
+    `<span class="wb-chip" id="wbc-${w}">${w}</span>`
+  ).join('');
+}
+
+function showQ() {
+  answered = false;
+  const q = currentQ[qi];
+  const total = currentQ.length;
+  document.getElementById('pbarFill').style.width = ((qi/total)*100) + '%';
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score}  ❌ ${wrong.length}`;
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+  buildWordBank();
+
+  const weekLabel = q.week === '1' ? 'Week 1/2' : q.week === '7' ? 'Week 7/8' : `Week ${q.week}`;
+  const sentHtml = q.sent.replace('___',
+    `<span class="blank" id="the-blank">${'_'.repeat(q.word.length)}</span>`);
+
+  const optsHtml = q.opts.map((o, i) =>
+    `<button class="opt-btn" data-idx="${i}" data-word="${o}" onclick="pick(this)">${o}</button>`
+  ).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div class="q-card" id="qCard">
+      <div class="q-num">Question ${qi+1}</div>
+      <span class="q-week">${weekLabel}</span>
+      <div class="q-sentence">${sentHtml}</div>
+      <div class="opts-grid">${optsHtml}</div>
+    </div>`;
+  updateDot(qi, 'curr');
+}
+
+function pick(btn) {
+  if (answered) return; answered = true;
+  const q = currentQ[qi];
+  const idx = parseInt(btn.dataset.idx);
+  const word = btn.dataset.word;
+
+  document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+
+  // Update blank
+  const blank = document.getElementById('the-blank');
+  blank.textContent = word;
+
+  // Update word bank chip
+  const chip = document.getElementById('wbc-' + word);
+  if (chip) chip.classList.add('used');
+
+  if (idx === q.ans) {
+    btn.classList.add('correct');
+    blank.classList.add('correct');
+    score++; popStars();
+    fb(`✅ <b>${q.word}</b> — ${q.hint}`, 'ok');
+    updateDot(qi, 'ok');
+  } else {
+    btn.classList.add('wrong');
+    blank.classList.add('wrong');
+    document.querySelector(`[data-idx="${q.ans}"]`).classList.add('correct');
+    wrong.push(q);
+    fb(`❌ The answer is <b>${q.word}</b> — ${q.hint}`, 'bad');
+    document.getElementById('qCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('qCard')?.classList.remove('shake'), 400);
+    updateDot(qi, 'bad');
+  }
+
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === currentQ.length - 1 ? 'See Results! 🎊' : 'Next ➡️';
+  nb.className = 'next-btn show';
+}
+
+function handleNext() {
+  qi++;
+  if (qi < currentQ.length) showQ();
+  else showFinal();
+}
+
+function showFinal() {
+  const total = currentQ.length;
+  const pct = score / total;
+  const stars = pct === 1 ? '⭐⭐⭐' : pct >= 0.7 ? '⭐⭐' : '⭐';
+  const msg = pct === 1
+    ? 'PERFECT! You know all the words! 🏆🎉'
+    : pct >= 0.7
+    ? 'Great job! You almost got them all!'
+    : 'Good try! Review the words and play again!';
+
+  document.getElementById('dots').innerHTML = '';
+  document.getElementById('wordbankWrap').style.display = 'none';
+  document.getElementById('filterWrap').style.display = 'none';
+  clearFb();
+  document.getElementById('content').innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+  document.getElementById('pbarFill').style.width = '100%';
+
+  const wrongHtml = wrong.length > 0 ? `
+    <div class="wrong-list">
+      <div class="wl-title">📝 Review these words:</div>
+      ${wrong.map(q => `
+        <div class="wl-item">
+          <span class="wl-ans">${q.word}</span> — ${q.hint}<br>
+          <small style="color:#94a3b8">"${q.sent.replace('___', q.word)}"</small>
+        </div>`).join('')}
+    </div>` : '';
+
+  document.getElementById('finalCard').innerHTML = `
+    <div class="final-title">📘 Quiz Done!</div>
+    <div class="final-score">${score} / ${total}</div>
+    <div class="final-stars">${stars}</div>
+    <div class="final-msg">${msg}</div>
+    ${wrongHtml}
+    <div class="final-btns">
+      <button class="retry-btn" onclick="startGame()">🔄 Play Again (same week)</button>
+      <button class="filter-btn" onclick="resetToFilter()">📋 Change Week</button>
+    </div>`;
+  document.getElementById('finalCard').classList.add('show');
+  for (let i = 0; i < 4; i++) setTimeout(popStars, i * 250);
+}
+
+function resetToFilter() {
+  document.getElementById('finalCard').classList.remove('show');
+  document.getElementById('filterWrap').style.display = '';
+  document.getElementById('dots').innerHTML = '';
+  document.getElementById('scoreLabel').textContent = 'Choose a week to start!';
+  document.getElementById('scoreVal').textContent = '';
+  document.getElementById('pbarFill').style.width = '0%';
+  document.getElementById('content').innerHTML = '';
+  document.getElementById('wordbankWrap').style.display = 'none';
+}
+
+function buildDots(n) {
+  const c = document.getElementById('dots');
+  c.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' curr' : '');
+    d.id = 'dot' + i;
+    if (i === 0) d.style.background = '#3b82f6';
+    c.appendChild(d);
+  }
+}
+
+function updateDot(i, state) {
+  const d = document.getElementById('dot' + i);
+  if (!d) return;
+  d.className = 'dot ' + state;
+  const next = document.getElementById('dot' + (i + 1));
+  if (next && state !== 'curr') {
+    next.classList.add('curr');
+    next.style.background = '#3b82f6';
+  }
+}
+
+function popStars() {
+  const e = ['⭐','✨','🌟','🎉','📘','🏆'];
+  for (let i = 0; i < 5; i++) setTimeout(() => {
+    const s = document.createElement('div'); s.className = 'star-pop';
+    s.textContent = e[Math.floor(Math.random() * e.length)];
+    s.style.left = (10 + Math.random() * 80) + 'vw';
+    s.style.top  = (20 + Math.random() * 50) + 'vh';
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 900);
+  }, i * 130);
+}
+
+// Start with filter visible, no game yet
+window.onload = () => {
+  document.getElementById('wordbankWrap').style.display = 'none';
+  startGame(); // auto-start with all weeks
+};
+</script>
+</body>
+</html>
