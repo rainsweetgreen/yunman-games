@@ -135,13 +135,33 @@ cet_grammar_w{N}_{topic}.html
 2. **Unseen Reading game** — Claude Code writes a NEW passage of the same
    text type and difficulty, with parallel question structure
 
+### Reading Game UI — Two Tabs (REQUIRED)
+
+Every reading game has **two tabs** at the top:
+- **📝 Reading Game** — phase-based: Learn → Part A → Part B → Part C → Done
+- **📚 Vocabulary** — independent vocab practice, accessible anytime without losing game progress
+
 ### Seen Reading Game — Required Parts
 
 | Part | Type | Details |
 |------|------|---------|
 | A | Multiple Choice — 4 questions, 3 options each | Must include a Setting question |
-| B | Long Answer — 1 question, complete sentence | Format: Subject + verb + because + reason |
+| B | Long Answer — typing + Hint | See below ↓ |
 | C | Story Elements Match — 3 pairs | Characters → names / Setting → location sentence / Lesson → moral |
+
+#### Part B — Long Answer (Typing with Hint)
+- Student **types their answer** in a real textarea (not MC)
+- **💡 Hint button** (tap 1): reveals a sentence starter (e.g. "Georgia moves to Ghost Ranch because …")
+- **👁 Show Full Answer button** (tap 2): reveals the complete Grade-1-level model answer
+- Model answer must use simple vocabulary a Grade 1 student can write: Subject + verb + because + reason (one clause only)
+- Part B is **not auto-graded** — it is practice. Do not include it in the total score.
+- Do NOT include this in the score total; label the section "✏️ Practice — not scored"
+
+#### Vocab Tab (Separate, always accessible)
+- 6–8 fill-in-blank questions per week's FET vocab words
+- Each question has **2 choices** shown as pill buttons
+- Vocab has its own progress dots and its own done screen with score
+- Tab state (progress) is preserved if user switches back to the Reading Game tab
 
 ### MC Question Types to Include (Seen)
 - Comprehension: find answer directly in text

@@ -9,9 +9,13 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Nunito',sans-serif;background:#fff8f0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
 h1{font-family:'Fredoka One',cursive;color:#7c3aed;font-size:1.6rem;text-align:center;margin-bottom:2px}
-.subtitle{color:#64748b;font-size:.88rem;margin-bottom:14px;text-align:center}
+.subtitle{color:#64748b;font-size:.88rem;margin-bottom:10px;text-align:center}
 
-.dots{display:flex;gap:7px;justify-content:center;margin-bottom:12px}
+.tabs{display:flex;gap:8px;background:#ede9fe;border-radius:99px;padding:5px;width:100%;max-width:520px;margin-bottom:14px}
+.tab{flex:1;padding:10px 8px;border-radius:99px;border:none;font-family:'Fredoka One',cursive;font-size:.9rem;cursor:pointer;background:transparent;color:#7c3aed;transition:.2s}
+.tab.active{background:#7c3aed;color:#fff;box-shadow:0 2px 8px rgba(124,58,237,.3)}
+
+.dots{display:flex;gap:7px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
 .dot{width:12px;height:12px;border-radius:50%;background:#e2e8f0;transition:.3s}
 .dot.done{background:#7c3aed}
 .dot.active{background:#c4b5fd;box-shadow:0 0 0 3px #ede9fe}
@@ -25,7 +29,7 @@ h1{font-family:'Fredoka One',cursive;color:#7c3aed;font-size:1.6rem;text-align:c
 
 .phase-title{font-family:'Fredoka One',cursive;color:#7c3aed;font-size:1.05rem;text-align:center;margin-bottom:14px}
 .q-num{font-size:.78rem;color:#94a3b8;text-align:center;margin-bottom:4px}
-.q-text{font-size:1rem;color:#1e293b;text-align:center;line-height:1.55;margin-bottom:18px;font-weight:700}
+.q-text{font-size:1rem;color:#1e293b;text-align:center;line-height:1.55;margin-bottom:16px;font-weight:700}
 .tag{display:inline-block;padding:3px 12px;border-radius:99px;font-size:.72rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
 .tag-type{background:#ede9fe;color:#5b21b6}
 .tag-lesson{background:#dcfce7;color:#166534}
@@ -42,32 +46,45 @@ h1{font-family:'Fredoka One',cursive;color:#7c3aed;font-size:1.6rem;text-align:c
 .feedback.ok{color:#16a34a}
 .feedback.bad{color:#dc2626}
 
-/* passage card */
 .passage-box{background:#f5f3ff;border-radius:14px;padding:16px;margin-bottom:12px;font-size:.92rem;line-height:1.75;color:#1e293b;border-left:4px solid #7c3aed}
 .passage-box h3{font-family:'Fredoka One',cursive;color:#7c3aed;margin-bottom:10px;font-size:1rem}
 .passage-box p{margin-bottom:8px}
 
-/* hint box */
-.hint-box{background:#fef9c3;border-radius:10px;padding:9px 12px;font-size:.85rem;font-weight:700;color:#92400e;margin-bottom:12px;text-align:center}
+.practice-badge{background:#fef9c3;border-radius:8px;padding:6px 12px;font-size:.8rem;font-weight:700;color:#92400e;text-align:center;margin-bottom:10px}
+.answer-area{width:100%;border:2px solid #ddd6fe;border-radius:12px;padding:12px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:600;color:#1e293b;resize:none;outline:none;min-height:90px;line-height:1.5;transition:.2s}
+.answer-area:focus{border-color:#7c3aed;box-shadow:0 0 0 3px #ede9fe}
+.hint-area{background:#f5f3ff;border:2px solid #ddd6fe;border-radius:12px;padding:12px;margin-top:10px;font-size:.9rem;line-height:1.6;color:#374151;display:none}
+.hint-area em{font-style:normal;color:#7c3aed;font-weight:800}
+.btn-row{display:flex;gap:8px;margin-top:12px}
+.hint-btn{flex:1;background:#ede9fe;border:2px solid #ddd6fe;border-radius:12px;padding:11px;font-family:'Fredoka One',cursive;font-size:.95rem;color:#7c3aed;cursor:pointer;transition:.2s}
+.hint-btn:hover{background:#ddd6fe}
 
-/* sequence game */
-.seq-instruction{font-size:.85rem;color:#64748b;text-align:center;margin-bottom:12px;font-weight:700}
-.seq-slots{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+/* sequence */
+.seq-instruction{font-size:.83rem;color:#64748b;text-align:center;margin-bottom:12px;font-weight:700}
+.seq-slots{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
 .seq-slot{display:flex;align-items:center;gap:10px;background:#f5f3ff;border:2px dashed #c4b5fd;border-radius:12px;padding:10px 12px;min-height:50px}
-.seq-num{font-family:'Fredoka One',cursive;color:#7c3aed;font-size:1.1rem;min-width:24px}
-.seq-filled{font-size:.88rem;font-weight:700;color:#1e293b;flex:1}
-.seq-events{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
-.seq-event{background:#fff;border:2px solid #ddd6fe;border-radius:12px;padding:10px 14px;font-size:.88rem;font-weight:700;color:#1e293b;cursor:pointer;transition:.2s}
+.seq-num{font-family:'Fredoka One',cursive;color:#7c3aed;font-size:1rem;min-width:60px;white-space:nowrap}
+.seq-filled{font-size:.85rem;font-weight:700;color:#1e293b;flex:1;line-height:1.4}
+.seq-events{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.seq-event{background:#fff;border:2px solid #ddd6fe;border-radius:12px;padding:10px 14px;font-size:.88rem;font-weight:700;color:#1e293b;cursor:pointer;transition:.2s;line-height:1.4}
 .seq-event:hover{background:#ede9fe;border-color:#a78bfa}
 .seq-event.used{background:#e2e8f0;color:#94a3b8;cursor:default;border-color:#e2e8f0}
 .seq-slot.correct-slot{border-style:solid;border-color:#4ade80;background:#dcfce7}
 .seq-slot.wrong-slot{border-style:solid;border-color:#f87171;background:#fee2e2;animation:shake .3s}
 
-/* next / start btn */
-.next-btn{display:block;width:100%;background:#7c3aed;color:#fff;border:none;border-radius:14px;padding:13px;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;margin-top:10px;transition:.2s}
+/* vocab */
+.vocab-sent{font-size:.95rem;font-weight:700;color:#1e293b;margin-bottom:12px;line-height:1.55;text-align:center}
+.blank-word{color:#7c3aed;font-weight:900;border-bottom:2px solid #7c3aed;padding:0 4px}
+.vocab-opts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.vocab-btn{background:#f5f3ff;border:2px solid #ddd6fe;border-radius:99px;padding:10px 22px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;color:#7c3aed;cursor:pointer;transition:.2s}
+.vocab-btn:hover{background:#ede9fe}
+.vocab-btn.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+.vocab-btn.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+.vocab-btn:disabled{cursor:default}
+
+.next-btn{display:block;width:100%;background:#7c3aed;color:#fff;border:none;border-radius:14px;padding:13px;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;margin-top:12px;transition:.2s}
 .next-btn:hover{background:#6d28d9}
 
-/* score */
 .score-wrap{text-align:center;margin-bottom:16px}
 .score-num{font-family:'Fredoka One',cursive;font-size:2rem;color:#7c3aed}
 .wrong-list{list-style:none;display:flex;flex-direction:column;gap:9px}
@@ -85,254 +102,283 @@ h1{font-family:'Fredoka One',cursive;color:#7c3aed;font-size:1.6rem;text-align:c
 <h1>🔮 Unseen Reading</h1>
 <p class="subtitle">Week 10–12 — Biography (New Passage!)</p>
 
+<div class="tabs" id="tabBar">
+  <button class="tab active" data-tab="game" onclick="switchTab('game')">📝 Reading Game</button>
+  <button class="tab" data-tab="vocab" onclick="switchTab('vocab')">📚 Vocabulary</button>
+</div>
+
 <div class="dots" id="dots"></div>
 <div id="root"></div>
 
 <script>
-// ─── PASSAGE ──────────────────────────────────────────────────────────────────
-const PASSAGE_HTML = `
+// ── PASSAGE ───────────────────────────────────────────────────────────────────
+const PASSAGE = `
 <div class="passage-box">
   <h3>🔵 Yayoi Kusama: The Artist Who Loves Dots</h3>
   <p>Yayoi Kusama was born in Japan in 1929. When she was a little girl, she loved to draw and paint. One day, she looked at a flower and saw dots everywhere. After that, she began to paint dots on everything she could find!</p>
-  <p>Yayoi loved art, but not everyone in Japan understood her work. So when she grew up, she moved to New York City to share her art with the world. She worked very hard every day, painting bright pictures full of dots, circles, and patterns.</p>
-  <p>Some people laughed at her art at first. But Yayoi never gave up. She kept painting and making art every single day, no matter what.</p>
+  <p>Yayoi loved art, but not everyone in Japan understood her work. So when she grew up, she moved to New York City to share her art with the world. She worked very hard every single day, painting bright pictures full of dots, circles, and patterns.</p>
+  <p>Some people laughed at her art at first. But Yayoi never gave up. She kept painting and making art every day, no matter what.</p>
   <p>Today, Yayoi Kusama is one of the most famous artists in the world. People travel from many countries just to see her colorful rooms full of dots and mirrors. She shows everyone that if you follow your dream and keep working hard, anything is possible.</p>
 </div>`;
 
-// ─── DATA ─────────────────────────────────────────────────────────────────────
-const PHASES = ['read','partA','partB','partC','done'];
-let phase = 0, qi = 0, score = 0, total = 0, wrongs = [];
-
+// ── DATA ──────────────────────────────────────────────────────────────────────
 const A_QS = [
-  {
-    tag:'tag-type', tagLabel:'Text Type 文章類型',
-    emoji:'📖',
-    text:'"Yayoi Kusama: The Artist Who Loves Dots" is a...',
-    opts:['a. made-up story about a Japanese girl who likes dots.',
-          'b. biography — a true story about Yayoi Kusama\'s real life.',
-          'c. poem about colorful circles and patterns.'],
-    ans:1,
-    explain:'Biography = a TRUE story about a real person\'s life. Yayoi Kusama is a real artist! 🔵'
-  },
-  {
-    tag:'tag-lesson', tagLabel:'Main Lesson',
-    emoji:'💡',
-    text:'What is the main lesson of this story?',
-    opts:['a. You should move to New York City if you want to be an artist.',
-          'b. Painting dots is the most important thing an artist can do.',
-          'c. If you follow your dream and keep working hard, anything is possible.'],
-    ans:2,
-    explain:'The last paragraph says: "if you follow your dream and keep working hard, anything is possible." 💡'
-  },
-  {
-    tag:'tag-detail', tagLabel:'Key Detail',
-    emoji:'🌏',
-    text:'Why did Yayoi Kusama move to New York City?\nShe moved because...',
-    opts:['a. she wanted to learn how to paint dots in art school.',
-          'b. not everyone in Japan understood her work and she wanted to share her art with the world.',
-          'c. she found a room full of mirrors and dots in New York.'],
-    ans:1,
-    explain:'The story says "she moved to New York City to share her art with the world." 🌏'
-  }
+  {tag:'tag-type',tagLabel:'Text Type 文章類型',emoji:'📖',
+   text:'"Yayoi Kusama: The Artist Who Loves Dots" is a...',
+   opts:['a. made-up story about a Japanese girl who likes dots.',
+         'b. biography — a true story about Yayoi Kusama\'s real life.',
+         'c. poem about colorful circles and patterns.'],
+   ans:1,
+   explain:'Biography = a TRUE story about a real person\'s life. Yayoi Kusama is a real artist! 🔵'},
+  {tag:'tag-lesson',tagLabel:'Main Lesson',emoji:'💡',
+   text:'What is the main lesson of this story?',
+   opts:['a. You should move to New York City if you want to be an artist.',
+         'b. Painting dots is the most important thing an artist can do.',
+         'c. If you follow your dream and keep working hard, anything is possible.'],
+   ans:2,
+   explain:'The last paragraph says: "if you follow your dream and keep working hard, anything is possible." 💡'},
+  {tag:'tag-detail',tagLabel:'Key Detail',emoji:'🌏',
+   text:'Why did Yayoi Kusama move to New York City?\nShe moved because...',
+   opts:['a. she wanted to learn how to paint dots at art school.',
+         'b. not everyone in Japan understood her work, and she wanted to share her art with the world.',
+         'c. she found a room full of mirrors and dots there.'],
+   ans:1,
+   explain:'The story says "she moved to New York City to share her art with the world." 🌏'},
 ];
-total += A_QS.length;
 
 const B_Q = {
   text:'How did Yayoi Kusama show that she never gave up?\nAnswer in a complete sentence.',
-  hint:'先圈問題字！(Circle "How" → She showed it by doing something. Use "by + action" or "She kept ___.")',
-  opts:[
-    'a. Yayoi showed she never gave up by moving to Japan and painting flowers.',
-    'b. Yayoi showed she never gave up by painting and making art every single day, no matter what.',
-    'c. Yayoi showed she never gave up by laughing at people who did not understand her.'
-  ],
-  ans:1,
-  explain:'"She kept painting and making art every single day, no matter what." ✅'
+  starter:'Yayoi Kusama showed she never gave up by …',
+  model:'Yayoi Kusama showed she never gave up by painting and making art every single day, no matter what.',
 };
-total += 1;
 
-// Sequence events in correct order: born → loved art/saw dots → moved to NYC → famous
 const SEQ_EVENTS = [
-  {text:'Yayoi Kusama was born in Japan.', order:0},
-  {text:'She saw dots on a flower and began painting dots everywhere.', order:1},
-  {text:'She moved to New York City to share her art with the world.', order:2},
-  {text:'She became one of the most famous artists in the world.', order:3},
+  {text:'Yayoi Kusama was born in Japan.',order:0},
+  {text:'She saw dots on a flower and began painting dots on everything.',order:1},
+  {text:'She moved to New York City to share her art with the world.',order:2},
+  {text:'She became one of the most famous artists in the world.',order:3},
 ];
-const SEQ_LABELS = ['1st — First','2nd — Next','3rd — Then','4th — Finally'];
-let seqState = { filled: [null,null,null,null], nextSlot: 0 };
-total += SEQ_EVENTS.length;
+const SEQ_LABELS=['1st — First','2nd — Next','3rd — Then','4th — Finally'];
 
-// ─── HELPERS ─────────────────────────────────────────────────────────────────
-function render(){document.getElementById('root').innerHTML='';buildDots();phases[PHASES[phase]]();}
-function buildDots(){
+const VOCAB_QS = [
+  {sent:'Georgia\'s first ___ was of bright colors and light all around.',opts:['memory','mistake'],ans:0,explain:'memory = 記憶'},
+  {sent:'She ___ that she likes to be alone on the open land.',opts:['destroys','discovers'],ans:1,explain:'discovers = 發現'},
+  {sent:'The huge bones she found in the desert did not scare her. They ___ her.',opts:['amaze','anger'],ans:0,explain:'amaze = 令人驚嘆'},
+  {sent:'Georgia ___ to show on paper what she sees in her mind.',opts:['struggles','stomps'],ans:0,explain:'struggle = 努力、掙扎'},
+  {sent:'She never stopped working toward her ___ of being an artist.',opts:['dream','desk'],ans:0,explain:'dream = 夢想'},
+  {sent:'The flowers she paints fill people with ___. They stop to stare.',opts:['delight','delay'],ans:0,explain:'delight = 喜悅'},
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+const GAME_PHASES=['read','partA','partB','partC','done'];
+let gPhase=0,gQi=0,gScore=0,gTotal=A_QS.length+SEQ_EVENTS.length,gWrongs=[];
+let seqState={filled:[null,null,null,null],nextSlot:0};
+let vQi=0,vScore=0,vWrongs=[];
+let activeTab='game';
+
+function switchTab(tab){
+  activeTab=tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  renderActive();
+}
+function renderActive(){activeTab==='game'?renderGame():renderVocab();}
+
+function buildDots(n,cur,type){
   const d=document.getElementById('dots');d.innerHTML='';
-  PHASES.forEach((_,i)=>{
-    const el=document.createElement('div');
-    el.className='dot'+(i<phase?' done':i===phase?' active':'');
-    d.appendChild(el);
+  if(type==='vocab'){
+    for(let i=0;i<n;i++){const el=document.createElement('div');el.className='dot'+(i<cur?' done':i===cur?' active':'');d.appendChild(el);}
+  } else {
+    GAME_PHASES.forEach((_,i)=>{const el=document.createElement('div');el.className='dot'+(i<gPhase?' done':i===gPhase?' active':'');d.appendChild(el);});
+  }
+}
+function star(e){const s=document.createElement('div');s.className='star-pop';s.textContent='⭐';s.style.left=(e.clientX-16)+'px';s.style.top=(e.clientY-16)+'px';document.body.appendChild(s);setTimeout(()=>s.remove(),850);}
+function card(html){const root=document.getElementById('root');root.innerHTML='';const c=document.createElement('div');c.className='card';c.innerHTML=html;root.appendChild(c);return c;}
+function progBar(cur,tot){return `<div class="prog-wrap"><div class="prog-bar" style="width:${Math.round(cur/tot*100)}%"></div></div>`;}
+function nextBtn(label,fn){const b=document.createElement('button');b.className='next-btn';b.textContent=label;b.onclick=fn;return b;}
+
+// ── READING GAME ──────────────────────────────────────────────────────────────
+function renderGame(){
+  buildDots(GAME_PHASES.length,gPhase,'game');
+  const ph=GAME_PHASES[gPhase];
+  if(ph==='read')phRead();
+  else if(ph==='partA')phA();
+  else if(ph==='partB')phB();
+  else if(ph==='partC')phC();
+  else phDone();
+}
+
+function phRead(){
+  const c=card(`
+    <div class="phase-title">📖 Read the New Passage First!</div>
+    <p style="text-align:center;font-size:.82rem;color:#64748b;margin-bottom:10px">This is a BRAND NEW story. Read it carefully before answering!</p>
+    ${PASSAGE}
+  `);
+  c.appendChild(nextBtn("I've read it — Start Part A! ✅",()=>{gPhase=1;gQi=0;renderGame();}));
+}
+
+function phA(){
+  if(gQi>=A_QS.length){gPhase=2;renderGame();return;}
+  const q=A_QS[gQi];
+  const c=card(`
+    ${progBar(gQi,A_QS.length)}
+    <div class="phase-title">Part A — Multiple Choice</div>
+    <div style="text-align:center;margin-bottom:8px"><span class="tag ${q.tag}">${q.tagLabel}</span></div>
+    <div class="q-num">Question ${gQi+1} / ${A_QS.length}</div>
+    <div class="q-text">${q.emoji} ${q.text.replace(/\n/g,'<br>')}</div>
+    <div class="opts" id="opts"></div>
+    <div class="feedback" id="fb"></div>
+  `);
+  const og=c.querySelector('#opts');
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');b.className='opt-btn';b.textContent=o;
+    b.onclick=ev=>{
+      if(b.disabled)return;
+      og.querySelectorAll('.opt-btn').forEach(x=>x.disabled=true);
+      const fb=c.querySelector('#fb');
+      if(i===q.ans){b.classList.add('correct');fb.textContent='✅ '+q.explain;fb.className='feedback ok';gScore++;star(ev);setTimeout(()=>{gQi++;renderGame();},1100);}
+      else{b.classList.add('wrong');fb.textContent='❌ '+q.explain;fb.className='feedback bad';gWrongs.push({q:q.text,a:q.opts[q.ans],h:q.explain});setTimeout(()=>{gQi++;renderGame();},1300);}
+    };
+    og.appendChild(b);
   });
 }
-function star(e){
-  const s=document.createElement('div');s.className='star-pop';s.textContent='⭐';
-  s.style.left=(e.clientX-16)+'px';s.style.top=(e.clientY-16)+'px';
-  document.body.appendChild(s);setTimeout(()=>s.remove(),850);
-}
-function card(html){
-  const c=document.createElement('div');c.className='card';c.innerHTML=html;
-  document.getElementById('root').appendChild(c);return c;
-}
-function progBar(cur,tot){
-  return `<div class="prog-wrap"><div class="prog-bar" style="width:${cur/tot*100}%"></div></div>`;
-}
-function nextBtn(label,fn){
-  const b=document.createElement('button');b.className='next-btn';b.textContent=label;
-  b.onclick=fn;return b;
-}
-function addWrong(q,a,h){wrongs.push({q,a,h});}
 
-// ─── PHASES ──────────────────────────────────────────────────────────────────
-const phases = {
-  read(){
-    const c=card(`
-      <div class="phase-title">📖 Read the Passage First!</div>
-      <p style="text-align:center;font-size:.82rem;color:#64748b;margin-bottom:10px">This is a NEW story — read carefully before answering questions!</p>
-      ${PASSAGE_HTML}
-    `);
-    c.appendChild(nextBtn('I\'ve read it — Start Part A! ✅',()=>{phase=1;qi=0;render();}));
-  },
-
-  partA(){
-    if(qi>=A_QS.length){phase=2;render();return;}
-    const q=A_QS[qi];
-    const c=card(`
-      ${progBar(qi,A_QS.length)}
-      <div class="phase-title">Part A — Multiple Choice</div>
-      <div style="text-align:center;margin-bottom:8px"><span class="tag ${q.tag}">${q.tagLabel}</span></div>
-      <div class="q-num">Question ${qi+1} / ${A_QS.length}</div>
-      <div class="q-text">${q.emoji} ${q.text.replace(/\n/g,'<br>')}</div>
-      <div class="opts" id="opts"></div>
-      <div class="feedback" id="fb"></div>
-    `);
-    const og=c.querySelector('#opts');
-    q.opts.forEach((o,i)=>{
-      const b=document.createElement('button');b.className='opt-btn';b.textContent=o;
-      b.onclick=ev=>{
-        if(b.disabled)return;
-        og.querySelectorAll('.opt-btn').forEach(x=>x.disabled=true);
-        const fb=c.querySelector('#fb');
-        if(i===q.ans){
-          b.classList.add('correct');fb.textContent='✅ '+q.explain;fb.className='feedback ok';
-          score++;star(ev);
-          setTimeout(()=>{qi++;render();},1100);
-        } else {
-          b.classList.add('wrong');fb.textContent='❌ '+q.explain;fb.className='feedback bad';
-          addWrong(q.text,q.opts[q.ans],q.explain);
-          setTimeout(()=>{qi++;render();},1300);
+function phB(){
+  const q=B_Q;
+  let hint1=false,hint2=false;
+  const c=card(`
+    <div class="phase-title">Part B — Long Answer ✏️</div>
+    <div class="practice-badge">✏️ Practice — not scored. Just try your best!</div>
+    <div style="background:#f5f3ff;border-radius:10px;padding:8px 12px;font-size:.83rem;font-weight:700;color:#7c3aed;margin-bottom:10px;text-align:center">
+      💡 先圈問題字！Circle "How" → use "She showed it by ___"
+    </div>
+    <div class="q-text">${q.text.replace(/\n/g,'<br>')}</div>
+    <textarea class="answer-area" id="ans" placeholder="Write your complete sentence here..."></textarea>
+    <div class="hint-area" id="hintArea"></div>
+    <div class="btn-row">
+      <button class="hint-btn" id="hintBtn">💡 Show Hint</button>
+    </div>
+  `);
+  const hintArea=c.querySelector('#hintArea');
+  const hintBtn=c.querySelector('#hintBtn');
+  hintBtn.onclick=()=>{
+    if(!hint1){
+      hint1=true;
+      hintArea.style.display='block';
+      hintArea.innerHTML=`<div style="margin-bottom:6px;font-weight:800;color:#7c3aed">Sentence starter:</div>
+        <div style="font-size:.93rem;color:#1e293b"><em>${q.starter}</em></div>
+        <button class="hint-btn" id="ansBtn" style="margin-top:10px;width:100%">👁 Show Full Model Answer</button>`;
+      c.querySelector('#ansBtn').onclick=()=>{
+        if(!hint2){hint2=true;
+          hintArea.innerHTML=`<div style="font-family:'Fredoka One',cursive;color:#16a34a;margin-bottom:4px">✅ Model Answer:</div>
+            <div style="font-size:.92rem;color:#166534;font-weight:700;line-height:1.6">"${q.model}"</div>`;
+          hintBtn.style.display='none';
         }
       };
-      og.appendChild(b);
-    });
-  },
-
-  partB(){
-    const q=B_Q;
-    const c=card(`
-      <div class="phase-title">Part B — Long Answer ✏️</div>
-      <div class="hint-box">💡 ${q.hint}</div>
-      <div class="q-text">${q.text.replace(/\n/g,'<br>')}</div>
-      <div class="opts" id="opts"></div>
-      <div class="feedback" id="fb"></div>
-    `);
-    const og=c.querySelector('#opts');
-    q.opts.forEach((o,i)=>{
-      const b=document.createElement('button');b.className='opt-btn';b.textContent=o;
-      b.onclick=ev=>{
-        if(b.disabled)return;
-        og.querySelectorAll('.opt-btn').forEach(x=>x.disabled=true);
-        const fb=c.querySelector('#fb');
-        if(i===q.ans){
-          b.classList.add('correct');fb.textContent='✅ '+q.explain;fb.className='feedback ok';
-          score++;star(ev);
-          setTimeout(()=>{phase=3;render();},1100);
-        } else {
-          b.classList.add('wrong');fb.textContent='❌ '+q.explain;fb.className='feedback bad';
-          addWrong(q.text,q.opts[q.ans],q.explain);
-          setTimeout(()=>{phase=3;render();},1300);
-        }
-      };
-      og.appendChild(b);
-    });
-  },
-
-  partC(){
-    seqState={filled:[null,null,null,null],nextSlot:0};
-    // Shuffle events
-    const shuffled=[...SEQ_EVENTS].sort(()=>Math.random()-.5);
-    const c=card(`
-      <div class="phase-title">Part C — Put in Order 📅</div>
-      <p class="seq-instruction">Tap events in the correct order (earliest → latest)</p>
-      <div class="seq-slots" id="slots">
-        ${SEQ_LABELS.map((l,i)=>`<div class="seq-slot" id="slot-${i}"><span class="seq-num">${l.split('—')[0].trim()}</span><span class="seq-filled" id="filled-${i}"></span></div>`).join('')}
-      </div>
-      <div class="seq-events" id="evts"></div>
-      <div class="feedback" id="fb"></div>
-    `);
-    const evts=c.querySelector('#evts');
-    shuffled.forEach(ev=>{
-      const b=document.createElement('div');b.className='seq-event';b.textContent=ev.text;
-      b.dataset.order=ev.order;
-      b.onclick=evClick=>{
-        if(b.classList.contains('used'))return;
-        const slot=seqState.nextSlot;
-        if(slot>=4)return;
-        b.classList.add('used');
-        seqState.filled[slot]=ev.order;
-        c.querySelector('#filled-'+slot).textContent=ev.text;
-        const fb=c.querySelector('#fb');
-
-        // Check if this slot is correct
-        if(slot===ev.order){
-          c.querySelector('#slot-'+slot).classList.add('correct-slot');
-          score++;star(evClick);
-        } else {
-          c.querySelector('#slot-'+slot).classList.add('wrong-slot');
-          addWrong('Order event: '+ev.text,'Should be #'+(ev.order+1)+' ('+SEQ_LABELS[ev.order]+')',SEQ_LABELS[ev.order]);
-          setTimeout(()=>c.querySelector('#slot-'+slot).classList.remove('wrong-slot'),600);
-        }
-
-        seqState.nextSlot++;
-        if(seqState.nextSlot>=4){
-          fb.textContent='✅ All placed!';fb.className='feedback ok';
-          setTimeout(()=>{phase=4;render();},900);
-        }
-      };
-      evts.appendChild(b);
-    });
-  },
-
-  done(){
-    const pct=Math.round(score/total*100);
-    const emoji=pct>=90?'🌟':pct>=70?'😊':'💪';
-    let wrongHtml='';
-    if(wrongs.length){
-      wrongHtml=`<div style="margin-top:16px"><div style="font-family:'Fredoka One',cursive;color:#dc2626;margin-bottom:8px">Review ✏️</div><ul class="wrong-list">`;
-      wrongs.forEach(w=>{
-        wrongHtml+=`<li class="wrong-item"><div class="wr-q">${w.q}</div><div class="wr-a">✅ ${w.a}</div><div class="wr-h">💡 ${w.h}</div></li>`;
-      });
-      wrongHtml+='</ul></div>';
     }
-    const c=card(`
-      <div class="score-wrap">
-        <div style="font-size:3rem">${emoji}</div>
-        <div class="score-num">${score} / ${total}</div>
-        <div style="color:#64748b;font-size:.9rem">${pct}% — ${pct>=90?'Excellent! 🎉':pct>=70?'Good job! 👍':'Keep going! 💪'}</div>
-      </div>
-      ${wrongHtml}
-    `);
-    c.appendChild(nextBtn('Play Again 🔄',()=>{phase=0;qi=0;score=0;wrongs=[];seqState={filled:[null,null,null,null],nextSlot:0};render();}));
-  }
-};
+  };
+  c.appendChild(nextBtn('Next — Part C ➜',()=>{gPhase=3;seqState={filled:[null,null,null,null],nextSlot:0};renderGame();}));
+}
 
-render();
+function phC(){
+  const shuffled=[...SEQ_EVENTS].sort(()=>Math.random()-.5);
+  const c=card(`
+    <div class="phase-title">Part C — Put in Order 📅</div>
+    <p class="seq-instruction">Tap events in the correct order (earliest → latest)</p>
+    <div class="seq-slots" id="slots">
+      ${SEQ_LABELS.map((l,i)=>`<div class="seq-slot" id="slot-${i}"><span class="seq-num">${l}</span><span class="seq-filled" id="filled-${i}"></span></div>`).join('')}
+    </div>
+    <div class="seq-events" id="evts"></div>
+    <div class="feedback" id="fb"></div>
+  `);
+  const evts=c.querySelector('#evts');
+  shuffled.forEach(ev=>{
+    const b=document.createElement('div');b.className='seq-event';b.textContent=ev.text;b.dataset.order=ev.order;
+    b.onclick=evClick=>{
+      if(b.classList.contains('used'))return;
+      const slot=seqState.nextSlot;if(slot>=4)return;
+      b.classList.add('used');
+      seqState.filled[slot]=ev.order;
+      c.querySelector('#filled-'+slot).textContent=ev.text;
+      const fb=c.querySelector('#fb');
+      if(slot===ev.order){c.querySelector('#slot-'+slot).classList.add('correct-slot');gScore++;star(evClick);}
+      else{c.querySelector('#slot-'+slot).classList.add('wrong-slot');gWrongs.push({q:'Order: '+ev.text,a:SEQ_LABELS[ev.order]+' ('+ev.text+')',h:'Think about the order: Born → Saw dots → Moved to NYC → Became famous'});setTimeout(()=>c.querySelector('#slot-'+slot).classList.remove('wrong-slot'),600);}
+      seqState.nextSlot++;
+      if(seqState.nextSlot>=4){fb.textContent='✅ All placed!';fb.className='feedback ok';setTimeout(()=>{gPhase=4;renderGame();},900);}
+    };
+    evts.appendChild(b);
+  });
+}
+
+function phDone(){
+  const pct=Math.round(gScore/gTotal*100);
+  const emoji=pct>=90?'🌟':pct>=70?'😊':'💪';
+  let wHtml='';
+  if(gWrongs.length){
+    wHtml='<div style="margin-top:14px"><div style="font-family:\'Fredoka One\',cursive;color:#dc2626;margin-bottom:8px">Review ✏️</div><ul class="wrong-list">';
+    gWrongs.forEach(w=>{wHtml+=`<li class="wrong-item"><div class="wr-q">${w.q}</div><div class="wr-a">✅ ${w.a}</div><div class="wr-h">💡 ${w.h}</div></li>`;});
+    wHtml+='</ul></div>';
+  }
+  const c=card(`
+    <div class="score-wrap">
+      <div style="font-size:3rem">${emoji}</div>
+      <div class="score-num">${gScore} / ${gTotal}</div>
+      <div style="color:#64748b;font-size:.88rem">${pct}% — ${pct>=90?'Excellent! 🎉':pct>=70?'Good job! 👍':'Keep going! 💪'}</div>
+      <div style="font-size:.8rem;color:#94a3b8;margin-top:4px">(Part B is practice — not included in score)</div>
+    </div>
+    ${wHtml}
+  `);
+  c.appendChild(nextBtn('Play Again 🔄',()=>{gPhase=0;gQi=0;gScore=0;gWrongs=[];seqState={filled:[null,null,null,null],nextSlot:0};renderGame();}));
+}
+
+// ── VOCABULARY TAB ────────────────────────────────────────────────────────────
+function renderVocab(){
+  buildDots(VOCAB_QS.length,vQi,'vocab');
+  if(vQi>=VOCAB_QS.length){phVocabDone();return;}
+  const q=VOCAB_QS[vQi];
+  const displaySent=q.sent.replace('___',`<span class="blank-word">___</span>`);
+  const c=card(`
+    ${progBar(vQi,VOCAB_QS.length)}
+    <div class="phase-title">Vocabulary 📚</div>
+    <div class="q-num">Word ${vQi+1} / ${VOCAB_QS.length}</div>
+    <div class="q-text vocab-sent">${displaySent}</div>
+    <div class="vocab-opts" id="vopts"></div>
+    <div class="feedback" id="fb"></div>
+  `);
+  const vo=c.querySelector('#vopts');
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');b.className='vocab-btn';b.textContent=o;
+    b.onclick=ev=>{
+      if(b.disabled)return;
+      vo.querySelectorAll('.vocab-btn').forEach(x=>x.disabled=true);
+      const fb=c.querySelector('#fb');
+      if(i===q.ans){b.classList.add('correct');fb.textContent='✅ '+q.explain;fb.className='feedback ok';vScore++;star(ev);setTimeout(()=>{vQi++;renderVocab();},900);}
+      else{b.classList.add('wrong');fb.textContent='❌ '+q.explain;fb.className='feedback bad';vWrongs.push({q:q.sent,a:q.opts[q.ans],h:q.explain});setTimeout(()=>{vQi++;renderVocab();},1100);}
+    };
+    vo.appendChild(b);
+  });
+}
+
+function phVocabDone(){
+  const pct=Math.round(vScore/VOCAB_QS.length*100);
+  const emoji=pct>=90?'🌟':pct>=70?'😊':'💪';
+  let wHtml='';
+  if(vWrongs.length){
+    wHtml='<div style="margin-top:14px"><div style="font-family:\'Fredoka One\',cursive;color:#dc2626;margin-bottom:8px">Review</div><ul class="wrong-list">';
+    vWrongs.forEach(w=>{wHtml+=`<li class="wrong-item"><div class="wr-q">${w.q}</div><div class="wr-a">✅ ${w.a}</div><div class="wr-h">💡 ${w.h}</div></li>`;});
+    wHtml+='</ul></div>';
+  }
+  const c=card(`
+    <div style="text-align:center;padding:10px 0">
+      <div style="font-size:2.5rem">${emoji}</div>
+      <div class="score-num">${vScore} / ${VOCAB_QS.length}</div>
+      <div style="color:#64748b;font-size:.88rem">${pct}%</div>
+    </div>
+    ${wHtml}
+  `);
+  c.appendChild(nextBtn('Try Again 🔄',()=>{vQi=0;vScore=0;vWrongs=[];renderVocab();}));
+}
+
+renderGame();
 </script>
 </body>
 </html>
