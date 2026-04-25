@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Through Georgia's Eyes — Seen Reading</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#fff8f0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+h1{font-family:'Fredoka One',cursive;color:#be185d;font-size:1.6rem;text-align:center;margin-bottom:2px}
+.subtitle{color:#64748b;font-size:.88rem;margin-bottom:14px;text-align:center}
+
+.dots{display:flex;gap:7px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+.dot{width:12px;height:12px;border-radius:50%;background:#e2e8f0;transition:.3s}
+.dot.done{background:#be185d}
+.dot.active{background:#f9a8d4;box-shadow:0 0 0 3px #fce7f3}
+
+.card{background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.08);padding:22px;width:100%;max-width:520px;animation:popIn .35s ease}
+@keyframes popIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+.prog-wrap{background:#e2e8f0;border-radius:99px;height:8px;margin-bottom:16px;overflow:hidden}
+.prog-bar{height:100%;background:linear-gradient(90deg,#be185d,#f472b6);border-radius:99px;transition:.4s}
+
+.phase-title{font-family:'Fredoka One',cursive;color:#be185d;font-size:1.05rem;text-align:center;margin-bottom:14px}
+.q-num{font-size:.78rem;color:#94a3b8;text-align:center;margin-bottom:4px}
+.q-text{font-size:1rem;color:#1e293b;text-align:center;line-height:1.55;margin-bottom:18px;font-weight:700}
+.tag{display:inline-block;padding:3px 12px;border-radius:99px;font-size:.72rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
+.tag-setting{background:#fef3c7;color:#92400e}
+.tag-comp{background:#dbeafe;color:#1e40af}
+.tag-infer{background:#fce7f3;color:#9d174d}
+.tag-type{background:#dcfce7;color:#166534}
+
+.opts{display:flex;flex-direction:column;gap:9px;margin-bottom:8px}
+.opt-btn{background:#fdf2f8;border:2px solid #fbcfe8;border-radius:13px;padding:12px 14px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;color:#1e293b;cursor:pointer;transition:.2s;text-align:left}
+.opt-btn:hover{background:#fce7f3;border-color:#f9a8d4}
+.opt-btn.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+.opt-btn.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+.opt-btn:disabled{cursor:default}
+
+.feedback{min-height:26px;text-align:center;font-weight:700;font-size:.9rem;margin-bottom:4px}
+.feedback.ok{color:#16a34a}
+.feedback.bad{color:#dc2626}
+
+/* learn card */
+.learn-box{background:#fdf2f8;border-radius:14px;padding:14px;margin-bottom:14px;font-size:.88rem;line-height:1.6;color:#374151}
+.learn-box h3{font-family:'Fredoka One',cursive;color:#be185d;margin-bottom:8px;font-size:1rem}
+.learn-box ul{padding-left:18px}
+.learn-box li{margin-bottom:4px}
+.learn-box em{font-style:normal;color:#be185d;font-weight:800}
+
+/* match game */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.match-left,.match-right{display:flex;flex-direction:column;gap:8px}
+.match-label{background:#fdf2f8;border:2px solid #fbcfe8;border-radius:11px;padding:10px 10px;font-family:'Fredoka One',cursive;font-size:.9rem;color:#be185d;text-align:center;cursor:pointer;transition:.2s;min-height:54px;display:flex;align-items:center;justify-content:center}
+.match-label.selected{background:#be185d;color:#fff;border-color:#be185d}
+.match-label.matched{background:#dcfce7;border-color:#4ade80;color:#166534;cursor:default}
+.match-desc{background:#f8fafc;border:2px solid #e2e8f0;border-radius:11px;padding:10px;font-size:.82rem;font-weight:700;color:#374151;text-align:center;cursor:pointer;transition:.2s;min-height:54px;display:flex;align-items:center;justify-content:center}
+.match-desc.selected{background:#fce7f3;border-color:#f9a8d4}
+.match-desc.matched{background:#dcfce7;border-color:#4ade80;color:#166534;cursor:default}
+.match-desc.wrong-flash{background:#fee2e2;border-color:#f87171;animation:shake .3s}
+
+/* vocab */
+.vocab-q{margin-bottom:16px}
+.vocab-sent{font-size:.95rem;font-weight:700;color:#1e293b;margin-bottom:10px;line-height:1.55}
+.blank-word{color:#be185d;font-weight:800;border-bottom:2px solid #be185d}
+.vocab-opts{display:flex;gap:8px;flex-wrap:wrap}
+.vocab-btn{background:#fdf2f8;border:2px solid #fbcfe8;border-radius:99px;padding:8px 18px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:#be185d;cursor:pointer;transition:.2s}
+.vocab-btn:hover{background:#fce7f3}
+.vocab-btn.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+.vocab-btn.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+.vocab-btn:disabled{cursor:default}
+
+/* next / start btn */
+.next-btn{display:block;width:100%;background:#be185d;color:#fff;border:none;border-radius:14px;padding:13px;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;margin-top:10px;transition:.2s}
+.next-btn:hover{background:#9d174d}
+
+/* score */
+.score-wrap{text-align:center;margin-bottom:16px}
+.score-num{font-family:'Fredoka One',cursive;font-size:2rem;color:#be185d}
+.wrong-list{list-style:none;display:flex;flex-direction:column;gap:9px}
+.wrong-item{background:#fff7ed;border-left:4px solid #f59e0b;border-radius:10px;padding:9px 12px;font-size:.88rem;line-height:1.5}
+.wrong-item .wr-q{font-weight:700;color:#1e293b}
+.wrong-item .wr-a{color:#16a34a;font-weight:700}
+.wrong-item .wr-h{color:#64748b;font-size:.82rem}
+
+.star-pop{position:fixed;pointer-events:none;font-size:2rem;animation:flyUp .8s ease forwards;z-index:999}
+@keyframes flyUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-90px) scale(1.5)}}
+</style>
+</head>
+<body>
+
+<h1>🎨 Through Georgia's Eyes</h1>
+<p class="subtitle">Seen Reading — Week 10–12</p>
+
+<div class="dots" id="dots"></div>
+<div id="root"></div>
+
+<script>
+// ─── PHASE ORDER ──────────────────────────────────────────────────────────────
+// 0 = learn, 1 = partA, 2 = partB, 3 = partC (match), 4 = vocab, 5 = done
+const PHASES = ['learn','partA','partB','partC','vocab','done'];
+let phase = 0, qi = 0, score = 0, total = 0, wrongs = [];
+
+// ─── PART A ───────────────────────────────────────────────────────────────────
+const A_QS = [
+  {
+    tag:'tag-setting', tagLabel:'Setting 場景',
+    emoji:'🏜️',
+    text:'Where does Georgia mainly live when she creates her most famous artwork?',
+    opts:['a. On a grassy farm in the countryside where she was born.',
+          'b. In the city, walking through canyons of concrete.',
+          'c. At Ghost Ranch in New Mexico, surrounded by the desert.'],
+    ans:2,
+    explain:'Setting = WHERE the story mainly takes place. Georgia\'s famous art comes from Ghost Ranch in New Mexico! 🏜️'
+  },
+  {
+    tag:'tag-comp', tagLabel:'Comprehension',
+    emoji:'💀',
+    text:'What does Georgia discover in the desert?',
+    opts:['a. She discovers fields of giant colorful flowers.',
+          'b. She discovers bones and skulls. They are beautiful to her.',
+          'c. She discovers a family of Chow Chow dogs.'],
+    ans:1,
+    explain:'Georgia finds skulls and bones in the desert. She thinks they are beautiful and strong! 💀'
+  },
+  {
+    tag:'tag-infer', tagLabel:'Inference 推理',
+    emoji:'🌿',
+    text:'Why does Georgia move from the city to New Mexico?\nShe moves because...',
+    opts:['a. she wants to go to a new art school.',
+          'b. she misses the outdoor world and nature calls her.',
+          'c. the city has too many people and too much noise.'],
+    ans:1,
+    explain:'The story says Georgia misses "the outdoor world" and the "faraway place — open sky and land — calls her." 🌿'
+  },
+  {
+    tag:'tag-type', tagLabel:'Text Type 文章類型',
+    emoji:'📖',
+    text:'How can you tell that "Through Georgia\'s Eyes" is a biography?',
+    opts:['a. It is a made-up story about a girl who learns to paint.',
+          'b. It is the true story of Georgia O\'Keeffe\'s real life.',
+          'c. It teaches readers how to paint flowers step by step.'],
+    ans:1,
+    explain:'Biography = a TRUE story about a real person\'s life. Georgia O\'Keeffe was a real artist! 📖'
+  }
+];
+total += A_QS.length;
+
+// ─── PART B ───────────────────────────────────────────────────────────────────
+const B_Q = {
+  text:'Why does Georgia move to Ghost Ranch in New Mexico?\nAnswer in a complete sentence.',
+  hint:'先圈問題字！(Circle "Why" → answer needs "because" + reason)',
+  opts:[
+    'a. Georgia moves to Ghost Ranch because she wants to be near an art school.',
+    'b. Georgia moves to Ghost Ranch because she misses the outdoor world and loves the wideness and wonder of nature.',
+    'c. Georgia moves to Ghost Ranch because her Chow Chow dog likes the desert.'
+  ],
+  ans:1,
+  explain:'The story says the "faraway place — open sky and land — calls her." She misses nature! ✅'
+};
+total += 1;
+
+// ─── PART C ───────────────────────────────────────────────────────────────────
+const MATCH_PAIRS = [
+  {label:'👤 Characters', desc:'Georgia O\'Keeffe — a girl who grows up to become a famous artist'},
+  {label:'📍 Setting', desc:'Ghost Ranch in New Mexico — a quiet desert with red cliffs'},
+  {label:'💡 Lesson', desc:'Open your eyes and see the world in your own special way'},
+];
+let matchState = { selectedLabel: null, matchedCount: 0 };
+const MATCH_TOTAL = MATCH_PAIRS.length;
+total += MATCH_TOTAL;
+
+// ─── VOCAB ────────────────────────────────────────────────────────────────────
+const VOCAB_QS = [
+  {sent:'Georgia\'s first ___ was of bright colors and light all around.', blank:'memory', opts:['memory','mistake'], ans:0, explain:'memory = 記憶'},
+  {sent:'She ___ that she likes to be alone on the farm.', blank:'discovers', opts:['destroys','discovers'], ans:1, explain:'discovers = 發現'},
+  {sent:'The giant bones she found in the desert did not frighten her. They ___ her.', blank:'amaze', opts:['amaze','anger'], ans:0, explain:'amaze = 使驚嘆'},
+  {sent:'Georgia ___ to show on paper what she sees.', blank:'struggles', opts:['struggles','stomps'], ans:0, explain:'struggle = 掙扎、努力'},
+  {sent:'She never stopped working toward her ___ of becoming an artist.', blank:'dream', opts:['dream','desk'], ans:0, explain:'dream = 夢想'},
+  {sent:'The flowers she paints fill people with ___. They stop to stare.', blank:'delight', opts:['delay','delight'], ans:1, explain:'delight = 喜悅'},
+];
+total += VOCAB_QS.length;
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+function render(){document.getElementById('root').innerHTML='';buildDots();phases[PHASES[phase]]();}
+function buildDots(){
+  const d=document.getElementById('dots');d.innerHTML='';
+  PHASES.forEach((_,i)=>{
+    const el=document.createElement('div');
+    el.className='dot'+(i<phase?' done':i===phase?' active':'');
+    d.appendChild(el);
+  });
+}
+function star(e){
+  const s=document.createElement('div');s.className='star-pop';s.textContent='⭐';
+  s.style.left=(e.clientX-16)+'px';s.style.top=(e.clientY-16)+'px';
+  document.body.appendChild(s);setTimeout(()=>s.remove(),850);
+}
+function card(html){
+  const c=document.createElement('div');c.className='card';c.innerHTML=html;
+  document.getElementById('root').appendChild(c);return c;
+}
+function progBar(cur,tot){
+  return `<div class="prog-wrap"><div class="prog-bar" style="width:${cur/tot*100}%"></div></div>`;
+}
+function nextBtn(label,fn){
+  const b=document.createElement('button');b.className='next-btn';b.textContent=label;
+  b.onclick=fn;return b;
+}
+function addWrong(q,a,h){wrongs.push({q,a,h});}
+
+// ─── PHASES ──────────────────────────────────────────────────────────────────
+const phases = {
+  learn(){
+    const c=card(`
+      <div class="phase-title">📖 Story Review — Through Georgia's Eyes</div>
+      <div class="learn-box">
+        <h3>Who is Georgia O'Keeffe?</h3>
+        <ul>
+          <li>Grew up on a <em>farm</em> — loved the land and sky</li>
+          <li>At age 12, she took <em>painting lessons</em></li>
+          <li>In 1899, people said girls couldn't be artists — but she kept going!</li>
+          <li>Went to <em>Art School</em> → brushes and canvas became her language</li>
+          <li>Lived in the <em>city</em> → missed nature</li>
+          <li>Moved to <em>Ghost Ranch, New Mexico</em> (desert) 🏜️</li>
+          <li>Found <em>skulls and bones</em> in the desert — beautiful to her!</li>
+          <li>Painted giant <em>flowers</em> 🌸 — people feel like tiny butterflies</li>
+          <li>Had a <em>Chow Chow dog</em> that followed her on hikes</li>
+        </ul>
+      </div>
+      <div class="learn-box">
+        <h3>Story Elements</h3>
+        <ul>
+          <li>👤 <em>Characters</em>: Georgia O'Keeffe (real artist)</li>
+          <li>📍 <em>Setting</em>: Farm (childhood) → City → Ghost Ranch, New Mexico</li>
+          <li>📝 <em>Text Type</em>: Biography (true story about a real person)</li>
+          <li>💡 <em>Lesson</em>: Open your eyes — see the world in your own special way</li>
+        </ul>
+      </div>
+    `);
+    c.appendChild(nextBtn('Start Part A — Multiple Choice 📝',()=>{phase=1;qi=0;render();}));
+  },
+
+  partA(){
+    if(qi>=A_QS.length){phase=2;qi=0;render();return;}
+    const q=A_QS[qi];
+    const c=card(`
+      ${progBar(qi,A_QS.length)}
+      <div class="phase-title">Part A — Multiple Choice</div>
+      <div style="text-align:center;margin-bottom:8px"><span class="tag ${q.tag}">${q.tagLabel}</span></div>
+      <div class="q-num">Question ${qi+1} / ${A_QS.length}</div>
+      <div class="q-text">${q.emoji} ${q.text.replace(/\n/g,'<br>')}</div>
+      <div class="opts" id="opts"></div>
+      <div class="feedback" id="fb"></div>
+    `);
+    const og=c.querySelector('#opts');
+    q.opts.forEach((o,i)=>{
+      const b=document.createElement('button');b.className='opt-btn';b.textContent=o;
+      b.onclick=ev=>{
+        if(b.disabled)return;
+        og.querySelectorAll('.opt-btn').forEach(x=>x.disabled=true);
+        const fb=c.querySelector('#fb');
+        if(i===q.ans){
+          b.classList.add('correct');fb.textContent='✅ '+q.explain;fb.className='feedback ok';
+          score++;star(ev);
+          setTimeout(()=>{qi++;render();},1100);
+        } else {
+          b.classList.add('wrong');fb.textContent='❌ '+q.explain;fb.className='feedback bad';
+          addWrong(q.text,q.opts[q.ans],q.explain);
+          setTimeout(()=>{qi++;render();},1300);
+        }
+      };
+      og.appendChild(b);
+    });
+  },
+
+  partB(){
+    const q=B_Q;
+    const c=card(`
+      <div class="phase-title">Part B — Long Answer ✏️</div>
+      <div style="text-align:center;margin-bottom:12px;background:#fef9c3;border-radius:10px;padding:8px;font-size:.85rem;font-weight:700;color:#92400e">
+        💡 ${q.hint}
+      </div>
+      <div class="q-text">${q.text.replace(/\n/g,'<br>')}</div>
+      <div class="opts" id="opts"></div>
+      <div class="feedback" id="fb"></div>
+    `);
+    const og=c.querySelector('#opts');
+    q.opts.forEach((o,i)=>{
+      const b=document.createElement('button');b.className='opt-btn';b.textContent=o;
+      b.onclick=ev=>{
+        if(b.disabled)return;
+        og.querySelectorAll('.opt-btn').forEach(x=>x.disabled=true);
+        const fb=c.querySelector('#fb');
+        if(i===q.ans){
+          b.classList.add('correct');fb.textContent='✅ '+q.explain;fb.className='feedback ok';
+          score++;star(ev);
+          setTimeout(()=>{phase=3;render();},1100);
+        } else {
+          b.classList.add('wrong');fb.textContent='❌ '+q.explain;fb.className='feedback bad';
+          addWrong(q.text,q.opts[q.ans],q.explain);
+          setTimeout(()=>{phase=3;render();},1300);
+        }
+      };
+      og.appendChild(b);
+    });
+  },
+
+  partC(){
+    matchState={selectedLabel:null, matchedCount:0};
+    // Shuffle right side
+    const descs=[...MATCH_PAIRS.map(p=>p.desc)].sort(()=>Math.random()-.5);
+    const c=card(`
+      <div class="phase-title">Part C — Story Elements Match 🔗</div>
+      <p style="text-align:center;font-size:.85rem;color:#64748b;margin-bottom:12px">Tap a label on the left, then tap the matching description on the right.</p>
+      <div class="match-grid">
+        <div class="match-left" id="labels"></div>
+        <div class="match-right" id="descs"></div>
+      </div>
+      <div class="feedback" id="fb"></div>
+    `);
+    const lb=c.querySelector('#labels');
+    const db=c.querySelector('#descs');
+    MATCH_PAIRS.forEach(p=>{
+      const el=document.createElement('div');el.className='match-label';el.textContent=p.label;
+      el.dataset.label=p.label;
+      el.onclick=()=>{
+        if(el.classList.contains('matched'))return;
+        lb.querySelectorAll('.match-label').forEach(x=>{if(!x.classList.contains('matched'))x.classList.remove('selected')});
+        el.classList.add('selected');
+        matchState.selectedLabel=p.label;
+      };
+      lb.appendChild(el);
+    });
+    descs.forEach(desc=>{
+      const el=document.createElement('div');el.className='match-desc';el.textContent=desc;
+      el.onclick=ev=>{
+        if(el.classList.contains('matched'))return;
+        if(!matchState.selectedLabel)return;
+        const pair=MATCH_PAIRS.find(p=>p.label===matchState.selectedLabel);
+        const fb=c.querySelector('#fb');
+        if(pair && pair.desc===desc){
+          // correct
+          el.classList.add('matched');
+          lb.querySelectorAll('.match-label').forEach(x=>{if(x.dataset.label===matchState.selectedLabel)x.classList.add('matched');});
+          matchState.matchedCount++;
+          score++;star(ev);
+          fb.textContent='✅ Matched!';fb.className='feedback ok';
+          matchState.selectedLabel=null;
+          if(matchState.matchedCount>=MATCH_TOTAL){
+            setTimeout(()=>{phase=4;qi=0;render();},700);
+          }
+        } else {
+          el.classList.add('wrong-flash');
+          fb.textContent='❌ Try again!';fb.className='feedback bad';
+          addWrong('Match: '+matchState.selectedLabel,'Correct: '+pair.desc,'Match the label to the right description!');
+          setTimeout(()=>{
+            el.classList.remove('wrong-flash');
+            lb.querySelectorAll('.match-label').forEach(x=>{if(!x.classList.contains('matched'))x.classList.remove('selected');});
+            matchState.selectedLabel=null;
+          },700);
+        }
+      };
+      db.appendChild(el);
+    });
+  },
+
+  vocab(){
+    if(qi>=VOCAB_QS.length){phase=5;render();return;}
+    const q=VOCAB_QS[qi];
+    const displaySent=q.sent.replace(q.blank,`<span class="blank-word">___</span>`);
+    const c=card(`
+      ${progBar(qi,VOCAB_QS.length)}
+      <div class="phase-title">Vocabulary 📚</div>
+      <div class="q-num">Word ${qi+1} / ${VOCAB_QS.length}</div>
+      <div class="q-text vocab-sent">${displaySent}</div>
+      <div class="vocab-opts" id="vopts"></div>
+      <div class="feedback" id="fb"></div>
+    `);
+    const vo=c.querySelector('#vopts');
+    q.opts.forEach((o,i)=>{
+      const b=document.createElement('button');b.className='vocab-btn';b.textContent=o;
+      b.onclick=ev=>{
+        if(b.disabled)return;
+        vo.querySelectorAll('.vocab-btn').forEach(x=>x.disabled=true);
+        const fb=c.querySelector('#fb');
+        if(i===q.ans){
+          b.classList.add('correct');fb.textContent='✅ '+q.explain;fb.className='feedback ok';
+          score++;star(ev);
+          setTimeout(()=>{qi++;render();},900);
+        } else {
+          b.classList.add('wrong');fb.textContent='❌ '+q.explain;fb.className='feedback bad';
+          addWrong(q.sent,q.opts[q.ans],q.explain);
+          setTimeout(()=>{qi++;render();},1100);
+        }
+      };
+      vo.appendChild(b);
+    });
+  },
+
+  done(){
+    const pct=Math.round(score/total*100);
+    const emoji=pct>=90?'🌟':pct>=70?'😊':'💪';
+    let wrongHtml='';
+    if(wrongs.length){
+      wrongHtml=`<div style="margin-top:16px"><div style="font-family:'Fredoka One',cursive;color:#dc2626;margin-bottom:8px">Review ✏️</div><ul class="wrong-list">`;
+      wrongs.forEach(w=>{
+        wrongHtml+=`<li class="wrong-item"><div class="wr-q">${w.q}</div><div class="wr-a">✅ ${w.a}</div><div class="wr-h">💡 ${w.h}</div></li>`;
+      });
+      wrongHtml+='</ul></div>';
+    }
+    const c=card(`
+      <div class="score-wrap">
+        <div style="font-size:3rem">${emoji}</div>
+        <div class="score-num">${score} / ${total}</div>
+        <div style="color:#64748b;font-size:.9rem">${pct}% — ${pct>=90?'Excellent! 🎉':pct>=70?'Good job! 👍':'Keep going! 💪'}</div>
+      </div>
+      ${wrongHtml}
+    `);
+    c.appendChild(nextBtn('Play Again 🔄',()=>{phase=0;qi=0;score=0;wrongs=[];matchState={selectedLabel:null,matchedCount:0};render();}));
+  }
+};
+
+render();
+</script>
+</body>
+</html>
