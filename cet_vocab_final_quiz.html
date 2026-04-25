@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📘 CET Vocab Final Review</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#f0f7ff;font-family:'Nunito',sans-serif;min-height:100vh;}
+  .wrap{max-width:560px;margin:0 auto;padding:16px 16px 80px;}
+
+  /* HEADER */
+  .g-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .g-title{font-family:'Fredoka One',cursive;font-size:1.3rem;color:#1e3a5f;}
+  .g-prog {font-family:'Fredoka One',cursive;font-size:1rem;color:#94a3b8;}
+  .pbar-wrap{background:#e2e8f0;border-radius:99px;height:8px;margin-bottom:14px;overflow:hidden;}
+  .pbar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#3b82f6,#6366f1);transition:width .4s;}
+  .score-row{display:flex;justify-content:space-between;margin-bottom:12px;}
+  .score-label{font-family:'Fredoka One',cursive;font-size:.9rem;color:#94a3b8;}
+  .score-val  {font-family:'Fredoka One',cursive;font-size:.9rem;color:#22c55e;}
+
+  /* WORD BANK */
+  .wordbank-wrap{background:white;border-radius:18px;padding:16px;box-shadow:0 3px 16px rgba(59,130,246,.1);margin-bottom:14px;border:2px solid #bfdbfe;}
+  .wordbank-label{font-family:'Fredoka One',cursive;font-size:.85rem;color:#3b82f6;margin-bottom:10px;letter-spacing:.5px;}
+  .wordbank{display:flex;flex-wrap:wrap;gap:8px;}
+  .wb-chip{padding:6px 14px;border-radius:50px;background:#eff6ff;border:2px solid #93c5fd;font-family:'Fredoka One',cursive;font-size:.95rem;color:#1d4ed8;cursor:default;transition:all .2s;user-select:none;}
+  .wb-chip.used{background:#f1f5f9;border-color:#cbd5e1;color:#94a3b8;text-decoration:line-through;}
+
+  /* QUESTION CARD */
+  .q-card{background:white;border-radius:20px;padding:22px 18px;box-shadow:0 5px 20px rgba(59,130,246,.12);margin-bottom:14px;animation:popIn .35s cubic-bezier(.34,1.56,.64,1);}
+  .q-card.shake{animation:shake .35s ease;}
+  @keyframes popIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .q-num{font-family:'Fredoka One',cursive;font-size:.82rem;color:#94a3b8;margin-bottom:8px;}
+  .q-week{display:inline-block;padding:3px 12px;border-radius:20px;background:#eff6ff;color:#3b82f6;font-family:'Fredoka One',cursive;font-size:.75rem;margin-bottom:12px;}
+  .q-sentence{font-size:1.1rem;font-weight:800;color:#1e293b;line-height:2;text-align:center;margin-bottom:16px;}
+  .blank{display:inline-block;min-width:100px;border-bottom:3px solid #3b82f6;padding:0 8px;color:transparent;background:#eff6ff;border-radius:6px;cursor:default;font-weight:900;text-align:center;vertical-align:middle;}
+  .blank.filled{color:#1d4ed8;}
+  .blank.correct{color:#15803d;background:#dcfce7;border-color:#22c55e;}
+  .blank.wrong  {color:#b91c1c;background:#fee2e2;border-color:#f87171;}
+
+  /* OPTIONS */
+  .opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .opt-btn{padding:13px 10px;border-radius:14px;border:3px solid #e2e8f0;background:#f8fafc;font-family:'Fredoka One',cursive;font-size:1.05rem;cursor:pointer;text-align:center;color:#334155;transition:all .15s;}
+  .opt-btn:hover  {border-color:#3b82f6;background:#eff6ff;color:#1d4ed8;transform:translateY(-2px);}
+  .opt-btn.correct{background:#dcfce7;border-color:#22c55e;color:#15803d;}
+  .opt-btn.wrong  {background:#fee2e2;border-color:#f87171;color:#b91c1c;}
+  .opt-btn:disabled{cursor:default;transform:none;}
+
+  /* DOTS */
+  .dots{display:flex;justify-content:center;gap:5px;margin-bottom:12px;flex-wrap:wrap;}
+  .dot{width:10px;height:10px;border-radius:50%;background:#e2e8f0;transition:all .3s;}
+  .dot.curr{background:#3b82f6;transform:scale(1.4);}
+  .dot.ok  {background:#22c55e;}
+  .dot.bad {background:#f87171;}
+
+  /* FEEDBACK */
+  .feedback{border-radius:14px;padding:12px 16px;margin-bottom:12px;font-weight:800;font-size:.92rem;display:none;line-height:1.5;}
+  .feedback.show{display:block;}
+  .feedback.ok {background:#dcfce7;color:#15803d;border:3px solid #86efac;}
+  .feedback.bad{background:#fee2e2;color:#b91c1c;border:3px solid #fca5a5;}
+
+  /* NEXT BTN */
+  .next-btn{width:100%;padding:15px;border-radius:50px;border:none;background:linear-gradient(135deg,#3b82f6,#6366f1);color:white;font-family:'Fredoka One',cursive;font-size:1.2rem;cursor:pointer;display:none;box-shadow:0 4px 14px rgba(59,130,246,.35);transition:all .15s;}
+  .next-btn.show{display:block;}
+  .next-btn:hover{transform:translateY(-2px);}
+
+  /* FINAL */
+  .final-card{background:white;border-radius:24px;padding:30px 22px;text-align:center;box-shadow:0 8px 28px rgba(59,130,246,.15);display:none;}
+  .final-card.show{display:block;animation:popIn .5s cubic-bezier(.34,1.56,.64,1);}
+  .final-title{font-family:'Fredoka One',cursive;font-size:2rem;color:#3b82f6;margin-bottom:6px;}
+  .final-score{font-family:'Fredoka One',cursive;font-size:3rem;color:#6366f1;}
+  .final-stars{font-size:2.2rem;letter-spacing:4px;margin:8px 0 12px;}
+  .final-msg  {font-size:.95rem;color:#64748b;font-weight:700;margin-bottom:20px;line-height:1.6;}
+  .wrong-list {background:#f8fafc;border-radius:14px;padding:14px;margin-bottom:18px;text-align:left;}
+  .wl-title   {font-family:'Fredoka One',cursive;font-size:.9rem;color:#3b82f6;margin-bottom:8px;}
+  .wl-item    {font-size:.85rem;font-weight:700;color:#475569;padding:5px 0;border-bottom:1px solid #f1f5f9;line-height:1.5;}
+  .wl-ans     {color:#15803d;font-weight:900;}
+  .final-btns {display:flex;flex-direction:column;gap:10px;}
+  .retry-btn  {padding:14px;border-radius:50px;border:none;background:linear-gradient(135deg,#3b82f6,#6366f1);color:white;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;}
+  .filter-btn {padding:12px;border-radius:50px;border:2px solid #e2e8f0;background:white;font-family:'Fredoka One',cursive;font-size:.95rem;color:#94a3b8;cursor:pointer;}
+
+  /* WEEK FILTER */
+  .filter-wrap{background:white;border-radius:16px;padding:14px 16px;box-shadow:0 3px 12px rgba(0,0,0,.06);margin-bottom:14px;}
+  .filter-label{font-family:'Fredoka One',cursive;font-size:.82rem;color:#94a3b8;margin-bottom:8px;}
+  .filter-chips{display:flex;flex-wrap:wrap;gap:6px;}
+  .fc{padding:6px 14px;border-radius:50px;border:2px solid #e2e8f0;background:white;font-family:'Fredoka One',cursive;font-size:.8rem;color:#94a3b8;cursor:pointer;transition:all .15s;}
+  .fc.active{background:#eff6ff;border-color:#3b82f6;color:#1d4ed8;}
+
+  /* STAR POP */
+  .star-pop{position:fixed;font-size:2rem;pointer-events:none;animation:fly .9s ease-out forwards;z-index:999;}
+  @keyframes fly{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-80px) scale(1.5)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="g-header">
+    <div class="g-title" id="gTitle">📘 CET Vocab — Final Review</div>
+    <div class="g-prog"  id="gProg">Week 10–16</div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
+  <div class="score-row">
+    <div class="score-label" id="scoreLabel">Choose a week to start!</div>
+    <div class="score-val"   id="scoreVal"></div>
+  </div>
+
+  <!-- Week Filter -->
+  <div class="filter-wrap" id="filterWrap">
+    <div class="filter-label">Practice by week:</div>
+    <div class="filter-chips">
+      <button class="fc active" data-week="all"  onclick="setWeek('all',this)">🌟 All Weeks</button>
+      <button class="fc" data-week="10" onclick="setWeek('10',this)">Week 10</button>
+      <button class="fc" data-week="11" onclick="setWeek('11',this)">Week 11</button>
+      <button class="fc" data-week="12" onclick="setWeek('12',this)">Week 12</button>
+      <button class="fc" data-week="13" onclick="setWeek('13',this)">Week 13</button>
+      <button class="fc" data-week="14" onclick="setWeek('14',this)">Week 14</button>
+      <button class="fc" data-week="15" onclick="setWeek('15',this)">Week 15&16</button>
+    </div>
+  </div>
+
+  <!-- Word Bank -->
+  <div class="wordbank-wrap" id="wordbankWrap" style="display:none">
+    <div class="wordbank-label">📋 Word Bank — choose the right word!</div>
+    <div class="wordbank" id="wordbank"></div>
+  </div>
+
+  <div id="content"></div>
+  <div class="dots" id="dots"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="handleNext()"></button>
+  <div class="final-card" id="finalCard"></div>
+</div>
+
+<script>
+// =============================================================
+// ALL QUESTIONS — Week 10-16, including 認讀字 (*)
+// Format: {week, word, sent, opts[4], ans(0-based index), hint}
+// =============================================================
+const ALL_QS = [
+
+  // ===== WEEK 10 — Bones =====
+  {week:'10', word:'field',
+   sent:'The scientists dug up dinosaur bones in a big open ___.',
+   opts:['garage','field','library','mall'], ans:1,
+   hint:'田野、草原'},
+  {week:'10', word:'museum',
+   sent:'We went to the ___ to see real dinosaur skeletons.',
+   opts:['museum','library','school','hospital'], ans:0,
+   hint:'博物館 (*)'},
+  {week:'10', word:'dinosaur',
+   sent:'A ___ is a huge animal that lived millions of years ago.',
+   opts:['elephant','dolphin','dinosaur','dragon'], ans:2,
+   hint:'恐龍 (*)'},
+  {week:'10', word:'drawing',
+   sent:'The scientist made a ___ of the dinosaur skeleton she found.',
+   opts:['photo','story','drawing','model'], ans:2,
+   hint:'圖畫、素描'},
+  {week:'10', word:'model',
+   sent:'We used clay to build a ___ of the dinosaur bones.',
+   opts:['drawing','model','photo','map'], ans:1,
+   hint:'模型'},
+  {week:'10', word:'fossil',
+   sent:'They found a ___ of a fish hidden inside a rock.',
+   opts:['shell','bone','fossil','tooth'], ans:2,
+   hint:'化石 (*)'},
+  {week:'10', word:'alive',
+   sent:'Dinosaurs were ___ long ago, but now they are all gone.',
+   opts:['asleep','alone','angry','alive'], ans:3,
+   hint:'活著的'},
+  {week:'10', word:'look for',
+   sent:'The scientists went to the desert to ___ dinosaur bones.',
+   opts:['give up','look for','run away','show off'], ans:1,
+   hint:'尋找'},
+  {week:'10', word:'trip',
+   sent:'Our class went on a ___ to the dinosaur museum.',
+   opts:['break','rest','trip','nap'], ans:2,
+   hint:'旅行'},
+  {week:'10', word:'break',
+   sent:'Be careful! Do not ___ the fossil. It is very old!',
+   opts:['fold','break','drop','open'], ans:1,
+   hint:'打破'},
+
+  // ===== WEEK 11 — Bones =====
+  {week:'11', word:'cow',
+   sent:'The farmer has ten ___s on his farm. They give us milk.',
+   opts:['horse','goat','cow','sheep'], ans:2,
+   hint:'牛'},
+  {week:'11', word:'together',
+   sent:'My best friend and I always walk to school ___.',
+   opts:['alone','apart','together','outside'], ans:2,
+   hint:'一起'},
+  {week:'11', word:'puzzle',
+   sent:'We worked on a 100-piece ___ all afternoon.',
+   opts:['game','toy','puzzle','book'], ans:2,
+   hint:'拼圖'},
+  {week:'11', word:'about',
+   sent:'This book is ___ a brave little dinosaur.',
+   opts:['under','above','about','across'], ans:2,
+   hint:'關於'},
+  {week:'11', word:'were',
+   sent:'The dinosaurs ___ very big animals.',
+   opts:['am','is','are','were'], ans:3,
+   hint:'（be動詞過去式）'},
+  {week:'11', word:'could',
+   sent:'The big dinosaur ___ shake the ground when it walked.',
+   opts:['can','will','may','could'], ans:3,
+   hint:'能夠（過去式）'},
+  {week:'11', word:'show',
+   sent:'Let me ___ you the cool dinosaur drawing I made.',
+   opts:['ask','tell','show','give'], ans:2,
+   hint:'展示、給...看'},
+  {week:'11', word:'chicken',
+   sent:'I ate ___ and rice for lunch today.',
+   opts:['beef','fish','chicken','pork'], ans:2,
+   hint:'雞肉'},
+  {week:'11', word:'four',
+   sent:'A cow has ___ legs.',
+   opts:['two','three','four','five'], ans:2,
+   hint:'四'},
+  {week:'11', word:'bird',
+   sent:'Some scientists think today\'s ___ is related to the dinosaur.',
+   opts:['fish','snake','bird','frog'], ans:2,
+   hint:'鳥'},
+
+  // ===== WEEK 12 =====
+  {week:'12', word:'claw',
+   sent:'The eagle caught a fish with its sharp ___.',
+   opts:['beak','wing','claw','tail'], ans:2,
+   hint:'爪子'},
+  {week:'12', word:'catch',
+   sent:'Throw the ball to me! I will ___ it!',
+   opts:['kick','drop','throw','catch'], ans:3,
+   hint:'接住、抓住'},
+  {week:'12', word:'horn',
+   sent:'The rhino has a big ___ on its nose.',
+   opts:['tail','horn','ear','claw'], ans:1,
+   hint:'角（動物的）'},
+  {week:'12', word:'teeth',
+   sent:'The alligator has very sharp ___.',
+   opts:['claws','teeth','eyes','ears'], ans:1,
+   hint:'牙齒（複數）'},
+  {week:'12', word:'ate',
+   sent:'She was so hungry that she ___ the whole pizza!',
+   opts:['cooked','made','ate','found'], ans:2,
+   hint:'吃（eat的過去式）'},
+  {week:'12', word:'clue',
+   sent:'The detective found a ___ to help solve the mystery.',
+   opts:['map','clue','gift','story'], ans:1,
+   hint:'線索'},
+  {week:'12', word:'flat',
+   sent:'The land near the sea is very ___.',
+   opts:['round','tall','bumpy','flat'], ans:3,
+   hint:'平坦的'},
+  {week:'12', word:'other',
+   sent:'One glove is here. Where is the ___ one?',
+   opts:['same','next','other','last'], ans:2,
+   hint:'另一個'},
+  {week:'12', word:'meat',
+   sent:'The lion only eats ___. It does not eat plants.',
+   opts:['bread','fruit','meat','leaves'], ans:2,
+   hint:'肉'},
+  {week:'12', word:'past',
+   sent:'We drove ___ the school on the way to the museum.',
+   opts:['into','past','inside','across'], ans:1,
+   hint:'經過'},
+
+  // ===== WEEK 13 — In the Clouds =====
+  {week:'13', word:'sky',
+   sent:'The birds flew high up in the bright blue ___.',
+   opts:['ground','sea','sky','field'], ans:2,
+   hint:'天空'},
+  {week:'13', word:'cloud',
+   sent:'I lay on the grass and looked at the fluffy white ___ above me.',
+   opts:['rain','wind','cloud','storm'], ans:2,
+   hint:'雲'},
+  {week:'13', word:'float',
+   sent:'The balloon began to ___ up into the sky.',
+   opts:['sink','fall','float','drop'], ans:2,
+   hint:'漂浮'},
+  {week:'13', word:'plane',
+   sent:'We got on the ___ and flew to grandma\'s house.',
+   opts:['train','bus','plane','ship'], ans:2,
+   hint:'飛機'},
+  {week:'13', word:'over',
+   sent:'The plane flew ___ the mountain.',
+   opts:['under','behind','over','beside'], ans:2,
+   hint:'越過、在...上方'},
+  {week:'13', word:'dream',
+   sent:'Last night I had a ___ that I could fly like a bird!',
+   opts:['wish','dream','hope','plan'], ans:1,
+   hint:'夢'},
+  {week:'13', word:'stretch',
+   sent:'The giraffe can ___ its long neck to reach the top leaves.',
+   opts:['jump','stretch','climb','fly'], ans:1,
+   hint:'伸展 (*)'},
+  {week:'13', word:'pilot',
+   sent:'The ___ told us to put on our seat belts before take-off.',
+   opts:['doctor','teacher','driver','pilot'], ans:3,
+   hint:'飛行員'},
+  {week:'13', word:'doctor',
+   sent:'The ___ checked my ears and said I was very healthy.',
+   opts:['nurse','pilot','doctor','teacher'], ans:2,
+   hint:'醫生'},
+  {week:'13', word:'silly',
+   sent:'He wore his shoes on his hands. That was so ___!',
+   opts:['brave','smart','kind','silly'], ans:3,
+   hint:'傻傻的、可笑的'},
+
+  // ===== WEEK 14 — Bebe and Bessie =====
+  {week:'14', word:'train',
+   sent:'We took the ___ from Taipei to Hsinchu.',
+   opts:['bus','car','train','plane'], ans:2,
+   hint:'火車'},
+  {week:'14', word:'neighbor',
+   sent:'My ___ lives right next door. We play together every weekend.',
+   opts:['friend','cousin','neighbor','teacher'], ans:2,
+   hint:'鄰居 (*)'},
+  {week:'14', word:'ask',
+   sent:'I want to ___ my teacher a question about the story.',
+   opts:['tell','answer','know','ask'], ans:3,
+   hint:'問'},
+  {week:'14', word:'tough',
+   sent:'The math test was really ___. I had to think very hard.',
+   opts:['easy','fun','tough','short'], ans:2,
+   hint:'困難的、堅強的'},
+  {week:'14', word:'brave',
+   sent:'The little girl was ___ and climbed to the top of the tree.',
+   opts:['scared','tired','silly','brave'], ans:3,
+   hint:'勇敢的'},
+  {week:'14', word:'remind',
+   sent:'Please ___ me to bring my library book tomorrow!',
+   opts:['forget','remind','teach','show'], ans:1,
+   hint:'提醒'},
+  {week:'14', word:'talented',
+   sent:'Bebe is a very ___ cow. She can paint beautiful pictures!',
+   opts:['hungry','tired','talented','sad'], ans:2,
+   hint:'有才華的'},
+  {week:'14', word:'wait',
+   sent:'Please ___ here while I go get the tickets.',
+   opts:['run','leave','play','wait'], ans:3,
+   hint:'等待'},
+  {week:'14', word:'minute',
+   sent:'I will finish my homework in just one ___.',
+   opts:['second','hour','minute','day'], ans:2,
+   hint:'分鐘'},
+  {week:'14', word:'job',
+   sent:'Her ___ is to take care of the animals on the farm.',
+   opts:['game','trip','hobby','job'], ans:3,
+   hint:'工作、職業'},
+
+  // ===== WEEK 15&16 — In the Clouds =====
+  {week:'15', word:'trick',
+   sent:'The dog learned a cool new ___ — she can spin in a circle!',
+   opts:['treat','joke','game','trick'], ans:3,
+   hint:'把戲、技巧'},
+  {week:'15', word:'fly',
+   sent:'The pilot loves to ___ his plane over the clouds.',
+   opts:['swim','run','fly','jump'], ans:2,
+   hint:'飛'},
+  {week:'15', word:'flew',
+   sent:'The bird ___ away when I came too close.',
+   opts:['flown','flies','fly','flew'], ans:3,
+   hint:'飛（fly的過去式）'},
+  {week:'15', word:'learn',
+   sent:'I want to ___ how to play the piano this summer.',
+   opts:['forget','teach','stop','learn'], ans:3,
+   hint:'學習'},
+  {week:'15', word:'start',
+   sent:'Let\'s ___ reading. Everyone open your books to page one.',
+   opts:['stop','wait','end','start'], ans:3,
+   hint:'開始'},
+  {week:'15', word:'famous',
+   sent:'That singer is so ___ — everyone knows her songs!',
+   opts:['shy','quiet','famous','tiny'], ans:2,
+   hint:'有名的'},
+  {week:'15', word:'them',
+   sent:'My friends are outside. Can I go play with ___?',
+   opts:['they','their','them','those'], ans:2,
+   hint:'他們（受格）'},
+  {week:'15', word:'stop',
+   sent:'The car had to ___ at the red light.',
+   opts:['go','start','drive','stop'], ans:3,
+   hint:'停止'},
+  {week:'15', word:'work hard',
+   sent:'If you ___, you can learn anything!',
+   opts:['give up','rest all day','work hard','play all day'], ans:2,
+   hint:'努力'},
+  {week:'15', word:'give up',
+   sent:'Don\'t ___! Keep trying and you will get it!',
+   opts:['try again','give up','work hard','keep going'], ans:1,
+   hint:'放棄'},
+];
+
+// =============================================================
+// State
+// =============================================================
+let currentQ = [];
+let qi = 0, score = 0, wrong = [], answered = false;
+let weekFilter = 'all';
+
+const WEEK_LABELS = {
+  'all':'Week 10–16 Mix',
+  '10':'Week 10',
+  '11':'Week 11',
+  '12':'Week 12',
+  '13':'Week 13',
+  '14':'Week 14',
+  '15':'Week 15&16',
+};
+
+function clearFb() { document.getElementById('feedback').className = 'feedback'; }
+function fb(msg, type) {
+  const el = document.getElementById('feedback');
+  el.innerHTML = msg;
+  el.className = 'feedback show ' + type;
+}
+
+function setWeek(w, btn) {
+  weekFilter = w;
+  document.querySelectorAll('.fc').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  startGame();
+}
+
+function startGame() {
+  qi = 0; score = 0; wrong = []; answered = false;
+  const pool = weekFilter === 'all'
+    ? ALL_QS
+    : ALL_QS.filter(q => q.week === weekFilter);
+  currentQ = [...pool].sort(() => Math.random() - 0.5).slice(0, 10);
+
+  document.getElementById('finalCard').classList.remove('show');
+  document.getElementById('wordbankWrap').style.display = '';
+  document.getElementById('filterWrap').style.display = '';
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+  document.getElementById('gProg').textContent = WEEK_LABELS[weekFilter] || `Week ${weekFilter}`;
+  buildDots(currentQ.length);
+  showQ();
+}
+
+function buildWordBank() {
+  const q = currentQ[qi];
+  const wb = document.getElementById('wordbank');
+  wb.innerHTML = q.opts.map(w =>
+    `<span class="wb-chip" id="wbc-${w.replace(/\s/g,'_')}">${w}</span>`
+  ).join('');
+}
+
+function showQ() {
+  answered = false;
+  const q = currentQ[qi];
+  const total = currentQ.length;
+  document.getElementById('pbarFill').style.width = ((qi/total)*100) + '%';
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score}  ❌ ${wrong.length}`;
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+  buildWordBank();
+
+  const weekLabel = WEEK_LABELS[q.week] || `Week ${q.week}`;
+  const sentHtml = q.sent.replace('___',
+    `<span class="blank" id="the-blank">${'_'.repeat(q.word.length)}</span>`);
+
+  const optsHtml = q.opts.map((o, i) =>
+    `<button class="opt-btn" data-idx="${i}" data-word="${o}" onclick="pick(this)">${o}</button>`
+  ).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div class="q-card" id="qCard">
+      <div class="q-num">Question ${qi+1}</div>
+      <span class="q-week">${weekLabel}</span>
+      <div class="q-sentence">${sentHtml}</div>
+      <div class="opts-grid">${optsHtml}</div>
+    </div>`;
+  updateDot(qi, 'curr');
+}
+
+function pick(btn) {
+  if (answered) return; answered = true;
+  const q = currentQ[qi];
+  const idx = parseInt(btn.dataset.idx);
+  const word = btn.dataset.word;
+
+  document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+
+  const blank = document.getElementById('the-blank');
+  blank.textContent = word;
+  blank.classList.add('filled');
+
+  const chipId = 'wbc-' + word.replace(/\s/g,'_');
+  const chip = document.getElementById(chipId);
+  if (chip) chip.classList.add('used');
+
+  if (idx === q.ans) {
+    btn.classList.add('correct');
+    blank.classList.add('correct');
+    score++;
+    popStars();
+    fb(`✅ <b>${q.word}</b> — ${q.hint}`, 'ok');
+    updateDot(qi, 'ok');
+  } else {
+    btn.classList.add('wrong');
+    blank.classList.add('wrong');
+    document.querySelector(`[data-idx="${q.ans}"]`).classList.add('correct');
+    wrong.push(q);
+    fb(`❌ The answer is <b>${q.word}</b> — ${q.hint}`, 'bad');
+    document.getElementById('qCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('qCard')?.classList.remove('shake'), 400);
+    updateDot(qi, 'bad');
+  }
+
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === currentQ.length - 1 ? 'See Results! 🎊' : 'Next ➡️';
+  nb.className = 'next-btn show';
+}
+
+function handleNext() {
+  qi++;
+  if (qi < currentQ.length) showQ();
+  else showFinal();
+}
+
+function showFinal() {
+  const total = currentQ.length;
+  const pct = score / total;
+  const stars = pct === 1 ? '⭐⭐⭐' : pct >= 0.7 ? '⭐⭐' : '⭐';
+  const msg = pct === 1
+    ? 'PERFECT! You know all the words! 🏆🎉'
+    : pct >= 0.7
+    ? 'Great job! You almost got them all!'
+    : 'Good try! Review the words and play again!';
+
+  document.getElementById('dots').innerHTML = '';
+  document.getElementById('wordbankWrap').style.display = 'none';
+  document.getElementById('filterWrap').style.display = 'none';
+  clearFb();
+  document.getElementById('content').innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+  document.getElementById('pbarFill').style.width = '100%';
+
+  // Deduplicate wrong answers
+  const seen = new Set();
+  const uniqueWrong = wrong.filter(q => {
+    if (seen.has(q.word)) return false;
+    seen.add(q.word); return true;
+  });
+
+  const wrongHtml = uniqueWrong.length > 0 ? `
+    <div class="wrong-list">
+      <div class="wl-title">📝 Review these words:</div>
+      ${uniqueWrong.map(q => `
+        <div class="wl-item">
+          <span class="wl-ans">${q.word}</span> — ${q.hint}<br>
+          <small style="color:#94a3b8">"${q.sent.replace('___', q.word)}"</small>
+        </div>`).join('')}
+    </div>` : '';
+
+  document.getElementById('finalCard').innerHTML = `
+    <div class="final-title">📘 Quiz Done!</div>
+    <div class="final-score">${score} / ${total}</div>
+    <div class="final-stars">${stars}</div>
+    <div class="final-msg">${msg}</div>
+    ${wrongHtml}
+    <div class="final-btns">
+      <button class="retry-btn" onclick="startGame()">🔄 Play Again (same week)</button>
+      <button class="filter-btn" onclick="resetToFilter()">📋 Change Week</button>
+    </div>`;
+  document.getElementById('finalCard').classList.add('show');
+  for (let i = 0; i < 4; i++) setTimeout(popStars, i * 250);
+}
+
+function resetToFilter() {
+  document.getElementById('finalCard').classList.remove('show');
+  document.getElementById('filterWrap').style.display = '';
+  document.getElementById('dots').innerHTML = '';
+  document.getElementById('scoreLabel').textContent = 'Choose a week to start!';
+  document.getElementById('scoreVal').textContent = '';
+  document.getElementById('pbarFill').style.width = '0%';
+  document.getElementById('content').innerHTML = '';
+  document.getElementById('wordbankWrap').style.display = 'none';
+}
+
+function buildDots(n) {
+  const c = document.getElementById('dots');
+  c.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' curr' : '');
+    d.id = 'dot' + i;
+    if (i === 0) d.style.background = '#3b82f6';
+    c.appendChild(d);
+  }
+}
+
+function updateDot(i, state) {
+  const d = document.getElementById('dot' + i);
+  if (!d) return;
+  d.className = 'dot ' + state;
+  const next = document.getElementById('dot' + (i + 1));
+  if (next && state !== 'curr') {
+    next.classList.add('curr');
+    next.style.background = '#3b82f6';
+  }
+}
+
+function popStars() {
+  const e = ['⭐','✨','🌟','🎉','📘','🏆'];
+  for (let i = 0; i < 5; i++) setTimeout(() => {
+    const s = document.createElement('div'); s.className = 'star-pop';
+    s.textContent = e[Math.floor(Math.random() * e.length)];
+    s.style.left = (10 + Math.random() * 80) + 'vw';
+    s.style.top  = (20 + Math.random() * 50) + 'vh';
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 900);
+  }, i * 130);
+}
+
+window.onload = () => {
+  document.getElementById('wordbankWrap').style.display = 'none';
+  startGame();
+};
+</script>
+</body>
+</html>
