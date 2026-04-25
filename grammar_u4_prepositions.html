@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prepositions — Grammar Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Nunito',sans-serif;background:#fff8f0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+  h1{font-family:'Fredoka One',cursive;color:#0f766e;font-size:1.7rem;text-align:center;margin-bottom:4px}
+  .subtitle{color:#64748b;font-size:.9rem;margin-bottom:16px;text-align:center}
+
+  /* dots */
+  .dots{display:flex;gap:8px;justify-content:center;margin-bottom:14px}
+  .dot{width:13px;height:13px;border-radius:50%;background:#e2e8f0;transition:.3s}
+  .dot.done{background:#0d9488}
+  .dot.active{background:#2dd4bf;box-shadow:0 0 0 3px #99f6e4}
+
+  /* card */
+  .card{background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.08);padding:24px;width:100%;max-width:520px;animation:popIn .35s ease}
+  @keyframes popIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+  /* progress */
+  .prog-wrap{background:#e2e8f0;border-radius:99px;height:8px;margin-bottom:18px;overflow:hidden}
+  .prog-bar{height:100%;background:linear-gradient(90deg,#0d9488,#2dd4bf);border-radius:99px;transition:.4s}
+
+  /* phase title */
+  .phase-title{font-family:'Fredoka One',cursive;color:#0f766e;font-size:1.1rem;text-align:center;margin-bottom:16px}
+  .q-num{font-size:.8rem;color:#94a3b8;text-align:center;margin-bottom:6px}
+  .q-text{font-size:1.05rem;color:#1e293b;text-align:center;line-height:1.55;margin-bottom:20px;font-weight:600}
+  .blank{display:inline-block;min-width:70px;border-bottom:2px solid #0d9488;color:#0d9488;font-weight:800}
+
+  /* options */
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+  .opt-btn{background:#f0fdfa;border:2px solid #99f6e4;border-radius:14px;padding:12px 10px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;color:#134e4a;cursor:pointer;transition:.2s;text-align:center}
+  .opt-btn:hover{background:#ccfbf1;border-color:#5eead4}
+  .opt-btn.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+  .opt-btn.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+  .opt-btn:disabled{cursor:default}
+
+  /* 3-button type quiz */
+  .type-btns{display:flex;flex-direction:column;gap:10px;margin-bottom:8px}
+  .type-btn{background:#f0fdfa;border:2px solid #99f6e4;border-radius:14px;padding:13px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;color:#134e4a;cursor:pointer;transition:.2s}
+  .type-btn:hover{background:#ccfbf1;border-color:#5eead4}
+  .type-btn.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+  .type-btn.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+  .type-btn:disabled{cursor:default}
+
+  /* feedback */
+  .feedback{min-height:28px;text-align:center;font-weight:700;font-size:.95rem;margin-bottom:4px}
+  .feedback.ok{color:#16a34a}
+  .feedback.bad{color:#dc2626}
+
+  /* learn card */
+  .learn-title{font-family:'Fredoka One',cursive;color:#0f766e;font-size:1.3rem;text-align:center;margin-bottom:14px}
+  .group-label{font-family:'Fredoka One',cursive;font-size:.95rem;margin:10px 0 6px;color:#0f766e}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:4px}
+  .chip{padding:6px 13px;border-radius:99px;font-weight:700;font-size:.9rem}
+  .chip.loc{background:#ccfbf1;color:#134e4a}
+  .chip.time{background:#fef9c3;color:#78350f}
+  .chip.dir{background:#ede9fe;color:#4c1d95}
+  .ex{font-size:.85rem;color:#475569;margin:4px 0 8px;line-height:1.4;padding-left:4px}
+  .ex em{font-style:normal;color:#0d9488;font-weight:700}
+
+  /* next / start btn */
+  .next-btn{display:block;width:100%;background:#0d9488;color:#fff;border:none;border-radius:14px;padding:14px;font-family:'Fredoka One',cursive;font-size:1.2rem;cursor:pointer;margin-top:10px;transition:.2s}
+  .next-btn:hover{background:#0f766e}
+
+  /* score */
+  .score-wrap{text-align:center;margin-bottom:18px}
+  .score-num{font-family:'Fredoka One',cursive;font-size:2.2rem;color:#0d9488}
+  .score-label{font-size:.9rem;color:#64748b}
+
+  /* wrong list */
+  .wrong-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+  .wrong-item{background:#fff7ed;border-left:4px solid #f59e0b;border-radius:10px;padding:10px 12px;font-size:.9rem;line-height:1.5}
+  .wrong-item .wr-q{font-weight:700;color:#1e293b}
+  .wrong-item .wr-a{color:#16a34a;font-weight:700}
+  .wrong-item .wr-h{color:#64748b;font-size:.83rem}
+
+  /* star */
+  .star-pop{position:fixed;pointer-events:none;font-size:2rem;animation:flyUp .8s ease forwards;z-index:999}
+  @keyframes flyUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-90px) scale(1.5)}}
+</style>
+</head>
+<body>
+
+<h1>Prepositions 📍</h1>
+<p class="subtitle">Week 15 — CET Grammar</p>
+
+<div class="dots" id="dots"></div>
+<div id="root"></div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const FILL_QS = [
+  {sent:'The cat is ___ the box.',                    opts:['in','on','at','from'],           ans:0, explain:'in = 在…裡面'},
+  {sent:'The book is ___ the table.',                 opts:['on','in','under','behind'],       ans:0, explain:'on = 在…上面'},
+  {sent:'The dog is hiding ___ the bed.',             opts:['under','on','in','next to'],      ans:0, explain:'under = 在…下面'},
+  {sent:'We go to school ___ the morning.',           opts:['in','on','at','to'],              ans:0, explain:'in the morning = 早上'},
+  {sent:'My birthday is ___ July.',                   opts:['in','on','at','from'],            ans:0, explain:'in + month = 幾月'},
+  {sent:'School starts ___ 8 o\'clock.',              opts:['at','in','on','to'],              ans:0, explain:'at + time = 幾點'},
+  {sent:'The picture is ___ the wall.',               opts:['on','in','under','at'],           ans:0, explain:'on = 在牆上面'},
+  {sent:'We have a test ___ Monday.',                 opts:['on','at','in','from'],            ans:0, explain:'on + day = 星期幾'},
+  {sent:'The bird flew ___ the window.',              opts:['through','in','on','at'],         ans:0, explain:'through = 穿過'},
+  {sent:'She sat ___ her two friends.',               opts:['between','under','on','from'],    ans:0, explain:'between = 在兩者之間'},
+  {sent:'The sign is ___ the door.',                  opts:['above','in','on','between'],      ans:0, explain:'above = 在…上方'},
+  {sent:'We drove ___ the city to the beach.',        opts:['from','in','on','above'],         ans:0, explain:'from = 從（出發點）'},
+];
+
+const TYPE_QS = [
+  {sent:'The apple is on the table.',                         ans:'Location', explain:'on the table = 位置'},
+  {sent:'We arrived at noon.',                                ans:'Time',     explain:'at noon = 時間'},
+  {sent:'She jumped into the pool.',                          ans:'Direction',explain:'into = 方向（進入）'},
+  {sent:'The keys are under the sofa.',                       ans:'Location', explain:'under = 位置'},
+  {sent:'He was born in March.',                              ans:'Time',     explain:'in March = 時間（月份）'},
+  {sent:'The cat ran out of the room.',                       ans:'Direction',explain:'out of = 方向（離開）'},
+  {sent:'The trophy is on the shelf.',                        ans:'Location', explain:'on = 位置'},
+  {sent:'We go swimming on Saturdays.',                       ans:'Time',     explain:'on Saturdays = 時間（星期）'},
+  {sent:'The bird flew toward the tree.',                     ans:'Direction',explain:'toward = 方向（朝著）'},
+  {sent:'The clouds are above the mountains.',                ans:'Location', explain:'above = 位置（上方）'},
+];
+
+// ─── STATE ──────────────────────────────────────────────────────────────────
+const PHASES = ['learn','fill','type','done'];
+let phase = 0, qi = 0, score = 0, wrongs = [];
+
+// ─── HELPERS ────────────────────────────────────────────────────────────────
+function render(){document.getElementById('root').innerHTML='';buildDots();phases[PHASES[phase]]();}
+function buildDots(){
+  const d=document.getElementById('dots');d.innerHTML='';
+  PHASES.forEach((p,i)=>{
+    const el=document.createElement('div');
+    el.className='dot'+(i<phase?' done':i===phase?' active':'');
+    d.appendChild(el);
+  });
+}
+function star(e){
+  const s=document.createElement('div');s.className='star-pop';s.textContent='⭐';
+  s.style.left=(e.clientX-16)+'px';s.style.top=(e.clientY-16)+'px';
+  document.body.appendChild(s);setTimeout(()=>s.remove(),850);
+}
+function card(html){
+  const c=document.createElement('div');c.className='card';c.innerHTML=html;
+  document.getElementById('root').appendChild(c);return c;
+}
+function progBar(cur,total){
+  return `<div class="prog-wrap"><div class="prog-bar" style="width:${cur/total*100}%"></div></div>`;
+}
+function nextBtn(label,fn){
+  const b=document.createElement('button');b.className='next-btn';b.textContent=label;
+  b.onclick=fn;return b;
+}
+
+// ─── PHASES ─────────────────────────────────────────────────────────────────
+const phases = {
+  learn(){
+    const c=card(`
+      <div class="learn-title">📍 Prepositions</div>
+      <p style="text-align:center;font-size:.9rem;color:#475569;margin-bottom:10px">Prepositions tell us <strong>where</strong>, <strong>when</strong>, or <strong>which direction</strong>.</p>
+      <div class="group-label">📍 Location — 位置（哪裡）</div>
+      <div class="chips">
+        <span class="chip loc">in</span><span class="chip loc">on</span><span class="chip loc">under</span>
+        <span class="chip loc">behind</span><span class="chip loc">in front of</span>
+        <span class="chip loc">next to</span><span class="chip loc">between</span>
+        <span class="chip loc">above</span><span class="chip loc">below</span>
+      </div>
+      <p class="ex">e.g. The cat is <em>in</em> the box. The book is <em>on</em> the table.</p>
+      <div class="group-label">⏰ Time — 時間（什麼時候）</div>
+      <div class="chips">
+        <span class="chip time">at</span><span class="chip time">on</span><span class="chip time">in</span>
+      </div>
+      <p class="ex">
+        <em>at</em> 3 o'clock &nbsp;|&nbsp; <em>on</em> Monday &nbsp;|&nbsp; <em>in</em> July / the morning
+      </p>
+      <div class="group-label">➡️ Direction — 方向（往哪走）</div>
+      <div class="chips">
+        <span class="chip dir">to</span><span class="chip dir">from</span><span class="chip dir">into</span>
+        <span class="chip dir">out of</span><span class="chip dir">through</span><span class="chip dir">toward</span>
+      </div>
+      <p class="ex">e.g. She walked <em>to</em> school. The bird flew <em>through</em> the window.</p>
+    `);
+    c.appendChild(nextBtn('Let\'s practice! 🚀',()=>{phase=1;qi=0;render();}));
+  },
+
+  fill(){
+    if(qi>=FILL_QS.length){phase=2;qi=0;render();return;}
+    const q=FILL_QS[qi];
+    const filled=q.sent.replace('___',`<span class="blank">___</span>`);
+    const c=card(`
+      ${progBar(qi,FILL_QS.length)}
+      <div class="phase-title">Part 1 — Choose the Preposition ✏️</div>
+      <div class="q-num">Question ${qi+1} / ${FILL_QS.length}</div>
+      <div class="q-text">${filled}</div>
+      <div class="opts" id="opts"></div>
+      <div class="feedback" id="fb"></div>
+    `);
+    const og=c.querySelector('#opts');
+    q.opts.forEach((o,i)=>{
+      const b=document.createElement('button');b.className='opt-btn';b.textContent=o;
+      b.onclick=ev=>{
+        if(b.disabled)return;
+        og.querySelectorAll('.opt-btn').forEach(x=>x.disabled=true);
+        const fb=c.querySelector('#fb');
+        if(i===q.ans){
+          b.classList.add('correct');fb.textContent='✅ Correct!';fb.className='feedback ok';
+          score++;star(ev);
+          setTimeout(()=>{qi++;render();},900);
+        } else {
+          b.classList.add('wrong');fb.textContent='❌ '+q.explain;fb.className='feedback bad';
+          wrongs.push({q:q.sent,a:q.opts[q.ans],h:q.explain});
+          setTimeout(()=>{qi++;render();},1200);
+        }
+      };
+      og.appendChild(b);
+    });
+  },
+
+  type(){
+    if(qi>=TYPE_QS.length){phase=3;render();return;}
+    const q=TYPE_QS[qi];
+    let qiAtClick=qi;
+    const c=card(`
+      ${progBar(qi,TYPE_QS.length)}
+      <div class="phase-title">Part 2 — What type? 🤔</div>
+      <div class="q-num">Question ${qi+1} / ${TYPE_QS.length}</div>
+      <div class="q-text">${q.sent}</div>
+      <div class="type-btns" id="tbtns"></div>
+      <div class="feedback" id="fb"></div>
+    `);
+    const tb=c.querySelector('#tbtns');
+    ['Location','Time','Direction'].forEach(type=>{
+      const b=document.createElement('button');b.className='type-btn';
+      b.textContent=type==='Location'?'📍 Location 位置':type==='Time'?'⏰ Time 時間':'➡️ Direction 方向';
+      b.onclick=ev=>{
+        if(qiAtClick!==qi)return;
+        tb.querySelectorAll('.type-btn').forEach(x=>x.disabled=true);
+        const fb=c.querySelector('#fb');
+        if(type===q.ans){
+          b.classList.add('correct');fb.textContent='✅ '+q.explain;fb.className='feedback ok';
+          score++;star(ev);
+          setTimeout(()=>{qi++;render();},950);
+        } else {
+          b.classList.add('wrong');fb.textContent='❌ '+q.explain;fb.className='feedback bad';
+          wrongs.push({q:q.sent,a:q.ans,h:q.explain});
+          setTimeout(()=>{qi++;render();},1200);
+        }
+      };
+      tb.appendChild(b);
+    });
+  },
+
+  done(){
+    const total=FILL_QS.length+TYPE_QS.length;
+    const pct=Math.round(score/total*100);
+    const emoji=pct>=90?'🌟':pct>=70?'😊':'💪';
+    let wrongHtml='';
+    if(wrongs.length){
+      wrongHtml='<div style="margin-top:18px"><div style="font-family:\'Fredoka One\',cursive;color:#dc2626;margin-bottom:10px">Review ✏️</div><ul class="wrong-list">';
+      wrongs.forEach(w=>{
+        wrongHtml+=`<li class="wrong-item"><div class="wr-q">${w.q}</div><div class="wr-a">✅ ${w.a}</div><div class="wr-h">💡 ${w.h}</div></li>`;
+      });
+      wrongHtml+='</ul></div>';
+    }
+    const c=card(`
+      <div class="score-wrap">
+        <div style="font-size:3rem">${emoji}</div>
+        <div class="score-num">${score} / ${total}</div>
+        <div class="score-label">${pct}% — ${pct>=90?'Excellent! 🎉':pct>=70?'Good job! 👍':'Keep practicing! 💪'}</div>
+      </div>
+      ${wrongHtml}
+    `);
+    c.appendChild(nextBtn('Play Again 🔄',()=>{phase=0;qi=0;score=0;wrongs=[];render();}));
+  }
+};
+
+render();
+</script>
+</body>
+</html>

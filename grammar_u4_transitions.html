@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transitions & Conjunctions — Grammar Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Nunito',sans-serif;background:#fff8f0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+  h1{font-family:'Fredoka One',cursive;color:#2563eb;font-size:1.7rem;text-align:center;margin-bottom:4px}
+  .subtitle{color:#64748b;font-size:.9rem;margin-bottom:16px;text-align:center}
+
+  /* dots */
+  .dots{display:flex;gap:8px;justify-content:center;margin-bottom:14px}
+  .dot{width:13px;height:13px;border-radius:50%;background:#e2e8f0;transition:.3s}
+  .dot.done{background:#2563eb}
+  .dot.active{background:#60a5fa;box-shadow:0 0 0 3px #bfdbfe}
+
+  /* card */
+  .card{background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.08);padding:24px;width:100%;max-width:520px;animation:popIn .35s ease}
+  @keyframes popIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+  /* progress */
+  .prog-wrap{background:#e2e8f0;border-radius:99px;height:8px;margin-bottom:18px;overflow:hidden}
+  .prog-bar{height:100%;background:linear-gradient(90deg,#3b82f6,#60a5fa);border-radius:99px;transition:.4s}
+
+  /* phase title */
+  .phase-title{font-family:'Fredoka One',cursive;color:#2563eb;font-size:1.1rem;text-align:center;margin-bottom:16px}
+  .q-num{font-size:.8rem;color:#94a3b8;text-align:center;margin-bottom:6px}
+  .q-text{font-size:1.05rem;color:#1e293b;text-align:center;line-height:1.55;margin-bottom:20px;font-weight:600}
+  .blank{display:inline-block;min-width:80px;border-bottom:2px solid #2563eb;color:#2563eb;font-weight:800}
+
+  /* options */
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+  .opt-btn{background:#eff6ff;border:2px solid #bfdbfe;border-radius:14px;padding:12px 10px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;color:#1e40af;cursor:pointer;transition:.2s;text-align:center}
+  .opt-btn:hover{background:#dbeafe;border-color:#93c5fd}
+  .opt-btn.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+  .opt-btn.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+  .opt-btn:disabled{cursor:default}
+
+  /* 3-button type quiz */
+  .type-btns{display:flex;flex-direction:column;gap:10px;margin-bottom:8px}
+  .type-btn{background:#eff6ff;border:2px solid #bfdbfe;border-radius:14px;padding:13px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;color:#1e40af;cursor:pointer;transition:.2s}
+  .type-btn:hover{background:#dbeafe;border-color:#93c5fd}
+  .type-btn.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+  .type-btn.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+  .type-btn:disabled{cursor:default}
+
+  /* feedback */
+  .feedback{min-height:28px;text-align:center;font-weight:700;font-size:.95rem;margin-bottom:4px}
+  .feedback.ok{color:#16a34a}
+  .feedback.bad{color:#dc2626}
+
+  /* learn card */
+  .learn-title{font-family:'Fredoka One',cursive;color:#2563eb;font-size:1.3rem;text-align:center;margin-bottom:14px}
+  .group-label{font-family:'Fredoka One',cursive;font-size:.95rem;margin:10px 0 6px;color:#1e40af}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:4px}
+  .chip{padding:6px 13px;border-radius:99px;font-weight:700;font-size:.9rem}
+  .chip.seq{background:#dbeafe;color:#1e40af}
+  .chip.cause{background:#fef9c3;color:#92400e}
+  .chip.contrast{background:#fce7f3;color:#9d174d}
+  .chip.add{background:#dcfce7;color:#166534}
+  .ex{font-size:.85rem;color:#475569;margin:4px 0 8px;line-height:1.4;padding-left:4px}
+  .ex em{font-style:normal;color:#2563eb;font-weight:700}
+
+  /* next / start btn */
+  .next-btn{display:block;width:100%;background:#2563eb;color:#fff;border:none;border-radius:14px;padding:14px;font-family:'Fredoka One',cursive;font-size:1.2rem;cursor:pointer;margin-top:10px;transition:.2s}
+  .next-btn:hover{background:#1d4ed8}
+
+  /* score */
+  .score-wrap{text-align:center;margin-bottom:18px}
+  .score-num{font-family:'Fredoka One',cursive;font-size:2.2rem;color:#2563eb}
+  .score-label{font-size:.9rem;color:#64748b}
+
+  /* wrong list */
+  .wrong-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+  .wrong-item{background:#fff7ed;border-left:4px solid #f59e0b;border-radius:10px;padding:10px 12px;font-size:.9rem;line-height:1.5}
+  .wrong-item .wr-q{font-weight:700;color:#1e293b}
+  .wrong-item .wr-a{color:#16a34a;font-weight:700}
+  .wrong-item .wr-h{color:#64748b;font-size:.83rem}
+
+  /* star */
+  .star-pop{position:fixed;pointer-events:none;font-size:2rem;animation:flyUp .8s ease forwards;z-index:999}
+  @keyframes flyUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-90px) scale(1.5)}}
+</style>
+</head>
+<body>
+
+<h1>Transitions & Conjunctions ✨</h1>
+<p class="subtitle">Week 14 — CET Grammar</p>
+
+<div class="dots" id="dots"></div>
+<div id="root"></div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const FILL_QS = [
+  {sent:'I brushed my teeth. ___, I went to bed.',            opts:['Finally','However','Because','And'],  ans:0, explain:'Finally = 最後一件事'},
+  {sent:'___, I woke up. Next, I ate breakfast.',             opts:['First','So','But','Also'],             ans:0, explain:'First = 第一件事'},
+  {sent:'She was tired. ___, she took a nap.',                opts:['So','First','However','Next'],         ans:0, explain:'So = 所以（結果）'},
+  {sent:'He studied hard. ___, he got a good grade.',         opts:['Therefore','But','Then','First'],      ans:0, explain:'Therefore = 所以（結論）'},
+  {sent:'I like cats. ___, I also like dogs.',                opts:['Also','Because','Finally','However'],  ans:0, explain:'Also = 另外、也'},
+  {sent:'She wanted to swim. ___, the pool was closed.',      opts:['However','So','First','Then'],         ans:0, explain:'However = 但是（轉折）'},
+  {sent:'___ it was raining, we stayed inside.',              opts:['Because','Next','Also','Finally'],     ans:0, explain:'Because = 因為'},
+  {sent:'We ate lunch. ___, we played outside.',              opts:['Then','However','Because','First'],    ans:0, explain:'Then = 然後（接著）'},
+  {sent:'I was cold. ___, I put on a jacket.',                opts:['So','But','Also','Next'],              ans:0, explain:'So = 所以'},
+  {sent:'He ran fast. ___, he won the race.',                 opts:['Finally','However','Because','And'],   ans:0, explain:'Finally = 最後（結果）'},
+];
+
+const TYPE_QS = [
+  {sent:'First, I washed my hands. Then, I ate dinner. Finally, I did my homework.', ans:'Sequence',  explain:'First / Then / Finally = 順序'},
+  {sent:'She was hungry. So, she ate a snack.',                                        ans:'Cause & Effect', explain:'So = 所以，表示結果'},
+  {sent:'I like pizza. However, my brother likes sushi.',                              ans:'Contrast', explain:'However = 但是，表示轉折'},
+  {sent:'Because it was hot, we drank water.',                                         ans:'Cause & Effect', explain:'Because = 因為，表示原因'},
+  {sent:'Next, stir the batter. Then, pour it into the pan.',                          ans:'Sequence', explain:'Next / Then = 順序'},
+  {sent:'She worked hard. Therefore, she passed the test.',                            ans:'Cause & Effect', explain:'Therefore = 所以（結論）'},
+  {sent:'He wanted to play. However, it was time for bed.',                            ans:'Contrast', explain:'However = 但是，轉折'},
+  {sent:'First, mix the flour. Next, add eggs. Finally, bake it.',                     ans:'Sequence', explain:'First / Next / Finally = 順序'},
+  {sent:'I was tired. So, I went to sleep early.',                                     ans:'Cause & Effect', explain:'So = 所以'},
+  {sent:'She likes math. However, she finds science hard.',                            ans:'Contrast', explain:'However = 但是'},
+];
+
+// ─── STATE ──────────────────────────────────────────────────────────────────
+const PHASES = ['learn','fill','type','done'];
+let phase = 0, qi = 0, score = 0, wrongs = [];
+
+// ─── HELPERS ────────────────────────────────────────────────────────────────
+function render(){document.getElementById('root').innerHTML='';buildDots();phases[PHASES[phase]]();}
+function buildDots(){
+  const d=document.getElementById('dots');d.innerHTML='';
+  PHASES.forEach((p,i)=>{
+    const el=document.createElement('div');
+    el.className='dot'+(i<phase?' done':i===phase?' active':'');
+    d.appendChild(el);
+  });
+}
+function star(e){
+  const s=document.createElement('div');s.className='star-pop';s.textContent='⭐';
+  s.style.left=(e.clientX-16)+'px';s.style.top=(e.clientY-16)+'px';
+  document.body.appendChild(s);setTimeout(()=>s.remove(),850);
+}
+function card(html){
+  const c=document.createElement('div');c.className='card';c.innerHTML=html;
+  document.getElementById('root').appendChild(c);return c;
+}
+function progBar(cur,total){
+  return `<div class="prog-wrap"><div class="prog-bar" style="width:${cur/total*100}%"></div></div>`;
+}
+function nextBtn(label,fn){
+  const b=document.createElement('button');b.className='next-btn';b.textContent=label;
+  b.onclick=fn;return b;
+}
+
+// ─── PHASES ─────────────────────────────────────────────────────────────────
+const phases = {
+  learn(){
+    const c=card(`
+      <div class="learn-title">📌 Transitions & Conjunctions</div>
+      <div class="group-label">📋 Sequence — 順序</div>
+      <div class="chips">
+        <span class="chip seq">First</span><span class="chip seq">Next</span>
+        <span class="chip seq">Then</span><span class="chip seq">Finally</span>
+        <span class="chip seq">After that</span>
+      </div>
+      <p class="ex">e.g. <em>First</em>, I wake up. <em>Next</em>, I brush my teeth.</p>
+      <div class="group-label">⚡ Cause &amp; Effect — 原因/結果</div>
+      <div class="chips">
+        <span class="chip cause">Because</span><span class="chip cause">So</span>
+        <span class="chip cause">Therefore</span>
+      </div>
+      <p class="ex">e.g. It was cold, <em>so</em> I wore a coat. / <em>Because</em> it rained, we stayed home.</p>
+      <div class="group-label">↔️ Contrast — 轉折</div>
+      <div class="chips">
+        <span class="chip contrast">However</span><span class="chip contrast">But</span>
+      </div>
+      <p class="ex">e.g. I wanted to play. <em>However</em>, it was raining.</p>
+      <div class="group-label">➕ Addition — 補充</div>
+      <div class="chips">
+        <span class="chip add">Also</span><span class="chip add">And</span>
+      </div>
+      <p class="ex">e.g. I like cats. I <em>also</em> like dogs.</p>
+    `);
+    c.appendChild(nextBtn('Let\'s practice! 🚀',()=>{phase=1;qi=0;render();}));
+  },
+
+  fill(){
+    if(qi>=FILL_QS.length){phase=2;qi=0;render();return;}
+    const q=FILL_QS[qi];
+    const filled=q.sent.replace('___',`<span class="blank">___</span>`);
+    const c=card(`
+      ${progBar(qi,FILL_QS.length)}
+      <div class="phase-title">Part 1 — Fill in the Blank ✏️</div>
+      <div class="q-num">Question ${qi+1} / ${FILL_QS.length}</div>
+      <div class="q-text">${filled}</div>
+      <div class="opts" id="opts"></div>
+      <div class="feedback" id="fb"></div>
+    `);
+    const og=c.querySelector('#opts');
+    q.opts.forEach((o,i)=>{
+      const b=document.createElement('button');b.className='opt-btn';b.textContent=o;
+      b.onclick=ev=>{
+        if(b.disabled)return;
+        og.querySelectorAll('.opt-btn').forEach(x=>x.disabled=true);
+        const fb=c.querySelector('#fb');
+        if(i===q.ans){
+          b.classList.add('correct');fb.textContent='✅ Correct!';fb.className='feedback ok';
+          score++;star(ev);
+          setTimeout(()=>{qi++;render();},900);
+        } else {
+          b.classList.add('wrong');fb.textContent='❌ '+q.explain;fb.className='feedback bad';
+          wrongs.push({q:q.sent,a:q.opts[q.ans],h:q.explain});
+          setTimeout(()=>{qi++;render();},1200);
+        }
+      };
+      og.appendChild(b);
+    });
+  },
+
+  type(){
+    if(qi>=TYPE_QS.length){phase=3;render();return;}
+    const q=TYPE_QS[qi];
+    let qiAtClick=qi;
+    const c=card(`
+      ${progBar(qi,TYPE_QS.length)}
+      <div class="phase-title">Part 2 — What does it show? 🤔</div>
+      <div class="q-num">Question ${qi+1} / ${TYPE_QS.length}</div>
+      <div class="q-text">${q.sent}</div>
+      <div class="type-btns" id="tbtns"></div>
+      <div class="feedback" id="fb"></div>
+    `);
+    const tb=c.querySelector('#tbtns');
+    ['Sequence','Cause & Effect','Contrast'].forEach(type=>{
+      const b=document.createElement('button');b.className='type-btn';
+      b.textContent=type==='Sequence'?'📋 Sequence 順序':type==='Cause & Effect'?'⚡ Cause & Effect 原因/結果':'↔️ Contrast 轉折';
+      b.onclick=ev=>{
+        if(qiAtClick!==qi)return;
+        tb.querySelectorAll('.type-btn').forEach(x=>x.disabled=true);
+        const fb=c.querySelector('#fb');
+        if(type===q.ans){
+          b.classList.add('correct');fb.textContent='✅ '+q.explain;fb.className='feedback ok';
+          score++;star(ev);
+          setTimeout(()=>{qi++;render();},950);
+        } else {
+          b.classList.add('wrong');fb.textContent='❌ '+q.explain;fb.className='feedback bad';
+          wrongs.push({q:q.sent,a:q.ans,h:q.explain});
+          setTimeout(()=>{qi++;render();},1200);
+        }
+      };
+      tb.appendChild(b);
+    });
+  },
+
+  done(){
+    const total=FILL_QS.length+TYPE_QS.length;
+    const pct=Math.round(score/total*100);
+    const emoji=pct>=90?'🌟':pct>=70?'😊':'💪';
+    let wrongHtml='';
+    if(wrongs.length){
+      wrongHtml='<div style="margin-top:18px"><div style="font-family:\'Fredoka One\',cursive;color:#dc2626;margin-bottom:10px">Review ✏️</div><ul class="wrong-list">';
+      wrongs.forEach(w=>{
+        wrongHtml+=`<li class="wrong-item"><div class="wr-q">${w.q}</div><div class="wr-a">✅ ${w.a}</div><div class="wr-h">💡 ${w.h}</div></li>`;
+      });
+      wrongHtml+='</ul></div>';
+    }
+    const c=card(`
+      <div class="score-wrap">
+        <div style="font-size:3rem">${emoji}</div>
+        <div class="score-num">${score} / ${total}</div>
+        <div class="score-label">${pct}% — ${pct>=90?'Excellent! 🎉':pct>=70?'Good job! 👍':'Keep practicing! 💪'}</div>
+      </div>
+      ${wrongHtml}
+    `);
+    c.appendChild(nextBtn('Play Again 🔄',()=>{phase=0;qi=0;score=0;wrongs=[];render();}));
+  }
+};
+
+render();
+</script>
+</body>
+</html>

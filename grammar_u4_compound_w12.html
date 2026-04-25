@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔗 Compound Sentences — Level 2!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#fff8f0;font-family:'Nunito',sans-serif;min-height:100vh;}
+  .wrap{max-width:520px;margin:0 auto;padding:16px 16px 60px;}
+  .g-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .g-title{font-family:'Fredoka One',cursive;font-size:1.3rem;color:#333;}
+  .g-prog{font-family:'Fredoka One',cursive;font-size:1rem;color:#aaa;}
+  .pbar-wrap{background:#eee;border-radius:99px;height:8px;margin-bottom:14px;overflow:hidden;}
+  .pbar-fill{height:100%;border-radius:99px;transition:width .4s;}
+  .score-row{display:flex;justify-content:space-between;margin-bottom:10px;}
+  .score-label{font-family:'Fredoka One',cursive;font-size:.9rem;color:#aaa;}
+  .score-val{font-family:'Fredoka One',cursive;font-size:.9rem;color:#34d399;}
+  .learn-card{background:white;border-radius:20px;padding:20px 18px;box-shadow:0 6px 20px rgba(0,0,0,.08);margin-bottom:14px;}
+  .learn-title{font-family:'Fredoka One',cursive;font-size:1.1rem;text-align:center;margin-bottom:12px;}
+  .tip-box{border-radius:12px;padding:12px 14px;font-size:.88rem;font-weight:700;line-height:1.8;margin-bottom:10px;}
+  .tip-comma{background:#fffbeb;color:#92400e;border-left:4px solid #f59e0b;}
+  .tip-review{background:#f0fdf4;color:#065f46;border-left:4px solid #10b981;}
+  .conj-tag{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.9rem;font-weight:900;margin:2px;}
+  .tag-and{background:#bbf7d0;color:#065f46;}
+  .tag-or{background:#bfdbfe;color:#1e40af;}
+  .tag-but{background:#fde68a;color:#92400e;}
+  .phase-label{font-family:'Fredoka One',cursive;font-size:.8rem;letter-spacing:2px;text-transform:uppercase;border-radius:20px;padding:4px 14px;display:inline-block;margin-bottom:12px;}
+  .pl-fix{background:#fef3c7;color:#92400e;}
+  .pl-complete{background:#eff6ff;color:#1e40af;}
+  .q-card{background:white;border-radius:20px;padding:22px 18px;box-shadow:0 6px 20px rgba(0,0,0,.08);margin-bottom:14px;animation:popIn .35s cubic-bezier(.34,1.56,.64,1);}
+  .q-card.shake{animation:shake .35s ease;}
+  @keyframes popIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .q-emoji{font-size:2.4rem;display:block;text-align:center;margin-bottom:10px;}
+  .q-sentence{font-size:1rem;font-weight:800;color:#222;text-align:center;line-height:2;margin-bottom:8px;}
+  .q-hint{font-size:.82rem;color:#aaa;font-weight:700;text-align:center;margin-bottom:14px;}
+  .q-blank{display:inline-block;min-width:60px;border-bottom:3px solid #10b981;color:#10b981;font-weight:900;text-align:center;padding:0 4px;}
+  .opts-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .rw-opts{display:flex;flex-direction:column;gap:10px;}
+  .opt-btn{padding:12px 8px;border-radius:14px;border:3px solid #eee;background:#f9f9f9;font-family:'Fredoka One',cursive;font-size:1.05rem;cursor:pointer;transition:all .15s;text-align:center;color:#334155;}
+  .opt-btn:hover{border-color:#10b981;background:#f0fdf4;color:#065f46;transform:translateY(-2px);}
+  .opt-btn.correct{background:#d1fae5;border-color:#34d399;color:#065f46;}
+  .opt-btn.wrong{background:#fee2e2;border-color:#fca5a5;color:#991b1b;}
+  .opt-btn:disabled{cursor:default;transform:none;}
+  .rw-btn{padding:13px 16px;border-radius:14px;border:3px solid #eee;background:#f9f9f9;font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:700;color:#333;cursor:pointer;transition:all .15s;text-align:left;}
+  .rw-btn:hover{border-color:#3b82f6;background:#eff6ff;}
+  .rw-btn.correct{background:#d1fae5;border-color:#34d399;color:#065f46;}
+  .rw-btn.wrong{background:#fee2e2;border-color:#fca5a5;color:#991b1b;}
+  .rw-btn:disabled{cursor:default;}
+  .dots{display:flex;justify-content:center;gap:5px;margin-bottom:12px;flex-wrap:wrap;}
+  .dot{width:10px;height:10px;border-radius:50%;background:#e5e7eb;transition:all .3s;}
+  .dot.curr{background:#10b981;transform:scale(1.4);}
+  .dot.ok{background:#34d399;}
+  .dot.bad{background:#f87171;}
+  .feedback{border-radius:14px;padding:12px 16px;margin-bottom:12px;font-weight:800;font-size:.92rem;display:none;text-align:center;line-height:1.5;}
+  .feedback.show{display:block;}
+  .feedback.ok{background:#d1fae5;color:#065f46;border:3px solid #6ee7b7;}
+  .feedback.bad{background:#fee2e2;color:#991b1b;border:3px solid #fca5a5;}
+  .next-btn{width:100%;padding:15px;border-radius:50px;border:none;background:linear-gradient(135deg,#10b981,#059669);color:white;font-family:'Fredoka One',cursive;font-size:1.2rem;cursor:pointer;display:none;box-shadow:0 4px 14px rgba(16,185,129,.35);transition:transform .1s;}
+  .next-btn.show{display:block;}
+  .next-btn:active{transform:scale(.97);}
+  .final-card{background:white;border-radius:24px;padding:30px 22px;text-align:center;box-shadow:0 8px 28px rgba(0,0,0,.1);display:none;}
+  .final-card.show{display:block;animation:popIn .5s cubic-bezier(.34,1.56,.64,1);}
+  .final-title{font-family:'Fredoka One',cursive;font-size:2rem;color:#10b981;margin-bottom:6px;}
+  .final-score{font-family:'Fredoka One',cursive;font-size:3rem;color:#059669;}
+  .final-stars{font-size:2.2rem;letter-spacing:4px;margin:6px 0 12px;}
+  .final-msg{font-size:.95rem;color:#666;font-weight:700;margin-bottom:20px;line-height:1.6;}
+  .wrong-rev{background:#f0fdf4;border-radius:12px;padding:14px;margin-bottom:18px;text-align:left;}
+  .wr-title{font-family:'Fredoka One',cursive;font-size:.9rem;color:#065f46;margin-bottom:8px;}
+  .wr-item{font-size:.82rem;font-weight:700;color:#555;padding:4px 0;border-bottom:1px solid #f0f0f0;line-height:1.5;}
+  .wr-ans{color:#059669;font-weight:900;}
+  .final-btns{display:flex;flex-direction:column;gap:10px;}
+  .retry-btn{padding:14px;border-radius:50px;border:none;background:linear-gradient(135deg,#10b981,#059669);color:white;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;}
+  .star-pop{position:fixed;font-size:1.8rem;pointer-events:none;animation:fly .9s ease-out forwards;z-index:999;}
+  @keyframes fly{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-80px) scale(1.5)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="g-header">
+    <div class="g-title" id="gTitle">🔗 Compound Sentences 2!</div>
+    <div class="g-prog" id="gProg"></div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
+  <div class="score-row">
+    <div class="score-label" id="scoreLabel"></div>
+    <div class="score-val" id="scoreVal"></div>
+  </div>
+  <div id="content"></div>
+  <div class="dots" id="dots"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="handleNext()"></button>
+  <div class="final-card" id="finalCard"></div>
+</div>
+<script>
+// Part 2: More and/or/but (new sentences)
+const CONJ_QS = [
+  {sentence:'Lily loves to read, ___ she reads every night.', ans:'and', emoji:'📚', hint:'Both facts → and', explain:'and = both things are true'},
+  {sentence:'We can take the bus, ___ we can walk home.', ans:'or', emoji:'🚌', hint:'Two choices → or', explain:'or = two options to choose from'},
+  {sentence:'The pizza smells good, ___ I am not hungry.', ans:'but', emoji:'🍕', hint:'Surprise/contrast → but', explain:'but = unexpected opposite'},
+  {sentence:'Dad washed the car, ___ Mom cleaned the house.', ans:'and', emoji:'🚗', hint:'Both actions happened → and', explain:'and = both things happened'},
+  {sentence:'You can draw a cat, ___ you can draw a dog.', ans:'or', emoji:'🎨', hint:'Pick one → or', explain:'or = choose one option'},
+  {sentence:'Sam studied hard, ___ he still got one wrong.', ans:'but', emoji:'📝', hint:'Contrast → but', explain:'but = unexpected result'},
+  {sentence:'Grandma baked cookies, ___ we ate them all!', ans:'and', emoji:'🍪', hint:'Next thing that happened → and', explain:'and = the next thing'},
+  {sentence:'I want to swim, ___ the pool is closed today.', ans:'but', emoji:'🏊', hint:'Disappointing contrast → but', explain:'but = something blocking the plan'},
+  {sentence:'We can watch a movie, ___ we can play a board game.', ans:'or', emoji:'🎲', hint:'Two fun choices → or', explain:'or = two options'},
+  {sentence:'The cat is small, ___ it is very fast.', ans:'but', emoji:'🐱', hint:'Surprising contrast → but', explain:'but = surprising opposite'},
+];
+
+// Part 3: Complete the compound sentence (choose the right second clause)
+const COMPLETE_QS = [
+  {
+    first: 'I was tired,', conj: 'but', emoji: '😴',
+    opts: ['but I finished my homework.', 'but I going to sleep.', 'but yesterday.'],
+    ans: 0, explain: '"but I finished my homework." — correct grammar after "but"'
+  },
+  {
+    first: 'We can eat pizza,', conj: 'or', emoji: '🍕',
+    opts: ['or we but pasta.', 'or we can have pasta.', 'or having pasta.'],
+    ans: 1, explain: '"or we can have pasta." — subject + verb needed after "or"'
+  },
+  {
+    first: 'The dog is loud,', conj: 'but', emoji: '🐕',
+    opts: ['but it is very friendly.', 'but very friendly it.', 'but friendly is it.'],
+    ans: 0, explain: '"but it is very friendly." — subject + verb after "but"'
+  },
+  {
+    first: 'Mom made soup,', conj: 'and', emoji: '🍲',
+    opts: ['and Dad bread made.', 'and Dad made bread.', 'and made Dad bread.'],
+    ans: 1, explain: '"and Dad made bread." — subject + verb in correct order'
+  },
+  {
+    first: 'You can stay inside,', conj: 'or', emoji: '🏠',
+    opts: ['or you can play outside.', 'or outside playing.', 'or can you outside.'],
+    ans: 0, explain: '"or you can play outside." — subject + verb needed'
+  },
+  {
+    first: 'It was raining,', conj: 'but', emoji: '☔',
+    opts: ['but we went to the park.', 'but to park going.', 'but park the went.'],
+    ans: 0, explain: '"but we went to the park." — correct sentence after "but"'
+  },
+];
+
+let phase = 'learn';
+let qi = 0, score = 0, wrong = [], answered = false;
+let currentQ = [];
+
+function setPbar(pct, color) {
+  const el = document.getElementById('pbarFill');
+  el.style.background = color; el.style.width = pct + '%';
+}
+function clearFb() { document.getElementById('feedback').className = 'feedback'; }
+function fb(msg, type) { const el = document.getElementById('feedback'); el.innerHTML = msg; el.className = 'feedback show ' + type; }
+
+function showLearn() {
+  phase = 'learn'; clearFb();
+  document.getElementById('gTitle').textContent = '🔗 Compound Sentences 2!';
+  document.getElementById('gProg').textContent = 'Part 1 / 3';
+  document.getElementById('scoreLabel').textContent = '';
+  document.getElementById('scoreVal').textContent = '';
+  document.getElementById('dots').innerHTML = '';
+  document.getElementById('finalCard').classList.remove('show');
+  setPbar(8, 'linear-gradient(90deg,#10b981,#059669)');
+  document.getElementById('nextBtn').textContent = 'Start Part 2: and / or / but ➡️';
+  document.getElementById('nextBtn').className = 'next-btn show';
+  document.getElementById('content').innerHTML = `
+    <div class="learn-card">
+      <div class="learn-title" style="color:#065f46">🔗 Compound Sentences — Level 2 Review</div>
+      <div class="tip-box tip-review">
+        <b>Remember the 3 conjunctions 連接詞：</b><br>
+        <span class="conj-tag tag-and">and</span> = adds information 加上<br>
+        <span class="conj-tag tag-or">or</span> = gives a choice 選擇<br>
+        <span class="conj-tag tag-but">but</span> = shows contrast 相反
+      </div>
+      <div class="tip-box tip-comma">
+        ⚠️ <b>Comma rule 逗號規則：</b><br>
+        Always put a <b>comma (,)</b> BEFORE the conjunction!<br>
+        例：I like cats<b>,</b> and I like dogs.
+      </div>
+      <div class="tip-box" style="background:#eff6ff;color:#1e40af;border-left:4px solid #3b82f6;">
+        <b>New challenge: Complete the sentence!</b><br>
+        Choose the correct second clause.<br>
+        Make sure it has a <b>subject + verb</b>!
+      </div>
+    </div>`;
+}
+
+function startConj() {
+  phase = 'conj'; score = 0; wrong = []; qi = 0; answered = false;
+  currentQ = [...CONJ_QS].sort(() => Math.random() - .5).slice(0, 8);
+  document.getElementById('gTitle').textContent = '🔗 and / or / but?';
+  document.getElementById('gProg').textContent = 'Part 2 / 3';
+  buildDots(currentQ.length); showConjQ();
+}
+
+function showConjQ() {
+  answered = false;
+  const q = currentQ[qi]; const total = currentQ.length;
+  setPbar(12 + (qi / total) * 35, 'linear-gradient(90deg,#10b981,#059669)');
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  clearFb(); document.getElementById('nextBtn').className = 'next-btn';
+  const sentHTML = q.sentence.replace('___', `<span class="q-blank">___</span>`);
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label pl-fix">🔗 Choose the Conjunction</div>
+    <div class="q-card" id="qCard">
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-sentence">${sentHTML}</div>
+      <div class="q-hint">${q.hint}</div>
+      <div class="opts-3">
+        <button class="opt-btn" data-val="and" onclick="pickConj(this)" style="color:#065f46;border-color:#10b981">and</button>
+        <button class="opt-btn" data-val="or"  onclick="pickConj(this)" style="color:#1e40af;border-color:#3b82f6">or</button>
+        <button class="opt-btn" data-val="but" onclick="pickConj(this)" style="color:#92400e;border-color:#f59e0b">but</button>
+      </div>
+    </div>`;
+  updateDot(qi, 'curr');
+}
+
+function pickConj(btn) {
+  if (answered) return; answered = true;
+  const q = currentQ[qi]; const val = btn.dataset.val;
+  document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  if (val === q.ans) {
+    btn.classList.add('correct'); score++; popStars();
+    fb(`✅ <b>${q.ans}</b> — ${q.explain}`, 'ok'); updateDot(qi, 'ok');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelector(`[data-val="${q.ans}"]`).classList.add('correct');
+    wrong.push(q);
+    fb(`❌ Answer: <b>${q.ans}</b> — ${q.explain}`, 'bad');
+    document.getElementById('qCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('qCard')?.classList.remove('shake'), 400);
+    updateDot(qi, 'bad');
+  }
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === currentQ.length - 1 ? 'Next Part ➡️' : 'Next ➡️';
+  nb.className = 'next-btn show';
+}
+
+function startComplete() {
+  phase = 'complete'; score = 0; wrong = []; qi = 0; answered = false;
+  currentQ = [...COMPLETE_QS].sort(() => Math.random() - .5);
+  document.getElementById('gTitle').textContent = '✍️ Complete the Sentence!';
+  document.getElementById('gProg').textContent = 'Part 3 / 3';
+  buildDots(currentQ.length); showCompleteQ();
+}
+
+function showCompleteQ() {
+  answered = false;
+  const q = currentQ[qi]; const total = currentQ.length;
+  setPbar(50 + (qi / total) * 42, 'linear-gradient(90deg,#3b82f6,#1d4ed8)');
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  clearFb(); document.getElementById('nextBtn').className = 'next-btn';
+  const conjTag = `<span style="font-weight:900;color:#059669">${q.conj}</span>`;
+  const optsHTML = q.opts.map((o, i) =>
+    `<button class="rw-btn" data-idx="${i}" onclick="pickComplete(this)">${q.first} ${o}</button>`
+  ).join('');
+  document.getElementById('content').innerHTML = `
+    <div class="phase-label pl-complete">✍️ Complete the Sentence</div>
+    <div class="q-card" id="qCard">
+      <span class="q-emoji">${q.emoji}</span>
+      <div class="q-sentence">${q.first} ${conjTag} ___?</div>
+      <div class="q-hint">Choose the correct ending for this compound sentence.</div>
+      <div class="rw-opts">${optsHTML}</div>
+    </div>`;
+  updateDot(qi, 'curr');
+}
+
+function pickComplete(btn) {
+  if (answered) return; answered = true;
+  const q = currentQ[qi]; const idx = parseInt(btn.dataset.idx);
+  document.querySelectorAll('.rw-btn').forEach(b => b.disabled = true);
+  if (idx === q.ans) {
+    btn.classList.add('correct'); score++; popStars();
+    fb(`✅ ${q.explain}`, 'ok'); updateDot(qi, 'ok');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.rw-btn')[q.ans].classList.add('correct');
+    wrong.push(q);
+    fb(`❌ ${q.explain}`, 'bad');
+    document.getElementById('qCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('qCard')?.classList.remove('shake'), 400);
+    updateDot(qi, 'bad');
+  }
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === currentQ.length - 1 ? 'See Results! 🎊' : 'Next ➡️';
+  nb.className = 'next-btn show';
+}
+
+function handleNext() {
+  qi++;
+  if (phase === 'learn') { startConj(); return; }
+  if (phase === 'conj') {
+    if (qi < currentQ.length) showConjQ();
+    else { qi = 0; startComplete(); }
+    return;
+  }
+  if (phase === 'complete') {
+    if (qi < currentQ.length) showCompleteQ();
+    else showFinal();
+    return;
+  }
+}
+
+function showFinal() {
+  document.getElementById('dots').innerHTML = '';
+  clearFb(); document.getElementById('content').innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+  document.getElementById('pbarFill').style.width = '100%';
+  const stars = score >= 10 ? '⭐⭐⭐' : score >= 6 ? '⭐⭐' : '⭐';
+  const msg = score >= 10 ? 'Compound Sentence Master! 🏆' : score >= 6 ? 'Great job! Almost there!' : 'Keep practicing! You can do it!';
+  const wrongHtml = wrong.length > 0 ? `
+    <div class="wrong-rev">
+      <div class="wr-title">📝 Review these:</div>
+      ${wrong.map(q => `<div class="wr-item">${q.sentence || q.first} → <span class="wr-ans">${q.ans || q.opts[q.ans]}</span></div>`).join('')}
+    </div>` : '';
+  document.getElementById('finalCard').innerHTML = `
+    <div class="final-title">🔗 Level 2 Done!</div>
+    <div class="final-score">${score} ⭐</div>
+    <div class="final-stars">${stars}</div>
+    <div class="final-msg">${msg}</div>
+    ${wrongHtml}
+    <div class="final-btns"><button class="retry-btn" onclick="showLearn()">🔄 Play Again</button></div>`;
+  document.getElementById('finalCard').classList.add('show');
+  for (let i = 0; i < 4; i++) setTimeout(popStars, i * 200);
+}
+
+function buildDots(n) {
+  const c = document.getElementById('dots'); c.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' curr' : ''); d.id = 'dot' + i; c.appendChild(d);
+  }
+}
+function updateDot(i, state) {
+  const d = document.getElementById('dot' + i); if (!d) return;
+  d.className = 'dot ' + state;
+  const next = document.getElementById('dot' + (i + 1));
+  if (next) next.classList.add('curr');
+}
+function popStars() {
+  const e = ['⭐','✨','🌟','🔗','🎉'];
+  for (let i = 0; i < 5; i++) setTimeout(() => {
+    const s = document.createElement('div'); s.className = 'star-pop';
+    s.textContent = e[Math.floor(Math.random() * e.length)];
+    s.style.left = (10 + Math.random() * 80) + 'vw';
+    s.style.top = (20 + Math.random() * 50) + 'vh';
+    document.body.appendChild(s); setTimeout(() => s.remove(), 900);
+  }, i * 120);
+}
+
+window.onload = showLearn;
+</script>
+</body>
+</html>
