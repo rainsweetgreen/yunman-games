@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐦 er / ir / ur + Adding Endings! W11</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #fff8f0; font-family: 'Nunito', sans-serif; min-height: 100vh; }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 16px 16px 60px; }
+
+  .g-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .g-title { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #333; }
+  .g-prog  { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #aaa; }
+  .pbar-wrap { background: #eee; border-radius: 99px; height: 8px; margin-bottom: 14px; overflow: hidden; }
+  .pbar-fill { height: 100%; border-radius: 99px; transition: width 0.4s; background: linear-gradient(90deg,#8b5cf6,#06b6d4); }
+  .score-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+  .score-label { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #aaa; }
+  .score-val   { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #34d399; }
+
+  .learn-card {
+    background: white; border-radius: 20px; padding: 20px 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+  }
+  .learn-title { font-family: 'Fredoka One', cursive; font-size: 1.2rem; text-align: center; margin-bottom: 14px; }
+  .rule-box {
+    border-radius: 12px; padding: 12px 14px; font-size: 0.88rem;
+    font-weight: 700; line-height: 1.7; margin-bottom: 10px;
+  }
+  .rule-er  { background: #f3e8ff; color: #6b21a8; border-left: 4px solid #8b5cf6; }
+  .rule-ir  { background: #fff7ed; color: #c2410c; border-left: 4px solid #f97316; }
+  .rule-ur  { background: #ecfdf5; color: #065f46; border-left: 4px solid #10b981; }
+  .rule-add { background: #eff6ff; color: #1e40af; border-left: 4px solid #3b82f6; }
+  .ex-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .ex-chip { padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 800; }
+  .ec-er { background: #e9d5ff; color: #6b21a8; }
+  .ec-ir { background: #fed7aa; color: #c2410c; }
+  .ec-ur { background: #bbf7d0; color: #065f46; }
+  .ec-blue { background: #bfdbfe; color: #1e40af; }
+
+  .q-card {
+    background: white; border-radius: 20px; padding: 22px 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+    animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes popIn { from{opacity:0;transform:scale(0.88)} to{opacity:1;transform:scale(1)} }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+  .q-card.shake { animation: shake 0.35s ease; }
+
+  .phase-label {
+    font-family: 'Fredoka One', cursive; font-size: 0.8rem; letter-spacing: 2px;
+    text-transform: uppercase; border-radius: 20px; padding: 4px 14px;
+    display: inline-block; margin-bottom: 12px;
+  }
+  .pl-a  { background: #f3e8ff; color: #6b21a8; }
+  .pl-b  { background: #fff7ed; color: #c2410c; }
+  .pl-c  { background: #eff6ff; color: #1e40af; }
+  .pl-d  { background: #fff1f2; color: #be123c; }
+
+  .q-word {
+    font-family: 'Fredoka One', cursive; font-size: 2.8rem; text-align: center;
+    letter-spacing: 3px; margin-bottom: 8px; color: #333;
+  }
+  .q-emoji   { font-size: 3.2rem; display: block; text-align: center; margin-bottom: 10px; }
+  .q-hint    { font-size: 0.85rem; color: #aaa; font-weight: 700; text-align: center; margin-bottom: 14px; }
+
+  .opts-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .opts-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .opt-btn {
+    padding: 16px 10px; border-radius: 14px; border: 3px solid #eee;
+    background: #f9f9f9; font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem; cursor: pointer; text-align: center; transition: all 0.15s;
+  }
+  .opt-btn:hover   { border-color: #8b5cf6; background: #f3e8ff; transform: translateY(-2px); }
+  .opt-btn.correct { background: #d1fae5; border-color: #34d399; color: #065f46; }
+  .opt-btn.wrong   { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+  .opt-btn:disabled { cursor: default; transform: none; }
+
+  .opt-er { background: #f3e8ff; border-color: #c4b5fd; color: #6b21a8; font-size: 1.6rem; padding: 18px; }
+  .opt-ir { background: #fff7ed; border-color: #fcd34d; color: #c2410c; font-size: 1.6rem; padding: 18px; }
+  .opt-ur { background: #ecfdf5; border-color: #6ee7b7; color: #065f46; font-size: 1.6rem; padding: 18px; }
+  .opt-er:hover { background: #e9d5ff; border-color: #8b5cf6; }
+  .opt-ir:hover { background: #fef3c7; border-color: #f97316; }
+  .opt-ur:hover { background: #bbf7d0; border-color: #10b981; }
+
+  .base-display { text-align: center; margin-bottom: 14px; }
+  .base-word    { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #333; }
+  .plus-end     { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #3b82f6; margin-left: 8px; }
+  .add-arrow    { font-size: 1.6rem; display: block; color: #bbb; margin: 4px 0; }
+
+  .sentence-display {
+    font-family: 'Fredoka One', cursive; font-size: 1.25rem; text-align: center;
+    color: #333; margin-bottom: 16px; line-height: 2;
+  }
+  .blank-slot { display: inline-block; min-width: 80px; border-bottom: 3px solid #8b5cf6; color: #8b5cf6; padding: 0 4px; }
+
+  .dots { display: flex; justify-content: center; gap: 5px; margin-bottom: 12px; flex-wrap: wrap; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #e5e7eb; transition: all 0.3s; }
+  .dot.curr { background: #8b5cf6; transform: scale(1.4); }
+  .dot.ok   { background: #34d399; }
+  .dot.bad  { background: #f87171; }
+
+  .feedback {
+    border-radius: 14px; padding: 12px 16px; margin-bottom: 12px;
+    font-weight: 800; font-size: 0.95rem; display: none; text-align: center; line-height: 1.6;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok  { background: #d1fae5; color: #065f46; border: 3px solid #6ee7b7; }
+  .feedback.bad { background: #fee2e2; color: #991b1b; border: 3px solid #fca5a5; }
+
+  .next-btn {
+    width: 100%; padding: 15px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg,#8b5cf6,#06b6d4);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+    cursor: pointer; display: none; box-shadow: 0 4px 14px rgba(139,92,246,0.35);
+    transition: transform 0.1s;
+  }
+  .next-btn:active { transform: scale(0.97); }
+  .next-btn.show { display: block; }
+
+  .final-card {
+    background: white; border-radius: 24px; padding: 30px 22px;
+    text-align: center; box-shadow: 0 8px 28px rgba(0,0,0,0.1); display: none;
+  }
+  .final-card.show { display: block; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  .final-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #8b5cf6; margin-bottom: 6px; }
+  .final-score { font-family: 'Fredoka One', cursive; font-size: 3.2rem; color: #5c6bc0; margin-bottom: 4px; }
+  .final-stars { font-size: 2.4rem; letter-spacing: 6px; margin: 8px 0 12px; }
+  .final-msg   { font-size: 0.95rem; color: #666; font-weight: 700; margin-bottom: 20px; }
+  .wrong-title { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #991b1b; margin-bottom: 8px; text-align: left; }
+  .wrong-item  { background: #fff1f2; border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; font-size: 0.88rem; font-weight: 700; text-align: left; }
+  .wi-q { color: #991b1b; margin-bottom: 3px; }
+  .wi-a { color: #065f46; margin-bottom: 2px; }
+  .wi-h { color: #555; font-weight: 600; font-size: 0.82rem; }
+  .retry-btn { width: 100%; padding: 14px; border-radius: 50px; border: none; background: linear-gradient(135deg,#8b5cf6,#06b6d4); color: white; font-family: 'Fredoka One',cursive; font-size: 1.1rem; cursor: pointer; }
+
+  .story-box {
+    background: #f0fdf4; border-radius: 16px; padding: 16px 14px; margin-top: 16px;
+    border-left: 4px solid #10b981; font-size: 0.88rem; font-weight: 700; color: #065f46;
+    line-height: 2; text-align: left;
+  }
+  .story-box .story-title { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #047857; margin-bottom: 8px; }
+  .hl { background: #bbf7d0; border-radius: 4px; padding: 0 3px; }
+
+  .star-pop { position: fixed; font-size: 1.8rem; pointer-events: none; animation: fly 0.9s ease-out forwards; z-index: 999; }
+  @keyframes fly { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-90px) scale(1.6)} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="g-header">
+    <div class="g-title" id="gTitle">🐦 er / ir / ur Magic!</div>
+    <div class="g-prog"  id="gProg">Learn</div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
+  <div class="score-row">
+    <div class="score-label" id="scoreLabel"></div>
+    <div class="score-val"   id="scoreVal"></div>
+  </div>
+  <div id="content"></div>
+  <div class="dots"     id="dots"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="handleNext()">開始 Part A 🔍</button>
+  <div class="final-card" id="finalCard"></div>
+</div>
+
+<script>
+// ===== DATA =====
+
+const PARTA = [
+  { word:'curb',  answer:'ur', explain:'"ur" in c-UR-b — like fur! 🐱' },
+  { word:'fern',  answer:'er', explain:'"er" in f-ER-n — like her! 🌿' },
+  { word:'first', answer:'ir', explain:'"ir" in f-IR-st — like bird! 🥇' },
+  { word:'shirt', answer:'ir', explain:'"ir" in sh-IR-t — like dirt! 👕' },
+  { word:'verb',  answer:'er', explain:'"er" in v-ER-b — like her! ✏️' },
+  { word:'fur',   answer:'ur', explain:'"ur" in f-UR — like burn! 🐱' },
+  { word:'bird',  answer:'ir', explain:'"ir" in b-IR-d — like first! 🐦' },
+  { word:'perk',  answer:'er', explain:'"er" in p-ER-k — like fern! ✨' },
+];
+
+const PARTB = [
+  { emoji:'🐦', hint:'a feathered animal that can fly', options:['bird','bid'], answer:'bird', explain:'b-IR-d — "ir" makes the /er/ sound! 🐦' },
+  { emoji:'🌿', hint:'a leafy green plant with fronds', options:['fern','fun'],  answer:'fern', explain:'f-ER-n — "er" makes the /er/ sound! 🌿' },
+  { emoji:'👩‍⚕️', hint:'someone who helps sick people at a hospital', options:['nurse','nest'], answer:'nurse', explain:'n-UR-se — "ur" makes the /er/ sound! 👩‍⚕️' },
+  { emoji:'👕', hint:'clothing you wear on your upper body', options:['shirt','ship'], answer:'shirt', explain:'sh-IR-t — "ir" makes the /er/ sound! 👕' },
+];
+
+const PARTC = [
+  { base:'jog',  ending:'ing', correct:'jogging',  wrong:'joging',   explain:'jog = short o + g → double the g before -ing 🏃' },
+  { base:'shop', ending:'ed',  correct:'shopped',  wrong:'shoped',   explain:'shop = short o + p → double the p before -ed 🛍️' },
+  { base:'grab', ending:'ing', correct:'grabbing', wrong:'grabing',  explain:'grab = short a + b → double the b before -ing 🤲' },
+  { base:'hum',  ending:'ing', correct:'humming',  wrong:'huming',   explain:'hum = short u + m → double the m before -ing 🎵' },
+  { base:'skip', ending:'ed',  correct:'skipped',  wrong:'skiped',   explain:'skip = short i + p → double the p before -ed 🦘' },
+  { base:'run',  ending:'ing', correct:'running',  wrong:'runing',   explain:'run = short u + n → double the n before -ing 🏃‍♀️' },
+];
+
+const PARTD = [
+  { before:'We', after:'packing the car.',     blank:'were',  options:['were','where'],  explain:'were = 過去式 "be"，We were packing ✅' },
+  { before:'I had to', after:'the big box.',   blank:'pull',  options:['pull','put'],    explain:'pull = 拉 (to pull something heavy 💪)' },
+  { before:'Are there', after:'left to grab?', blank:'any',   options:['any','every'],   explain:'any = 有沒有？"Are there any…?" ❓' },
+  { before:'It was', after:'dirty.',           blank:'very',  options:['very','many'],   explain:'very = 非常，very dirty = 很髒 🧹' },
+  { before:'Kurt helps', after:'day.',         blank:'every', options:['every','any'],   explain:'every day = 每天，every = 每個 📅' },
+];
+
+const TOTAL = PARTA.length + PARTB.length + PARTC.length + PARTD.length;
+
+// ===== STATE =====
+let phase = 'learn', qi = 0, score = 0, total = 0, answered = false;
+let wrong = [];
+let aWrong = [], bWrong = [], cWrong = [], dWrong = [];
+
+// ===== HELPERS =====
+function clearFb() { document.getElementById('feedback').className = 'feedback'; }
+function fb(msg, type) {
+  const el = document.getElementById('feedback');
+  el.innerHTML = msg; el.className = 'feedback show ' + type;
+}
+function setBar(pct) { document.getElementById('pbarFill').style.width = pct + '%'; }
+function updateScore() {
+  document.getElementById('scoreLabel').textContent = '⭐ Score';
+  document.getElementById('scoreVal').textContent   = score + ' / ' + total;
+  setBar(Math.round(total / TOTAL * 100));
+}
+function buildDots(arr, curIdx, badArr) {
+  return arr.map(function(_, i) {
+    var cls = 'dot';
+    if (i === curIdx) cls += ' curr';
+    else if (i < curIdx) cls += (badArr.indexOf(i) >= 0 ? ' bad' : ' ok');
+    return '<div class="' + cls + '"></div>';
+  }).join('');
+}
+function setDots(arr, curIdx, badArr) {
+  document.getElementById('dots').innerHTML = buildDots(arr, curIdx, badArr);
+}
+function popStars(btn) {
+  var r = btn.getBoundingClientRect();
+  var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+  var emojis = ['⭐','✨','🌟','💜'];
+  for (var i = 0; i < 4; i++) {
+    var e = document.createElement('div'); e.className = 'star-pop';
+    e.textContent = emojis[i % emojis.length];
+    e.style.left = (cx + (Math.random()-0.5)*80) + 'px';
+    e.style.top  = (cy + (Math.random()-0.5)*40) + 'px';
+    document.body.appendChild(e);
+    (function(el){ setTimeout(function(){ el.remove(); }, 900); })(e);
+  }
+}
+function disableOpts() {
+  document.querySelectorAll('.opt-btn').forEach(function(b){ b.disabled = true; });
+}
+function setNext(label) {
+  document.getElementById('nextBtn').textContent = label;
+  document.getElementById('nextBtn').className = 'next-btn show';
+}
+
+// ===== LEARN =====
+function showLearn() {
+  phase = 'learn'; clearFb();
+  document.getElementById('gTitle').textContent = '🐦 er / ir / ur Magic!';
+  document.getElementById('gProg').textContent  = 'Learn';
+  document.getElementById('scoreLabel').textContent = '';
+  document.getElementById('scoreVal').textContent   = '';
+  document.getElementById('dots').innerHTML = '';
+  document.getElementById('finalCard').classList.remove('show');
+  setBar(2);
+  setNext('開始 Part A — 找一找！🔍');
+
+  document.getElementById('content').innerHTML = [
+    '<div class="learn-card">',
+    '<div class="learn-title">🌟 今天學什麼？Week 11/12</div>',
+
+    '<div class="rule-box" style="background:#faf5ff;color:#6b21a8;border-left:4px solid #8b5cf6">',
+    '🔮 <b>er / ir / ur</b> — 三個拼法，同一個音！<br>',
+    '就像 <b>her</b>（她）: &nbsp;<span style="font-size:1.3em;letter-spacing:2px">/ ər /</span>',
+    '</div>',
+
+    '<div class="rule-box rule-er">💜 <b>-er</b> words:',
+    '<div class="ex-row">',
+    '<span class="ex-chip ec-er">h<b>er</b> 👩</span>',
+    '<span class="ex-chip ec-er">v<b>er</b>b ✏️</span>',
+    '<span class="ex-chip ec-er">f<b>er</b>n 🌿</span>',
+    '<span class="ex-chip ec-er">p<b>er</b>k ✨</span>',
+    '</div></div>',
+
+    '<div class="rule-box rule-ir">🧡 <b>-ir</b> words:',
+    '<div class="ex-row">',
+    '<span class="ex-chip ec-ir">b<b>ir</b>d 🐦</span>',
+    '<span class="ex-chip ec-ir">d<b>ir</b>t 🌱</span>',
+    '<span class="ex-chip ec-ir">f<b>ir</b>st 🥇</span>',
+    '<span class="ex-chip ec-ir">sh<b>ir</b>t 👕</span>',
+    '</div></div>',
+
+    '<div class="rule-box rule-ur">💚 <b>-ur</b> words:',
+    '<div class="ex-row">',
+    '<span class="ex-chip ec-ur">f<b>ur</b> 🐱</span>',
+    '<span class="ex-chip ec-ur">c<b>ur</b>b 🪨</span>',
+    '<span class="ex-chip ec-ur">n<b>ur</b>se 👩‍⚕️</span>',
+    '<span class="ex-chip ec-ur">b<b>ur</b>n 🔥</span>',
+    '</div></div>',
+
+    '<div class="rule-box rule-add">📚 <b>Adding Endings 加字尾規則</b><br>',
+    '短母音 + <b>1</b> 個子音 → 加 <b>-ed / -ing</b> 前，子音先<b>加倍！</b><br>',
+    '<div class="ex-row">',
+    '<span class="ex-chip ec-blue">jog → jogg<b>ing</b> 🏃</span>',
+    '<span class="ex-chip ec-blue">hop → hopp<b>ed</b> 🐇</span>',
+    '<span class="ex-chip ec-blue">hum → humm<b>ing</b> 🎵</span>',
+    '</div></div>',
+
+    '</div>'
+  ].join('');
+}
+
+// ===== PART A =====
+function showPartA() {
+  phase = 'partA'; qi = 0; answered = false;
+  document.getElementById('gTitle').textContent = 'Part A — Which Pattern?';
+  clearFb();
+  renderPartA();
+}
+function renderPartA() {
+  answered = false; clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+  var q = PARTA[qi];
+  document.getElementById('gProg').textContent = 'Part A  ' + (qi+1) + ' / ' + PARTA.length;
+  setDots(PARTA, qi, aWrong);
+
+  document.getElementById('content').innerHTML = [
+    '<div class="q-card" id="qCard">',
+    '<span class="phase-label pl-a">🔤 Part A — er / ir / ur</span>',
+    '<div class="q-word">' + q.word + '</div>',
+    '<div class="q-hint">Which letters make the vowel sound?</div>',
+    '<div class="opts-3">',
+    '<button class="opt-btn opt-er" id="aBtn-er" onclick="checkA(\'er\',this)">er</button>',
+    '<button class="opt-btn opt-ir" id="aBtn-ir" onclick="checkA(\'ir\',this)">ir</button>',
+    '<button class="opt-btn opt-ur" id="aBtn-ur" onclick="checkA(\'ur\',this)">ur</button>',
+    '</div></div>'
+  ].join('');
+}
+function checkA(choice, btn) {
+  if (answered) return; answered = true;
+  var q = PARTA[qi]; total++;
+  disableOpts();
+  if (choice === q.answer) {
+    btn.classList.add('correct');
+    score++; fb('🎉 ' + q.explain, 'ok'); popStars(btn);
+  } else {
+    btn.classList.add('wrong');
+    document.getElementById('aBtn-' + q.answer).classList.add('correct');
+    aWrong.push(qi);
+    wrong.push({ part:'A', q:'Which pattern: "' + q.word + '"?', right:q.answer, hint:q.explain });
+    fb('❌ 正確是 <b>' + q.answer + '</b>！' + q.explain, 'bad');
+  }
+  updateScore();
+  setNext(qi < PARTA.length - 1 ? '下一題 →' : '繼續 Part B 🐦');
+}
+
+// ===== PART B =====
+function showPartB() {
+  phase = 'partB'; qi = 0; answered = false;
+  document.getElementById('gTitle').textContent = 'Part B — Picture Names';
+  clearFb();
+  renderPartB();
+}
+function renderPartB() {
+  answered = false; clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+  var q = PARTB[qi];
+  document.getElementById('gProg').textContent = 'Part B  ' + (qi+1) + ' / ' + PARTB.length;
+  setDots(PARTB, qi, bWrong);
+
+  document.getElementById('content').innerHTML = [
+    '<div class="q-card" id="qCard">',
+    '<span class="phase-label pl-b">🖼️ Part B — Picture Names</span>',
+    '<span class="q-emoji">' + q.emoji + '</span>',
+    '<div class="q-hint">' + q.hint + '</div>',
+    '<div class="opts-2">',
+    q.options.map(function(o, i) {
+      return '<button class="opt-btn" id="bBtn-' + i + '" onclick="checkB(this,' + i + ')">' + o + '</button>';
+    }).join(''),
+    '</div></div>'
+  ].join('');
+}
+function checkB(btn, idx) {
+  if (answered) return; answered = true;
+  var q = PARTB[qi]; total++;
+  var choice = q.options[idx];
+  disableOpts();
+  if (choice === q.answer) {
+    btn.classList.add('correct');
+    score++; fb('🎉 ' + q.explain, 'ok'); popStars(btn);
+  } else {
+    btn.classList.add('wrong');
+    var ci = q.options.indexOf(q.answer);
+    document.getElementById('bBtn-' + ci).classList.add('correct');
+    bWrong.push(qi);
+    wrong.push({ part:'B', q:q.emoji + ' ' + q.hint, right:q.answer, hint:q.explain });
+    fb('❌ 正確是 <b>' + q.answer + '</b>！' + q.explain, 'bad');
+  }
+  updateScore();
+  setNext(qi < PARTB.length - 1 ? '下一題 →' : '繼續 Part C ✏️');
+}
+
+// ===== PART C =====
+function showPartC() {
+  phase = 'partC'; qi = 0; answered = false;
+  document.getElementById('gTitle').textContent = 'Part C — Adding Endings';
+  clearFb();
+  renderPartC();
+}
+function renderPartC() {
+  answered = false; clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+  var q = PARTC[qi];
+  document.getElementById('gProg').textContent = 'Part C  ' + (qi+1) + ' / ' + PARTC.length;
+  setDots(PARTC, qi, cWrong);
+
+  var opts = Math.random() > 0.5 ? [q.correct, q.wrong] : [q.wrong, q.correct];
+
+  document.getElementById('content').innerHTML = [
+    '<div class="q-card" id="qCard">',
+    '<span class="phase-label pl-c">✏️ Part C — Adding Endings</span>',
+    '<div class="base-display">',
+    '<span class="base-word">' + q.base + '</span>',
+    '<span class="plus-end"> + ' + q.ending + '</span>',
+    '<span class="add-arrow">↓</span>',
+    '</div>',
+    '<div class="q-hint">短母音 + 1 consonant → double it first!</div>',
+    '<div class="opts-2">',
+    opts.map(function(o, i) {
+      return '<button class="opt-btn" id="cBtn-' + i + '" onclick="checkC(this,' + i + ')" style="font-size:1rem">' + o + '</button>';
+    }).join(''),
+    '</div></div>'
+  ].join('');
+
+  document.getElementById('content')._cOpts = opts;
+}
+function checkC(btn, idx) {
+  if (answered) return; answered = true;
+  var q = PARTC[qi]; total++;
+  var opts = document.getElementById('content')._cOpts;
+  var choice = opts[idx];
+  disableOpts();
+  if (choice === q.correct) {
+    btn.classList.add('correct');
+    score++; fb('🎉 ' + q.explain, 'ok'); popStars(btn);
+  } else {
+    btn.classList.add('wrong');
+    var ci = opts.indexOf(q.correct);
+    document.getElementById('cBtn-' + ci).classList.add('correct');
+    cWrong.push(qi);
+    wrong.push({ part:'C', q:q.base + ' + ' + q.ending, right:q.correct, hint:q.explain });
+    fb('❌ 正確是 <b>' + q.correct + '</b>！' + q.explain, 'bad');
+  }
+  updateScore();
+  setNext(qi < PARTC.length - 1 ? '下一題 →' : '繼續 Part D 📖');
+}
+
+// ===== PART D =====
+function showPartD() {
+  phase = 'partD'; qi = 0; answered = false;
+  document.getElementById('gTitle').textContent = 'Part D — Story Words';
+  clearFb();
+  renderPartD();
+}
+function renderPartD() {
+  answered = false; clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+  var q = PARTD[qi];
+  document.getElementById('gProg').textContent = 'Part D  ' + (qi+1) + ' / ' + PARTD.length;
+  setDots(PARTD, qi, dWrong);
+
+  var opts = Math.random() > 0.5 ? [q.options[0], q.options[1]] : [q.options[1], q.options[0]];
+
+  document.getElementById('content').innerHTML = [
+    '<div class="q-card" id="qCard">',
+    '<span class="phase-label pl-d">📖 Part D — Fill in the Blank</span>',
+    '<div class="sentence-display">',
+    q.before + ' <span class="blank-slot">___</span> ' + q.after,
+    '</div>',
+    '<div class="opts-2">',
+    opts.map(function(o, i) {
+      return '<button class="opt-btn" id="dBtn-' + i + '" onclick="checkD(this,' + i + ')">' + o + '</button>';
+    }).join(''),
+    '</div></div>'
+  ].join('');
+
+  document.getElementById('content')._dOpts = opts;
+}
+function checkD(btn, idx) {
+  if (answered) return; answered = true;
+  var q = PARTD[qi]; total++;
+  var opts = document.getElementById('content')._dOpts;
+  var choice = opts[idx];
+  disableOpts();
+  if (choice === q.blank) {
+    btn.classList.add('correct');
+    score++; fb('🎉 ' + q.explain, 'ok'); popStars(btn);
+  } else {
+    btn.classList.add('wrong');
+    var ci = opts.indexOf(q.blank);
+    document.getElementById('dBtn-' + ci).classList.add('correct');
+    dWrong.push(qi);
+    wrong.push({ part:'D', q:q.before + ' ___ ' + q.after, right:q.blank, hint:q.explain });
+    fb('❌ 正確是 <b>' + q.blank + '</b>！' + q.explain, 'bad');
+  }
+  updateScore();
+  setNext(qi < PARTD.length - 1 ? '下一題 →' : '看成績 🏆');
+}
+
+// ===== NAVIGATION =====
+function handleNext() {
+  if (phase === 'learn')  { showPartA(); return; }
+  if (phase === 'partA') {
+    if (++qi < PARTA.length) renderPartA(); else showPartB(); return;
+  }
+  if (phase === 'partB') {
+    if (++qi < PARTB.length) renderPartB(); else showPartC(); return;
+  }
+  if (phase === 'partC') {
+    if (++qi < PARTC.length) renderPartC(); else showPartD(); return;
+  }
+  if (phase === 'partD') {
+    if (++qi < PARTD.length) renderPartD(); else showDone(); return;
+  }
+}
+
+// ===== DONE =====
+function showDone() {
+  phase = 'done';
+  document.getElementById('content').innerHTML = '';
+  document.getElementById('dots').innerHTML = '';
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+  setBar(100);
+
+  var pct  = Math.round(score / TOTAL * 100);
+  var stars = pct >= 90 ? '⭐⭐⭐' : pct >= 70 ? '⭐⭐' : '⭐';
+  var msg   = pct >= 90 ? 'Yunman is a phonics star! 太厲害了！🌟' :
+              pct >= 70 ? '做得很好！Keep practicing! 💪' :
+                          '繼續加油！Practice makes perfect! 🌈';
+
+  var wrongHTML = '';
+  if (wrong.length > 0) {
+    wrongHTML = '<div class="wrong-title">📝 錯題複習</div>' +
+      wrong.map(function(w) {
+        return '<div class="wrong-item">' +
+          '<div class="wi-q">❌ ' + w.q + '</div>' +
+          '<div class="wi-a">✅ 正確：' + w.right + '</div>' +
+          '<div class="wi-h">' + w.hint + '</div>' +
+        '</div>';
+      }).join('');
+  }
+
+  var storyHTML = [
+    '<div class="story-box">',
+    '<div class="story-title">📖 Read: Kurt Can Help</div>',
+    'Kurt likes to help every day.<br>',
+    'He planted seeds with Mom.<br>',
+    'Some <span class="hl">dirt</span> got on her <span class="hl">shirt</span>.<br>',
+    'The seeds turned into <span class="hl">ferns</span>.<br>',
+    'Kurt will pull the can to the <span class="hl">curb</span>.<br>',
+    'There <span class="hl">were</span> bits of trash to sort.<br>',
+    'Kurt put any plastic in the blue bin.<br>',
+    'Kurt <span class="hl">skipped</span> to the park.<br>',
+    'It was <span class="hl">very</span> <span class="hl">dirty</span>.<br>',
+    'He <span class="hl">gripped</span> his brush.<br>',
+    'He <span class="hl">rubbed</span> it on the slide.',
+    '</div>'
+  ].join('');
+
+  document.getElementById('finalCard').innerHTML =
+    '<div class="final-title">🎉 完成！</div>' +
+    '<div class="final-score">' + score + ' / ' + TOTAL + '</div>' +
+    '<div class="final-stars">' + stars + '</div>' +
+    '<div class="final-msg">' + msg + '</div>' +
+    wrongHTML + storyHTML +
+    '<div style="margin-top:16px"><button class="retry-btn" onclick="restart()">🔄 再玩一次</button></div>';
+
+  document.getElementById('finalCard').classList.add('show');
+}
+
+function restart() {
+  qi = 0; score = 0; total = 0; answered = false;
+  wrong = []; aWrong = []; bWrong = []; cWrong = []; dWrong = [];
+  document.getElementById('finalCard').classList.remove('show');
+  showLearn();
+}
+
+// ===== INIT =====
+showLearn();
+</script>
+</body>
+</html>
