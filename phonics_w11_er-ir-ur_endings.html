@@ -19,15 +19,10 @@
   .score-label { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #aaa; }
   .score-val   { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #34d399; }
 
-  .learn-card {
-    background: white; border-radius: 20px; padding: 20px 18px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
-  }
+  /* ── Learn card ── */
+  .learn-card { background: white; border-radius: 20px; padding: 20px 18px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px; }
   .learn-title { font-family: 'Fredoka One', cursive; font-size: 1.2rem; text-align: center; margin-bottom: 14px; }
-  .rule-box {
-    border-radius: 12px; padding: 12px 14px; font-size: 0.88rem;
-    font-weight: 700; line-height: 1.7; margin-bottom: 10px;
-  }
+  .rule-box { border-radius: 12px; padding: 12px 14px; font-size: 0.88rem; font-weight: 700; line-height: 1.7; margin-bottom: 10px; }
   .rule-er  { background: #f3e8ff; color: #6b21a8; border-left: 4px solid #8b5cf6; }
   .rule-ir  { background: #fff7ed; color: #c2410c; border-left: 4px solid #f97316; }
   .rule-ur  { background: #ecfdf5; color: #065f46; border-left: 4px solid #10b981; }
@@ -39,6 +34,29 @@
   .ec-ur { background: #bbf7d0; color: #065f46; }
   .ec-blue { background: #bfdbfe; color: #1e40af; }
 
+  /* ── Menu ── */
+  .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .menu-card {
+    border-radius: 18px; padding: 20px 12px 16px; border: 3px solid #eee;
+    background: white; cursor: pointer; text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06); transition: all 0.15s;
+  }
+  .menu-card:not([disabled]):hover { transform: translateY(-2px); border-color: #8b5cf6; background: #faf5ff; }
+  .menu-card[disabled] { cursor: default; }
+  .menu-card.done { background: #f0fdf4; border-color: #34d399; }
+  .mc-icon  { font-size: 2rem; margin-bottom: 6px; }
+  .mc-title { font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: #333; margin-bottom: 4px; }
+  .mc-desc  { font-size: 0.78rem; color: #888; font-weight: 700; margin-bottom: 8px; }
+  .mc-status { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #bbb; }
+  .mc-status.ok { color: #34d399; }
+  .done-now-btn {
+    width: 100%; padding: 15px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg,#f59e0b,#ef4444);
+    color: white; font-family: 'Fredoka One',cursive; font-size: 1.2rem;
+    cursor: pointer; box-shadow: 0 4px 14px rgba(239,68,68,0.35);
+  }
+
+  /* ── Q card ── */
   .q-card {
     background: white; border-radius: 20px; padding: 22px 18px;
     box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
@@ -46,24 +64,20 @@
   }
   @keyframes popIn { from{opacity:0;transform:scale(0.88)} to{opacity:1;transform:scale(1)} }
   @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
-  .q-card.shake { animation: shake 0.35s ease; }
 
   .phase-label {
     font-family: 'Fredoka One', cursive; font-size: 0.8rem; letter-spacing: 2px;
     text-transform: uppercase; border-radius: 20px; padding: 4px 14px;
     display: inline-block; margin-bottom: 12px;
   }
-  .pl-a  { background: #f3e8ff; color: #6b21a8; }
-  .pl-b  { background: #fff7ed; color: #c2410c; }
-  .pl-c  { background: #eff6ff; color: #1e40af; }
-  .pl-d  { background: #fff1f2; color: #be123c; }
+  .pl-a { background: #f3e8ff; color: #6b21a8; }
+  .pl-b { background: #fff7ed; color: #c2410c; }
+  .pl-c { background: #eff6ff; color: #1e40af; }
+  .pl-d { background: #f0fdf4; color: #065f46; }
 
-  .q-word {
-    font-family: 'Fredoka One', cursive; font-size: 2.8rem; text-align: center;
-    letter-spacing: 3px; margin-bottom: 8px; color: #333;
-  }
-  .q-emoji   { font-size: 3.2rem; display: block; text-align: center; margin-bottom: 10px; }
-  .q-hint    { font-size: 0.85rem; color: #aaa; font-weight: 700; text-align: center; margin-bottom: 14px; }
+  .q-word  { font-family: 'Fredoka One', cursive; font-size: 2.8rem; text-align: center; letter-spacing: 3px; margin-bottom: 8px; color: #333; }
+  .q-emoji { font-size: 3.2rem; display: block; text-align: center; margin-bottom: 10px; }
+  .q-hint  { font-size: 0.85rem; color: #aaa; font-weight: 700; text-align: center; margin-bottom: 14px; }
 
   .opts-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .opts-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
@@ -72,39 +86,53 @@
     background: #f9f9f9; font-family: 'Fredoka One', cursive;
     font-size: 1.2rem; cursor: pointer; text-align: center; transition: all 0.15s;
   }
-  .opt-btn:hover   { border-color: #8b5cf6; background: #f3e8ff; transform: translateY(-2px); }
+  .opt-btn:not([disabled]):hover { border-color: #8b5cf6; background: #f3e8ff; transform: translateY(-2px); }
   .opt-btn.correct { background: #d1fae5; border-color: #34d399; color: #065f46; }
   .opt-btn.wrong   { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
-  .opt-btn:disabled { cursor: default; transform: none; }
-
+  .opt-btn[disabled] { cursor: default; transform: none; }
   .opt-er { background: #f3e8ff; border-color: #c4b5fd; color: #6b21a8; font-size: 1.6rem; padding: 18px; }
   .opt-ir { background: #fff7ed; border-color: #fcd34d; color: #c2410c; font-size: 1.6rem; padding: 18px; }
   .opt-ur { background: #ecfdf5; border-color: #6ee7b7; color: #065f46; font-size: 1.6rem; padding: 18px; }
-  .opt-er:hover { background: #e9d5ff; border-color: #8b5cf6; }
-  .opt-ir:hover { background: #fef3c7; border-color: #f97316; }
-  .opt-ur:hover { background: #bbf7d0; border-color: #10b981; }
+  .opt-er:not([disabled]):hover { background: #e9d5ff; border-color: #8b5cf6; }
+  .opt-ir:not([disabled]):hover { background: #fef3c7; border-color: #f97316; }
+  .opt-ur:not([disabled]):hover { background: #bbf7d0; border-color: #10b981; }
 
   .base-display { text-align: center; margin-bottom: 14px; }
-  .base-word    { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #333; }
-  .plus-end     { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #3b82f6; margin-left: 8px; }
-  .add-arrow    { font-size: 1.6rem; display: block; color: #bbb; margin: 4px 0; }
+  .base-word { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #333; }
+  .plus-end  { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #3b82f6; margin-left: 8px; }
+  .add-arrow { font-size: 1.6rem; display: block; color: #bbb; margin: 4px 0; }
 
-  .sentence-display {
-    font-family: 'Fredoka One', cursive; font-size: 1.25rem; text-align: center;
-    color: #333; margin-bottom: 16px; line-height: 2;
+  /* ── Tap-word (Part D) ── */
+  .tap-instr { font-size: 0.9rem; font-weight: 800; color: #065f46; margin-bottom: 12px; line-height: 1.5; }
+  .tap-passage { background: #fffbeb; border-radius: 14px; padding: 14px 12px; margin-bottom: 12px; }
+  .tap-line { margin-bottom: 8px; line-height: 2.6; }
+  .tap-word {
+    display: inline-block; padding: 3px 7px; border-radius: 8px;
+    cursor: pointer; transition: all 0.12s; border: 2px solid transparent;
+    font-weight: 700; font-size: 1.05rem; color: #333; margin: 2px 1px;
+    user-select: none; -webkit-user-select: none;
   }
-  .blank-slot { display: inline-block; min-width: 80px; border-bottom: 3px solid #8b5cf6; color: #8b5cf6; padding: 0 4px; }
+  .tap-word:hover    { background: #fef9c3; border-color: #fbbf24; }
+  .tap-word.selected { background: #fde68a; border-color: #f59e0b; color: #92400e; }
+  .tap-word.correct  { background: #d1fae5; border-color: #34d399; color: #065f46; font-weight: 800; }
+  .tap-word.wrong    { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+  .tap-word.missed   { background: #fef9c3; border-color: #fbbf24; color: #92400e; font-weight: 800; outline: 2px dashed #f59e0b; }
+  .sel-count { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #8b5cf6; text-align: center; margin-bottom: 10px; }
+  .check-btn {
+    width: 100%; padding: 12px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg,#10b981,#059669);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.1rem;
+    cursor: pointer; margin-bottom: 4px;
+  }
 
+  /* ── Dots ── */
   .dots { display: flex; justify-content: center; gap: 5px; margin-bottom: 12px; flex-wrap: wrap; }
   .dot { width: 10px; height: 10px; border-radius: 50%; background: #e5e7eb; transition: all 0.3s; }
   .dot.curr { background: #8b5cf6; transform: scale(1.4); }
   .dot.ok   { background: #34d399; }
   .dot.bad  { background: #f87171; }
 
-  .feedback {
-    border-radius: 14px; padding: 12px 16px; margin-bottom: 12px;
-    font-weight: 800; font-size: 0.95rem; display: none; text-align: center; line-height: 1.6;
-  }
+  .feedback { border-radius: 14px; padding: 12px 16px; margin-bottom: 12px; font-weight: 800; font-size: 0.95rem; display: none; text-align: center; line-height: 1.6; }
   .feedback.show { display: block; }
   .feedback.ok  { background: #d1fae5; color: #065f46; border: 3px solid #6ee7b7; }
   .feedback.bad { background: #fee2e2; color: #991b1b; border: 3px solid #fca5a5; }
@@ -113,35 +141,24 @@
     width: 100%; padding: 15px; border-radius: 50px; border: none;
     background: linear-gradient(135deg,#8b5cf6,#06b6d4);
     color: white; font-family: 'Fredoka One', cursive; font-size: 1.2rem;
-    cursor: pointer; display: none; box-shadow: 0 4px 14px rgba(139,92,246,0.35);
-    transition: transform 0.1s;
+    cursor: pointer; display: none; box-shadow: 0 4px 14px rgba(139,92,246,0.35); transition: transform 0.1s;
   }
   .next-btn:active { transform: scale(0.97); }
   .next-btn.show { display: block; }
 
-  .final-card {
-    background: white; border-radius: 24px; padding: 30px 22px;
-    text-align: center; box-shadow: 0 8px 28px rgba(0,0,0,0.1); display: none;
-  }
+  /* ── Done screen ── */
+  .final-card { background: white; border-radius: 24px; padding: 30px 22px; text-align: center; box-shadow: 0 8px 28px rgba(0,0,0,0.1); display: none; }
   .final-card.show { display: block; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
   .final-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #8b5cf6; margin-bottom: 6px; }
   .final-score { font-family: 'Fredoka One', cursive; font-size: 3.2rem; color: #5c6bc0; margin-bottom: 4px; }
   .final-stars { font-size: 2.4rem; letter-spacing: 6px; margin: 8px 0 12px; }
   .final-msg   { font-size: 0.95rem; color: #666; font-weight: 700; margin-bottom: 20px; }
   .wrong-title { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #991b1b; margin-bottom: 8px; text-align: left; }
-  .wrong-item  { background: #fff1f2; border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; font-size: 0.88rem; font-weight: 700; text-align: left; }
-  .wi-q { color: #991b1b; margin-bottom: 3px; }
-  .wi-a { color: #065f46; margin-bottom: 2px; }
-  .wi-h { color: #555; font-weight: 600; font-size: 0.82rem; }
+  .wrong-item  { background: #fff1f2; border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; text-align: left; }
+  .wi-q { font-size: 0.85rem; color: #991b1b; font-weight: 800; margin-bottom: 3px; }
+  .wi-a { font-size: 0.85rem; color: #065f46; font-weight: 800; margin-bottom: 2px; }
+  .wi-h { font-size: 0.8rem; color: #555; font-weight: 600; }
   .retry-btn { width: 100%; padding: 14px; border-radius: 50px; border: none; background: linear-gradient(135deg,#8b5cf6,#06b6d4); color: white; font-family: 'Fredoka One',cursive; font-size: 1.1rem; cursor: pointer; }
-
-  .story-box {
-    background: #f0fdf4; border-radius: 16px; padding: 16px 14px; margin-top: 16px;
-    border-left: 4px solid #10b981; font-size: 0.88rem; font-weight: 700; color: #065f46;
-    line-height: 2; text-align: left;
-  }
-  .story-box .story-title { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #047857; margin-bottom: 8px; }
-  .hl { background: #bbf7d0; border-radius: 4px; padding: 0 3px; }
 
   .star-pop { position: fixed; font-size: 1.8rem; pointer-events: none; animation: fly 0.9s ease-out forwards; z-index: 999; }
   @keyframes fly { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-90px) scale(1.6)} }
@@ -151,7 +168,7 @@
 <div class="wrap">
   <div class="g-header">
     <div class="g-title" id="gTitle">🐦 er / ir / ur Magic!</div>
-    <div class="g-prog"  id="gProg">Learn</div>
+    <div class="g-prog" id="gProg">Learn</div>
   </div>
   <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
   <div class="score-row">
@@ -161,61 +178,102 @@
   <div id="content"></div>
   <div class="dots"     id="dots"></div>
   <div class="feedback" id="feedback"></div>
-  <button class="next-btn" id="nextBtn" onclick="handleNext()">開始 Part A 🔍</button>
+  <button class="next-btn" id="nextBtn" onclick="handleNext()"></button>
   <div class="final-card" id="finalCard"></div>
 </div>
 
 <script>
-// ===== DATA =====
+// ============================================================
+// DATA
+// ============================================================
 
 const PARTA = [
-  { word:'curb',  answer:'ur', explain:'"ur" in c-UR-b — like fur! 🐱' },
-  { word:'fern',  answer:'er', explain:'"er" in f-ER-n — like her! 🌿' },
-  { word:'first', answer:'ir', explain:'"ir" in f-IR-st — like bird! 🥇' },
-  { word:'shirt', answer:'ir', explain:'"ir" in sh-IR-t — like dirt! 👕' },
-  { word:'verb',  answer:'er', explain:'"er" in v-ER-b — like her! ✏️' },
-  { word:'fur',   answer:'ur', explain:'"ur" in f-UR — like burn! 🐱' },
-  { word:'bird',  answer:'ir', explain:'"ir" in b-IR-d — like first! 🐦' },
-  { word:'perk',  answer:'er', explain:'"er" in p-ER-k — like fern! ✨' },
+  { word:'curb',  answer:'ur', explain:'"ur" in c-UR-b 🪨' },
+  { word:'fern',  answer:'er', explain:'"er" in f-ER-n 🌿' },
+  { word:'first', answer:'ir', explain:'"ir" in f-IR-st 🥇' },
+  { word:'shirt', answer:'ir', explain:'"ir" in sh-IR-t 👕' },
+  { word:'verb',  answer:'er', explain:'"er" in v-ER-b ✏️' },
+  { word:'fur',   answer:'ur', explain:'"ur" in f-UR 🐱' },
+  { word:'bird',  answer:'ir', explain:'"ir" in b-IR-d 🐦' },
+  { word:'perk',  answer:'er', explain:'"er" in p-ER-k ✨' },
 ];
 
 const PARTB = [
-  { emoji:'🐦', hint:'a feathered animal that can fly', options:['bird','bid'], answer:'bird', explain:'b-IR-d — "ir" makes the /er/ sound! 🐦' },
-  { emoji:'🌿', hint:'a leafy green plant with fronds', options:['fern','fun'],  answer:'fern', explain:'f-ER-n — "er" makes the /er/ sound! 🌿' },
+  { emoji:'🐦', hint:'a feathered animal that can fly',             options:['bird','bid'],   answer:'bird',  explain:'b-IR-d — "ir" makes the /er/ sound! 🐦' },
+  { emoji:'🌿', hint:'a leafy green plant with fronds',             options:['fern','fun'],   answer:'fern',  explain:'f-ER-n — "er" makes the /er/ sound! 🌿' },
   { emoji:'👩‍⚕️', hint:'someone who helps sick people at a hospital', options:['nurse','nest'], answer:'nurse', explain:'n-UR-se — "ur" makes the /er/ sound! 👩‍⚕️' },
-  { emoji:'👕', hint:'clothing you wear on your upper body', options:['shirt','ship'], answer:'shirt', explain:'sh-IR-t — "ir" makes the /er/ sound! 👕' },
+  { emoji:'👕', hint:'clothing you wear on your upper body',        options:['shirt','ship'],  answer:'shirt', explain:'sh-IR-t — "ir" makes the /er/ sound! 👕' },
 ];
 
 const PARTC = [
-  { base:'jog',  ending:'ing', correct:'jogging',  wrong:'joging',   explain:'jog = short o + g → double the g before -ing 🏃' },
-  { base:'shop', ending:'ed',  correct:'shopped',  wrong:'shoped',   explain:'shop = short o + p → double the p before -ed 🛍️' },
-  { base:'grab', ending:'ing', correct:'grabbing', wrong:'grabing',  explain:'grab = short a + b → double the b before -ing 🤲' },
-  { base:'hum',  ending:'ing', correct:'humming',  wrong:'huming',   explain:'hum = short u + m → double the m before -ing 🎵' },
-  { base:'skip', ending:'ed',  correct:'skipped',  wrong:'skiped',   explain:'skip = short i + p → double the p before -ed 🦘' },
-  { base:'run',  ending:'ing', correct:'running',  wrong:'runing',   explain:'run = short u + n → double the n before -ing 🏃‍♀️' },
+  { base:'jog',  ending:'ing', correct:'jogging',  wrong:'joging',  explain:'jog = short o + g → double the g! 🏃' },
+  { base:'shop', ending:'ed',  correct:'shopped',  wrong:'shoped',  explain:'shop = short o + p → double the p! 🛍️' },
+  { base:'grab', ending:'ing', correct:'grabbing', wrong:'grabing', explain:'grab = short a + b → double the b! 🤲' },
+  { base:'hum',  ending:'ing', correct:'humming',  wrong:'huming',  explain:'hum = short u + m → double the m! 🎵' },
+  { base:'skip', ending:'ed',  correct:'skipped',  wrong:'skiped',  explain:'skip = short i + p → double the p! 🦘' },
+  { base:'run',  ending:'ing', correct:'running',  wrong:'runing',  explain:'run = short u + n → double the n! 🏃‍♀️' },
 ];
 
+// Part D: tap-word questions from "Kurt Can Help"
+// Each question has: lines (array of word arrays), targets (global word indices), instruction, explain
 const PARTD = [
-  { before:'We', after:'packing the car.',     blank:'were',  options:['were','where'],  explain:'were = 過去式 "be"，We were packing ✅' },
-  { before:'I had to', after:'the big box.',   blank:'pull',  options:['pull','put'],    explain:'pull = 拉 (to pull something heavy 💪)' },
-  { before:'Are there', after:'left to grab?', blank:'any',   options:['any','every'],   explain:'any = 有沒有？"Are there any…?" ❓' },
-  { before:'It was', after:'dirty.',           blank:'very',  options:['very','many'],   explain:'very = 非常，very dirty = 很髒 🧹' },
-  { before:'Kurt helps', after:'day.',         blank:'every', options:['every','any'],   explain:'every day = 每天，every = 每個 📅' },
+  {
+    instruction: '🐦 Tap the <b>7 words</b> that have the same vowel sound as <b>bird</b>!',
+    lines: [
+      ['Kurt','likes','to','help','every','day.'],
+      ['He','planted','seeds','with','Mom.'],
+      ['Some','dirt','got','on','her','shirt.'],
+      ['The','seeds','turned','into','ferns.']
+    ],
+    // Global indices: line0=0-5, line1=6-10, line2=11-16, line3=17-21
+    targets: [0, 4, 12, 15, 16, 19, 21],
+    // Kurt(0), every(4), dirt(12), her(15), shirt(16), turned(19), ferns(21)
+    explain: 'Kurt(ur) every(er) dirt(ir) her(er) shirt(ir) turned(ur) ferns(er) — all make the /er/ sound!'
+  },
+  {
+    instruction: '💚 Tap the <b>3 words spelled with "ur"</b> that make the /er/ sound!',
+    lines: [
+      ['Kurt','will','pull','the','can','to','the','curb.'],
+      ['There','were','bits','of','trash','to','sort.'],
+      ['Kurt','put','any','plastic','in','the','blue','bin.']
+    ],
+    // Global indices: line0=0-7, line1=8-14, line2=15-22
+    targets: [0, 7, 15],
+    // Kurt(0), curb(7), Kurt(15) — note Kurt appears in line0 and line2
+    explain: 'Kurt(×2) + curb — all spelled "ur"! (were = "er" spelling, sort = "or" spelling)'
+  },
+  {
+    instruction: '✏️ Tap the <b>3 words</b> with an inflectional ending (<b>-ed</b> or <b>-ing</b>)!',
+    lines: [
+      ['Kurt','skipped','to','the','park.'],
+      ['It','was','very','dirty.'],
+      ['He','gripped','his','brush.'],
+      ['He','rubbed','it','on','the','slide.']
+    ],
+    // Global indices: line0=0-4, line1=5-8, line2=9-12, line3=13-18
+    targets: [1, 10, 14],
+    // skipped(1), gripped(10), rubbed(14)
+    explain: 'skipped (skip+p+ed) · gripped (grip+p+ed) · rubbed (rub+b+ed) — short vowel + doubled consonant + ed!'
+  }
 ];
 
-const TOTAL = PARTA.length + PARTB.length + PARTC.length + PARTD.length;
+const TOTAL = PARTA.length + PARTB.length + PARTC.length + PARTD.length; // 8+4+6+3 = 21
 
-// ===== STATE =====
-let phase = 'learn', qi = 0, score = 0, total = 0, answered = false;
-let wrong = [];
-let aWrong = [], bWrong = [], cWrong = [], dWrong = [];
+// ============================================================
+// STATE
+// ============================================================
+var phase = 'learn';
+var qi = 0, score = 0, total = 0, answered = false;
+var wrong = [];
+var aWrong = [], bWrong = [], cWrong = [], dWrong = [];
+var partDone = { A:false, B:false, C:false, D:false };
+var selIdxs = []; // for Part D tap-word
 
-// ===== HELPERS =====
+// ============================================================
+// HELPERS
+// ============================================================
 function clearFb() { document.getElementById('feedback').className = 'feedback'; }
-function fb(msg, type) {
-  const el = document.getElementById('feedback');
-  el.innerHTML = msg; el.className = 'feedback show ' + type;
-}
+function fb(msg, type) { var el = document.getElementById('feedback'); el.innerHTML = msg; el.className = 'feedback show ' + type; }
 function setBar(pct) { document.getElementById('pbarFill').style.width = pct + '%'; }
 function updateScore() {
   document.getElementById('scoreLabel').textContent = '⭐ Score';
@@ -224,37 +282,28 @@ function updateScore() {
 }
 function buildDots(arr, curIdx, badArr) {
   return arr.map(function(_, i) {
-    var cls = 'dot';
-    if (i === curIdx) cls += ' curr';
-    else if (i < curIdx) cls += (badArr.indexOf(i) >= 0 ? ' bad' : ' ok');
-    return '<div class="' + cls + '"></div>';
+    var c = 'dot'; if (i===curIdx) c+=' curr'; else if (i<curIdx) c+=(badArr.indexOf(i)>=0?' bad':' ok');
+    return '<div class="'+c+'"></div>';
   }).join('');
 }
-function setDots(arr, curIdx, badArr) {
-  document.getElementById('dots').innerHTML = buildDots(arr, curIdx, badArr);
-}
-function popStars(btn) {
-  var r = btn.getBoundingClientRect();
-  var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-  var emojis = ['⭐','✨','🌟','💜'];
-  for (var i = 0; i < 4; i++) {
-    var e = document.createElement('div'); e.className = 'star-pop';
-    e.textContent = emojis[i % emojis.length];
-    e.style.left = (cx + (Math.random()-0.5)*80) + 'px';
-    e.style.top  = (cy + (Math.random()-0.5)*40) + 'px';
+function setDots(arr, cur, bad) { document.getElementById('dots').innerHTML = buildDots(arr, cur, bad); }
+function setNext(label) { var b = document.getElementById('nextBtn'); b.textContent = label; b.className = 'next-btn show'; }
+function disableOpts() { document.querySelectorAll('.opt-btn').forEach(function(b){ b.disabled = true; }); }
+function popStars(el) {
+  var r = el ? el.getBoundingClientRect() : {left: window.innerWidth/2 - 30, top: window.innerHeight/2 - 30, width:60};
+  var cx = r.left + r.width/2, cy = r.top + 20;
+  ['⭐','✨','🌟','💜','⭐','✨'].forEach(function(em, i) {
+    var e = document.createElement('div'); e.className = 'star-pop'; e.textContent = em;
+    e.style.left = (cx + (Math.random()-0.5)*100) + 'px';
+    e.style.top  = (cy + (Math.random()-0.5)*50) + 'px';
     document.body.appendChild(e);
-    (function(el){ setTimeout(function(){ el.remove(); }, 900); })(e);
-  }
-}
-function disableOpts() {
-  document.querySelectorAll('.opt-btn').forEach(function(b){ b.disabled = true; });
-}
-function setNext(label) {
-  document.getElementById('nextBtn').textContent = label;
-  document.getElementById('nextBtn').className = 'next-btn show';
+    setTimeout(function(){ e.remove(); }, 900);
+  });
 }
 
-// ===== LEARN =====
+// ============================================================
+// LEARN
+// ============================================================
 function showLearn() {
   phase = 'learn'; clearFb();
   document.getElementById('gTitle').textContent = '🐦 er / ir / ur Magic!';
@@ -264,268 +313,281 @@ function showLearn() {
   document.getElementById('dots').innerHTML = '';
   document.getElementById('finalCard').classList.remove('show');
   setBar(2);
-  setNext('開始 Part A — 找一找！🔍');
+  setNext('選擇 Part！📋');
 
   document.getElementById('content').innerHTML = [
     '<div class="learn-card">',
     '<div class="learn-title">🌟 今天學什麼？Week 11/12</div>',
-
     '<div class="rule-box" style="background:#faf5ff;color:#6b21a8;border-left:4px solid #8b5cf6">',
     '🔮 <b>er / ir / ur</b> — 三個拼法，同一個音！<br>',
-    '就像 <b>her</b>（她）: &nbsp;<span style="font-size:1.3em;letter-spacing:2px">/ ər /</span>',
+    '就像 <b>bird</b>（鳥）的母音：<span style="font-size:1.3em;letter-spacing:2px">/ ər /</span>',
     '</div>',
-
-    '<div class="rule-box rule-er">💜 <b>-er</b> words:',
-    '<div class="ex-row">',
-    '<span class="ex-chip ec-er">h<b>er</b> 👩</span>',
-    '<span class="ex-chip ec-er">v<b>er</b>b ✏️</span>',
-    '<span class="ex-chip ec-er">f<b>er</b>n 🌿</span>',
-    '<span class="ex-chip ec-er">p<b>er</b>k ✨</span>',
-    '</div></div>',
-
-    '<div class="rule-box rule-ir">🧡 <b>-ir</b> words:',
-    '<div class="ex-row">',
-    '<span class="ex-chip ec-ir">b<b>ir</b>d 🐦</span>',
-    '<span class="ex-chip ec-ir">d<b>ir</b>t 🌱</span>',
-    '<span class="ex-chip ec-ir">f<b>ir</b>st 🥇</span>',
-    '<span class="ex-chip ec-ir">sh<b>ir</b>t 👕</span>',
-    '</div></div>',
-
-    '<div class="rule-box rule-ur">💚 <b>-ur</b> words:',
-    '<div class="ex-row">',
-    '<span class="ex-chip ec-ur">f<b>ur</b> 🐱</span>',
-    '<span class="ex-chip ec-ur">c<b>ur</b>b 🪨</span>',
-    '<span class="ex-chip ec-ur">n<b>ur</b>se 👩‍⚕️</span>',
-    '<span class="ex-chip ec-ur">b<b>ur</b>n 🔥</span>',
-    '</div></div>',
-
-    '<div class="rule-box rule-add">📚 <b>Adding Endings 加字尾規則</b><br>',
-    '短母音 + <b>1</b> 個子音 → 加 <b>-ed / -ing</b> 前，子音先<b>加倍！</b><br>',
-    '<div class="ex-row">',
-    '<span class="ex-chip ec-blue">jog → jogg<b>ing</b> 🏃</span>',
-    '<span class="ex-chip ec-blue">hop → hopp<b>ed</b> 🐇</span>',
-    '<span class="ex-chip ec-blue">hum → humm<b>ing</b> 🎵</span>',
-    '</div></div>',
-
+    '<div class="rule-box rule-er">💜 <b>-er</b>: <div class="ex-row"><span class="ex-chip ec-er">h<b>er</b> 👩</span><span class="ex-chip ec-er">v<b>er</b>b ✏️</span><span class="ex-chip ec-er">f<b>er</b>n 🌿</span><span class="ex-chip ec-er">p<b>er</b>k ✨</span></div></div>',
+    '<div class="rule-box rule-ir">🧡 <b>-ir</b>: <div class="ex-row"><span class="ex-chip ec-ir">b<b>ir</b>d 🐦</span><span class="ex-chip ec-ir">d<b>ir</b>t 🌱</span><span class="ex-chip ec-ir">f<b>ir</b>st 🥇</span><span class="ex-chip ec-ir">sh<b>ir</b>t 👕</span></div></div>',
+    '<div class="rule-box rule-ur">💚 <b>-ur</b>: <div class="ex-row"><span class="ex-chip ec-ur">f<b>ur</b> 🐱</span><span class="ex-chip ec-ur">c<b>ur</b>b 🪨</span><span class="ex-chip ec-ur">n<b>ur</b>se 👩‍⚕️</span><span class="ex-chip ec-ur">K<b>ur</b>t 📖</span></div></div>',
+    '<div class="rule-box rule-add">📚 <b>Adding Endings 規則</b><br>短母音 + 1 子音 → <b>先加倍</b>再加 -ed / -ing！<br><div class="ex-row"><span class="ex-chip ec-blue">jog→jogg<b>ing</b></span><span class="ex-chip ec-blue">hop→hopp<b>ed</b></span><span class="ex-chip ec-blue">hum→humm<b>ing</b></span></div></div>',
     '</div>'
   ].join('');
 }
 
-// ===== PART A =====
+// ============================================================
+// MENU
+// ============================================================
+function showMenu() {
+  phase = 'menu'; clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+  document.getElementById('dots').innerHTML = '';
+  document.getElementById('finalCard').classList.remove('show');
+
+  var doneCount = (partDone.A?1:0)+(partDone.B?1:0)+(partDone.C?1:0)+(partDone.D?1:0);
+  var allDone   = doneCount === 4;
+
+  document.getElementById('gTitle').textContent = '選擇一個 Part！';
+  document.getElementById('gProg').textContent  = doneCount + ' / 4 完成';
+  setBar(Math.round(total / TOTAL * 100));
+
+  function card(part, icon, title, desc, count) {
+    var done = partDone[part];
+    return '<button class="menu-card'+(done?' done':'')+'" '+(done?'disabled':'onclick="startPart(\''+part+'\')"')+'>'+
+      '<div class="mc-icon">'+icon+'</div>'+
+      '<div class="mc-title">Part '+part+'</div>'+
+      '<div class="mc-desc">'+desc+'</div>'+
+      '<div class="mc-status'+(done?' ok':'')+'">'+( done ? '✅ 完成！' : count+' 題')+'</div>'+
+    '</button>';
+  }
+
+  document.getElementById('content').innerHTML =
+    '<div class="menu-grid">'+
+    card('A','🔤','A','er / ir / ur 辨識', PARTA.length)+
+    card('B','🖼️','B','圖片辨字', PARTB.length)+
+    card('C','✏️','C','加字尾規則', PARTC.length)+
+    card('D','📖','D','Kurt Can Help 故事', PARTD.length)+
+    '</div>'+
+    (allDone ? '<button class="done-now-btn" onclick="showDone()">🏆 看成績！</button>' : '');
+}
+
+function startPart(p) {
+  if (p==='A') showPartA();
+  else if (p==='B') showPartB();
+  else if (p==='C') showPartC();
+  else if (p==='D') showPartD();
+}
+
+// ============================================================
+// PART A — er / ir / ur sort
+// ============================================================
 function showPartA() {
   phase = 'partA'; qi = 0; answered = false;
   document.getElementById('gTitle').textContent = 'Part A — Which Pattern?';
-  clearFb();
-  renderPartA();
+  clearFb(); renderPartA();
 }
 function renderPartA() {
   answered = false; clearFb();
   document.getElementById('nextBtn').className = 'next-btn';
   var q = PARTA[qi];
-  document.getElementById('gProg').textContent = 'Part A  ' + (qi+1) + ' / ' + PARTA.length;
+  document.getElementById('gProg').textContent = 'Part A  '+(qi+1)+' / '+PARTA.length;
   setDots(PARTA, qi, aWrong);
-
-  document.getElementById('content').innerHTML = [
-    '<div class="q-card" id="qCard">',
-    '<span class="phase-label pl-a">🔤 Part A — er / ir / ur</span>',
-    '<div class="q-word">' + q.word + '</div>',
-    '<div class="q-hint">Which letters make the vowel sound?</div>',
-    '<div class="opts-3">',
-    '<button class="opt-btn opt-er" id="aBtn-er" onclick="checkA(\'er\',this)">er</button>',
-    '<button class="opt-btn opt-ir" id="aBtn-ir" onclick="checkA(\'ir\',this)">ir</button>',
-    '<button class="opt-btn opt-ur" id="aBtn-ur" onclick="checkA(\'ur\',this)">ur</button>',
-    '</div></div>'
-  ].join('');
+  document.getElementById('content').innerHTML =
+    '<div class="q-card">'+
+    '<span class="phase-label pl-a">🔤 Part A — er / ir / ur</span>'+
+    '<div class="q-word">'+q.word+'</div>'+
+    '<div class="q-hint">Which letters make the vowel sound?</div>'+
+    '<div class="opts-3">'+
+    '<button class="opt-btn opt-er" id="aBtn-er" onclick="checkA(\'er\',this)">er</button>'+
+    '<button class="opt-btn opt-ir" id="aBtn-ir" onclick="checkA(\'ir\',this)">ir</button>'+
+    '<button class="opt-btn opt-ur" id="aBtn-ur" onclick="checkA(\'ur\',this)">ur</button>'+
+    '</div></div>';
 }
 function checkA(choice, btn) {
   if (answered) return; answered = true;
   var q = PARTA[qi]; total++;
   disableOpts();
   if (choice === q.answer) {
-    btn.classList.add('correct');
-    score++; fb('🎉 ' + q.explain, 'ok'); popStars(btn);
+    btn.classList.add('correct'); score++; fb('🎉 '+q.explain, 'ok'); popStars(btn);
   } else {
     btn.classList.add('wrong');
-    document.getElementById('aBtn-' + q.answer).classList.add('correct');
+    document.getElementById('aBtn-'+q.answer).classList.add('correct');
     aWrong.push(qi);
-    wrong.push({ part:'A', q:'Which pattern: "' + q.word + '"?', right:q.answer, hint:q.explain });
-    fb('❌ 正確是 <b>' + q.answer + '</b>！' + q.explain, 'bad');
+    wrong.push({part:'A', q:'"'+q.word+'" 是哪個拼法？', right:q.answer, hint:q.explain});
+    fb('❌ 正確是 <b>'+q.answer+'</b>！'+q.explain, 'bad');
   }
   updateScore();
-  setNext(qi < PARTA.length - 1 ? '下一題 →' : '繼續 Part B 🐦');
+  setNext(qi < PARTA.length-1 ? '下一題 →' : '回到選單 📋');
 }
 
-// ===== PART B =====
+// ============================================================
+// PART B — picture names
+// ============================================================
 function showPartB() {
   phase = 'partB'; qi = 0; answered = false;
   document.getElementById('gTitle').textContent = 'Part B — Picture Names';
-  clearFb();
-  renderPartB();
+  clearFb(); renderPartB();
 }
 function renderPartB() {
   answered = false; clearFb();
   document.getElementById('nextBtn').className = 'next-btn';
   var q = PARTB[qi];
-  document.getElementById('gProg').textContent = 'Part B  ' + (qi+1) + ' / ' + PARTB.length;
+  document.getElementById('gProg').textContent = 'Part B  '+(qi+1)+' / '+PARTB.length;
   setDots(PARTB, qi, bWrong);
-
-  document.getElementById('content').innerHTML = [
-    '<div class="q-card" id="qCard">',
-    '<span class="phase-label pl-b">🖼️ Part B — Picture Names</span>',
-    '<span class="q-emoji">' + q.emoji + '</span>',
-    '<div class="q-hint">' + q.hint + '</div>',
-    '<div class="opts-2">',
-    q.options.map(function(o, i) {
-      return '<button class="opt-btn" id="bBtn-' + i + '" onclick="checkB(this,' + i + ')">' + o + '</button>';
-    }).join(''),
-    '</div></div>'
-  ].join('');
+  document.getElementById('content').innerHTML =
+    '<div class="q-card">'+
+    '<span class="phase-label pl-b">🖼️ Part B — Picture Names</span>'+
+    '<span class="q-emoji">'+q.emoji+'</span>'+
+    '<div class="q-hint">'+q.hint+'</div>'+
+    '<div class="opts-2">'+
+    q.options.map(function(o,i){ return '<button class="opt-btn" id="bBtn-'+i+'" onclick="checkB(this,'+i+')">'+o+'</button>'; }).join('')+
+    '</div></div>';
 }
 function checkB(btn, idx) {
   if (answered) return; answered = true;
   var q = PARTB[qi]; total++;
-  var choice = q.options[idx];
   disableOpts();
-  if (choice === q.answer) {
-    btn.classList.add('correct');
-    score++; fb('🎉 ' + q.explain, 'ok'); popStars(btn);
+  if (q.options[idx] === q.answer) {
+    btn.classList.add('correct'); score++; fb('🎉 '+q.explain, 'ok'); popStars(btn);
   } else {
     btn.classList.add('wrong');
-    var ci = q.options.indexOf(q.answer);
-    document.getElementById('bBtn-' + ci).classList.add('correct');
+    document.getElementById('bBtn-'+q.options.indexOf(q.answer)).classList.add('correct');
     bWrong.push(qi);
-    wrong.push({ part:'B', q:q.emoji + ' ' + q.hint, right:q.answer, hint:q.explain });
-    fb('❌ 正確是 <b>' + q.answer + '</b>！' + q.explain, 'bad');
+    wrong.push({part:'B', q:q.emoji+' '+q.hint, right:q.answer, hint:q.explain});
+    fb('❌ 正確是 <b>'+q.answer+'</b>！'+q.explain, 'bad');
   }
   updateScore();
-  setNext(qi < PARTB.length - 1 ? '下一題 →' : '繼續 Part C ✏️');
+  setNext(qi < PARTB.length-1 ? '下一題 →' : '回到選單 📋');
 }
 
-// ===== PART C =====
+// ============================================================
+// PART C — adding endings
+// ============================================================
 function showPartC() {
   phase = 'partC'; qi = 0; answered = false;
   document.getElementById('gTitle').textContent = 'Part C — Adding Endings';
-  clearFb();
-  renderPartC();
+  clearFb(); renderPartC();
 }
 function renderPartC() {
   answered = false; clearFb();
   document.getElementById('nextBtn').className = 'next-btn';
   var q = PARTC[qi];
-  document.getElementById('gProg').textContent = 'Part C  ' + (qi+1) + ' / ' + PARTC.length;
+  document.getElementById('gProg').textContent = 'Part C  '+(qi+1)+' / '+PARTC.length;
   setDots(PARTC, qi, cWrong);
-
   var opts = Math.random() > 0.5 ? [q.correct, q.wrong] : [q.wrong, q.correct];
-
-  document.getElementById('content').innerHTML = [
-    '<div class="q-card" id="qCard">',
-    '<span class="phase-label pl-c">✏️ Part C — Adding Endings</span>',
-    '<div class="base-display">',
-    '<span class="base-word">' + q.base + '</span>',
-    '<span class="plus-end"> + ' + q.ending + '</span>',
-    '<span class="add-arrow">↓</span>',
-    '</div>',
-    '<div class="q-hint">短母音 + 1 consonant → double it first!</div>',
-    '<div class="opts-2">',
-    opts.map(function(o, i) {
-      return '<button class="opt-btn" id="cBtn-' + i + '" onclick="checkC(this,' + i + ')" style="font-size:1rem">' + o + '</button>';
-    }).join(''),
-    '</div></div>'
-  ].join('');
-
+  document.getElementById('content').innerHTML =
+    '<div class="q-card">'+
+    '<span class="phase-label pl-c">✏️ Part C — Adding Endings</span>'+
+    '<div class="base-display"><span class="base-word">'+q.base+'</span><span class="plus-end"> + '+q.ending+'</span><span class="add-arrow">↓</span></div>'+
+    '<div class="q-hint">短母音 + 1 consonant → double it first!</div>'+
+    '<div class="opts-2">'+
+    opts.map(function(o,i){ return '<button class="opt-btn" id="cBtn-'+i+'" onclick="checkC(this,'+i+')" style="font-size:1rem">'+o+'</button>'; }).join('')+
+    '</div></div>';
   document.getElementById('content')._cOpts = opts;
 }
 function checkC(btn, idx) {
   if (answered) return; answered = true;
   var q = PARTC[qi]; total++;
   var opts = document.getElementById('content')._cOpts;
-  var choice = opts[idx];
   disableOpts();
-  if (choice === q.correct) {
-    btn.classList.add('correct');
-    score++; fb('🎉 ' + q.explain, 'ok'); popStars(btn);
+  if (opts[idx] === q.correct) {
+    btn.classList.add('correct'); score++; fb('🎉 '+q.explain, 'ok'); popStars(btn);
   } else {
     btn.classList.add('wrong');
-    var ci = opts.indexOf(q.correct);
-    document.getElementById('cBtn-' + ci).classList.add('correct');
+    document.getElementById('cBtn-'+opts.indexOf(q.correct)).classList.add('correct');
     cWrong.push(qi);
-    wrong.push({ part:'C', q:q.base + ' + ' + q.ending, right:q.correct, hint:q.explain });
-    fb('❌ 正確是 <b>' + q.correct + '</b>！' + q.explain, 'bad');
+    wrong.push({part:'C', q:q.base+' + '+q.ending, right:q.correct, hint:q.explain});
+    fb('❌ 正確是 <b>'+q.correct+'</b>！'+q.explain, 'bad');
   }
   updateScore();
-  setNext(qi < PARTC.length - 1 ? '下一題 →' : '繼續 Part D 📖');
+  setNext(qi < PARTC.length-1 ? '下一題 →' : '回到選單 📋');
 }
 
-// ===== PART D =====
+// ============================================================
+// PART D — Kurt Can Help tap-word
+// ============================================================
 function showPartD() {
   phase = 'partD'; qi = 0; answered = false;
-  document.getElementById('gTitle').textContent = 'Part D — Story Words';
-  clearFb();
-  renderPartD();
+  document.getElementById('gTitle').textContent = 'Part D — Kurt Can Help';
+  clearFb(); renderPartD();
 }
 function renderPartD() {
-  answered = false; clearFb();
+  answered = false; selIdxs = []; clearFb();
   document.getElementById('nextBtn').className = 'next-btn';
   var q = PARTD[qi];
-  document.getElementById('gProg').textContent = 'Part D  ' + (qi+1) + ' / ' + PARTD.length;
+  document.getElementById('gProg').textContent = 'Part D  '+(qi+1)+' / '+PARTD.length;
   setDots(PARTD, qi, dWrong);
 
-  var opts = Math.random() > 0.5 ? [q.options[0], q.options[1]] : [q.options[1], q.options[0]];
+  // Build word spans with global indices
+  var gIdx = 0;
+  var linesHtml = q.lines.map(function(line) {
+    var ws = line.map(function(word) {
+      var i = gIdx++;
+      return '<span class="tap-word" data-idx="'+i+'" onclick="toggleW(this)">'+word+'</span>';
+    }).join(' ');
+    return '<div class="tap-line">'+ws+'</div>';
+  }).join('');
 
-  document.getElementById('content').innerHTML = [
-    '<div class="q-card" id="qCard">',
-    '<span class="phase-label pl-d">📖 Part D — Fill in the Blank</span>',
-    '<div class="sentence-display">',
-    q.before + ' <span class="blank-slot">___</span> ' + q.after,
-    '</div>',
-    '<div class="opts-2">',
-    opts.map(function(o, i) {
-      return '<button class="opt-btn" id="dBtn-' + i + '" onclick="checkD(this,' + i + ')">' + o + '</button>';
-    }).join(''),
-    '</div></div>'
-  ].join('');
-
-  document.getElementById('content')._dOpts = opts;
+  document.getElementById('content').innerHTML =
+    '<div class="q-card">'+
+    '<span class="phase-label pl-d">📖 Part D — Kurt Can Help</span>'+
+    '<div class="tap-instr">'+q.instruction+'</div>'+
+    '<div class="tap-passage">'+linesHtml+'</div>'+
+    '<div class="sel-count" id="selCount">0 / '+q.targets.length+' selected</div>'+
+    '<button class="check-btn" id="checkBtn" onclick="checkTap()">Check ✓</button>'+
+    '</div>';
 }
-function checkD(btn, idx) {
+
+function toggleW(el) {
+  if (answered) return;
+  var idx = parseInt(el.dataset.idx);
+  var pos = selIdxs.indexOf(idx);
+  if (pos >= 0) { selIdxs.splice(pos,1); el.classList.remove('selected'); }
+  else          { selIdxs.push(idx);     el.classList.add('selected'); }
+  document.getElementById('selCount').textContent = selIdxs.length + ' / ' + PARTD[qi].targets.length + ' selected';
+}
+
+function checkTap() {
   if (answered) return; answered = true;
   var q = PARTD[qi]; total++;
-  var opts = document.getElementById('content')._dOpts;
-  var choice = opts[idx];
-  disableOpts();
-  if (choice === q.blank) {
-    btn.classList.add('correct');
-    score++; fb('🎉 ' + q.explain, 'ok'); popStars(btn);
+
+  document.querySelectorAll('.tap-word').forEach(function(el){ el.onclick = null; });
+  document.getElementById('checkBtn').style.display = 'none';
+
+  var tSet = {}, sSet = {};
+  q.targets.forEach(function(t){ tSet[t] = true; });
+  selIdxs.forEach(function(s)  { sSet[s]  = true; });
+
+  var allOk = true;
+  document.querySelectorAll('.tap-word').forEach(function(el) {
+    var i = parseInt(el.dataset.idx);
+    var isTgt = !!tSet[i], isSel = !!sSet[i];
+    el.classList.remove('selected');
+    if (isTgt && isSel)       el.classList.add('correct');
+    else if (!isTgt && isSel) { el.classList.add('wrong');  allOk = false; }
+    else if (isTgt && !isSel) { el.classList.add('missed'); allOk = false; }
+  });
+
+  if (allOk) {
+    score++; fb('🎉 完美！'+q.explain, 'ok'); popStars(null);
   } else {
-    btn.classList.add('wrong');
-    var ci = opts.indexOf(q.blank);
-    document.getElementById('dBtn-' + ci).classList.add('correct');
     dWrong.push(qi);
-    wrong.push({ part:'D', q:q.before + ' ___ ' + q.after, right:q.blank, hint:q.explain });
-    fb('❌ 正確是 <b>' + q.blank + '</b>！' + q.explain, 'bad');
+    wrong.push({part:'D', q:q.instruction.replace(/<[^>]*>/g,''), right:'See highlighted words above', hint:q.explain});
+    fb('❌ 看看<span style="background:#d1fae5;padding:0 4px;border-radius:4px">綠色</span>是答對的，<span style="background:#fef9c3;padding:0 4px;border-radius:4px">黃色</span>是漏選的！'+q.explain, 'bad');
   }
   updateScore();
-  setNext(qi < PARTD.length - 1 ? '下一題 →' : '看成績 🏆');
+  setNext(qi < PARTD.length-1 ? '下一題 →' : '回到選單 📋');
 }
 
-// ===== NAVIGATION =====
+// ============================================================
+// NAVIGATION
+// ============================================================
 function handleNext() {
-  if (phase === 'learn')  { showPartA(); return; }
-  if (phase === 'partA') {
-    if (++qi < PARTA.length) renderPartA(); else showPartB(); return;
-  }
-  if (phase === 'partB') {
-    if (++qi < PARTB.length) renderPartB(); else showPartC(); return;
-  }
-  if (phase === 'partC') {
-    if (++qi < PARTC.length) renderPartC(); else showPartD(); return;
-  }
-  if (phase === 'partD') {
-    if (++qi < PARTD.length) renderPartD(); else showDone(); return;
-  }
+  if (phase === 'learn') { showMenu(); return; }
+  if (phase === 'partA') { if(++qi < PARTA.length) { renderPartA(); return; } partDone.A=true; showMenu(); return; }
+  if (phase === 'partB') { if(++qi < PARTB.length) { renderPartB(); return; } partDone.B=true; showMenu(); return; }
+  if (phase === 'partC') { if(++qi < PARTC.length) { renderPartC(); return; } partDone.C=true; showMenu(); return; }
+  if (phase === 'partD') { if(++qi < PARTD.length) { renderPartD(); return; } partDone.D=true; showMenu(); return; }
 }
 
-// ===== DONE =====
+// ============================================================
+// DONE
+// ============================================================
 function showDone() {
   phase = 'done';
   document.getElementById('content').innerHTML = '';
@@ -534,7 +596,7 @@ function showDone() {
   document.getElementById('nextBtn').className = 'next-btn';
   setBar(100);
 
-  var pct  = Math.round(score / TOTAL * 100);
+  var pct   = Math.round(score / TOTAL * 100);
   var stars = pct >= 90 ? '⭐⭐⭐' : pct >= 70 ? '⭐⭐' : '⭐';
   var msg   = pct >= 90 ? 'Yunman is a phonics star! 太厲害了！🌟' :
               pct >= 70 ? '做得很好！Keep practicing! 💪' :
@@ -543,38 +605,17 @@ function showDone() {
   var wrongHTML = '';
   if (wrong.length > 0) {
     wrongHTML = '<div class="wrong-title">📝 錯題複習</div>' +
-      wrong.map(function(w) {
-        return '<div class="wrong-item">' +
-          '<div class="wi-q">❌ ' + w.q + '</div>' +
-          '<div class="wi-a">✅ 正確：' + w.right + '</div>' +
-          '<div class="wi-h">' + w.hint + '</div>' +
-        '</div>';
+      wrong.map(function(w){
+        return '<div class="wrong-item"><div class="wi-q">❌ '+w.q+'</div><div class="wi-a">✅ 正確：'+w.right+'</div><div class="wi-h">'+w.hint+'</div></div>';
       }).join('');
   }
 
-  var storyHTML = [
-    '<div class="story-box">',
-    '<div class="story-title">📖 Read: Kurt Can Help</div>',
-    'Kurt likes to help every day.<br>',
-    'He planted seeds with Mom.<br>',
-    'Some <span class="hl">dirt</span> got on her <span class="hl">shirt</span>.<br>',
-    'The seeds turned into <span class="hl">ferns</span>.<br>',
-    'Kurt will pull the can to the <span class="hl">curb</span>.<br>',
-    'There <span class="hl">were</span> bits of trash to sort.<br>',
-    'Kurt put any plastic in the blue bin.<br>',
-    'Kurt <span class="hl">skipped</span> to the park.<br>',
-    'It was <span class="hl">very</span> <span class="hl">dirty</span>.<br>',
-    'He <span class="hl">gripped</span> his brush.<br>',
-    'He <span class="hl">rubbed</span> it on the slide.',
-    '</div>'
-  ].join('');
-
   document.getElementById('finalCard').innerHTML =
-    '<div class="final-title">🎉 完成！</div>' +
-    '<div class="final-score">' + score + ' / ' + TOTAL + '</div>' +
-    '<div class="final-stars">' + stars + '</div>' +
-    '<div class="final-msg">' + msg + '</div>' +
-    wrongHTML + storyHTML +
+    '<div class="final-title">🎉 完成！</div>'+
+    '<div class="final-score">'+score+' / '+TOTAL+'</div>'+
+    '<div class="final-stars">'+stars+'</div>'+
+    '<div class="final-msg">'+msg+'</div>'+
+    wrongHTML+
     '<div style="margin-top:16px"><button class="retry-btn" onclick="restart()">🔄 再玩一次</button></div>';
 
   document.getElementById('finalCard').classList.add('show');
@@ -582,12 +623,15 @@ function showDone() {
 
 function restart() {
   qi = 0; score = 0; total = 0; answered = false;
-  wrong = []; aWrong = []; bWrong = []; cWrong = []; dWrong = [];
+  wrong = []; aWrong = []; bWrong = []; cWrong = []; dWrong = []; selIdxs = [];
+  partDone = {A:false, B:false, C:false, D:false};
   document.getElementById('finalCard').classList.remove('show');
   showLearn();
 }
 
-// ===== INIT =====
+// ============================================================
+// INIT
+// ============================================================
 showLearn();
 </script>
 </body>
