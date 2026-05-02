@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Word Endings Challenge — s / es / ing</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#fff8f0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+h1{font-family:'Fredoka One',cursive;color:#6366f1;font-size:1.7rem;text-align:center;margin-bottom:2px}
+.subtitle{color:#64748b;font-size:.88rem;margin-bottom:14px;text-align:center}
+
+.dots{display:flex;gap:7px;justify-content:center;margin-bottom:12px}
+.dot{width:12px;height:12px;border-radius:50%;background:#e2e8f0;transition:.3s}
+.dot.done{background:#6366f1}
+.dot.active{background:#a5b4fc;box-shadow:0 0 0 3px #e0e7ff}
+
+.card{background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.08);padding:22px;width:100%;max-width:520px;animation:popIn .35s ease}
+@keyframes popIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+.prog-wrap{background:#e2e8f0;border-radius:99px;height:8px;margin-bottom:16px;overflow:hidden}
+.prog-bar{height:100%;background:linear-gradient(90deg,#6366f1,#a5b4fc);border-radius:99px;transition:.4s}
+
+.phase-title{font-family:'Fredoka One',cursive;color:#6366f1;font-size:1.1rem;text-align:center;margin-bottom:14px}
+.q-num{font-size:.78rem;color:#94a3b8;text-align:center;margin-bottom:5px}
+
+/* tags */
+.tag{display:inline-block;padding:4px 14px;border-radius:99px;font-size:.75rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
+.tag-noun{background:#cffafe;color:#155e75}
+.tag-verb{background:#ede9fe;color:#5b21b6}
+.tag-ing{background:#ffedd5;color:#9a3412}
+.tag-mix{background:#e0e7ff;color:#3730a3}
+
+/* question */
+.q-context{font-size:1rem;color:#1e293b;text-align:center;line-height:1.65;margin-bottom:6px;font-weight:700}
+.q-base{text-align:center;font-size:.85rem;color:#64748b;margin-bottom:16px;font-weight:700}
+.q-base span{background:#f1f5f9;border-radius:6px;padding:2px 10px;font-family:'Fredoka One',cursive;color:#6366f1}
+
+/* options */
+.opts{display:flex;flex-direction:column;gap:10px;margin-bottom:8px}
+.opt-btn{background:#f5f3ff;border:2px solid #c7d2fe;border-radius:13px;padding:13px 16px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;color:#1e293b;cursor:pointer;transition:.2s;text-align:center;letter-spacing:.3px}
+.opt-btn:hover{background:#e0e7ff;border-color:#a5b4fc}
+.opt-btn.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+.opt-btn.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+.opt-btn:disabled{cursor:default}
+
+.feedback{min-height:28px;text-align:center;font-weight:700;font-size:.9rem;margin-top:4px}
+.feedback.ok{color:#16a34a}
+.feedback.bad{color:#dc2626}
+
+/* learn card */
+.rule-block{border-radius:13px;padding:13px;margin-bottom:11px;font-size:.88rem;line-height:1.7}
+.rule-block h3{font-family:'Fredoka One',cursive;font-size:.95rem;margin-bottom:7px}
+.rule-block.green{background:#f0fdf4;border-left:4px solid #22c55e}
+.rule-block.green h3{color:#15803d}
+.rule-block.purple{background:#f5f3ff;border-left:4px solid #8b5cf6}
+.rule-block.purple h3{color:#6d28d9}
+.rule-block.orange{background:#fff7ed;border-left:4px solid #f97316}
+.rule-block.orange h3{color:#c2410c}
+.rule-block.warn{background:#fef9c3;border-left:4px solid #eab308}
+.rule-block.warn h3{color:#854d0e}
+.rule-row{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.rule-arrow{color:#94a3b8;font-weight:800}
+.word-hl{font-weight:800;color:#6366f1}
+.ending-hl{font-weight:900;color:#dc2626;text-decoration:underline}
+
+/* next btn */
+.next-btn{display:block;width:100%;background:#6366f1;color:#fff;border:none;border-radius:14px;padding:13px;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;margin-top:12px;transition:.2s}
+.next-btn:hover{background:#4f46e5}
+
+/* done */
+.score-wrap{text-align:center;margin-bottom:16px}
+.score-num{font-family:'Fredoka One',cursive;font-size:2.2rem;color:#6366f1}
+.wrong-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.wrong-item{background:#fff7ed;border-left:4px solid #f59e0b;border-radius:10px;padding:9px 12px;font-size:.88rem;line-height:1.5}
+.wrong-item .wr-q{font-weight:700;color:#1e293b}
+.wrong-item .wr-a{color:#16a34a;font-weight:700}
+.wrong-item .wr-h{color:#64748b;font-size:.82rem}
+
+.star-pop{position:fixed;pointer-events:none;font-size:2rem;animation:flyUp .8s ease forwards;z-index:999}
+@keyframes flyUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-90px) scale(1.5)}}
+</style>
+</head>
+<body>
+
+<h1>✏️ Word Endings Challenge</h1>
+<p class="subtitle">-s &nbsp;/&nbsp; -es &nbsp;/&nbsp; -ing</p>
+
+<div class="dots" id="dots"></div>
+<div id="root"></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+
+const NOUN_QS = [
+  {tag:'tag-noun',label:'Noun Plural 名詞複數',emoji:'🖌️',
+   context:'We need one more brush. Can you find three ___?',
+   base:'brush',
+   opts:['brushs','brushes','brush'],ans:1,
+   explain:'brush → brush·es　(-sh 結尾 → 加 -es，唸起來才順)'},
+  {tag:'tag-noun',label:'Noun Plural 名詞複數',emoji:'⭐',
+   context:'I see one star. Tonight I see many ___ in the sky.',
+   base:'star',
+   opts:['stares','starees','stars'],ans:2,
+   explain:'star → stars　(一般字尾 → 直接加 -s)'},
+  {tag:'tag-noun',label:'Noun Plural 名詞複數',emoji:'📦',
+   context:'He put one box away. Now he has three ___ to carry.',
+   base:'box',
+   opts:['boxies','boxs','boxes'],ans:2,
+   explain:'box → box·es　(-x 結尾 → 加 -es)'},
+  {tag:'tag-noun',label:'Noun Plural 名詞複數',emoji:'🚲',
+   context:'She has one bike. Dad and Mum have two ___.',
+   base:'bike',
+   opts:['bikees','bikes','bikies'],ans:1,
+   explain:'bike → bikes　(字尾雖然有 e，但是 -ike 不是 s/sh/ch/x，所以加 -s)'},
+  {tag:'tag-noun',label:'Noun Plural 名詞複數',emoji:'🔥',
+   context:'I found one match. I found a whole box of ___.',
+   base:'match',
+   opts:['matches','matchs','matche'],ans:0,
+   explain:'match → match·es　(-ch 結尾 → 加 -es)'},
+];
+
+const VERB_QS = [
+  {tag:'tag-verb',label:'Verb 動詞 (She)',emoji:'🧼',
+   context:'"___ the dishes every night," said Mom.',
+   hint:'主詞是 She (她)',
+   base:'wash',
+   opts:['wash','washs','washes'],ans:2,
+   explain:'She + wash → wash·es　(she/he/it + -sh 結尾 → 加 -es)'},
+  {tag:'tag-verb',label:'Verb 動詞 (I)',emoji:'🚌',
+   context:'I ___ to school by bus every day.',
+   hint:'主詞是 I (我) — 要加嗎？',
+   base:'go',
+   opts:['goes','go','goed'],ans:1,
+   explain:'I → 不加 s！ "I go" ✅　只有 He/She/It 才加 s/es'},
+  {tag:'tag-verb',label:'Verb 動詞 (He)',emoji:'🔧',
+   context:'He ___ broken toys and bikes for fun.',
+   hint:'主詞是 He (他)',
+   base:'fix',
+   opts:['fixs','fix','fixes'],ans:2,
+   explain:'He + fix → fix·es　(he/she/it + -x 結尾 → 加 -es)'},
+  {tag:'tag-verb',label:'Verb 動詞 (They)',emoji:'⚽',
+   context:'They ___ soccer in the park every afternoon.',
+   hint:'主詞是 They (他們) — 要加嗎？',
+   base:'play',
+   opts:['playes','plays','play'],ans:2,
+   explain:'They → 不加 s！ "They play" ✅　只有 He/She/It 才加'},
+  {tag:'tag-verb',label:'Verb 動詞 (It)',emoji:'🐕',
+   context:'The dog ___ at strangers every night.',
+   hint:'主詞是 The dog = It (牠)',
+   base:'bark',
+   opts:['bark','barks','barkies'],ans:1,
+   explain:'It (the dog) + bark → barks　(he/she/it + 一般字尾 → 加 -s)'},
+];
+
+const ING_QS = [
+  {tag:'tag-ing',label:'-ing (Drop e 去 e)',emoji:'🎂',
+   context:'Mom is ___ a birthday cake for me.',
+   base:'bake',
+   hint:'bake 結尾有不發音的 e！',
+   opts:['baking','bakeing','bakking'],ans:0,
+   explain:'bake → bak·ing　(去掉 e，再加 -ing)　不能寫 bakeing ❌'},
+  {tag:'tag-ing',label:'-ing (Double 雙寫)',emoji:'🏃',
+   context:'Dad is ___ to catch the bus.',
+   base:'run',
+   hint:'run = 短母音 + 單子音 (CVC)',
+   opts:['runing','runeing','running'],ans:2,
+   explain:'run → runn·ing　(短母音，子音雙寫)　不能寫 runing ❌'},
+  {tag:'tag-ing',label:'-ing (Drop e 去 e)',emoji:'💃',
+   context:'She is ___ with her dog in the garden.',
+   base:'smile',
+   hint:'smile 結尾有不發音的 e！',
+   opts:['smileing','smilling','smiling'],ans:2,
+   explain:'smile → smil·ing　(去掉 e，再加 -ing)'},
+  {tag:'tag-ing',label:'-ing (Double 雙寫)',emoji:'🏊',
+   context:'We are all ___ in the cool pool.',
+   base:'swim',
+   hint:'swim = 短母音 + 單子音 (CVC)',
+   opts:['swimming','swiming','swimeing'],ans:0,
+   explain:'swim → swimm·ing　(短母音，子音雙寫)'},
+  {tag:'tag-ing',label:'⚠️ hop → hopping (短母音)',emoji:'🐸',
+   context:'The little frog is ___ across the lily pads.',
+   base:'hop',
+   hint:'hop: 短母音 o → 雙寫子音！（不是 hoping！）',
+   opts:['hopeing','hopping','hoping'],ans:1,
+   explain:'hop → hopp·ing　(短母音 o, CVC → 雙寫 p)　hoping = hope+ing，意思不同！'},
+  {tag:'tag-ing',label:'⚠️ hope → hoping (去 e)',emoji:'🙏',
+   context:'She is ___ it will be sunny tomorrow.',
+   base:'hope',
+   hint:'hope: 結尾有 e，長母音 o → 去 e！（不是 hopping！）',
+   opts:['hopping','hopeing','hoping'],ans:2,
+   explain:'hope → hop·ing　(去掉 e，再加 -ing)　hopping = hop+ing，意思不同！'},
+];
+
+const MIX_QS = [
+  {tag:'tag-mix',label:'Mix! — Noun',emoji:'🍽️',
+   context:'She washed one dish. Now she has washed all the ___.',
+   base:'dish',
+   opts:['dish','dishs','dishes'],ans:2,
+   explain:'dish → dish·es　(-sh 結尾 → 加 -es)'},
+  {tag:'tag-mix',label:'Mix! — Verb (We)',emoji:'🧹',
+   context:'We ___ our room every Saturday morning.',
+   base:'clean',
+   hint:'主詞是 We',
+   opts:['cleans','clean','cleanses'],ans:1,
+   explain:'We → 不加 s！ "We clean" ✅　只有 He/She/It 才加'},
+  {tag:'tag-mix',label:'Mix! — -ing (Drop e)',emoji:'✉️',
+   context:'She is ___ a letter to her grandma.',
+   base:'write',
+   opts:['writting','writeing','writing'],ans:2,
+   explain:'write → writ·ing　(去掉 e，再加 -ing)'},
+  {tag:'tag-mix',label:'Mix! — Noun',emoji:'🪑',
+   context:'One bench is not enough. We need three ___.',
+   base:'bench',
+   opts:['benches','benchs','bench'],ans:0,
+   explain:'bench → bench·es　(-ch 結尾 → 加 -es)'},
+  {tag:'tag-mix',label:'Mix! — Verb (She)',emoji:'🗣️',
+   context:'She ___ Chinese and English very well.',
+   base:'speak',
+   hint:'主詞是 She',
+   opts:['speak','speakes','speaks'],ans:2,
+   explain:'She + speak → speaks　(she/he/it + 一般字尾 → 加 -s)'},
+  {tag:'tag-mix',label:'Mix! — -ing (Double)',emoji:'👶',
+   context:'The baby is ___ up in his high chair.',
+   base:'sit',
+   hint:'sit = 短母音 + 單子音',
+   opts:['siting','sitting','siteing'],ans:1,
+   explain:'sit → sitt·ing　(短母音 i, CVC → 雙寫 t)'},
+  {tag:'tag-mix',label:'Mix! — Verb (They)',emoji:'🚶',
+   context:'They ___ home together after school.',
+   base:'walk',
+   hint:'主詞是 They',
+   opts:['walks','walkes','walk'],ans:2,
+   explain:'They → 不加 s！ "They walk" ✅'},
+  {tag:'tag-mix',label:'Mix! — -ing (Regular)',emoji:'🎮',
+   context:'I am ___ games with my friends right now.',
+   base:'play',
+   opts:['plays','playeing','playing'],ans:2,
+   explain:'play → play·ing　(一般字尾，直接加 -ing)'},
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+const PHASES = ['learn','nouns','verbs','ing','mix','done'];
+let phase=0, qi=0, score=0, total=0, wrongs=[];
+total = NOUN_QS.length + VERB_QS.length + ING_QS.length + MIX_QS.length;
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function render(){
+  document.getElementById('root').innerHTML='';
+  buildDots();
+  const ph=PHASES[phase];
+  if(ph==='learn') phLearn();
+  else if(ph==='nouns') phQ(NOUN_QS,'nouns','verbs','Part 1 — Noun Plurals 名詞複數',NOUN_QS.length);
+  else if(ph==='verbs') phQ(VERB_QS,'verbs','ing','Part 2 — Verb s/es 動詞變化',NOUN_QS.length+VERB_QS.length);
+  else if(ph==='ing')   phQ(ING_QS,'ing','mix','Part 3 — Adding -ing 加 -ing',NOUN_QS.length+VERB_QS.length+ING_QS.length);
+  else if(ph==='mix')   phQ(MIX_QS,'mix','done','⭐ Big Mix! 大挑戰',total);
+  else phDone();
+}
+
+function buildDots(){
+  const d=document.getElementById('dots');d.innerHTML='';
+  PHASES.forEach((p,i)=>{
+    if(p==='done')return;
+    const el=document.createElement('div');
+    el.className='dot'+(i<phase?' done':i===phase?' active':'');
+    d.appendChild(el);
+  });
+}
+function star(e){
+  const s=document.createElement('div');s.className='star-pop';s.textContent='⭐';
+  s.style.left=(e.clientX-16)+'px';s.style.top=(e.clientY-16)+'px';
+  document.body.appendChild(s);setTimeout(()=>s.remove(),850);
+}
+function card(html){
+  const c=document.createElement('div');c.className='card';c.innerHTML=html;
+  document.getElementById('root').appendChild(c);return c;
+}
+function pb(cur,tot){return `<div class="prog-wrap"><div class="prog-bar" style="width:${Math.round(cur/tot*100)}%"></div></div>`;}
+function nextBtn(lbl,fn){
+  const b=document.createElement('button');b.className='next-btn';b.textContent=lbl;b.onclick=fn;return b;
+}
+
+// ── LEARN ─────────────────────────────────────────────────────────────────────
+function phLearn(){
+  const c=card(`
+    <div class="phase-title">📝 Quick Rules Cheat Sheet</div>
+    <div class="rule-block green">
+      <h3>🔤 Noun Plurals 名詞複數 (+s / +es)</h3>
+      <div class="rule-row"><span class="word-hl">star</span><span class="rule-arrow">→</span><span>star<span class="ending-hl">s</span> &nbsp;（一般字尾 → 加 <strong>-s</strong>）</span></div>
+      <div class="rule-row"><span class="word-hl">brush / dish / match / box</span></div>
+      <div class="rule-row"><span class="rule-arrow">→</span><span>brush<span class="ending-hl">es</span> &nbsp;（sh/ch/x/s 結尾 → 加 <strong>-es</strong>）</span></div>
+    </div>
+    <div class="rule-block purple">
+      <h3>🗣️ Verb s/es 動詞（只有 He/She/It 才加！）</h3>
+      <div class="rule-row"><span>I / You / We / They</span><span class="rule-arrow">→</span><span style="color:#16a34a;font-weight:800">不加！keep base form</span></div>
+      <div class="rule-row"><span>He / She / It + 一般字</span><span class="rule-arrow">→</span><span>+ <strong class="ending-hl">s</strong></span></div>
+      <div class="rule-row"><span>He / She / It + sh/ch/x</span><span class="rule-arrow">→</span><span>+ <strong class="ending-hl">es</strong></span></div>
+    </div>
+    <div class="rule-block orange">
+      <h3>🏃 Adding -ing 加 -ing</h3>
+      <div class="rule-row"><span>一般字尾</span><span class="rule-arrow">→</span><span>直接加 <strong class="ending-hl">-ing</strong> &nbsp;（jump → jump<span class="ending-hl">ing</span>）</span></div>
+      <div class="rule-row"><span>結尾有 silent e</span><span class="rule-arrow">→</span><span>去 e + <strong class="ending-hl">-ing</strong> &nbsp;（bake → bak<span class="ending-hl">ing</span>）</span></div>
+      <div class="rule-row"><span>短母音 + 單子音</span><span class="rule-arrow">→</span><span>雙寫 + <strong class="ending-hl">-ing</strong> &nbsp;（run → runn<span class="ending-hl">ing</span>）</span></div>
+    </div>
+    <div class="rule-block warn">
+      <h3>⚠️ Tricky Pair — 很容易搞混！</h3>
+      <div class="rule-row"><span class="word-hl">hop</span><span style="font-size:.78rem;color:#64748b">（短母音 o）</span><span class="rule-arrow">→</span><span>hopp<span class="ending-hl">ing</span> 🐸</span></div>
+      <div class="rule-row"><span class="word-hl">hope</span><span style="font-size:.78rem;color:#64748b">（長母音 o，有 e）</span><span class="rule-arrow">→</span><span>hop<span class="ending-hl">ing</span> 🙏</span></div>
+    </div>
+  `);
+  c.appendChild(nextBtn('Start Part 1 — Nouns! 🔤',()=>{phase=1;qi=0;render();}));
+}
+
+// ── QUESTION RENDERER (shared by all 4 phases) ────────────────────────────────
+function phQ(qs, phName, nextPh, title, progMax){
+  if(qi>=qs.length){
+    phase=PHASES.indexOf(nextPh);qi=0;render();return;
+  }
+  const q=qs[qi];
+  const hintHtml=q.hint?`<div style="background:#fef9c3;border-radius:8px;padding:5px 10px;font-size:.8rem;font-weight:700;color:#92400e;text-align:center;margin-bottom:10px">💡 ${q.hint}</div>`:'';
+  const c=card(`
+    ${pb(score,progMax)}
+    <div class="phase-title">${title}</div>
+    <div style="text-align:center;margin-bottom:8px"><span class="tag ${q.tag}">${q.label}</span></div>
+    <div class="q-num">Question ${qi+1} / ${qs.length}</div>
+    <div class="q-context">${q.emoji} ${q.context}</div>
+    <div class="q-base">base word: <span>${q.base}</span></div>
+    ${hintHtml}
+    <div class="opts" id="opts"></div>
+    <div class="feedback" id="fb"></div>
+  `);
+  const og=c.querySelector('#opts');
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');b.className='opt-btn';b.textContent=o;
+    b.onclick=ev=>{
+      if(b.disabled)return;
+      og.querySelectorAll('.opt-btn').forEach(x=>x.disabled=true);
+      const fb=c.querySelector('#fb');
+      if(i===q.ans){
+        b.classList.add('correct');fb.textContent='✅ '+q.explain;fb.className='feedback ok';
+        score++;star(ev);
+        setTimeout(()=>{qi++;phQ(qs,phName,nextPh,title,progMax);},1100);
+      } else {
+        b.classList.add('wrong');fb.textContent='❌ '+q.explain;fb.className='feedback bad';
+        og.querySelectorAll('.opt-btn')[q.ans].classList.add('correct');
+        wrongs.push({q:q.emoji+' '+q.context,a:q.opts[q.ans],h:q.explain});
+        setTimeout(()=>{qi++;phQ(qs,phName,nextPh,title,progMax);},1400);
+      }
+    };
+    og.appendChild(b);
+  });
+}
+
+// ── DONE ─────────────────────────────────────────────────────────────────────
+function phDone(){
+  const pct=Math.round(score/total*100);
+  const emoji=pct>=90?'🌟':pct>=70?'😊':'💪';
+  let wHtml='';
+  if(wrongs.length){
+    wHtml='<div style="margin-top:14px"><div style="font-family:\'Fredoka One\',cursive;color:#dc2626;margin-bottom:8px">Review ✏️</div><ul class="wrong-list">';
+    wrongs.forEach(w=>{wHtml+=`<li class="wrong-item"><div class="wr-q">${w.q}</div><div class="wr-a">✅ ${w.a}</div><div class="wr-h">💡 ${w.h}</div></li>`;});
+    wHtml+='</ul></div>';
+  }
+  const c=card(`
+    <div class="score-wrap">
+      <div style="font-size:3rem">${emoji}</div>
+      <div class="score-num">${score} / ${total}</div>
+      <div style="color:#64748b;font-size:.88rem">${pct}% — ${pct>=90?'Excellent! 🎉':pct>=70?'Good job! 👍':'Keep practicing! 💪'}</div>
+    </div>
+    ${wHtml}
+  `);
+  c.appendChild(nextBtn('Play Again 🔄',()=>{phase=0;qi=0;score=0;wrongs=[];render();}));
+}
+
+render();
+</script>
+</body>
+</html>
