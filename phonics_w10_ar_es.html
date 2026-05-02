@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phonics Week 10 — ar &amp; -es</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#fff8f0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+h1{font-family:'Fredoka One',cursive;color:#0369a1;font-size:1.7rem;text-align:center;margin-bottom:3px}
+.subtitle{color:#64748b;font-size:.88rem;margin-bottom:14px;text-align:center}
+
+/* dots */
+.dots{display:flex;gap:6px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+.dot{width:11px;height:11px;border-radius:50%;background:#e2e8f0;transition:.3s}
+.dot.done{background:#0369a1}
+.dot.active{background:#7dd3fc;box-shadow:0 0 0 3px #e0f2fe}
+
+/* card */
+.card{background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.08);padding:22px;width:100%;max-width:520px;animation:popIn .35s ease}
+@keyframes popIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+/* progress bar */
+.prog-wrap{background:#e2e8f0;border-radius:99px;height:8px;margin-bottom:14px;overflow:hidden}
+.prog-bar{height:100%;background:linear-gradient(90deg,#0369a1,#38bdf8);border-radius:99px;transition:.4s}
+
+/* phase title */
+.phase-title{font-family:'Fredoka One',cursive;color:#0369a1;font-size:1.1rem;text-align:center;margin-bottom:14px}
+.q-num{font-size:.78rem;color:#94a3b8;text-align:center;margin-bottom:5px}
+
+/* learn boxes */
+.learn-box{background:#e0f2fe;border-radius:14px;padding:14px;margin-bottom:12px;font-size:.9rem;line-height:1.65;color:#0c4a6e}
+.learn-box h3{font-family:'Fredoka One',cursive;color:#0369a1;margin-bottom:8px;font-size:1rem}
+.learn-box ul{padding-left:18px}
+.learn-box li{margin-bottom:3px}
+.learn-box em{font-style:normal;color:#0369a1;font-weight:800}
+.learn-box .rule-tag{display:inline-block;background:#0369a1;color:#fff;border-radius:6px;padding:2px 8px;font-size:.78rem;font-weight:800;margin-right:6px}
+.word-grid{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px}
+.word-pill{background:#fff;border:2px solid #7dd3fc;border-radius:99px;padding:5px 13px;font-size:.88rem;font-weight:700;color:#0369a1}
+.word-pill .ar-highlight{color:#dc2626;text-decoration:underline}
+
+/* feedback */
+.feedback{min-height:26px;text-align:center;font-weight:700;font-size:.9rem;margin-top:8px}
+.feedback.ok{color:#16a34a}
+.feedback.bad{color:#dc2626}
+
+/* word chips for tap-all exercises */
+.tap-instruction{font-size:.9rem;font-weight:700;color:#0c4a6e;text-align:center;background:#e0f2fe;border-radius:10px;padding:8px 12px;margin-bottom:12px}
+.chip-area{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:14px}
+.word-chip{padding:9px 14px;border-radius:10px;font-size:.95rem;font-weight:700;color:#1e293b;background:#f1f5f9;border:2px solid #e2e8f0;cursor:pointer;transition:.15s;user-select:none}
+.word-chip:hover{background:#e0f2fe;border-color:#7dd3fc}
+.word-chip.selected{background:#bfdbfe;border-color:#3b82f6;color:#1e40af}
+.word-chip.chip-correct{background:#dcfce7;border-color:#4ade80;color:#166534;cursor:default}
+.word-chip.chip-wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;cursor:default;animation:shake .3s}
+.word-chip.chip-missed{background:#fef9c3;border-color:#fbbf24;color:#92400e;cursor:default}
+.word-chip.chip-plain{background:#f1f5f9;border-color:#e2e8f0;color:#64748b;cursor:default}
+
+/* ar round counter */
+.round-tag{font-family:'Fredoka One',cursive;font-size:.85rem;color:#64748b;text-align:center;margin-bottom:8px}
+
+/* options for -es and hfw */
+.opts-row{display:flex;flex-direction:column;gap:9px;margin-bottom:8px}
+.opt-btn{background:#e0f2fe;border:2px solid #7dd3fc;border-radius:13px;padding:12px 14px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;color:#0c4a6e;cursor:pointer;transition:.2s;text-align:left}
+.opt-btn:hover{background:#bae6fd;border-color:#38bdf8}
+.opt-btn.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+.opt-btn.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+.opt-btn:disabled{cursor:default}
+
+/* HFW pill choices */
+.hfw-sent{font-size:1rem;font-weight:700;color:#1e293b;text-align:center;line-height:1.6;margin-bottom:14px}
+.blank-word{color:#0369a1;font-weight:900;border-bottom:2px solid #0369a1;padding:0 4px}
+.pill-opts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.pill-btn{background:#e0f2fe;border:2px solid #7dd3fc;border-radius:99px;padding:10px 22px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;color:#0369a1;cursor:pointer;transition:.2s}
+.pill-btn:hover{background:#bae6fd}
+.pill-btn.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+.pill-btn.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+.pill-btn:disabled{cursor:default}
+
+/* check / next buttons */
+.check-btn{display:block;width:100%;background:#0369a1;color:#fff;border:none;border-radius:14px;padding:13px;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;margin-top:8px;transition:.2s}
+.check-btn:hover{background:#075985}
+.next-btn{display:block;width:100%;background:#0369a1;color:#fff;border:none;border-radius:14px;padding:13px;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;margin-top:10px;transition:.2s}
+.next-btn:hover{background:#075985}
+
+/* -es table in learn */
+.es-table{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:8px}
+.es-table th{background:#0369a1;color:#fff;padding:6px 10px;text-align:left;font-family:'Fredoka One',cursive;font-size:.85rem}
+.es-table td{padding:6px 10px;border-bottom:1px solid #e0f2fe;color:#0c4a6e;font-weight:700}
+.es-table tr:nth-child(even) td{background:#f0f9ff}
+.es-rule-box{background:#fef9c3;border-radius:10px;padding:10px 12px;font-size:.9rem;font-weight:700;color:#78350f;margin-bottom:10px;line-height:1.5;border-left:4px solid #fbbf24}
+
+/* score done */
+.score-wrap{text-align:center;margin-bottom:14px}
+.score-num{font-family:'Fredoka One',cursive;font-size:2.2rem;color:#0369a1}
+.wrong-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.wrong-item{background:#fff7ed;border-left:4px solid #f59e0b;border-radius:10px;padding:9px 12px;font-size:.88rem;line-height:1.5}
+.wrong-item .wr-q{font-weight:700;color:#1e293b}
+.wrong-item .wr-a{color:#16a34a;font-weight:700}
+.wrong-item .wr-h{color:#64748b;font-size:.82rem}
+
+.star-pop{position:fixed;pointer-events:none;font-size:2rem;animation:flyUp .8s ease forwards;z-index:999}
+@keyframes flyUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-90px) scale(1.5)}}
+</style>
+</head>
+<body>
+
+<h1>🌟 Phonics Week 10</h1>
+<p class="subtitle">r-Controlled <strong>ar</strong> &amp; Inflectional Ending <strong>-es</strong></p>
+
+<div class="dots" id="dots"></div>
+<div id="root"></div>
+
+<script>
+// ── PHASES ────────────────────────────────────────────────────────────────────
+const PHASES = ['learn_ar','practice_ar','learn_es','practice_es','story1','story2','story3','hfw','done'];
+let phase=0, qi=0, score=0, total=0, wrongs=[];
+
+// ── AR PRACTICE DATA ─────────────────────────────────────────────────────────
+const AR_ROUNDS = [
+  {label:'Round 1 / 3',
+   words:['bark','run','park','sleep','dark','play'],
+   targets:new Set([0,2,4]),
+   hint:'bark, park, dark — they all have /ar/ like "far"! 🌳'},
+  {label:'Round 2 / 3',
+   words:['car','tree','star','jump','farm','rain'],
+   targets:new Set([0,2,4]),
+   hint:'car 🚗, star ⭐, farm 🌾 — all /ar/ sounds!'},
+  {label:'Round 3 / 3',
+   words:['art','bird','arm','cake','shark','book'],
+   targets:new Set([0,2,4]),
+   hint:'art 🎨, arm 💪, shark 🦈 — all /ar/ sounds!'},
+];
+total += AR_ROUNDS.length; // 1 point per round (all correct)
+
+// ── -ES PRACTICE DATA ────────────────────────────────────────────────────────
+const ES_QS = [
+  {sent:'I have one brush. Now I have two ___.', opts:['brushs','brushes','brushing'], ans:1, explain:'brush ends in -sh → add -es → brushes 🖌️'},
+  {sent:'She has one box. She has three ___.', opts:['boxs','boxe','boxes'], ans:2, explain:'box ends in -x → add -es → boxes 📦'},
+  {sent:'He found one match. He found four ___.', opts:['matchs','matches','matche'], ans:1, explain:'match ends in -ch → add -es → matches 🔥'},
+  {sent:'Every day Barb ___ the colors together.', opts:['mix','mixs','mixes'], ans:2, explain:'mix ends in -x → add -es → mixes 🎨'},
+  {sent:'Every morning he ___ to catch the bus.', opts:['rush','rushes','rushed'], ans:1, explain:'rush ends in -sh → add -es → rushes 🏃'},
+  {sent:'The dog always ___ the ball in the park.', opts:['catch','catchs','catches'], ans:2, explain:'catch ends in -ch → add -es → catches 🐕'},
+];
+total += ES_QS.length;
+
+// ── STORY EXERCISES ──────────────────────────────────────────────────────────
+const STORY_EX = [
+  {
+    title:'Story Exercise 1 — Find the /ar/ words 🔍',
+    instruction:'Tap ALL the words that have the same vowel sound as <strong>far</strong>.',
+    tokens:['Mark','is','an','artist.','He','always','sets','up','dishes.','He','grabs','his','new','brushes.','Mark','starts','with','a','dark','blue','part.'],
+    targetIdx:new Set([0,3,14,15,18,20]), // Mark, artist., Mark, starts, dark, part.
+    correctFeedback:'Great! Mark, artist, starts, dark, part all have the /ar/ sound! ⭐',
+    wrongFeedback:'Check again! Look for the letters "ar" in each word.',
+    count:1
+  },
+  {
+    title:'Story Exercise 2 — Find the -es verbs 🔍',
+    instruction:'Tap the THREE verbs with the ending <strong>-es</strong>.\n(Hint: they are action words — what someone does!)',
+    tokens:['Mark','passes','his','brushes.','Please','put','stars','in','the','sky.','Barb','mixes','white','on','the','blue','part.','Then','she','fixes','them.'],
+    targetIdx:new Set([1,11,19]), // passes, mixes, fixes
+    correctFeedback:'passes ✅ mixes ✅ fixes ✅ — these are all -es verbs! (brushes here is a noun)',
+    wrongFeedback:'Find the 3 ACTION words (verbs) that end in -es. Tap only those!',
+    count:1
+  },
+  {
+    title:'Story Exercise 3 — Find the plural -es nouns 🔍',
+    instruction:'Tap the TWO nouns (things) that use <strong>-es</strong> to mean "more than one".',
+    tokens:['Mark','wipes','the','brushes','and','dishes.','Thank','you','for','helping,','Barb.','Mark','found','a','place','for','the','art.'],
+    targetIdx:new Set([3,5]), // brushes, dishes.
+    correctFeedback:'brushes (more than one brush 🖌️) and dishes (more than one dish 🍽️) — both plural -es nouns!',
+    wrongFeedback:'Look for things (nouns) that end in -es. "wipes" is a verb — skip it!',
+    count:1
+  }
+];
+total += STORY_EX.length;
+
+// ── HIGH-FREQUENCY WORDS ──────────────────────────────────────────────────────
+const HFW_QS = [
+  {sent:'Mark said, "___ you for helping, Barb!"', blank:'___', opts:['Thank','Please'], ans:0, explain:'Thank = 謝謝'},
+  {sent:'Mark ___ a perfect spot for the art.', blank:'___', opts:['always','found'], ans:1, explain:'found = 找到（過去式）'},
+  {sent:'___ put the brush down carefully.', blank:'___', opts:['Please','Thank'], ans:0, explain:'Please = 請'},
+  {sent:'He got a ___ set of brushes today.', blank:'___', opts:['new','found'], ans:0, explain:'new = 新的'},
+  {sent:'Barb ___ helps Mark finish the painting.', blank:'___', opts:['please','always'], ans:1, explain:'always = 總是、永遠'},
+];
+total += HFW_QS.length;
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let arRound=0, arSelected=new Set();
+let storySelected=new Set(), storyChecked=false;
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function render(){
+  document.getElementById('root').innerHTML='';
+  buildDots();
+  const ph=PHASES[phase];
+  if(ph==='learn_ar') phLearnAr();
+  else if(ph==='practice_ar') phPracticeAr();
+  else if(ph==='learn_es') phLearnEs();
+  else if(ph==='practice_es') phPracticeEs();
+  else if(ph==='story1') phStory(0);
+  else if(ph==='story2') phStory(1);
+  else if(ph==='story3') phStory(2);
+  else if(ph==='hfw') phHfw();
+  else phDone();
+}
+function buildDots(){
+  const d=document.getElementById('dots');d.innerHTML='';
+  PHASES.forEach((_,i)=>{
+    if(i===PHASES.length-1)return; // skip 'done' dot
+    const el=document.createElement('div');
+    el.className='dot'+(i<phase?' done':i===phase?' active':'');
+    d.appendChild(el);
+  });
+}
+function star(e){
+  const s=document.createElement('div');s.className='star-pop';s.textContent='⭐';
+  s.style.left=(e.clientX-16)+'px';s.style.top=(e.clientY-16)+'px';
+  document.body.appendChild(s);setTimeout(()=>s.remove(),850);
+}
+function card(html){
+  const c=document.createElement('div');c.className='card';c.innerHTML=html;
+  document.getElementById('root').appendChild(c);return c;
+}
+function pb(cur,tot){return `<div class="prog-wrap"><div class="prog-bar" style="width:${Math.round(cur/tot*100)}%"></div></div>`;}
+function nextBtn(lbl,fn){const b=document.createElement('button');b.className='next-btn';b.textContent=lbl;b.onclick=fn;return b;}
+function advance(){phase++;qi=0;arRound=0;arSelected=new Set();storySelected=new Set();storyChecked=false;render();}
+
+// ── PHASE: LEARN AR ───────────────────────────────────────────────────────────
+function phLearnAr(){
+  const c=card(`
+    <div class="phase-title">📖 Learn — r-Controlled Vowel <em>ar</em></div>
+    <div class="learn-box">
+      <h3>What does <em>ar</em> sound like?</h3>
+      <p>When <strong>a</strong> comes before <strong>r</strong>, it makes a special sound — like the <em>ar</em> in <strong>car</strong> 🚗 or <strong>star</strong> ⭐</p>
+      <p style="margin-top:6px">Say it out loud: <strong style="font-size:1.3rem;color:#dc2626">ɑːr</strong> (like "ahhh-r")</p>
+    </div>
+    <div class="learn-box">
+      <h3>ar word families</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;font-size:.88rem">
+        <div><span style="font-family:'Fredoka One',cursive;color:#0369a1">-ark</span><br><span class="word-pill" style="display:inline-block;margin:2px 2px 0 0"><span class="ar-highlight">ar</span>k</span> <span class="word-pill" style="display:inline-block;margin:2px 2px 0 0">p<span class="ar-highlight">ar</span>k</span> <span class="word-pill" style="display:inline-block;margin:2px 2px 0 0">d<span class="ar-highlight">ar</span>k</span></div>
+        <div><span style="font-family:'Fredoka One',cursive;color:#0369a1">-ar</span><br><span class="word-pill" style="display:inline-block;margin:2px 2px 0 0">c<span class="ar-highlight">ar</span></span> <span class="word-pill" style="display:inline-block;margin:2px 2px 0 0">f<span class="ar-highlight">ar</span></span> <span class="word-pill" style="display:inline-block;margin:2px 2px 0 0">st<span class="ar-highlight">ar</span></span></div>
+        <div><span style="font-family:'Fredoka One',cursive;color:#0369a1">-art</span><br><span class="word-pill" style="display:inline-block;margin:2px 2px 0 0"><span class="ar-highlight">ar</span>t</span> <span class="word-pill" style="display:inline-block;margin:2px 2px 0 0">p<span class="ar-highlight">ar</span>t</span> <span class="word-pill" style="display:inline-block;margin:2px 2px 0 0">st<span class="ar-highlight">ar</span>t</span></div>
+        <div><span style="font-family:'Fredoka One',cursive;color:#0369a1">-arm</span><br><span class="word-pill" style="display:inline-block;margin:2px 2px 0 0"><span class="ar-highlight">ar</span>m</span> <span class="word-pill" style="display:inline-block;margin:2px 2px 0 0">f<span class="ar-highlight">ar</span>m</span> <span class="word-pill" style="display:inline-block;margin:2px 2px 0 0">ch<span class="ar-highlight">ar</span>m</span></div>
+      </div>
+      <div style="margin-top:8px"><span style="font-family:'Fredoka One',cursive;color:#0369a1">also:</span> sh<span class="ar-highlight" style="font-weight:800;color:#dc2626">ar</span>k, y<span class="ar-highlight" style="font-weight:800;color:#dc2626">ar</span>n, sp<span class="ar-highlight" style="font-weight:800;color:#dc2626">ar</span>k</div>
+    </div>
+    <div class="learn-box" style="background:#fef3c7;border-left:4px solid #f59e0b">
+      <h3 style="color:#92400e">⚠️ Watch out!</h3>
+      <p style="color:#78350f">These words do NOT have the /ar/ sound:<br>
+      <strong>bird</strong> (ir), <strong>sleep</strong> (ee), <strong>cake</strong> (long a)</p>
+    </div>
+  `);
+  c.appendChild(nextBtn('Practice ar words! 🚀',()=>{arRound=0;arSelected=new Set();advance();}));
+}
+
+// ── PHASE: PRACTICE AR ────────────────────────────────────────────────────────
+function phPracticeAr(){
+  if(arRound>=AR_ROUNDS.length){advance();return;}
+  const rnd=AR_ROUNDS[arRound];
+  const c=card(`
+    <div class="phase-title">Tap all words with the /ar/ sound 👆</div>
+    <div class="round-tag">${rnd.label}</div>
+    <div class="tap-instruction">Tap every word that sounds like <strong>"far"</strong></div>
+    <div class="chip-area" id="chips"></div>
+    <div class="feedback" id="fb"></div>
+  `);
+  const chipArea=c.querySelector('#chips');
+  rnd.words.forEach((w,i)=>{
+    const ch=document.createElement('span');ch.className='word-chip';ch.textContent=w;
+    ch.onclick=()=>{
+      if(ch.classList.contains('chip-correct')||ch.classList.contains('chip-wrong'))return;
+      if(arSelected.has(i)){arSelected.delete(i);ch.classList.remove('selected');}
+      else{arSelected.add(i);ch.classList.add('selected');}
+    };
+    chipArea.appendChild(ch);
+  });
+
+  const checkBtn=document.createElement('button');checkBtn.className='check-btn';checkBtn.textContent='✅ Check!';
+  checkBtn.onclick=(ev)=>{
+    const fb=c.querySelector('#fb');
+    let allRight=true;
+    rnd.words.forEach((_,i)=>{
+      const ch=chipArea.children[i];
+      const isTarget=rnd.targets.has(i);
+      const isSel=arSelected.has(i);
+      if(isTarget&&isSel){ch.classList.remove('selected');ch.classList.add('chip-correct');}
+      else if(isTarget&&!isSel){ch.classList.add('chip-missed');allRight=false;}
+      else if(!isTarget&&isSel){ch.classList.remove('selected');ch.classList.add('chip-wrong');allRight=false;}
+      else{ch.classList.add('chip-plain');}
+    });
+    checkBtn.style.display='none';
+    if(allRight){
+      score++;star(ev);
+      fb.textContent='⭐ '+rnd.hint;fb.className='feedback ok';
+    } else {
+      fb.textContent='❌ '+rnd.hint;fb.className='feedback bad';
+      wrongs.push({q:'Round '+arRound+': Tap ar words from ['+rnd.words.join(', ')+']',a:rnd.words.filter((_,i)=>rnd.targets.has(i)).join(', '),h:rnd.hint});
+    }
+    const nb=document.createElement('button');nb.className='next-btn';nb.textContent=arRound<AR_ROUNDS.length-1?'Next Round ➜':'Next: -es Rule ➜';
+    nb.onclick=()=>{arRound++;arSelected=new Set();phPracticeAr();};
+    c.appendChild(nb);
+  };
+  c.appendChild(checkBtn);
+}
+
+// ── PHASE: LEARN -ES ─────────────────────────────────────────────────────────
+function phLearnEs(){
+  const c=card(`
+    <div class="phase-title">📖 Learn — Inflectional Ending <em>-es</em></div>
+    <div class="es-rule-box">
+      📌 <strong>Rule:</strong> When a word ends in <strong>s, sh, ch,</strong> or <strong>x</strong> — add <strong>-es</strong> (not just -s)
+    </div>
+    <div class="learn-box">
+      <h3>Noun Plurals (more than one thing)</h3>
+      <table class="es-table">
+        <tr><th>One</th><th>More than one</th><th>Ending</th></tr>
+        <tr><td>brush</td><td><strong>brush<em style="color:#dc2626">es</em></strong></td><td>-sh → -es</td></tr>
+        <tr><td>dish</td><td><strong>dish<em style="color:#dc2626">es</em></strong></td><td>-sh → -es</td></tr>
+        <tr><td>box</td><td><strong>box<em style="color:#dc2626">es</em></strong></td><td>-x → -es</td></tr>
+        <tr><td>match</td><td><strong>match<em style="color:#dc2626">es</em></strong></td><td>-ch → -es</td></tr>
+        <tr><td>bench</td><td><strong>bench<em style="color:#dc2626">es</em></strong></td><td>-ch → -es</td></tr>
+      </table>
+    </div>
+    <div class="learn-box">
+      <h3>Verbs (actions, he/she/it)</h3>
+      <table class="es-table">
+        <tr><th>Base</th><th>He/She ___ s</th><th>Ending</th></tr>
+        <tr><td>mix</td><td><strong>mix<em style="color:#dc2626">es</em></strong></td><td>-x → -es</td></tr>
+        <tr><td>catch</td><td><strong>catch<em style="color:#dc2626">es</em></strong></td><td>-ch → -es</td></tr>
+        <tr><td>rush</td><td><strong>rush<em style="color:#dc2626">es</em></strong></td><td>-sh → -es</td></tr>
+        <tr><td>pass</td><td><strong>pass<em style="color:#dc2626">es</em></strong></td><td>-ss → -es</td></tr>
+        <tr><td>fix</td><td><strong>fix<em style="color:#dc2626">es</em></strong></td><td>-x → -es</td></tr>
+      </table>
+    </div>
+  `);
+  c.appendChild(nextBtn('Practice -es! 🚀',advance));
+}
+
+// ── PHASE: PRACTICE -ES ───────────────────────────────────────────────────────
+function phPracticeEs(){
+  if(qi>=ES_QS.length){advance();return;}
+  const q=ES_QS[qi];
+  const c=card(`
+    ${pb(qi,ES_QS.length)}
+    <div class="phase-title">Choose the correct form ✏️</div>
+    <div class="q-num">Question ${qi+1} / ${ES_QS.length}</div>
+    <div class="q-text" style="font-size:1rem;color:#1e293b;text-align:center;line-height:1.6;margin-bottom:16px;font-weight:700">${q.sent}</div>
+    <div class="opts-row" id="opts"></div>
+    <div class="feedback" id="fb"></div>
+  `);
+  const og=c.querySelector('#opts');
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');b.className='opt-btn';b.textContent=o;
+    b.onclick=ev=>{
+      if(b.disabled)return;
+      og.querySelectorAll('.opt-btn').forEach(x=>x.disabled=true);
+      const fb=c.querySelector('#fb');
+      if(i===q.ans){b.classList.add('correct');fb.textContent='✅ '+q.explain;fb.className='feedback ok';score++;star(ev);setTimeout(()=>{qi++;phPracticeEs();},1000);}
+      else{b.classList.add('wrong');fb.textContent='❌ '+q.explain;fb.className='feedback bad';wrongs.push({q:q.sent,a:q.opts[q.ans],h:q.explain});setTimeout(()=>{qi++;phPracticeEs();},1200);}
+    };
+    og.appendChild(b);
+  });
+}
+
+// ── PHASE: STORY EXERCISES ────────────────────────────────────────────────────
+function phStory(idx){
+  const ex=STORY_EX[idx];
+  storySelected=new Set();storyChecked=false;
+  const c=card(`
+    <div class="phase-title">${ex.title}</div>
+    <div class="tap-instruction">${ex.instruction}</div>
+    <div class="chip-area" id="chips" style="line-height:2.2"></div>
+    <div class="feedback" id="fb"></div>
+  `);
+  const chipArea=c.querySelector('#chips');
+  ex.tokens.forEach((tok,i)=>{
+    const ch=document.createElement('span');
+    ch.className='word-chip';ch.style.margin='3px';
+    ch.textContent=tok;
+    ch.onclick=()=>{
+      if(storyChecked)return;
+      if(storySelected.has(i)){storySelected.delete(i);ch.classList.remove('selected');}
+      else{storySelected.add(i);ch.classList.add('selected');}
+    };
+    chipArea.appendChild(ch);
+  });
+
+  const checkBtn=document.createElement('button');checkBtn.className='check-btn';checkBtn.textContent='✅ Check my answer!';
+  checkBtn.onclick=(ev)=>{
+    storyChecked=true;
+    const fb=c.querySelector('#fb');
+    let correct=true;
+    ex.tokens.forEach((_,i)=>{
+      const ch=chipArea.children[i];
+      const isTarget=ex.targetIdx.has(i);
+      const isSel=storySelected.has(i);
+      if(isTarget&&isSel){ch.classList.remove('selected');ch.classList.add('chip-correct');}
+      else if(isTarget&&!isSel){ch.classList.add('chip-missed');correct=false;}
+      else if(!isTarget&&isSel){ch.classList.remove('selected');ch.classList.add('chip-wrong');correct=false;}
+      else{ch.classList.add('chip-plain');}
+    });
+    checkBtn.style.display='none';
+    if(correct){score++;star(ev);fb.textContent='⭐ '+ex.correctFeedback;fb.className='feedback ok';}
+    else{fb.textContent='❌ '+ex.wrongFeedback;fb.className='feedback bad';
+      wrongs.push({q:ex.title,a:'Correct words: '+ex.tokens.filter((_,i)=>ex.targetIdx.has(i)).join(', '),h:ex.correctFeedback});
+    }
+    const nb=nextBtn(idx<2?'Next Story Exercise ➜':'Next: High-Frequency Words ➜',advance);
+    c.appendChild(nb);
+  };
+  c.appendChild(checkBtn);
+}
+
+// ── PHASE: HFW ────────────────────────────────────────────────────────────────
+function phHfw(){
+  if(qi>=HFW_QS.length){advance();return;}
+  const q=HFW_QS[qi];
+  const displaySent=q.sent.replace('___',`<span class="blank-word">___</span>`);
+  const c=card(`
+    ${pb(qi,HFW_QS.length)}
+    <div class="phase-title">High-Frequency Words 💬</div>
+    <div class="q-num" style="color:#0369a1;font-weight:800;font-size:.82rem">new ✦ found ✦ thank ✦ please ✦ always</div>
+    <div style="margin:8px 0"></div>
+    <div class="hfw-sent">${displaySent}</div>
+    <div class="pill-opts" id="pills"></div>
+    <div class="feedback" id="fb"></div>
+  `);
+  const po=c.querySelector('#pills');
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');b.className='pill-btn';b.textContent=o;
+    b.onclick=ev=>{
+      if(b.disabled)return;
+      po.querySelectorAll('.pill-btn').forEach(x=>x.disabled=true);
+      const fb=c.querySelector('#fb');
+      if(i===q.ans){b.classList.add('correct');fb.textContent='✅ '+q.explain;fb.className='feedback ok';score++;star(ev);setTimeout(()=>{qi++;phHfw();},900);}
+      else{b.classList.add('wrong');fb.textContent='❌ '+q.explain;fb.className='feedback bad';wrongs.push({q:q.sent,a:q.opts[q.ans],h:q.explain});setTimeout(()=>{qi++;phHfw();},1100);}
+    };
+    po.appendChild(b);
+  });
+}
+
+// ── DONE ──────────────────────────────────────────────────────────────────────
+function phDone(){
+  const pct=Math.round(score/total*100);
+  const emoji=pct>=90?'🌟':pct>=70?'😊':'💪';
+  let wHtml='';
+  if(wrongs.length){
+    wHtml='<div style="margin-top:14px"><div style="font-family:\'Fredoka One\',cursive;color:#dc2626;margin-bottom:8px">Review ✏️</div><ul class="wrong-list">';
+    wrongs.forEach(w=>{wHtml+=`<li class="wrong-item"><div class="wr-q">${w.q}</div><div class="wr-a">✅ ${w.a}</div><div class="wr-h">💡 ${w.h}</div></li>`;});
+    wHtml+='</ul></div>';
+  }
+  const c=card(`
+    <div class="score-wrap">
+      <div style="font-size:3rem">${emoji}</div>
+      <div class="score-num">${score} / ${total}</div>
+      <div style="color:#64748b;font-size:.88rem">${pct}% — ${pct>=90?'Excellent! 🎉':pct>=70?'Good job! 👍':'Keep practicing! 💪'}</div>
+    </div>
+    ${wHtml}
+  `);
+  c.appendChild(nextBtn('Play Again 🔄',()=>{phase=0;qi=0;score=0;wrongs=[];arRound=0;arSelected=new Set();storySelected=new Set();storyChecked=false;render();}));
+}
+
+render();
+</script>
+</body>
+</html>
