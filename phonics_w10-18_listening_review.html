@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎧 Phonics Listening Homework W10–18</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#fff8f0;font-family:'Nunito',sans-serif;min-height:100vh;padding-bottom:80px;}
+
+  .top-bar{background:linear-gradient(135deg,#6366f1,#a855f7);color:white;padding:16px 20px 12px;text-align:center;box-shadow:0 4px 16px rgba(99,102,241,.3);}
+  .top-title{font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:3px;}
+  .top-sub{font-size:.82rem;font-weight:700;opacity:.88;}
+
+  .week-nav{display:flex;overflow-x:auto;gap:6px;padding:12px 16px;background:white;box-shadow:0 2px 8px rgba(0,0,0,.06);position:sticky;top:0;z-index:50;scrollbar-width:none;}
+  .week-nav::-webkit-scrollbar{display:none;}
+  .week-tab{flex-shrink:0;padding:7px 15px;border-radius:50px;border:none;font-family:'Fredoka One',cursive;font-size:.82rem;cursor:pointer;background:#f0f0f0;color:#aaa;white-space:nowrap;transition:all .2s;}
+  .week-tab.active{color:white;}
+  .t10.active{background:linear-gradient(135deg,#6366f1,#8b5cf6);}
+  .t1112.active{background:linear-gradient(135deg,#0d9488,#06b6d4);}
+  .t13.active{background:linear-gradient(135deg,#10b981,#4ade80);}
+  .t14.active{background:linear-gradient(135deg,#0284c7,#06b6d4);}
+  .t15.active{background:linear-gradient(135deg,#ea580c,#f59e0b);}
+  .t16.active{background:linear-gradient(135deg,#f43f5e,#ec4899);}
+  .t18.active{background:linear-gradient(135deg,#7c3aed,#a855f7);}
+
+  .content-area{max-width:560px;margin:0 auto;padding:16px;}
+  .week-panel{display:none;} .week-panel.active{display:block;}
+
+  .week-hdr{border-radius:16px;padding:14px 16px;color:white;margin-bottom:14px;}
+  .wh-week{font-family:'Fredoka One',cursive;font-size:1.2rem;}
+  .wh-topic{font-size:.82rem;font-weight:700;opacity:.9;margin-top:2px;}
+  .hdr10{background:linear-gradient(135deg,#6366f1,#8b5cf6);}
+  .hdr1112{background:linear-gradient(135deg,#0d9488,#06b6d4);}
+  .hdr13{background:linear-gradient(135deg,#10b981,#4ade80);}
+  .hdr14{background:linear-gradient(135deg,#0284c7,#06b6d4);}
+  .hdr15{background:linear-gradient(135deg,#ea580c,#f59e0b);}
+  .hdr16{background:linear-gradient(135deg,#f43f5e,#ec4899);}
+  .hdr18{background:linear-gradient(135deg,#7c3aed,#a855f7);}
+
+  .sec-card{background:white;border-radius:18px;padding:0;box-shadow:0 4px 16px rgba(0,0,0,.06);margin-bottom:14px;overflow:hidden;}
+  .sec-head{padding:14px 16px 0;}
+  .sec-label{font-family:'Fredoka One',cursive;font-size:1rem;margin-bottom:4px;}
+  .c10{color:#6366f1;} .c1112{color:#0d9488;} .c13{color:#10b981;}
+  .c14{color:#0284c7;} .c15{color:#ea580c;} .c16{color:#f43f5e;} .c18{color:#7c3aed;}
+
+  /* AUDIO GATE */
+  .audio-gate{margin:12px 16px 16px;background:#fff8f0;border:2px dashed #e9d5ff;border-radius:14px;padding:16px;text-align:center;transition:all .3s;}
+  .audio-gate.opened{background:#f0fdf4;border-color:#6ee7b7;border-style:solid;}
+  .gate-emoji{font-size:2rem;margin-bottom:6px;}
+  .gate-title{font-family:'Fredoka One',cursive;font-size:.95rem;color:#7c3aed;margin-bottom:3px;}
+  .gate-sub{font-size:.78rem;font-weight:700;color:#aaa;margin-bottom:10px;line-height:1.5;}
+  .play-btn{display:inline-flex;align-items:center;gap:7px;padding:11px 22px;border-radius:50px;border:none;cursor:pointer;font-family:'Fredoka One',cursive;font-size:.95rem;color:white;text-decoration:none;box-shadow:0 3px 12px rgba(0,0,0,.12);transition:all .15s;}
+  .play-btn:hover{transform:scale(1.04);}
+  .pb10{background:linear-gradient(135deg,#6366f1,#8b5cf6);}
+  .pb1112{background:linear-gradient(135deg,#0d9488,#06b6d4);}
+  .pb13{background:linear-gradient(135deg,#10b981,#4ade80);}
+  .pb14{background:linear-gradient(135deg,#0284c7,#06b6d4);}
+  .pb15{background:linear-gradient(135deg,#ea580c,#f59e0b);}
+  .pb16{background:linear-gradient(135deg,#f43f5e,#ec4899);}
+  .pb18{background:linear-gradient(135deg,#7c3aed,#a855f7);}
+  .unlock-btn{display:none;width:100%;margin-top:10px;padding:10px;border-radius:50px;border:none;background:#059669;color:white;font-family:'Fredoka One',cursive;font-size:.92rem;cursor:pointer;}
+  .unlock-btn:hover{background:#047857;}
+
+  /* Q AREA */
+  .q-area{display:none;padding:0 16px 16px;}
+  .q-area.open{display:block;animation:fadeIn .4s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+  .q-instruction{font-size:.8rem;font-weight:700;color:#888;background:#f9f9f9;border-radius:10px;padding:8px 12px;margin-bottom:12px;line-height:1.5;}
+
+  /* ADD -ES */
+  .add-es-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+  .add-es-num{font-family:'Fredoka One',cursive;font-size:.9rem;color:#aaa;min-width:22px;}
+  .add-es-word{font-family:'Fredoka One',cursive;font-size:1.3rem;color:#333;min-width:70px;}
+  .add-es-opts{display:flex;gap:6px;}
+  .ae-btn{padding:8px 14px;border-radius:50px;border:3px solid #eee;background:#f9f9f9;font-family:'Fredoka One',cursive;font-size:.85rem;cursor:pointer;transition:all .15s;}
+  .ae-btn:hover{border-color:#6366f1;background:#eef2ff;}
+  .ae-btn.selected{border-color:#6366f1;background:#eef2ff;color:#4338ca;}
+  .ae-btn.correct{border-color:#34d399;background:#d1fae5;color:#065f46;}
+  .ae-btn.wrong{border-color:#fca5a5;background:#fee2e2;color:#991b1b;}
+  .ae-btn:disabled{cursor:default;}
+
+  /* 3-CHOICE CIRCLE */
+  .choice-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+  .choice-num{font-family:'Fredoka One',cursive;font-size:.9rem;color:#aaa;min-width:22px;}
+  .choice-opts{display:flex;gap:6px;flex:1;flex-wrap:wrap;}
+  .choice-btn{flex:1;min-width:70px;padding:10px 6px;border-radius:14px;border:3px solid #eee;background:#f9f9f9;font-family:'Fredoka One',cursive;font-size:.95rem;cursor:pointer;text-align:center;transition:all .15s;}
+  .choice-btn:hover{border-color:#6366f1;background:#eef2ff;transform:translateY(-1px);}
+  .choice-btn.selected{border-color:#6366f1;background:#eef2ff;color:#4338ca;}
+  .choice-btn.correct{border-color:#34d399;background:#d1fae5;color:#065f46;}
+  .choice-btn.wrong{border-color:#fca5a5;background:#fee2e2;color:#991b1b;}
+  .choice-btn:disabled{cursor:default;}
+
+  /* TEXT WRITE INPUT */
+  .write-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+  .write-num{font-family:'Fredoka One',cursive;font-size:.9rem;color:#aaa;min-width:22px;}
+  .write-pre{font-family:'Fredoka One',cursive;font-size:1.1rem;color:#555;}
+  .write-input{border:3px solid #e0e7ff;border-radius:12px;padding:8px 12px;font-family:'Fredoka One',cursive;font-size:1.1rem;width:130px;outline:none;transition:all .2s;}
+  .write-input:focus{border-color:#6366f1;}
+  .write-input.correct{border-color:#34d399;background:#d1fae5;color:#065f46;}
+  .write-input.wrong{border-color:#fca5a5;background:#fee2e2;color:#991b1b;}
+  .write-hint{font-size:.8rem;font-weight:700;color:#059669;display:none;margin-top:2px;}
+
+  /* O/I and RE/UN FILL */
+  .fill2-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+  .fill2-num{font-family:'Fredoka One',cursive;font-size:.9rem;color:#aaa;min-width:22px;}
+  .fill2-word{font-family:'Fredoka One',cursive;font-size:1.15rem;color:#333;min-width:80px;}
+  .fill2-hint{font-size:.78rem;font-weight:700;color:#aaa;flex:1;}
+  .fill2-opts{display:flex;gap:6px;}
+  .f2-btn{padding:7px 14px;border-radius:50px;border:3px solid #eee;background:#f9f9f9;font-family:'Fredoka One',cursive;font-size:.88rem;cursor:pointer;transition:all .15s;}
+  .f2-btn:hover{border-color:#7c3aed;background:#f5f3ff;}
+  .f2-btn.selected{border-color:#7c3aed;background:#f5f3ff;color:#6d28d9;}
+  .f2-btn.correct{border-color:#34d399;background:#d1fae5;color:#065f46;}
+  .f2-btn.wrong{border-color:#fca5a5;background:#fee2e2;color:#991b1b;}
+  .f2-btn:disabled{cursor:default;}
+
+  /* SORT oa/ow/oe */
+  .sort-section{padding:0 16px 16px;}
+  .sort-words{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+  .sort-chip{padding:8px 18px;border-radius:50px;border:3px solid #ddd;background:#f9f9f9;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;transition:all .15s;}
+  .sort-chip.selected{border-color:#10b981;background:#ecfdf5;color:#065f46;}
+  .sort-chip.placed{opacity:.45;pointer-events:none;}
+  .sort-chip.correct{border-color:#34d399;background:#d1fae5;color:#065f46;pointer-events:none;}
+  .sort-chip.wrong{border-color:#fca5a5;background:#fee2e2;color:#991b1b;pointer-events:none;}
+  .sort-boxes{display:flex;gap:8px;margin-bottom:12px;}
+  .sort-box{flex:1;border:3px dashed #d1d5db;border-radius:14px;padding:10px 6px;min-height:68px;cursor:pointer;transition:all .15s;}
+  .sort-box:hover{border-color:#10b981;background:#f0fdf4;}
+  .sort-box.active-target{border-color:#10b981;background:#ecfdf5;}
+  .sort-box-label{font-family:'Fredoka One',cursive;font-size:1rem;text-align:center;color:#10b981;margin-bottom:6px;}
+  .sort-box-area{display:flex;flex-wrap:wrap;gap:4px;min-height:28px;}
+  .sort-placed{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:50px;background:#d1fae5;border:2px solid #6ee7b7;font-family:'Fredoka One',cursive;font-size:.82rem;cursor:pointer;}
+  .sort-placed:hover{background:#bbf7d0;}
+
+  /* READING CARD */
+  .reading-card{margin:12px 16px;background:#faf7ff;border:2px solid #e9d5ff;border-radius:14px;padding:14px;}
+  .reading-story{font-size:.85rem;font-weight:700;line-height:1.7;color:#374151;margin-bottom:12px;}
+  .reading-title{font-family:'Fredoka One',cursive;font-size:.95rem;color:#7c3aed;margin-bottom:6px;}
+
+  /* MC 3-choice reading */
+  .mc-row{margin-bottom:12px;}
+  .mc-q{font-size:.85rem;font-weight:800;color:#374151;margin-bottom:6px;}
+  .mc-opts{display:flex;flex-direction:column;gap:5px;}
+  .mc-btn{padding:9px 14px;border-radius:12px;border:3px solid #eee;background:#f9f9f9;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;text-align:left;transition:all .15s;}
+  .mc-btn:hover{border-color:#7c3aed;background:#f5f3ff;}
+  .mc-btn.selected{border-color:#7c3aed;background:#f5f3ff;color:#6d28d9;}
+  .mc-btn.correct{border-color:#34d399;background:#d1fae5;color:#065f46;}
+  .mc-btn.wrong{border-color:#fca5a5;background:#fee2e2;color:#991b1b;}
+  .mc-btn:disabled{cursor:default;}
+
+  /* REFERENCE CARD (no audio) */
+  .ref-card{margin:12px 16px 16px;background:#fafafa;border:2px solid #e9d5ff;border-radius:14px;padding:14px;}
+  .ref-item{font-size:.9rem;font-weight:700;color:#374151;margin-bottom:7px;line-height:1.6;}
+  .ref-item .hl{color:#6366f1;font-size:1rem;}
+
+  /* CHECK + RESULT */
+  .check-btn{width:100%;padding:12px;border-radius:50px;border:none;color:white;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;margin-top:8px;transition:all .15s;}
+  .check-btn:hover{opacity:.9;}
+  .cb10{background:linear-gradient(135deg,#6366f1,#8b5cf6);}
+  .cb1112{background:linear-gradient(135deg,#0d9488,#06b6d4);}
+  .cb13{background:linear-gradient(135deg,#10b981,#4ade80);}
+  .cb14{background:linear-gradient(135deg,#0284c7,#06b6d4);}
+  .cb15{background:linear-gradient(135deg,#ea580c,#f59e0b);}
+  .cb16{background:linear-gradient(135deg,#f43f5e,#ec4899);}
+  .cb18{background:linear-gradient(135deg,#7c3aed,#a855f7);}
+
+  .result-banner{border-radius:14px;padding:12px 16px;font-family:'Fredoka One',cursive;font-size:1rem;text-align:center;margin-top:10px;display:none;}
+  .result-banner.show{display:block;animation:fadeIn .3s ease;}
+  .rb-ok{background:#d1fae5;color:#065f46;border:3px solid #6ee7b7;}
+  .rb-bad{background:#fee2e2;color:#991b1b;border:3px solid #fca5a5;}
+  .retry-link{display:inline-block;margin-top:4px;font-size:.82rem;color:#6366f1;cursor:pointer;text-decoration:underline;}
+
+  .divider{height:1px;background:#f0f0f0;margin:12px 0;}
+  .sub-label{font-family:'Fredoka One',cursive;font-size:.85rem;color:#888;margin-bottom:8px;margin-top:4px;}
+
+  /* STAR POP */
+  .star-pop{position:fixed;font-size:2rem;pointer-events:none;animation:fly .9s ease-out forwards;z-index:999;}
+  @keyframes fly{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-80px) scale(1.6)}}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-title">🎧 Phonics Listening Homework</div>
+  <div class="top-sub">Week 10–18 ｜ 聽音檔，再作答！</div>
+</div>
+
+<div class="week-nav">
+  <button class="week-tab t10 active" onclick="showWeek('w10',this)">Week 10</button>
+  <button class="week-tab t1112" onclick="showWeek('w1112',this)">Week 11/12</button>
+  <button class="week-tab t13" onclick="showWeek('w13',this)">Week 13</button>
+  <button class="week-tab t14" onclick="showWeek('w14',this)">Week 14</button>
+  <button class="week-tab t15" onclick="showWeek('w15',this)">Week 15</button>
+  <button class="week-tab t16" onclick="showWeek('w16',this)">Week 16</button>
+  <button class="week-tab t18" onclick="showWeek('w18',this)">Week 18</button>
+</div>
+
+<div class="content-area">
+
+<!-- ===== WEEK 10 ===== -->
+<div class="week-panel active" id="panel-w10">
+  <div class="week-hdr hdr10">
+    <div><div class="wh-week">📖 Week 10</div><div class="wh-topic">r-Controlled ar ｜ Inflectional / Plural -es</div></div>
+  </div>
+
+  <!-- 10A: Add -es? -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c10">Part A — 要加 -es 嗎？</div></div>
+    <div class="audio-gate" id="gate-10a">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 10 Part A — 聽完再解鎖</div>
+      <a class="play-btn pb10" href="https://drive.google.com/file/d/1KquNBrRuk-ruLljwgBv0S5QY8TTTvV-Z/view" target="_blank" onclick="markPlayed('10a')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-10a" onclick="unlock('10a')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-10a">
+      <div class="q-instruction">聽音檔 — 字尾唸起來有 <b>-es</b> 嗎？有就加，沒有就不加！<br>（字尾 s / sh / ch / x / o → 加 -es）</div>
+      <div class="add-es-row"><div class="add-es-num">1.</div><div class="add-es-word">fox___</div><div class="add-es-opts">
+        <button class="ae-btn" data-q="10a-1" data-ans="es" onclick="pickAE(this,'10a-1','es')">+ es ✅</button>
+        <button class="ae-btn" data-q="10a-1" data-ans="no" onclick="pickAE(this,'10a-1','no')">不加 ❌</button>
+      </div></div>
+      <div class="add-es-row"><div class="add-es-num">2.</div><div class="add-es-word">hatch___</div><div class="add-es-opts">
+        <button class="ae-btn" data-q="10a-2" data-ans="es" onclick="pickAE(this,'10a-2','es')">+ es ✅</button>
+        <button class="ae-btn" data-q="10a-2" data-ans="no" onclick="pickAE(this,'10a-2','no')">不加 ❌</button>
+      </div></div>
+      <div class="add-es-row"><div class="add-es-num">3.</div><div class="add-es-word">mix___</div><div class="add-es-opts">
+        <button class="ae-btn" data-q="10a-3" data-ans="es" onclick="pickAE(this,'10a-3','es')">+ es ✅</button>
+        <button class="ae-btn" data-q="10a-3" data-ans="no" onclick="pickAE(this,'10a-3','no')">不加 ❌</button>
+      </div></div>
+      <div class="add-es-row"><div class="add-es-num">4.</div><div class="add-es-word">dish___</div><div class="add-es-opts">
+        <button class="ae-btn" data-q="10a-4" data-ans="es" onclick="pickAE(this,'10a-4','es')">+ es ✅</button>
+        <button class="ae-btn" data-q="10a-4" data-ans="no" onclick="pickAE(this,'10a-4','no')">不加 ❌</button>
+      </div></div>
+      <div class="add-es-row"><div class="add-es-num">5.</div><div class="add-es-word">lunch___</div><div class="add-es-opts">
+        <button class="ae-btn" data-q="10a-5" data-ans="es" onclick="pickAE(this,'10a-5','es')">+ es ✅</button>
+        <button class="ae-btn" data-q="10a-5" data-ans="no" onclick="pickAE(this,'10a-5','no')">不加 ❌</button>
+      </div></div>
+      <button class="check-btn cb10" onclick="checkSection('10a',{1:'es',2:'es',3:'es',4:'es',5:'es'})">Check ✅</button>
+      <div class="result-banner" id="rb-10a"></div>
+    </div>
+  </div>
+
+  <!-- 10B: Circle /ar/ word (3 choices) -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c10">Part B — 圈出聽到的字（三選一）</div></div>
+    <div class="audio-gate" id="gate-10b">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 10 Part B — 聽到哪個字？</div>
+      <a class="play-btn pb10" href="https://drive.google.com/file/d/1KNbeOka8VgfEAhEX1n5th0cvPoHhLiRy/view" target="_blank" onclick="markPlayed('10b')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-10b" onclick="unlock('10b')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-10b">
+      <div class="q-instruction">每題聽到哪個字？三個選一個！</div>
+      <div class="choice-row"><div class="choice-num">1.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="10b-1" data-val="bark" onclick="pickChoice(this,'10b-1')">bark</button>
+        <button class="choice-btn" data-q="10b-1" data-val="back" onclick="pickChoice(this,'10b-1')">back</button>
+        <button class="choice-btn" data-q="10b-1" data-val="park" onclick="pickChoice(this,'10b-1')">park</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">2.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="10b-2" data-val="art" onclick="pickChoice(this,'10b-2')">art</button>
+        <button class="choice-btn" data-q="10b-2" data-val="at" onclick="pickChoice(this,'10b-2')">at</button>
+        <button class="choice-btn" data-q="10b-2" data-val="mat" onclick="pickChoice(this,'10b-2')">mat</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">3.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="10b-3" data-val="star" onclick="pickChoice(this,'10b-3')">star</button>
+        <button class="choice-btn" data-q="10b-3" data-val="tar" onclick="pickChoice(this,'10b-3')">tar</button>
+        <button class="choice-btn" data-q="10b-3" data-val="car" onclick="pickChoice(this,'10b-3')">car</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">4.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="10b-4" data-val="mark" onclick="pickChoice(this,'10b-4')">mark</button>
+        <button class="choice-btn" data-q="10b-4" data-val="stark" onclick="pickChoice(this,'10b-4')">stark</button>
+        <button class="choice-btn" data-q="10b-4" data-val="mar" onclick="pickChoice(this,'10b-4')">mar</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">5.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="10b-5" data-val="harm" onclick="pickChoice(this,'10b-5')">harm</button>
+        <button class="choice-btn" data-q="10b-5" data-val="farm" onclick="pickChoice(this,'10b-5')">farm</button>
+        <button class="choice-btn" data-q="10b-5" data-val="charm" onclick="pickChoice(this,'10b-5')">charm</button>
+      </div></div>
+      <button class="check-btn cb10" onclick="checkSection('10b',{1:'back',2:'art',3:'car',4:'stark',5:'charm'})">Check ✅</button>
+      <div class="result-banner" id="rb-10b"></div>
+    </div>
+  </div>
+
+  <!-- 10 Writing: ar words reference -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c10">✏️ Writing Practice — ar words in sentences</div></div>
+    <div class="ref-card" style="margin:12px 16px 16px;">
+      <div style="font-family:'Fredoka One',cursive;font-size:.82rem;color:#888;margin-bottom:8px;">找出句子裡的 ar 單字（紫色標示）</div>
+      <div class="ref-item">1. Will <span class="hl">Mark</span> go to the <span class="hl">park</span> when it is <span class="hl">dark</span>?</div>
+      <div class="ref-item">2. The red <span class="hl">car</span> misses the <span class="hl">mark</span>.</div>
+      <div class="ref-item">3. <span class="hl">Star</span> will read the <span class="hl">card</span> from his mom.</div>
+      <div class="ref-item">4. English is not too <span class="hl">hard</span>.</div>
+      <div class="ref-item">5. Their dog <span class="hl">barks</span> in the <span class="hl">yard</span>.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WEEK 11/12 ===== -->
+<div class="week-panel" id="panel-w1112">
+  <div class="week-hdr hdr1112">
+    <div><div class="wh-week">📖 Week 11 / 12</div><div class="wh-topic">r-Controlled er, ir, ur</div></div>
+  </div>
+
+  <!-- 11A: Write er words -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c1112">Part A — 聽到的字用 <b>er</b> 拼寫</div></div>
+    <div class="audio-gate" id="gate-11a">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 11 Part A — 打字填入聽到的字</div>
+      <a class="play-btn pb1112" href="https://drive.google.com/file/d/13U7NaQWOXQDQsRdDOWRI50e1RRXoxMKe/view" target="_blank" onclick="markPlayed('11a')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-11a" onclick="unlock('11a')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-11a">
+      <div class="q-instruction">聽到的字全部用 <b>er</b> 結尾，打字寫出來！</div>
+      <div class="write-row"><div class="write-num">1.</div><input class="write-input" id="wi-11a-1" placeholder="..."><div class="write-hint" id="wh-11a-1"></div></div>
+      <div class="write-row"><div class="write-num">2.</div><input class="write-input" id="wi-11a-2" placeholder="..."><div class="write-hint" id="wh-11a-2"></div></div>
+      <div class="write-row"><div class="write-num">3.</div><input class="write-input" id="wi-11a-3" placeholder="..."><div class="write-hint" id="wh-11a-3"></div></div>
+      <button class="check-btn cb1112" onclick="checkWrite('11a',{1:'verb',2:'her',3:'pert'})">Check ✅</button>
+      <div class="result-banner" id="rb-11a"></div>
+    </div>
+  </div>
+
+  <!-- 11B: Write ur words -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c1112">Part B — 聽到的字用 <b>ur</b> 拼寫</div></div>
+    <div class="audio-gate" id="gate-11b">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 11 Part B</div>
+      <a class="play-btn pb1112" href="https://drive.google.com/file/d/1x7mhs2vsLODTOz3G9OQKz9hFvZFuGRy2/view" target="_blank" onclick="markPlayed('11b')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-11b" onclick="unlock('11b')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-11b">
+      <div class="q-instruction">聽到的字全部用 <b>ur</b> 結尾，打字寫出來！</div>
+      <div class="write-row"><div class="write-num">1.</div><input class="write-input" id="wi-11b-1" placeholder="..."><div class="write-hint" id="wh-11b-1"></div></div>
+      <div class="write-row"><div class="write-num">2.</div><input class="write-input" id="wi-11b-2" placeholder="..."><div class="write-hint" id="wh-11b-2"></div></div>
+      <div class="write-row"><div class="write-num">3.</div><input class="write-input" id="wi-11b-3" placeholder="..."><div class="write-hint" id="wh-11b-3"></div></div>
+      <button class="check-btn cb1112" onclick="checkWrite('11b',{1:'burn',2:'fur',3:'church'})">Check ✅</button>
+      <div class="result-banner" id="rb-11b"></div>
+    </div>
+  </div>
+
+  <!-- 11C: Circle 1 of 3 -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c1112">Part C — 圈出聽到的字（三選一）</div></div>
+    <div class="audio-gate" id="gate-11c">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 11 Part C</div>
+      <a class="play-btn pb1112" href="https://drive.google.com/file/d/13Ja5JEAQ-FIW3ZaTL5qpGxsOUDgXUoMx/view" target="_blank" onclick="markPlayed('11c')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-11c" onclick="unlock('11c')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-11c">
+      <div class="q-instruction">每題聽到哪個字？三個選一個！</div>
+      <div class="choice-row"><div class="choice-num">1.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="11c-1" data-val="first" onclick="pickChoice(this,'11c-1')">first</button>
+        <button class="choice-btn" data-q="11c-1" data-val="fort" onclick="pickChoice(this,'11c-1')">fort</button>
+        <button class="choice-btn" data-q="11c-1" data-val="far" onclick="pickChoice(this,'11c-1')">far</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">2.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="11c-2" data-val="cart" onclick="pickChoice(this,'11c-2')">cart</button>
+        <button class="choice-btn" data-q="11c-2" data-val="corn" onclick="pickChoice(this,'11c-2')">corn</button>
+        <button class="choice-btn" data-q="11c-2" data-val="churn" onclick="pickChoice(this,'11c-2')">churn</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">3.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="11c-3" data-val="stir" onclick="pickChoice(this,'11c-3')">stir</button>
+        <button class="choice-btn" data-q="11c-3" data-val="star" onclick="pickChoice(this,'11c-3')">star</button>
+        <button class="choice-btn" data-q="11c-3" data-val="store" onclick="pickChoice(this,'11c-3')">store</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">4.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="11c-4" data-val="shark" onclick="pickChoice(this,'11c-4')">shark</button>
+        <button class="choice-btn" data-q="11c-4" data-val="short" onclick="pickChoice(this,'11c-4')">short</button>
+        <button class="choice-btn" data-q="11c-4" data-val="shirt" onclick="pickChoice(this,'11c-4')">shirt</button>
+      </div></div>
+      <button class="check-btn cb1112" onclick="checkSection('11c',{1:'first',2:'churn',3:'store',4:'shirt'})">Check ✅</button>
+      <div class="result-banner" id="rb-11c"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WEEK 13 ===== -->
+<div class="week-panel" id="panel-w13">
+  <div class="week-hdr hdr13">
+    <div><div class="wh-week">📖 Week 13</div><div class="wh-topic">Long o: oa, ow, oe ｜ Consonant Blends</div></div>
+  </div>
+
+  <!-- 13 Reading: Fern the Bird -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c13">📖 Reading — Fern the Bird</div></div>
+    <div class="reading-card">
+      <div class="reading-title">Story: Fern the Bird</div>
+      <div class="reading-story">Fern is a bird. She sits on her <b>perch</b>. She sees the sun start to come up. Fern chirps and twirls! Spring makes her perk up. She flaps her wings and goes far. She goes to the park. She sees grass and <b>dirt</b>. She sees bugs and twigs. Then she feels a thirst. She sips from the pond. Slurp, slurp!</div>
+    </div>
+    <div class="q-area open" id="qa-13r" style="padding-top:0;">
+      <div class="mc-row">
+        <div class="mc-q">1. Where does Fern sit?</div>
+        <div class="mc-opts">
+          <button class="mc-btn" data-q="13r-1" data-val="a" onclick="pickMC(this,'13r-1')">a. on her perch</button>
+          <button class="mc-btn" data-q="13r-1" data-val="b" onclick="pickMC(this,'13r-1')">b. in the pond</button>
+          <button class="mc-btn" data-q="13r-1" data-val="c" onclick="pickMC(this,'13r-1')">c. in the dirt</button>
+        </div>
+      </div>
+      <div class="mc-row">
+        <div class="mc-q">2. What makes Fern perk up?</div>
+        <div class="mc-opts">
+          <button class="mc-btn" data-q="13r-2" data-val="a" onclick="pickMC(this,'13r-2')">a. bugs and twigs</button>
+          <button class="mc-btn" data-q="13r-2" data-val="b" onclick="pickMC(this,'13r-2')">b. the grass</button>
+          <button class="mc-btn" data-q="13r-2" data-val="c" onclick="pickMC(this,'13r-2')">c. spring</button>
+        </div>
+      </div>
+      <button class="check-btn cb13" onclick="checkSection('13r',{1:'a',2:'c'})">Check ✅</button>
+      <div class="result-banner" id="rb-13r"></div>
+    </div>
+  </div>
+
+  <!-- 13A: Write long-o words -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c13">Part A — 寫出聽到的長母音 o 字</div></div>
+    <div class="audio-gate" id="gate-13a">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 13 Part A — oa / ow 拼寫</div>
+      <a class="play-btn pb13" href="https://drive.google.com/file/d/1qb0jlqK5LTxGM4Fatyc6E1Sl9_lDlO-T/view" target="_blank" onclick="markPlayed('13a')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-13a" onclick="unlock('13a')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-13a">
+      <div class="q-instruction">聽到字：o在中間用 <b>oa</b>，o在字尾用 <b>ow</b>，打字寫出！</div>
+      <div class="write-row"><div class="write-num">1.</div><input class="write-input" id="wi-13a-1" placeholder="..."><div class="write-hint" id="wh-13a-1"></div></div>
+      <div class="write-row"><div class="write-num">2.</div><input class="write-input" id="wi-13a-2" placeholder="..."><div class="write-hint" id="wh-13a-2"></div></div>
+      <div class="write-row"><div class="write-num">3.</div><input class="write-input" id="wi-13a-3" placeholder="..."><div class="write-hint" id="wh-13a-3"></div></div>
+      <div class="write-row"><div class="write-num">4.</div><input class="write-input" id="wi-13a-4" placeholder="..."><div class="write-hint" id="wh-13a-4"></div></div>
+      <div class="write-row"><div class="write-num">5.</div><input class="write-input" id="wi-13a-5" placeholder="..."><div class="write-hint" id="wh-13a-5"></div></div>
+      <button class="check-btn cb13" onclick="checkWrite('13a',{1:'coat',2:'toad',3:'blow',4:'show',5:'float'})">Check ✅</button>
+      <div class="result-banner" id="rb-13a"></div>
+    </div>
+  </div>
+
+  <!-- 13B: Consonant blends (3 choices) -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c13">Part B — 圈出聽到的字（三選一）</div></div>
+    <div class="audio-gate" id="gate-13b">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 13 Part B — Consonant Blends</div>
+      <a class="play-btn pb13" href="https://drive.google.com/file/d/1fb7nlsmUreLmi1bjfRWkjbpg_mXUezjm/view" target="_blank" onclick="markPlayed('13b')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-13b" onclick="unlock('13b')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-13b">
+      <div class="q-instruction">每題聽到哪個字？三個選一個！</div>
+      <div class="choice-row"><div class="choice-num">1.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="13b-1" data-val="strip" onclick="pickChoice(this,'13b-1')">strip</button>
+        <button class="choice-btn" data-q="13b-1" data-val="sprint" onclick="pickChoice(this,'13b-1')">sprint</button>
+        <button class="choice-btn" data-q="13b-1" data-val="splint" onclick="pickChoice(this,'13b-1')">splint</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">2.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="13b-2" data-val="thrash" onclick="pickChoice(this,'13b-2')">thrash</button>
+        <button class="choice-btn" data-q="13b-2" data-val="splash" onclick="pickChoice(this,'13b-2')">splash</button>
+        <button class="choice-btn" data-q="13b-2" data-val="squash" onclick="pickChoice(this,'13b-2')">squash</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">3.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="13b-3" data-val="scrap" onclick="pickChoice(this,'13b-3')">scrap</button>
+        <button class="choice-btn" data-q="13b-3" data-val="splat" onclick="pickChoice(this,'13b-3')">splat</button>
+        <button class="choice-btn" data-q="13b-3" data-val="school" onclick="pickChoice(this,'13b-3')">school</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">4.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="13b-4" data-val="three" onclick="pickChoice(this,'13b-4')">three</button>
+        <button class="choice-btn" data-q="13b-4" data-val="spree" onclick="pickChoice(this,'13b-4')">spree</button>
+        <button class="choice-btn" data-q="13b-4" data-val="street" onclick="pickChoice(this,'13b-4')">street</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">5.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="13b-5" data-val="squish" onclick="pickChoice(this,'13b-5')">squish</button>
+        <button class="choice-btn" data-q="13b-5" data-val="spring" onclick="pickChoice(this,'13b-5')">spring</button>
+        <button class="choice-btn" data-q="13b-5" data-val="string" onclick="pickChoice(this,'13b-5')">string</button>
+      </div></div>
+      <button class="check-btn cb13" onclick="checkSection('13b',{1:'sprint',2:'splash',3:'scrap',4:'street',5:'squish'})">Check ✅</button>
+      <div class="result-banner" id="rb-13b"></div>
+    </div>
+  </div>
+
+  <!-- 13C: Sort oa / ow / oe -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c13">Part C — 分類 oa / ow / oe</div></div>
+    <div class="sort-section" id="sort-13c">
+      <div class="q-instruction" style="margin:0 0 12px;">每個字用哪種拼法？點字再點類別框！</div>
+      <div class="sort-words" id="sw-13c">
+        <div class="sort-chip" id="sc-show" onclick="sortSelectWord('show','13c')">show</div>
+        <div class="sort-chip" id="sc-toe" onclick="sortSelectWord('toe','13c')">toe</div>
+        <div class="sort-chip" id="sc-blow" onclick="sortSelectWord('blow','13c')">blow</div>
+        <div class="sort-chip" id="sc-road" onclick="sortSelectWord('road','13c')">road</div>
+        <div class="sort-chip" id="sc-doe" onclick="sortSelectWord('doe','13c')">doe</div>
+        <div class="sort-chip" id="sc-glow" onclick="sortSelectWord('glow','13c')">glow</div>
+      </div>
+      <div class="sort-boxes">
+        <div class="sort-box" id="sb-oa-13c" onclick="sortPlace('oa','13c')">
+          <div class="sort-box-label">🅾️ oa</div>
+          <div class="sort-box-area" id="sba-oa-13c"></div>
+        </div>
+        <div class="sort-box" id="sb-ow-13c" onclick="sortPlace('ow','13c')">
+          <div class="sort-box-label">🌊 ow</div>
+          <div class="sort-box-area" id="sba-ow-13c"></div>
+        </div>
+        <div class="sort-box" id="sb-oe-13c" onclick="sortPlace('oe','13c')">
+          <div class="sort-box-label">🦶 oe</div>
+          <div class="sort-box-area" id="sba-oe-13c"></div>
+        </div>
+      </div>
+      <button class="check-btn cb13" onclick="checkSort('13c',{show:'ow',toe:'oe',blow:'ow',road:'oa',doe:'oe',glow:'ow'})">Check ✅</button>
+      <div class="result-banner" id="rb-sort-13c"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WEEK 14 ===== -->
+<div class="week-panel" id="panel-w14">
+  <div class="week-hdr hdr14">
+    <div><div class="wh-week">📖 Week 14</div><div class="wh-topic">Vowel Teams ue, ew, ui ｜ Prefixes re-, un-</div></div>
+  </div>
+
+  <!-- 14A: Write long-u words -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c14">Part A — 寫出聽到的長母音 u 字</div></div>
+    <div class="audio-gate" id="gate-14a">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 14 Part A — ui / ue 拼寫</div>
+      <a class="play-btn pb14" href="https://drive.google.com/file/d/1kLeQUXHJwaN2mfpCh7ri6h9JIC0TNaOE/view" target="_blank" onclick="markPlayed('14a')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-14a" onclick="unlock('14a')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-14a">
+      <div class="q-instruction">u音在中間用 <b>ui</b>，u音在字尾用 <b>ue</b>，打字寫出！</div>
+      <div class="write-row"><div class="write-num">1.</div><input class="write-input" id="wi-14a-1" placeholder="..."><div class="write-hint" id="wh-14a-1"></div></div>
+      <div class="write-row"><div class="write-num">2.</div><input class="write-input" id="wi-14a-2" placeholder="..."><div class="write-hint" id="wh-14a-2"></div></div>
+      <div class="write-row"><div class="write-num">3.</div><input class="write-input" id="wi-14a-3" placeholder="..."><div class="write-hint" id="wh-14a-3"></div></div>
+      <div class="write-row"><div class="write-num">4.</div><input class="write-input" id="wi-14a-4" placeholder="..."><div class="write-hint" id="wh-14a-4"></div></div>
+      <div class="write-row"><div class="write-num">5.</div><input class="write-input" id="wi-14a-5" placeholder="..."><div class="write-hint" id="wh-14a-5"></div></div>
+      <button class="check-btn cb14" onclick="checkWrite('14a',{1:'suit',2:'due',3:'blue',4:'fruit',5:'true'})">Check ✅</button>
+      <div class="result-banner" id="rb-14a"></div>
+    </div>
+  </div>
+
+  <!-- 14B: Fill prefix re- or un- -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c14">Part B — 填前綴 re- 或 un-</div></div>
+    <div class="audio-gate" id="gate-14b">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 14 Part B — re- / un-</div>
+      <a class="play-btn pb14" href="https://drive.google.com/file/d/1_C941bqoksQ990PLanCmOm5XJ9Q_YPEa/view" target="_blank" onclick="markPlayed('14b')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-14b" onclick="unlock('14b')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-14b">
+      <div class="q-instruction">聽到的字，前綴是 <b>re-</b> 還是 <b>un-</b>？</div>
+      <div class="fill2-row"><div class="fill2-num">1.</div><div class="fill2-word">___ do</div><div class="fill2-opts">
+        <button class="f2-btn" data-q="14b-1" data-val="re" onclick="pickF2(this,'14b-1')">re-</button>
+        <button class="f2-btn" data-q="14b-1" data-val="un" onclick="pickF2(this,'14b-1')">un-</button>
+      </div></div>
+      <div class="fill2-row"><div class="fill2-num">2.</div><div class="fill2-word">___ zip</div><div class="fill2-opts">
+        <button class="f2-btn" data-q="14b-2" data-val="re" onclick="pickF2(this,'14b-2')">re-</button>
+        <button class="f2-btn" data-q="14b-2" data-val="un" onclick="pickF2(this,'14b-2')">un-</button>
+      </div></div>
+      <div class="fill2-row"><div class="fill2-num">3.</div><div class="fill2-word">___ tie</div><div class="fill2-opts">
+        <button class="f2-btn" data-q="14b-3" data-val="re" onclick="pickF2(this,'14b-3')">re-</button>
+        <button class="f2-btn" data-q="14b-3" data-val="un" onclick="pickF2(this,'14b-3')">un-</button>
+      </div></div>
+      <div class="fill2-row"><div class="fill2-num">4.</div><div class="fill2-word">___ set</div><div class="fill2-opts">
+        <button class="f2-btn" data-q="14b-4" data-val="re" onclick="pickF2(this,'14b-4')">re-</button>
+        <button class="f2-btn" data-q="14b-4" data-val="un" onclick="pickF2(this,'14b-4')">un-</button>
+      </div></div>
+      <div class="fill2-row"><div class="fill2-num">5.</div><div class="fill2-word">___ box</div><div class="fill2-opts">
+        <button class="f2-btn" data-q="14b-5" data-val="re" onclick="pickF2(this,'14b-5')">re-</button>
+        <button class="f2-btn" data-q="14b-5" data-val="un" onclick="pickF2(this,'14b-5')">un-</button>
+      </div></div>
+      <button class="check-btn cb14" onclick="checkSection('14b',{1:'un',2:'un',3:'re',4:'re',5:'un'})">Check ✅</button>
+      <div class="result-banner" id="rb-14b"></div>
+    </div>
+  </div>
+
+  <!-- 14 Reading: Sue's Puppy -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c14">📖 Reading — Sue's Puppy</div></div>
+    <div class="reading-card">
+      <div class="reading-title">Story: Sue's Puppy</div>
+      <div class="reading-story">My friend <b>Sue</b> has a <b>new</b> puppy. It is dark <b>blue</b>—that's not <b>true</b>, it's brown! The puppy likes to <b>chew</b> on his toys. Today, my red shoelace came untied. I had to stop and retie it. Sue's puppy got loose and ran to get some <b>fruit</b> juice that spilled. It was funny, but Sue was unhappy. We had to redo the cleanup. I hope we can play again soon.</div>
+    </div>
+    <div class="q-area open" id="qa-14r" style="padding-top:0;">
+      <div class="mc-row">
+        <div class="mc-q">1. What color is Sue's puppy?</div>
+        <div class="mc-opts">
+          <button class="mc-btn" data-q="14r-1" data-val="a" onclick="pickMC(this,'14r-1')">a. blue</button>
+          <button class="mc-btn" data-q="14r-1" data-val="b" onclick="pickMC(this,'14r-1')">b. brown ✅</button>
+          <button class="mc-btn" data-q="14r-1" data-val="c" onclick="pickMC(this,'14r-1')">c. red</button>
+        </div>
+      </div>
+      <div class="mc-row">
+        <div class="mc-q">2. What does Sue's puppy like to chew on?</div>
+        <div class="mc-opts">
+          <button class="mc-btn" data-q="14r-2" data-val="a" onclick="pickMC(this,'14r-2')">a. his toys</button>
+          <button class="mc-btn" data-q="14r-2" data-val="b" onclick="pickMC(this,'14r-2')">b. fruit juice</button>
+          <button class="mc-btn" data-q="14r-2" data-val="c" onclick="pickMC(this,'14r-2')">c. a shoelace</button>
+        </div>
+      </div>
+      <button class="check-btn cb14" onclick="checkSection('14r',{1:'b',2:'a'})">Check ✅</button>
+      <div class="result-banner" id="rb-14r"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WEEK 15 ===== -->
+<div class="week-panel" id="panel-w15">
+  <div class="week-hdr hdr15">
+    <div><div class="wh-week">📖 Week 15</div><div class="wh-topic">Open &amp; Closed Syllables ｜ oo, ou</div></div>
+  </div>
+
+  <!-- 15A: Write missing syllable -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c15">Part A — 寫出缺少的音節</div></div>
+    <div class="audio-gate" id="gate-15a">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 15 Part A — 填缺少的音節</div>
+      <a class="play-btn pb15" href="https://drive.google.com/file/d/1nBVsMDBPk1BSE2uiS4K0dUzgHFTQ4lMF/view" target="_blank" onclick="markPlayed('15a')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-15a" onclick="unlock('15a')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-15a">
+      <div class="q-instruction">聽到完整的字，在空格填入缺少的音節！</div>
+      <div class="write-row"><div class="write-num">1.</div><input class="write-input" id="wi-15a-1" placeholder="..." style="width:80px;"><div class="write-pre" style="margin-left:-4px;">- mit</div><div class="write-hint" id="wh-15a-1"></div></div>
+      <div class="write-row"><div class="write-num">2.</div><div class="write-pre">mu -</div><input class="write-input" id="wi-15a-2" placeholder="..." style="width:80px;"><div class="write-hint" id="wh-15a-2"></div></div>
+      <div class="write-row"><div class="write-num">3.</div><div class="write-pre">ex -</div><input class="write-input" id="wi-15a-3" placeholder="..." style="width:80px;"><div class="write-hint" id="wh-15a-3"></div></div>
+      <div class="write-row"><div class="write-num">4.</div><div class="write-pre">u -</div><input class="write-input" id="wi-15a-4" placeholder="..." style="width:80px;"><div class="write-hint" id="wh-15a-4"></div></div>
+      <div class="write-row"><div class="write-num">5.</div><div class="write-pre">ro -</div><input class="write-input" id="wi-15a-5" placeholder="..." style="width:80px;"><div class="write-hint" id="wh-15a-5"></div></div>
+      <button class="check-btn cb15" onclick="checkWrite('15a',{1:'lim',2:'sic',3:'it',4:'pon',5:'bot'})">Check ✅</button>
+      <div class="result-banner" id="rb-15a"></div>
+    </div>
+  </div>
+
+  <!-- 15B: Moon sound a or b -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c15">Part B — 哪個字跟 moon 的母音一樣？選 a 或 b</div></div>
+    <div class="audio-gate" id="gate-15b">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 15 Part B — /uː/ moon 音</div>
+      <a class="play-btn pb15" href="https://drive.google.com/file/d/1w7kUGjstpxlUjeAZ83fFD5v2zbgvQpg9/view" target="_blank" onclick="markPlayed('15b')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-15b" onclick="unlock('15b')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-15b">
+      <div class="q-instruction">哪個字有跟 <b>moon</b> 一樣的 /uː/ 音？選 a 或 b！</div>
+      <div class="choice-row"><div class="choice-num">1.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="15b-1" data-val="a" onclick="pickChoice(this,'15b-1')">a. sun</button>
+        <button class="choice-btn" data-q="15b-1" data-val="b" onclick="pickChoice(this,'15b-1')">b. soon</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">2.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="15b-2" data-val="a" onclick="pickChoice(this,'15b-2')">a. pill</button>
+        <button class="choice-btn" data-q="15b-2" data-val="b" onclick="pickChoice(this,'15b-2')">b. pool</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">3.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="15b-3" data-val="a" onclick="pickChoice(this,'15b-3')">a. school</button>
+        <button class="choice-btn" data-q="15b-3" data-val="b" onclick="pickChoice(this,'15b-3')">b. skill</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">4.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="15b-4" data-val="a" onclick="pickChoice(this,'15b-4')">a. cool</button>
+        <button class="choice-btn" data-q="15b-4" data-val="b" onclick="pickChoice(this,'15b-4')">b. carl</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">5.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="15b-5" data-val="a" onclick="pickChoice(this,'15b-5')">a. foul</button>
+        <button class="choice-btn" data-q="15b-5" data-val="b" onclick="pickChoice(this,'15b-5')">b. food</button>
+      </div></div>
+      <button class="check-btn cb15" onclick="checkSection('15b',{1:'b',2:'b',3:'a',4:'a',5:'b'})">Check ✅</button>
+      <div class="result-banner" id="rb-15b"></div>
+    </div>
+  </div>
+
+  <!-- 15 Writing: Syllable split -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c15">✏️ Writing — 選正確的音節切法</div></div>
+    <div class="q-area open" id="qa-15w" style="padding-top:12px;">
+      <div class="q-instruction">開音節（長母音）還是閉音節（短母音）？選正確的切法！</div>
+      <div class="choice-row"><div class="choice-num">1.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="15w-1" data-val="spi-der" onclick="pickChoice(this,'15w-1')">spi-der 🌟</button>
+        <button class="choice-btn" data-q="15w-1" data-val="spid-er" onclick="pickChoice(this,'15w-1')">spid-er</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">2.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="15w-2" data-val="be-gin" onclick="pickChoice(this,'15w-2')">be-gin 🌟</button>
+        <button class="choice-btn" data-q="15w-2" data-val="beg-in" onclick="pickChoice(this,'15w-2')">beg-in</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">3.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="15w-3" data-val="top-ic" onclick="pickChoice(this,'15w-3')">top-ic 🌟</button>
+        <button class="choice-btn" data-q="15w-3" data-val="to-pic" onclick="pickChoice(this,'15w-3')">to-pic</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">4.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="15w-4" data-val="to-day" onclick="pickChoice(this,'15w-4')">to-day 🌟</button>
+        <button class="choice-btn" data-q="15w-4" data-val="tod-ay" onclick="pickChoice(this,'15w-4')">tod-ay</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">5.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="15w-5" data-val="sev-en" onclick="pickChoice(this,'15w-5')">sev-en 🌟</button>
+        <button class="choice-btn" data-q="15w-5" data-val="se-ven" onclick="pickChoice(this,'15w-5')">se-ven</button>
+      </div></div>
+      <button class="check-btn cb15" onclick="checkSection('15w',{1:'spi-der',2:'be-gin',3:'top-ic',4:'to-day',5:'sev-en'})">Check ✅</button>
+      <div class="result-banner" id="rb-15w"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WEEK 16 ===== -->
+<div class="week-panel" id="panel-w16">
+  <div class="week-hdr hdr16">
+    <div><div class="wh-week">📖 Week 16</div><div class="wh-topic">Review: r-Controlled ar/er ｜ Blends ｜ Prefixes</div></div>
+  </div>
+
+  <!-- 16A: Write er/ar review words -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c16">Part A — 寫出聽到的字（ar / er 字）</div></div>
+    <div class="audio-gate" id="gate-16a">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 16 Part A — ar / er 複習</div>
+      <a class="play-btn pb16" href="https://drive.google.com/file/d/1I_TE1ADPBgBL5YGrmO1ZN80dKlSy9w_Z/view" target="_blank" onclick="markPlayed('16a')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-16a" onclick="unlock('16a')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-16a">
+      <div class="q-instruction">聽到的字打字寫出來！（ar 或 er 字）</div>
+      <div class="write-row"><div class="write-num">1.</div><input class="write-input" id="wi-16a-1" placeholder="..."><div class="write-hint" id="wh-16a-1"></div></div>
+      <div class="write-row"><div class="write-num">2.</div><input class="write-input" id="wi-16a-2" placeholder="..."><div class="write-hint" id="wh-16a-2"></div></div>
+      <div class="write-row"><div class="write-num">3.</div><input class="write-input" id="wi-16a-3" placeholder="..."><div class="write-hint" id="wh-16a-3"></div></div>
+      <div class="write-row"><div class="write-num">4.</div><input class="write-input" id="wi-16a-4" placeholder="..."><div class="write-hint" id="wh-16a-4"></div></div>
+      <div class="write-row"><div class="write-num">5.</div><input class="write-input" id="wi-16a-5" placeholder="..."><div class="write-hint" id="wh-16a-5"></div></div>
+      <button class="check-btn cb16" onclick="checkWrite('16a',{1:'far',2:'barn',3:'herd',4:'stern',5:'rearm'})">Check ✅</button>
+      <div class="result-banner" id="rb-16a"></div>
+    </div>
+  </div>
+
+  <!-- 16B: Circle 1 of 3 blends -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c16">Part B — 圈出聽到的字（三選一）</div></div>
+    <div class="audio-gate" id="gate-16b">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 16 Part B — Blends 複習</div>
+      <a class="play-btn pb16" href="https://drive.google.com/file/d/1UVzdntjrESZE9lkA2jMU37WaTaYeYXWK/view" target="_blank" onclick="markPlayed('16b')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-16b" onclick="unlock('16b')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-16b">
+      <div class="q-instruction">每題聽到哪個字？三個選一個！</div>
+      <div class="choice-row"><div class="choice-num">1.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="16b-1" data-val="script" onclick="pickChoice(this,'16b-1')">script</button>
+        <button class="choice-btn" data-q="16b-1" data-val="stripped" onclick="pickChoice(this,'16b-1')">stripped</button>
+        <button class="choice-btn" data-q="16b-1" data-val="split" onclick="pickChoice(this,'16b-1')">split</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">2.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="16b-2" data-val="thrash" onclick="pickChoice(this,'16b-2')">thrash</button>
+        <button class="choice-btn" data-q="16b-2" data-val="splash" onclick="pickChoice(this,'16b-2')">splash</button>
+        <button class="choice-btn" data-q="16b-2" data-val="crash" onclick="pickChoice(this,'16b-2')">crash</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">3.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="16b-3" data-val="stray" onclick="pickChoice(this,'16b-3')">stray</button>
+        <button class="choice-btn" data-q="16b-3" data-val="spray" onclick="pickChoice(this,'16b-3')">spray</button>
+        <button class="choice-btn" data-q="16b-3" data-val="tray" onclick="pickChoice(this,'16b-3')">tray</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">4.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="16b-4" data-val="straw" onclick="pickChoice(this,'16b-4')">straw</button>
+        <button class="choice-btn" data-q="16b-4" data-val="thaw" onclick="pickChoice(this,'16b-4')">thaw</button>
+        <button class="choice-btn" data-q="16b-4" data-val="draw" onclick="pickChoice(this,'16b-4')">draw</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">5.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="16b-5" data-val="strap" onclick="pickChoice(this,'16b-5')">strap</button>
+        <button class="choice-btn" data-q="16b-5" data-val="slap" onclick="pickChoice(this,'16b-5')">slap</button>
+        <button class="choice-btn" data-q="16b-5" data-val="clap" onclick="pickChoice(this,'16b-5')">clap</button>
+      </div></div>
+      <button class="check-btn cb16" onclick="checkSection('16b',{1:'stripped',2:'thrash',3:'spray',4:'draw',5:'strap'})">Check ✅</button>
+      <div class="result-banner" id="rb-16b"></div>
+    </div>
+  </div>
+
+  <!-- 16C: Prefix re- or un- (no audio) -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c16">✏️ Writing — 前綴 re- 還是 un-？</div></div>
+    <div class="q-area open" id="qa-16c" style="padding-top:12px;">
+      <div class="q-instruction"><b>re-</b> = 再次做 ｜ <b>un-</b> = 相反 / 取消</div>
+      <div class="fill2-row"><div class="fill2-num">1.</div><div class="fill2-word">___ learn</div><div class="fill2-hint">→ learn again</div><div class="fill2-opts">
+        <button class="f2-btn" data-q="16c-1" data-val="re" onclick="pickF2(this,'16c-1')">re-</button>
+        <button class="f2-btn" data-q="16c-1" data-val="un" onclick="pickF2(this,'16c-1')">un-</button>
+      </div></div>
+      <div class="fill2-row"><div class="fill2-num">2.</div><div class="fill2-word">___ lock</div><div class="fill2-hint">→ opposite of lock</div><div class="fill2-opts">
+        <button class="f2-btn" data-q="16c-2" data-val="re" onclick="pickF2(this,'16c-2')">re-</button>
+        <button class="f2-btn" data-q="16c-2" data-val="un" onclick="pickF2(this,'16c-2')">un-</button>
+      </div></div>
+      <div class="fill2-row"><div class="fill2-num">3.</div><div class="fill2-word">___ pack</div><div class="fill2-hint">→ opposite of pack</div><div class="fill2-opts">
+        <button class="f2-btn" data-q="16c-3" data-val="re" onclick="pickF2(this,'16c-3')">re-</button>
+        <button class="f2-btn" data-q="16c-3" data-val="un" onclick="pickF2(this,'16c-3')">un-</button>
+      </div></div>
+      <div class="fill2-row"><div class="fill2-num">4.</div><div class="fill2-word">___ pack</div><div class="fill2-hint">→ pack again</div><div class="fill2-opts">
+        <button class="f2-btn" data-q="16c-4" data-val="re" onclick="pickF2(this,'16c-4')">re-</button>
+        <button class="f2-btn" data-q="16c-4" data-val="un" onclick="pickF2(this,'16c-4')">un-</button>
+      </div></div>
+      <div class="fill2-row"><div class="fill2-num">5.</div><div class="fill2-word">___ make</div><div class="fill2-hint">→ make again</div><div class="fill2-opts">
+        <button class="f2-btn" data-q="16c-5" data-val="re" onclick="pickF2(this,'16c-5')">re-</button>
+        <button class="f2-btn" data-q="16c-5" data-val="un" onclick="pickF2(this,'16c-5')">un-</button>
+      </div></div>
+      <button class="check-btn cb16" onclick="checkSection('16c',{1:'re',2:'un',3:'un',4:'re',5:'re'})">Check ✅</button>
+      <div class="result-banner" id="rb-16c"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WEEK 18 ===== -->
+<div class="week-panel" id="panel-w18">
+  <div class="week-hdr hdr18">
+    <div><div class="wh-week">📖 Week 18</div><div class="wh-topic">Long i / Long o ｜ Suffixes -ly, -ful</div></div>
+  </div>
+
+  <!-- 18A: Fill O or I -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c18">Part A — 填入 O 還是 I？</div></div>
+    <div class="audio-gate" id="gate-18a">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 18 Part A — long o / long i</div>
+      <a class="play-btn pb18" href="https://drive.google.com/file/d/15XaqV4NYW-eexN4sVnITxGc7c6lHdq-t/view" target="_blank" onclick="markPlayed('18a')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-18a" onclick="unlock('18a')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-18a">
+      <div class="q-instruction">空格填 <b>O</b>（長母音 o）還是 <b>I</b>（長母音 i）？</div>
+      <div class="fill2-row"><div class="fill2-num">1.</div><div class="fill2-word">m_ld</div><div class="fill2-opts">
+        <button class="f2-btn" data-q="18a-1" data-val="o" onclick="pickF2(this,'18a-1')">O (mold)</button>
+        <button class="f2-btn" data-q="18a-1" data-val="i" onclick="pickF2(this,'18a-1')">I (mild)</button>
+      </div></div>
+      <div class="fill2-row"><div class="fill2-num">2.</div><div class="fill2-word">t_ld</div><div class="fill2-opts">
+        <button class="f2-btn" data-q="18a-2" data-val="o" onclick="pickF2(this,'18a-2')">O (told)</button>
+        <button class="f2-btn" data-q="18a-2" data-val="i" onclick="pickF2(this,'18a-2')">I (tild)</button>
+      </div></div>
+      <div class="fill2-row"><div class="fill2-num">3.</div><div class="fill2-word">b_nd</div><div class="fill2-opts">
+        <button class="f2-btn" data-q="18a-3" data-val="o" onclick="pickF2(this,'18a-3')">O (bond)</button>
+        <button class="f2-btn" data-q="18a-3" data-val="i" onclick="pickF2(this,'18a-3')">I (bind)</button>
+      </div></div>
+      <div class="fill2-row"><div class="fill2-num">4.</div><div class="fill2-word">p_st</div><div class="fill2-opts">
+        <button class="f2-btn" data-q="18a-4" data-val="o" onclick="pickF2(this,'18a-4')">O (post)</button>
+        <button class="f2-btn" data-q="18a-4" data-val="i" onclick="pickF2(this,'18a-4')">I (pist)</button>
+      </div></div>
+      <div class="fill2-row"><div class="fill2-num">5.</div><div class="fill2-word">w_ld</div><div class="fill2-opts">
+        <button class="f2-btn" data-q="18a-5" data-val="o" onclick="pickF2(this,'18a-5')">O (wold)</button>
+        <button class="f2-btn" data-q="18a-5" data-val="i" onclick="pickF2(this,'18a-5')">I (wild)</button>
+      </div></div>
+      <button class="check-btn cb18" onclick="checkSection('18a',{1:'o',2:'o',3:'i',4:'o',5:'i'})">Check ✅</button>
+      <div class="result-banner" id="rb-18a"></div>
+    </div>
+  </div>
+
+  <!-- 18B: Long i — a or b -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c18">Part B — 哪個字有 Long i 音？選 a 或 b</div></div>
+    <div class="audio-gate" id="gate-18b">
+      <div class="gate-emoji">🎧</div>
+      <div class="gate-title">先聽音檔！</div>
+      <div class="gate-sub">Wk 18 Part B — Long i 辨音</div>
+      <a class="play-btn pb18" href="https://drive.google.com/file/d/1W3NJO1L7i_I_QHWA5zv77KATrbtHQgk-/view" target="_blank" onclick="markPlayed('18b')">🎧 播放音檔</a>
+      <button class="unlock-btn" id="ub-18b" onclick="unlock('18b')">✅ 聽完了！開始作答 🔓</button>
+    </div>
+    <div class="q-area" id="qa-18b">
+      <div class="q-instruction">哪個字有 <b>Long i</b>（像 mild, wild, kind）的音？選 a 或 b！</div>
+      <div class="choice-row"><div class="choice-num">1.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="18b-1" data-val="a" onclick="pickChoice(this,'18b-1')">a. chin</button>
+        <button class="choice-btn" data-q="18b-1" data-val="b" onclick="pickChoice(this,'18b-1')">b. child</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">2.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="18b-2" data-val="a" onclick="pickChoice(this,'18b-2')">a. kind</button>
+        <button class="choice-btn" data-q="18b-2" data-val="b" onclick="pickChoice(this,'18b-2')">b. kid</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">3.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="18b-3" data-val="a" onclick="pickChoice(this,'18b-3')">a. wailed</button>
+        <button class="choice-btn" data-q="18b-3" data-val="b" onclick="pickChoice(this,'18b-3')">b. wild</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">4.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="18b-4" data-val="a" onclick="pickChoice(this,'18b-4')">a. find</button>
+        <button class="choice-btn" data-q="18b-4" data-val="b" onclick="pickChoice(this,'18b-4')">b. fend</button>
+      </div></div>
+      <div class="choice-row"><div class="choice-num">5.</div><div class="choice-opts">
+        <button class="choice-btn" data-q="18b-5" data-val="a" onclick="pickChoice(this,'18b-5')">a. mound</button>
+        <button class="choice-btn" data-q="18b-5" data-val="b" onclick="pickChoice(this,'18b-5')">b. mind</button>
+      </div></div>
+      <button class="check-btn cb18" onclick="checkSection('18b',{1:'b',2:'a',3:'b',4:'a',5:'b'})">Check ✅</button>
+      <div class="result-banner" id="rb-18b"></div>
+    </div>
+  </div>
+
+  <!-- 18 Writing: Suffix -ly or -ful -->
+  <div class="sec-card">
+    <div class="sec-head"><div class="sec-label c18">✏️ Writing — 字尾 -ly 還是 -ful？</div></div>
+    <div class="q-area open" id="qa-18w" style="padding-top:12px;">
+      <div class="q-instruction"><b>-ly</b> = in a ___ way ｜ <b>-ful</b> = full of ___</div>
+      <div class="fill2-row"><div class="fill2-num">1.</div><div class="fill2-word">bad___</div><div class="fill2-hint">→ in a bad way</div><div class="fill2-opts">
+        <button class="f2-btn" data-q="18w-1" data-val="ly" onclick="pickF2(this,'18w-1')">-ly</button>
+        <button class="f2-btn" data-q="18w-1" data-val="ful" onclick="pickF2(this,'18w-1')">-ful</button>
+      </div></div>
+      <div class="fill2-row"><div class="fill2-num">2.</div><div class="fill2-word">wild___</div><div class="fill2-hint">→ in a wild way</div><div class="fill2-opts">
+        <button class="f2-btn" data-q="18w-2" data-val="ly" onclick="pickF2(this,'18w-2')">-ly</button>
+        <button class="f2-btn" data-q="18w-2" data-val="ful" onclick="pickF2(this,'18w-2')">-ful</button>
+      </div></div>
+      <div class="fill2-row"><div class="fill2-num">3.</div><div class="fill2-word">care___</div><div class="fill2-hint">→ full of care</div><div class="fill2-opts">
+        <button class="f2-btn" data-q="18w-3" data-val="ly" onclick="pickF2(this,'18w-3')">-ly</button>
+        <button class="f2-btn" data-q="18w-3" data-val="ful" onclick="pickF2(this,'18w-3')">-ful</button>
+      </div></div>
+      <div class="fill2-row"><div class="fill2-num">4.</div><div class="fill2-word">smart___</div><div class="fill2-hint">→ in a smart way</div><div class="fill2-opts">
+        <button class="f2-btn" data-q="18w-4" data-val="ly" onclick="pickF2(this,'18w-4')">-ly</button>
+        <button class="f2-btn" data-q="18w-4" data-val="ful" onclick="pickF2(this,'18w-4')">-ful</button>
+      </div></div>
+      <div class="fill2-row"><div class="fill2-num">5.</div><div class="fill2-word">power___</div><div class="fill2-hint">→ full of power</div><div class="fill2-opts">
+        <button class="f2-btn" data-q="18w-5" data-val="ly" onclick="pickF2(this,'18w-5')">-ly</button>
+        <button class="f2-btn" data-q="18w-5" data-val="ful" onclick="pickF2(this,'18w-5')">-ful</button>
+      </div></div>
+      <button class="check-btn cb18" onclick="checkSection('18w',{1:'ly',2:'ly',3:'ful',4:'ly',5:'ful'})">Check ✅</button>
+      <div class="result-banner" id="rb-18w"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- content-area -->
+
+<script>
+// ===== WEEK NAV =====
+function showWeek(id, tab) {
+  document.querySelectorAll('.week-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.week-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  tab.classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ===== AUDIO GATE =====
+function markPlayed(id) {
+  setTimeout(() => {
+    const gate = document.getElementById('gate-' + id);
+    const ub   = document.getElementById('ub-' + id);
+    if (gate) gate.classList.add('opened');
+    if (ub)   ub.style.display = 'block';
+    const title = gate?.querySelector('.gate-title');
+    if (title) title.textContent = '音檔頁面已開啟！聽完再解鎖 👇';
+  }, 500);
+}
+function unlock(id) {
+  const gate = document.getElementById('gate-' + id);
+  const qa   = document.getElementById('qa-'   + id);
+  if (gate) gate.style.display = 'none';
+  if (qa)   qa.classList.add('open');
+}
+
+// ===== PICK =====
+const picks = {};
+function pickAE(btn, qId, val) {
+  document.querySelectorAll(`[data-q="${qId}"]`).forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  picks[qId] = val;
+}
+function pickChoice(btn, qId) {
+  document.querySelectorAll(`[data-q="${qId}"]`).forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  picks[qId] = btn.dataset.val;
+}
+function pickF2(btn, qId) {
+  document.querySelectorAll(`[data-q="${qId}"]`).forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  picks[qId] = btn.dataset.val;
+}
+function pickMC(btn, qId) {
+  document.querySelectorAll(`[data-q="${qId}"]`).forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  picks[qId] = btn.dataset.val;
+}
+
+// ===== CHECK SECTION (choice / ae / f2 / mc) =====
+function checkSection(secId, answers) {
+  const rb = document.getElementById('rb-' + secId);
+  let correct = 0, total = Object.keys(answers).length, unanswered = 0;
+  Object.entries(answers).forEach(([qNum, correctAns]) => {
+    const qId = secId + '-' + qNum;
+    const userAns = picks[qId];
+    const btns = document.querySelectorAll(`[data-q="${qId}"]`);
+    if (!userAns) { unanswered++; return; }
+    const isCorrect = userAns === correctAns;
+    if (isCorrect) correct++;
+    btns.forEach(b => {
+      b.disabled = true;
+      b.classList.remove('selected');
+      const bVal = b.dataset.val || b.dataset.ans;
+      if (bVal === correctAns) b.classList.add('correct');
+      if (bVal === userAns && !isCorrect) b.classList.add('wrong');
+    });
+  });
+  if (unanswered > 0) {
+    rb.className = 'result-banner show rb-bad';
+    rb.innerHTML = `⚠️ 還有 ${unanswered} 題沒作答！<span class="retry-link" onclick="resetSection('${secId}')">重新作答</span>`;
+    return;
+  }
+  rb.className = 'result-banner show ' + (correct === total ? 'rb-ok' : 'rb-bad');
+  if (correct === total) { rb.innerHTML = `🎉 全對！${correct} / ${total} ⭐⭐⭐`; popStars(); }
+  else rb.innerHTML = `${correct} / ${total} 答對<br><span class="retry-link" onclick="resetSection('${secId}')">🔄 再試一次</span>`;
+}
+function resetSection(secId) {
+  Object.keys(picks).forEach(k => { if (k.startsWith(secId + '-')) delete picks[k]; });
+  document.querySelectorAll(`[data-q^="${secId}-"]`).forEach(b => {
+    b.disabled = false;
+    b.classList.remove('selected','correct','wrong');
+  });
+  const rb = document.getElementById('rb-' + secId);
+  if (rb) rb.className = 'result-banner';
+}
+
+// ===== CHECK WRITE (text input) =====
+function checkWrite(secId, answers) {
+  const rb = document.getElementById('rb-' + secId);
+  let correct = 0, total = Object.keys(answers).length, unanswered = 0;
+  Object.entries(answers).forEach(([qNum, correctAns]) => {
+    const input = document.getElementById('wi-' + secId + '-' + qNum);
+    const hint  = document.getElementById('wh-' + secId + '-' + qNum);
+    if (!input) return;
+    const val = input.value.trim().toLowerCase();
+    if (!val) { unanswered++; return; }
+    const isCorrect = val === correctAns.toLowerCase();
+    if (isCorrect) { correct++; input.classList.add('correct'); }
+    else {
+      input.classList.add('wrong');
+      if (hint) { hint.textContent = '✅ ' + correctAns; hint.style.display = 'block'; }
+    }
+    input.disabled = true;
+  });
+  if (unanswered > 0) {
+    rb.className = 'result-banner show rb-bad';
+    rb.innerHTML = `⚠️ 還有 ${unanswered} 題沒填！<span class="retry-link" onclick="resetWrite('${secId}')">重新作答</span>`;
+    return;
+  }
+  rb.className = 'result-banner show ' + (correct === total ? 'rb-ok' : 'rb-bad');
+  if (correct === total) { rb.innerHTML = `🎉 全對！${correct} / ${total} ⭐⭐⭐`; popStars(); }
+  else rb.innerHTML = `${correct} / ${total} 答對<br><span class="retry-link" onclick="resetWrite('${secId}')">🔄 再試一次</span>`;
+}
+function resetWrite(secId) {
+  document.querySelectorAll(`[id^="wi-${secId}-"]`).forEach(inp => {
+    inp.value = ''; inp.disabled = false;
+    inp.classList.remove('correct','wrong');
+  });
+  document.querySelectorAll(`[id^="wh-${secId}-"]`).forEach(h => { h.textContent = ''; h.style.display = 'none'; });
+  const rb = document.getElementById('rb-' + secId);
+  if (rb) rb.className = 'result-banner';
+}
+
+// ===== SORT GAME =====
+const sortPicked = {}; // {weekId: wordKey}
+function sortSelectWord(word, weekId) {
+  document.querySelectorAll(`#sw-${weekId} .sort-chip`).forEach(c => c.classList.remove('selected'));
+  sortPicked[weekId] = word;
+  const chip = document.getElementById('sc-' + word);
+  if (chip && !chip.classList.contains('placed')) chip.classList.add('selected');
+}
+function sortPlace(category, weekId) {
+  const word = sortPicked[weekId];
+  if (!word) return;
+  const chip = document.getElementById('sc-' + word);
+  if (!chip || chip.classList.contains('placed')) return;
+  chip.classList.remove('selected');
+  chip.classList.add('placed');
+  sortPicked[weekId] = null;
+
+  // Add to box
+  const boxArea = document.getElementById('sba-' + category + '-' + weekId);
+  const placed = document.createElement('div');
+  placed.className = 'sort-placed';
+  placed.id = 'sp-' + word + '-' + weekId;
+  placed.dataset.word = word;
+  placed.dataset.cat = category;
+  placed.innerHTML = word + ' <span style="font-size:.7rem;opacity:.6" onclick="sortRemove(\'' + word + '\',\'' + category + '\',\'' + weekId + '\')">✕</span>';
+  boxArea.appendChild(placed);
+}
+function sortRemove(word, category, weekId) {
+  const placed = document.getElementById('sp-' + word + '-' + weekId);
+  if (placed) placed.remove();
+  const chip = document.getElementById('sc-' + word);
+  if (chip) { chip.classList.remove('placed','selected'); }
+  if (sortSelected[weekId] === null) sortSelected[weekId] = null;
+}
+function checkSort(weekId, answers) {
+  const rb = document.getElementById('rb-sort-' + weekId);
+  let correct = 0, total = Object.keys(answers).length, missing = 0;
+  Object.entries(answers).forEach(([word, correctCat]) => {
+    const placed = document.getElementById('sp-' + word + '-' + weekId);
+    const chip   = document.getElementById('sc-' + word);
+    if (!placed) { missing++; return; }
+    const userCat = placed.dataset.cat;
+    if (userCat === correctCat) {
+      correct++;
+      chip.classList.add('correct');
+    } else {
+      chip.classList.add('wrong');
+    }
+  });
+  if (missing > 0) {
+    rb.className = 'result-banner show rb-bad';
+    rb.innerHTML = `⚠️ 還有 ${missing} 個字沒分類！`;
+    return;
+  }
+  rb.className = 'result-banner show ' + (correct === total ? 'rb-ok' : 'rb-bad');
+  if (correct === total) { rb.innerHTML = `🎉 全對！${correct} / ${total} ⭐⭐⭐`; popStars(); }
+  else rb.innerHTML = `${correct} / ${total} 正確！oa: road ｜ ow: show, blow, glow ｜ oe: toe, doe`;
+}
+
+// ===== STARS =====
+function popStars() {
+  const e = ['⭐','✨','🌟','🎉','🏆'];
+  for (let i=0;i<5;i++) setTimeout(()=>{
+    const s = document.createElement('div');
+    s.className = 'star-pop';
+    s.textContent = e[Math.floor(Math.random()*e.length)];
+    s.style.left = (10+Math.random()*80)+'vw';
+    s.style.top  = (20+Math.random()*50)+'vh';
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),900);
+  }, i*150);
+}
+</script>
+</body>
+</html>
