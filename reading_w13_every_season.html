@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Every Season — Seen Reading</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#fff8f0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+h1{font-family:'Fredoka One',cursive;color:#15803d;font-size:1.6rem;text-align:center;margin-bottom:2px}
+.subtitle{color:#64748b;font-size:.88rem;margin-bottom:10px;text-align:center}
+
+/* TABS */
+.tabs{display:flex;gap:8px;background:#dcfce7;border-radius:99px;padding:5px;width:100%;max-width:540px;margin-bottom:14px}
+.tab{flex:1;padding:10px 8px;border-radius:99px;border:none;font-family:'Fredoka One',cursive;font-size:.9rem;cursor:pointer;background:transparent;color:#15803d;transition:.2s}
+.tab.active{background:#15803d;color:#fff;box-shadow:0 2px 8px rgba(21,128,61,.3)}
+
+/* DOTS */
+.dots{display:flex;gap:7px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+.dot{width:12px;height:12px;border-radius:50%;background:#e2e8f0;transition:.3s}
+.dot.done{background:#15803d}
+.dot.active{background:#86efac;box-shadow:0 0 0 3px #dcfce7}
+
+/* CARD */
+.card{background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.08);padding:22px;width:100%;max-width:540px;animation:popIn .35s ease}
+@keyframes popIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+/* PROGRESS */
+.prog-wrap{background:#e2e8f0;border-radius:99px;height:8px;margin-bottom:16px;overflow:hidden}
+.prog-bar{height:100%;background:linear-gradient(90deg,#15803d,#4ade80);border-radius:99px;transition:.4s}
+
+/* TYPOGRAPHY */
+.phase-title{font-family:'Fredoka One',cursive;color:#15803d;font-size:1.05rem;text-align:center;margin-bottom:14px}
+.q-num{font-size:.78rem;color:#94a3b8;text-align:center;margin-bottom:4px}
+.q-text{font-size:1rem;color:#1e293b;text-align:center;line-height:1.55;margin-bottom:16px;font-weight:700}
+.tag{display:inline-block;padding:3px 12px;border-radius:99px;font-size:.72rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
+.tag-setting{background:#fef3c7;color:#92400e}
+.tag-comp{background:#dbeafe;color:#1e40af}
+.tag-infer{background:#fce7f3;color:#9d174d}
+.tag-type{background:#dcfce7;color:#166534}
+
+/* MC OPTIONS */
+.opts{display:flex;flex-direction:column;gap:9px;margin-bottom:8px}
+.opt-btn{background:#f0fdf4;border:2px solid #bbf7d0;border-radius:13px;padding:12px 14px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;color:#1e293b;cursor:pointer;transition:.2s;text-align:left}
+.opt-btn:hover{background:#dcfce7;border-color:#86efac}
+.opt-btn.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+.opt-btn.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+.opt-btn:disabled{cursor:default}
+
+/* FEEDBACK */
+.feedback{min-height:26px;text-align:center;font-weight:700;font-size:.9rem;margin-bottom:4px}
+.feedback.ok{color:#16a34a}
+.feedback.bad{color:#dc2626}
+
+/* PART B */
+.practice-badge{background:#fef3c7;border-radius:8px;padding:6px 12px;font-size:.8rem;font-weight:700;color:#92400e;text-align:center;margin-bottom:10px}
+.answer-area{width:100%;border:2px solid #bbf7d0;border-radius:12px;padding:12px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:600;color:#1e293b;resize:none;outline:none;min-height:90px;line-height:1.5;transition:.2s}
+.answer-area:focus{border-color:#15803d;box-shadow:0 0 0 3px #dcfce7}
+.hint-area{background:#f0fdf4;border:2px solid #bbf7d0;border-radius:12px;padding:12px;margin-top:10px;font-size:.9rem;line-height:1.6;color:#374151;display:none}
+.hint-area em{font-style:normal;color:#15803d;font-weight:800}
+.hint-area .model-lbl{font-family:'Fredoka One',cursive;color:#16a34a;font-size:.9rem;margin-bottom:4px}
+.btn-row{display:flex;gap:8px;margin-top:12px}
+.hint-btn{flex:1;background:#dcfce7;border:2px solid #bbf7d0;border-radius:12px;padding:11px;font-family:'Fredoka One',cursive;font-size:.95rem;color:#15803d;cursor:pointer;transition:.2s}
+.hint-btn:hover{background:#bbf7d0}
+
+/* LEARN CARD */
+.learn-box{background:#f0fdf4;border-radius:14px;padding:14px;margin-bottom:14px;font-size:.88rem;line-height:1.7;color:#374151}
+.learn-box h3{font-family:'Fredoka One',cursive;color:#15803d;margin-bottom:8px;font-size:1rem}
+.learn-box ul{padding-left:18px}
+.learn-box li{margin-bottom:4px}
+.learn-box em{font-style:normal;color:#15803d;font-weight:800}
+.poem-stanza{background:#f9fafb;border-left:4px solid #86efac;border-radius:8px;padding:10px 14px;margin-bottom:8px;font-size:.87rem;line-height:1.8;color:#374151}
+.poem-stanza .season-head{font-family:'Fredoka One',cursive;color:#15803d;font-size:.95rem;margin-bottom:4px}
+
+/* MATCH */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.match-left,.match-right{display:flex;flex-direction:column;gap:8px}
+.match-label{background:#f0fdf4;border:2px solid #bbf7d0;border-radius:11px;padding:10px;font-family:'Fredoka One',cursive;font-size:.9rem;color:#15803d;text-align:center;cursor:pointer;transition:.2s;min-height:56px;display:flex;align-items:center;justify-content:center}
+.match-label.selected{background:#15803d;color:#fff;border-color:#15803d}
+.match-label.matched{background:#dcfce7;border-color:#4ade80;color:#166534;cursor:default}
+.match-desc{background:#f8fafc;border:2px solid #e2e8f0;border-radius:11px;padding:10px;font-size:.82rem;font-weight:700;color:#374151;text-align:center;cursor:pointer;transition:.2s;min-height:56px;display:flex;align-items:center;justify-content:center}
+.match-desc.selected{background:#dcfce7;border-color:#86efac}
+.match-desc.matched{background:#dcfce7;border-color:#4ade80;color:#166534;cursor:default}
+.match-desc.wrong-flash{background:#fee2e2;border-color:#f87171;animation:shake .3s}
+
+/* VOCAB */
+.vocab-sent{font-size:.95rem;font-weight:700;color:#1e293b;margin-bottom:12px;line-height:1.55;text-align:center}
+.blank-word{color:#15803d;font-weight:900;border-bottom:2px solid #15803d;padding:0 4px}
+.vocab-opts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.vocab-btn{background:#f0fdf4;border:2px solid #bbf7d0;border-radius:99px;padding:10px 22px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;color:#15803d;cursor:pointer;transition:.2s}
+.vocab-btn:hover{background:#dcfce7}
+.vocab-btn.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+.vocab-btn.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+.vocab-btn:disabled{cursor:default}
+
+/* NEXT BTN */
+.next-btn{display:block;width:100%;background:#15803d;color:#fff;border:none;border-radius:14px;padding:13px;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;margin-top:12px;transition:.2s}
+.next-btn:hover{background:#166534}
+
+/* SCORE / DONE */
+.score-wrap{text-align:center;margin-bottom:16px}
+.score-num{font-family:'Fredoka One',cursive;font-size:2rem;color:#15803d}
+.wrong-list{list-style:none;display:flex;flex-direction:column;gap:9px}
+.wrong-item{background:#fff7ed;border-left:4px solid #f59e0b;border-radius:10px;padding:9px 12px;font-size:.88rem;line-height:1.5}
+.wrong-item .wr-q{font-weight:700;color:#1e293b}
+.wrong-item .wr-a{color:#16a34a;font-weight:700}
+.wrong-item .wr-h{color:#64748b;font-size:.82rem}
+
+.star-pop{position:fixed;pointer-events:none;font-size:2rem;animation:flyUp .8s ease forwards;z-index:999}
+@keyframes flyUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-90px) scale(1.5)}}
+</style>
+</head>
+<body>
+
+<h1>🌸 Every Season</h1>
+<p class="subtitle">Seen Reading — Week 13</p>
+
+<div class="tabs">
+  <button class="tab active" data-tab="game" onclick="switchTab('game')">📝 Reading Game</button>
+  <button class="tab" data-tab="vocab" onclick="switchTab('vocab')">📚 Vocabulary</button>
+</div>
+
+<div class="dots" id="dots"></div>
+<div id="root"></div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────────────
+
+const A_QS = [
+  {
+    tag:'tag-type', tagLabel:'Text Type 文章類型', emoji:'📖',
+    text:'What kind of text is "Every Season"?',
+    opts:[
+      'a. A story about a girl and her four animal friends.',
+      'b. A poem that describes the four seasons.',
+      'c. A letter asking you to go outside more.'
+    ],
+    ans:1,
+    explain:'This is a POEM! It uses beautiful short lines to describe what happens in each season — not a story with characters or a letter. 🌸'
+  },
+  {
+    tag:'tag-setting', tagLabel:'Setting 場景 ⚠️', emoji:'🐥',
+    text:'In which season do ducklings follow all in a row?\n先圈問題字：which season',
+    opts:[
+      'a. In winter, when snowflakes swirl.',
+      'b. In autumn, when leaves turn and fall.',
+      'c. In spring, when grass grows green.'
+    ],
+    ans:2,
+    explain:'Setting = WHEN things happen. Ducklings follow in a row in SPRING! The poem says: "Ducklings follow, all in a row." 🐥 Not feelings — a real place and time!'
+  },
+  {
+    tag:'tag-comp', tagLabel:'Comprehension', emoji:'🏊',
+    text:'According to the poem, what is the special thing to do in summer?',
+    opts:[
+      'a. Rake and jump in the leaves.',
+      'b. Splash and swim.',
+      'c. Coast and slide in the snow.'
+    ],
+    ans:1,
+    explain:'"Summer is the time to splash and swim." 🏊 Remember: every season has its own activity!'
+  },
+  {
+    tag:'tag-infer', tagLabel:'Main Message 推理', emoji:'🌟',
+    text:'What is the MAIN MESSAGE of this poem?',
+    opts:[
+      'a. Spring is better than all the other seasons.',
+      'b. Animals and plants only change in winter.',
+      'c. Every season is special and has something wonderful.'
+    ],
+    ans:2,
+    explain:'The author loves ALL four seasons! Each section ends with "But then [next season] comes…" — showing every season brings something new and beautiful. 🌟'
+  },
+];
+
+const B_Q = {
+  text:'Which season do you enjoy most? Why?\nWrite a complete sentence.',
+  circleHint:'先圈問題字！(Circle the question words first!)\n→ Which season / enjoy / why',
+  starter:'I enjoy ___ most because …',
+  model:'I enjoy summer most because I can splash and swim with my friends.',
+};
+
+const MATCH_PAIRS = [
+  {label:'🌸 Spring',  desc:'dig and plant'},
+  {label:'☀️ Summer',  desc:'splash and swim'},
+  {label:'🍂 Autumn',  desc:'rake and jump'},
+  {label:'❄️ Winter',  desc:'coast and slide'},
+];
+
+const VOCAB_QS = [
+  {sent:'Lilacs ___ their sweet smell all over the garden.',    opts:['spread','hide'],      ans:0, explain:'spread = 散佈、蔓延'},
+  {sent:'After the warm rain, the seeds start to ___ in the soil.',   opts:['sprout','fall'],      ans:0, explain:'sprout = 發芽'},
+  {sent:'In spring, flowers ___ and open their colourful petals.',     opts:['bloom','sleep'],     ans:0, explain:'bloom = 開花'},
+  {sent:'The strong wind whips and seeds ___ everywhere.',             opts:['scatter','grow'],    ans:0, explain:'scatter = 四散、飛散'},
+  {sent:'Salamanders ___ out slowly from under the mossy rocks.',      opts:['slither','hop'],     ans:0, explain:'slither = 滑行（像蛇一樣）'},
+  {sent:'Butterflies ___ gently and land on the bright flowers.',      opts:['flutter','stomp'],   ans:0, explain:'flutter = 輕輕振翅、飄飛'},
+  {sent:'The little shorebirds ___ quickly along the wet beach.',      opts:['scurry','swim'],     ans:0, explain:'scurry = 急速奔跑'},
+  {sent:'After the snowfall, we can see animal ___ all over the ground.',opts:['tracks','nests'],  ans:0, explain:'tracks = 足跡、腳印'},
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────
+const GAME_PHASES = ['learn','partA','partB','partC','done'];
+let gPhase=0, gQi=0, gScore=0, gTotal=A_QS.length+MATCH_PAIRS.length, gWrongs=[];
+let matchState={sel:null,count:0};
+let vQi=0, vScore=0, vWrongs=[];
+let activeTab='game';
+
+// ── TAB SWITCH ────────────────────────────────────────────────────────
+function switchTab(tab){
+  activeTab=tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  renderActive();
+}
+function renderActive(){activeTab==='game'?renderGame():renderVocab();}
+
+// ── HELPERS ───────────────────────────────────────────────────────────
+function buildDots(n,cur,type){
+  const d=document.getElementById('dots');d.innerHTML='';
+  if(type==='vocab'){
+    for(let i=0;i<n;i++){
+      const el=document.createElement('div');
+      el.className='dot'+(i<cur?' done':i===cur?' active':'');
+      d.appendChild(el);
+    }
+  } else {
+    GAME_PHASES.forEach((_,i)=>{
+      const el=document.createElement('div');
+      el.className='dot'+(i<gPhase?' done':i===gPhase?' active':'');
+      d.appendChild(el);
+    });
+  }
+}
+function star(e){
+  const s=document.createElement('div');s.className='star-pop';
+  s.textContent=['⭐','🌟','✨','🌸'][Math.floor(Math.random()*4)];
+  s.style.left=(e.clientX-16)+'px';s.style.top=(e.clientY-16)+'px';
+  document.body.appendChild(s);setTimeout(()=>s.remove(),850);
+}
+function card(html){
+  const root=document.getElementById('root');root.innerHTML='';
+  const c=document.createElement('div');c.className='card';c.innerHTML=html;
+  root.appendChild(c);return c;
+}
+function progBar(cur,tot){
+  return `<div class="prog-wrap"><div class="prog-bar" style="width:${Math.round(cur/tot*100)}%"></div></div>`;
+}
+function nextBtn(label,fn){
+  const b=document.createElement('button');b.className='next-btn';b.textContent=label;
+  b.onclick=fn;return b;
+}
+
+// ── READING GAME ──────────────────────────────────────────────────────
+function renderGame(){
+  buildDots(GAME_PHASES.length,gPhase,'game');
+  const ph=GAME_PHASES[gPhase];
+  if(ph==='learn') phLearn();
+  else if(ph==='partA') phA();
+  else if(ph==='partB') phB();
+  else if(ph==='partC') phC();
+  else phDone();
+}
+
+function phLearn(){
+  const c=card(`
+    <div class="phase-title">📖 Poem Review — Every Season</div>
+
+    <div class="learn-box">
+      <h3>文章重點 Key Info</h3>
+      <ul>
+        <li>📝 <em>Text Type</em>: Poem（詩）— 描述四季的詩</li>
+        <li>🌍 <em>Topic</em>: What happens in each of the four seasons</li>
+        <li>💡 <em>Main Message</em>: Every season is special!</li>
+      </ul>
+    </div>
+
+    <div class="learn-box">
+      <h3>🌸 Spring</h3>
+      <div class="poem-stanza">
+        Speckled eggs fill woven nests. Showers soak. Seeds <em>sprout</em>. Flowers <em>bloom</em>.<br>
+        Crocuses pop. Daffodils open. Lilacs <em>spread</em> their sweet smell.<br>
+        Salamanders <em>slither</em> out from under mossy rocks.<br>
+        Ducklings follow, all in a row.<br>
+        <strong>Spring is the time to dig and plant.</strong>
+      </div>
+    </div>
+
+    <div class="learn-box">
+      <h3>☀️ Summer</h3>
+      <div class="poem-stanza">
+        The sun shines strong and hot.<br>
+        Bees sip, frogs hop, butterflies <em>flutter</em> and land.<br>
+        Shorebirds <em>scurry</em> and peck. I hear the roar of ocean waves.<br>
+        <strong>Summer is the time to splash and swim.</strong>
+      </div>
+    </div>
+
+    <div class="learn-box">
+      <h3>🍂 Autumn</h3>
+      <div class="poem-stanza">
+        Wind whips, seeds <em>scatter</em>. Leaves turn and fall.<br>
+        Orange maple, red oak, yellow ash.<br>
+        We pick pumpkins, taste apples, pears, and pies.<br>
+        Geese honk and head south. Chipmunks store acorns.<br>
+        <strong>Autumn is the time to rake and jump.</strong>
+      </div>
+    </div>
+
+    <div class="learn-box">
+      <h3>❄️ Winter</h3>
+      <div class="poem-stanza">
+        The cold brings icicles and snowflakes that swirl.<br>
+        Horses grow thick coats. Chickadees search for seeds.<br>
+        Snow blankets branches and buds.<br>
+        Animals leave their <em>tracks</em>.<br>
+        <strong>Winter is the time to coast and slide.</strong>
+      </div>
+    </div>
+  `);
+  c.appendChild(nextBtn('Start Part A 📝',()=>{gPhase=1;gQi=0;renderGame();}));
+}
+
+function phA(){
+  if(gQi>=A_QS.length){gPhase=2;renderGame();return;}
+  const q=A_QS[gQi];
+  const c=card(`
+    ${progBar(gQi,A_QS.length)}
+    <div class="phase-title">Part A — Multiple Choice</div>
+    <div style="text-align:center;margin-bottom:8px"><span class="tag ${q.tag}">${q.tagLabel}</span></div>
+    <div class="q-num">Question ${gQi+1} / ${A_QS.length}</div>
+    <div class="q-text">${q.emoji} ${q.text.replace(/\n/g,'<br>')}</div>
+    <div class="opts" id="opts"></div>
+    <div class="feedback" id="fb"></div>
+  `);
+  const og=c.querySelector('#opts');
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');b.className='opt-btn';b.textContent=o;
+    b.onclick=ev=>{
+      if(b.disabled)return;
+      og.querySelectorAll('.opt-btn').forEach(x=>x.disabled=true);
+      const fb=c.querySelector('#fb');
+      if(i===q.ans){
+        b.classList.add('correct');
+        fb.textContent='✅ '+q.explain;fb.className='feedback ok';
+        gScore++;star(ev);
+        setTimeout(()=>{gQi++;renderGame();},1200);
+      } else {
+        b.classList.add('wrong');
+        fb.textContent='❌ '+q.explain;fb.className='feedback bad';
+        gWrongs.push({q:q.text,a:q.opts[q.ans],h:q.explain});
+        setTimeout(()=>{gQi++;renderGame();},1500);
+      }
+    };
+    og.appendChild(b);
+  });
+}
+
+function phB(){
+  const q=B_Q;
+  let hint1=false,hint2=false;
+  const c=card(`
+    <div class="phase-title">Part B — Long Answer ✏️</div>
+    <div class="practice-badge">✏️ Practice — not scored. Just try your best!</div>
+    <div class="q-text">${q.text.replace(/\n/g,'<br>')}</div>
+    <textarea class="answer-area" id="ans" placeholder="Write your complete sentence here..."></textarea>
+    <div class="hint-area" id="hintArea"></div>
+    <div class="btn-row">
+      <button class="hint-btn" id="hintBtn">💡 Show Hint</button>
+    </div>
+  `);
+  const hintArea=c.querySelector('#hintArea');
+  const hintBtn=c.querySelector('#hintBtn');
+  hintBtn.onclick=()=>{
+    if(!hint1){
+      hint1=true;
+      hintArea.style.display='block';
+      hintArea.innerHTML=`
+        <div style="margin-bottom:8px;font-weight:800;color:#15803d">先圈問題字！Circle the question words first:</div>
+        <div style="font-size:.92rem;color:#1e293b;margin-bottom:10px">${q.circleHint.replace(/\n/g,'<br>')}</div>
+        <div style="margin-bottom:6px;font-weight:800;color:#15803d">Sentence starter:</div>
+        <div style="font-size:.95rem"><em>${q.starter}</em></div>
+        <button class="hint-btn" id="ansBtn" style="margin-top:10px;width:100%">👁 Show Full Model Answer</button>`;
+      c.querySelector('#ansBtn').onclick=()=>{
+        if(!hint2){
+          hint2=true;
+          hintArea.innerHTML=`<div class="model-lbl">✅ Model Answer:</div>
+            <div style="font-size:.92rem;color:#166534;font-weight:700;line-height:1.6">"${q.model}"</div>`;
+          hintBtn.style.display='none';
+        }
+      };
+    }
+  };
+  c.appendChild(nextBtn('Next — Part C ➜',()=>{gPhase=3;renderGame();}));
+}
+
+function phC(){
+  matchState={sel:null,count:0};
+  const descs=[...MATCH_PAIRS.map(p=>p.desc)].sort(()=>Math.random()-.5);
+  const c=card(`
+    <div class="phase-title">Part C — Season Activities Match 🔗</div>
+    <p style="text-align:center;font-size:.83rem;color:#64748b;margin-bottom:12px">
+      Tap a season on the left, then tap the matching activity on the right.
+    </p>
+    <div class="match-grid">
+      <div class="match-left" id="labels"></div>
+      <div class="match-right" id="descs"></div>
+    </div>
+    <div class="feedback" id="fb"></div>
+  `);
+  const lb=c.querySelector('#labels'),db=c.querySelector('#descs');
+  MATCH_PAIRS.forEach(p=>{
+    const el=document.createElement('div');el.className='match-label';el.textContent=p.label;el.dataset.label=p.label;
+    el.onclick=()=>{
+      if(el.classList.contains('matched'))return;
+      lb.querySelectorAll('.match-label').forEach(x=>{if(!x.classList.contains('matched'))x.classList.remove('selected');});
+      el.classList.add('selected');matchState.sel=p.label;
+    };
+    lb.appendChild(el);
+  });
+  descs.forEach(desc=>{
+    const el=document.createElement('div');el.className='match-desc';el.textContent=desc;
+    el.onclick=ev=>{
+      if(el.classList.contains('matched')||!matchState.sel)return;
+      const pair=MATCH_PAIRS.find(p=>p.label===matchState.sel);
+      const fb=c.querySelector('#fb');
+      if(pair&&pair.desc===desc){
+        el.classList.add('matched');
+        lb.querySelectorAll('.match-label').forEach(x=>{if(x.dataset.label===matchState.sel)x.classList.add('matched');});
+        matchState.count++;gScore++;star(ev);
+        fb.textContent='✅ Matched!';fb.className='feedback ok';
+        matchState.sel=null;
+        if(matchState.count>=MATCH_PAIRS.length)setTimeout(()=>{gPhase=4;renderGame();},700);
+      } else {
+        el.classList.add('wrong-flash');fb.textContent='❌ Try again!';fb.className='feedback bad';
+        gWrongs.push({q:'Match: '+matchState.sel,a:pair?pair.desc:'?',h:'Remember: Spring=dig & plant, Summer=splash & swim, Autumn=rake & jump, Winter=coast & slide.'});
+        setTimeout(()=>{
+          el.classList.remove('wrong-flash');
+          lb.querySelectorAll('.match-label').forEach(x=>{if(!x.classList.contains('matched'))x.classList.remove('selected');});
+          matchState.sel=null;
+        },700);
+      }
+    };
+    db.appendChild(el);
+  });
+}
+
+function phDone(){
+  const pct=Math.round(gScore/gTotal*100);
+  const emoji=pct>=90?'🌟':pct>=70?'😊':'💪';
+  let wHtml='';
+  if(gWrongs.length){
+    wHtml='<div style="margin-top:14px"><div style="font-family:\'Fredoka One\',cursive;color:#dc2626;margin-bottom:8px">Review ✏️</div><ul class="wrong-list">';
+    gWrongs.forEach(w=>{wHtml+=`<li class="wrong-item"><div class="wr-q">${w.q.replace(/\n/g,' ')}</div><div class="wr-a">✅ ${w.a}</div><div class="wr-h">💡 ${w.h}</div></li>`;});
+    wHtml+='</ul></div>';
+  }
+  const c=card(`
+    <div class="score-wrap">
+      <div style="font-size:3rem">${emoji}</div>
+      <div class="score-num">${gScore} / ${gTotal}</div>
+      <div style="color:#64748b;font-size:.88rem">${pct}% — ${pct>=90?'Excellent! 🎉':pct>=70?'Good job! 👍':'Keep practicing! 💪'}</div>
+      <div style="font-size:.8rem;color:#94a3b8;margin-top:4px">(Part B is practice — not included in score)</div>
+    </div>
+    ${wHtml}
+  `);
+  c.appendChild(nextBtn('Play Again 🔄',()=>{gPhase=0;gQi=0;gScore=0;gWrongs=[];matchState={sel:null,count:0};renderGame();}));
+}
+
+// ── VOCABULARY TAB ────────────────────────────────────────────────────
+function renderVocab(){
+  buildDots(VOCAB_QS.length,vQi,'vocab');
+  if(vQi>=VOCAB_QS.length){phVocabDone();return;}
+  const q=VOCAB_QS[vQi];
+  const displaySent=q.sent.replace('___',`<span class="blank-word">___</span>`);
+  const c=card(`
+    ${progBar(vQi,VOCAB_QS.length)}
+    <div class="phase-title">Vocabulary 📚</div>
+    <div class="q-num">Word ${vQi+1} / ${VOCAB_QS.length}</div>
+    <div class="q-text vocab-sent">${displaySent}</div>
+    <div class="vocab-opts" id="vopts"></div>
+    <div class="feedback" id="fb"></div>
+  `);
+  const vo=c.querySelector('#vopts');
+  const shuffled=Math.random()<.5?[...q.opts]:[q.opts[1],q.opts[0]];
+  const corrIdx=shuffled.indexOf(q.opts[q.ans]);
+  shuffled.forEach((o,i)=>{
+    const b=document.createElement('button');b.className='vocab-btn';b.textContent=o;
+    b.onclick=ev=>{
+      if(b.disabled)return;
+      vo.querySelectorAll('.vocab-btn').forEach(x=>x.disabled=true);
+      const fb=c.querySelector('#fb');
+      if(i===corrIdx){
+        b.classList.add('correct');fb.textContent='✅ '+q.explain;fb.className='feedback ok';
+        vScore++;star(ev);
+        setTimeout(()=>{vQi++;renderVocab();},1100);
+      } else {
+        b.classList.add('wrong');fb.textContent='❌ '+q.explain;fb.className='feedback bad';
+        vWrongs.push({q:q.sent,a:q.opts[q.ans],h:q.explain});
+        setTimeout(()=>{vQi++;renderVocab();},1300);
+      }
+    };
+    vo.appendChild(b);
+  });
+}
+
+function phVocabDone(){
+  const pct=Math.round(vScore/VOCAB_QS.length*100);
+  const emoji=pct>=90?'🌟':pct>=70?'😊':'💪';
+  let wHtml='';
+  if(vWrongs.length){
+    wHtml='<div style="margin-top:14px"><div style="font-family:\'Fredoka One\',cursive;color:#dc2626;margin-bottom:8px">Review ✏️</div><ul class="wrong-list">';
+    vWrongs.forEach(w=>{wHtml+=`<li class="wrong-item"><div class="wr-q">${w.q}</div><div class="wr-a">✅ ${w.a}</div><div class="wr-h">💡 ${w.h}</div></li>`;});
+    wHtml+='</ul></div>';
+  }
+  const c=card(`
+    <div class="score-wrap">
+      <div style="font-size:3rem">${emoji}</div>
+      <div class="score-num">${vScore} / ${VOCAB_QS.length}</div>
+      <div style="color:#64748b;font-size:.88rem">${pct}%</div>
+    </div>
+    ${wHtml}
+  `);
+  c.appendChild(nextBtn('Play Again 🔄',()=>{vQi=0;vScore=0;vWrongs=[];renderVocab();}));
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────
+renderGame();
+</script>
+</body>
+</html>
