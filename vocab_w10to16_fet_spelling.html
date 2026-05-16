@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✏️ FET Spelling Quiz Week 10–16</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #fff8f0; font-family: 'Nunito', sans-serif; min-height: 100vh; }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 16px 16px 60px; }
+  .g-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .g-title { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #333; }
+  .g-prog  { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #aaa; }
+  .pbar-wrap { background: #eee; border-radius: 99px; height: 8px; margin-bottom: 14px; overflow: hidden; }
+  .pbar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg,#6366f1,#a855f7); transition: width 0.4s; }
+  .score-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+  .score-label { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #aaa; }
+  .score-val   { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #34d399; }
+
+  /* Week selector */
+  .week-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+  .week-btn {
+    padding: 14px 8px; border-radius: 16px; border: 3px solid #eee;
+    background: white; font-family: 'Fredoka One', cursive; font-size: 0.9rem;
+    color: #333; cursor: pointer; text-align: center; transition: all 0.15s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
+  .week-btn:hover { border-color: #6366f1; background: #eef2ff; transform: translateY(-2px); }
+  .week-btn.done { background: #d1fae5; border-color: #34d399; color: #065f46; }
+
+  /* Spelling card */
+  .spell-card {
+    background: white; border-radius: 20px; padding: 28px 20px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+    text-align: center; animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes popIn { from{opacity:0;transform:scale(0.88)} to{opacity:1;transform:scale(1)} }
+  .spell-card.shake { animation: shake 0.35s ease; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+  .spell-emoji { font-size: 3rem; display: block; margin-bottom: 12px; }
+  .spell-meaning { font-family: 'Fredoka One', cursive; font-size: 1.5rem; color: #333; margin-bottom: 6px; }
+  .spell-hint { font-size: 0.82rem; color: #aaa; font-weight: 700; margin-bottom: 20px; }
+  .spell-hint .letter-count {
+    display: inline-block; background: #f3e8ff; color: #7c3aed;
+    border-radius: 20px; padding: 2px 10px; font-family: 'Fredoka One', cursive;
+  }
+
+  /* Letter input area */
+  .letter-boxes { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 18px; }
+  .letter-box {
+    width: 42px; height: 48px; border-radius: 10px; border: 3px solid #ddd;
+    background: #f9f9f9; font-family: 'Fredoka One', cursive;
+    font-size: 1.4rem; text-align: center; outline: none;
+    transition: border-color 0.15s; color: #333; caret-color: transparent;
+  }
+  .letter-box:focus { border-color: #6366f1; background: #eef2ff; }
+  .letter-box.correct { background: #d1fae5; border-color: #34d399; color: #065f46; }
+  .letter-box.wrong   { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+
+  .check-btn {
+    width: 100%; padding: 14px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+    cursor: pointer; margin-bottom: 12px; box-shadow: 0 4px 14px rgba(99,102,241,0.3);
+    transition: transform 0.1s;
+  }
+  .check-btn:active { transform: scale(0.97); }
+
+  /* Feedback */
+  .feedback {
+    border-radius: 14px; padding: 12px 16px; margin-bottom: 12px;
+    font-weight: 800; font-size: 0.95rem; display: none; text-align: center; line-height: 1.5;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok  { background: #d1fae5; color: #065f46; border: 3px solid #6ee7b7; }
+  .feedback.bad { background: #fee2e2; color: #991b1b; border: 3px solid #fca5a5; }
+
+  .next-btn {
+    width: 100%; padding: 15px; border-radius: 50px; border: none;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    color: white; font-family: 'Fredoka One', cursive; font-size: 1.2rem;
+    cursor: pointer; display: none; box-shadow: 0 4px 14px rgba(99,102,241,0.3);
+  }
+  .next-btn.show { display: block; }
+
+  /* Fill in Blank */
+  .fill-opts { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 4px; }
+  .fill-btn {
+    padding: 12px 6px; border-radius: 14px; border: 3px solid #eee;
+    background: #f9f9f9; font-family: 'Fredoka One', cursive;
+    font-size: 0.95rem; color: #333; cursor: pointer; transition: all 0.15s; text-align: center;
+  }
+  .fill-btn:hover   { border-color: #6366f1; background: #eef2ff; }
+  .fill-btn.correct { background: #d1fae5; border-color: #34d399; color: #065f46; }
+  .fill-btn.wrong   { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+  .fill-btn:disabled { cursor: default; }
+
+  /* Dots */
+  .dots { display: flex; justify-content: center; gap: 5px; margin-bottom: 12px; flex-wrap: wrap; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #e5e7eb; transition: all 0.3s; }
+  .dot.curr { background: #6366f1; transform: scale(1.4); }
+  .dot.ok   { background: #34d399; }
+  .dot.bad  { background: #f87171; }
+
+  /* Final */
+  .final-card {
+    background: white; border-radius: 24px; padding: 30px 22px;
+    text-align: center; box-shadow: 0 8px 28px rgba(0,0,0,0.1); display: none;
+  }
+  .final-card.show { display: block; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  .final-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #6366f1; margin-bottom: 6px; }
+  .final-score { font-family: 'Fredoka One', cursive; font-size: 3rem; color: #a855f7; }
+  .final-stars { font-size: 2.2rem; letter-spacing: 4px; margin: 6px 0 12px; }
+  .final-msg   { font-size: 0.95rem; color: #666; font-weight: 700; margin-bottom: 20px; line-height: 1.6; }
+  .wrong-rev   { background: #faf5ff; border-radius: 12px; padding: 14px; margin-bottom: 18px; text-align: left; }
+  .wr-title    { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: #7c3aed; margin-bottom: 8px; }
+  .wr-item     { font-size: 0.85rem; font-weight: 700; color: #555; padding: 4px 0; border-bottom: 1px solid #f5f5f5; }
+  .wr-ans      { color: #059669; font-weight: 900; }
+  .final-btns  { display: flex; flex-direction: column; gap: 10px; }
+  .retry-btn { padding: 14px; border-radius: 50px; border: none; background: linear-gradient(135deg,#6366f1,#a855f7); color: white; font-family: 'Fredoka One',cursive; font-size: 1.1rem; cursor: pointer; }
+  .back-btn  { padding: 14px; border-radius: 50px; border: none; background: linear-gradient(135deg,#10b981,#34d399); color: white; font-family: 'Fredoka One',cursive; font-size: 1.1rem; cursor: pointer; }
+
+  .star-pop { position: fixed; font-size: 1.8rem; pointer-events: none; animation: fly 0.9s ease-out forwards; z-index: 999; }
+  @keyframes fly { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-80px) scale(1.5)} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="g-header">
+    <div class="g-title" id="gTitle">✏️ FET Spelling</div>
+    <div class="g-prog" id="gProg"></div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
+  <div class="score-row">
+    <div class="score-label" id="scoreLabel"></div>
+    <div class="score-val"   id="scoreVal"></div>
+  </div>
+  <div id="content"></div>
+  <div class="dots"     id="dots"></div>
+  <div class="feedback" id="feedback"></div>
+  <button class="next-btn" id="nextBtn" onclick="handleNext()"></button>
+  <div class="final-card" id="finalCard"></div>
+</div>
+
+<script>
+// ===== VOCABULARY DATA W10–16 =====
+const WEEKS = {
+  "Week 10": {
+    title: "🎨 Through Georgia's Eyes",
+    words: [
+      {word:"memory",    meaning:"記憶",      emoji:"🧠", hint:"something you remember",       sentence:"I have a good ____ of my first day at school.",                sentHint:"記憶"},
+      {word:"discovers", meaning:"發現",      emoji:"🔍", hint:"finds something new",          sentence:"Georgia ____ that New Mexico has beautiful colors.",           sentHint:"發現"},
+      {word:"amaze",     meaning:"使驚嘆",    emoji:"🤩", hint:"make someone say wow",         sentence:"The tall red mountains never stop to ____ me.",                sentHint:"使驚嘆"},
+      {word:"wonder",    meaning:"好奇/驚嘆", emoji:"✨", hint:"feel amazed or curious",       sentence:"I ____ what the desert looks like at night.",                  sentHint:"好奇"},
+      {word:"tunes",     meaning:"曲調",      emoji:"🎵", hint:"simple songs or melodies",     sentence:"She hummed soft ____ while she painted in the desert.",        sentHint:"曲調"},
+      {word:"alone",     meaning:"獨自",      emoji:"🚶", hint:"by yourself, no one else",     sentence:"Georgia liked to paint ____ under the wide blue sky.",         sentHint:"獨自"},
+      {word:"struggle",  meaning:"努力/掙扎", emoji:"💪", hint:"try hard when it is difficult",sentence:"It is hard to ____ when nobody is there to help you.",         sentHint:"努力"},
+      {word:"dream",     meaning:"夢想",      emoji:"💭", hint:"something you hope to do",     sentence:"My ____ is to paint the whole wide world.",                   sentHint:"夢想"},
+      {word:"achieve",   meaning:"達成",      emoji:"🏆", hint:"reach your goal",             sentence:"You can ____ anything if you work hard every day.",            sentHint:"達成"},
+      {word:"world",     meaning:"世界",      emoji:"🌍", hint:"everything around us",         sentence:"Georgia wanted to show the ____ her amazing art.",             sentHint:"世界"},
+    ]
+  },
+  "Week 11/12": {
+    title: "🦴 Georgia & Bones",
+    words: [
+      {word:"wonder",   meaning:"奇觀/驚嘆", emoji:"🌟", hint:"something amazing to see",     sentence:"The Grand Canyon is a natural ____ of the world.",             sentHint:"奇觀"},
+      {word:"whisper",  meaning:"低聲說",    emoji:"🤫", hint:"speak very softly",             sentence:"Please ____ so you do not wake the baby.",                    sentHint:"低聲說"},
+      {word:"bones",    meaning:"骨頭",      emoji:"🦴", hint:"hard parts inside your body",  sentence:"The dog buried its ____ in the back yard.",                   sentHint:"骨頭"},
+      {word:"delight",  meaning:"喜悅",      emoji:"😊", hint:"great joy and happiness",       sentence:"The butterfly garden was a ____ to visit.",                   sentHint:"喜悅"},
+      {word:"children", meaning:"孩子們",    emoji:"👧", hint:"young boys and girls",          sentence:"The ____ ran and played in the park all afternoon.",           sentHint:"孩子們"},
+      {word:"mountain", meaning:"山",        emoji:"⛰️", hint:"very high land",               sentence:"We hiked up the ____ to see the beautiful view.",             sentHint:"山"},
+      {word:"artist",   meaning:"藝術家",    emoji:"🎨", hint:"person who makes art",          sentence:"Georgia was a famous ____ who loved painting nature.",         sentHint:"藝術家"},
+      {word:"surround", meaning:"包圍",      emoji:"🌿", hint:"go all around something",       sentence:"Big trees ____ the small house in the forest.",               sentHint:"包圍"},
+      {word:"desert",   meaning:"沙漠",      emoji:"🏜️", hint:"dry, hot land with little rain",sentence:"A camel can walk many miles in the ____.",                   sentHint:"沙漠"},
+      {word:"season",   meaning:"季節",      emoji:"🍂", hint:"spring, summer, fall, or winter",sentence:"Summer is my favorite ____ because I can swim.",             sentHint:"季節"},
+    ]
+  },
+  "Week 13": {
+    title: "🍂 Every Season I",
+    words: [
+      {word:"autumn",   meaning:"秋天",      emoji:"🍂", hint:"season after summer",           sentence:"Leaves turn orange and red in ____.",                         sentHint:"秋天"},
+      {word:"spring",   meaning:"春天",      emoji:"🌸", hint:"season after winter",            sentence:"Flowers start to bloom every ____.",                          sentHint:"春天"},
+      {word:"summer",   meaning:"夏天",      emoji:"☀️", hint:"the hottest season",            sentence:"We go swimming every ____.",                                  sentHint:"夏天"},
+      {word:"winter",   meaning:"冬天",      emoji:"❄️", hint:"the coldest season",            sentence:"It snows a lot in ____.",                                     sentHint:"冬天"},
+      {word:"speckled", meaning:"有斑點的",  emoji:"🐦", hint:"covered with small spots",       sentence:"The ____ egg was brown with white spots.",                    sentHint:"有斑點的"},
+      {word:"woven",    meaning:"編織的",    emoji:"🧶", hint:"made by weaving threads",        sentence:"The spider made a ____ web in the tree.",                     sentHint:"編織的"},
+      {word:"showers",  meaning:"陣雨",      emoji:"🌧️", hint:"light rains",                   sentence:"April ____ bring May flowers.",                               sentHint:"陣雨"},
+      {word:"sprout",   meaning:"發芽",      emoji:"🌱", hint:"begin to grow from a seed",     sentence:"Seeds ____ when they get water and sunlight.",                sentHint:"發芽"},
+      {word:"bloom",    meaning:"開花",      emoji:"🌸", hint:"grow flowers",                   sentence:"Cherry blossoms ____ every spring.",                          sentHint:"開花"},
+      {word:"spread",   meaning:"展開/蔓延", emoji:"🦅", hint:"stretch out wide",              sentence:"The eagle ____ its wings and flew away.",                     sentHint:"展開"},
+    ]
+  },
+  "Week 14": {
+    title: "🌿 Every Season II",
+    words: [
+      {word:"slither",  meaning:"滑行",      emoji:"🐍", hint:"slide like a snake",            sentence:"The snake began to ____ across the warm rock.",               sentHint:"滑行"},
+      {word:"barefoot", meaning:"赤腳",      emoji:"🦶", hint:"without shoes or socks",         sentence:"I love to run ____ on the soft grass.",                       sentHint:"赤腳"},
+      {word:"flutter",  meaning:"拍翅/飛舞", emoji:"🦋", hint:"move wings quickly",            sentence:"Butterflies ____ from flower to flower.",                     sentHint:"拍翅"},
+      {word:"taste",    meaning:"嚐味道",    emoji:"👅", hint:"try food with your mouth",       sentence:"Can you ____ the sweetness of this fresh fruit?",             sentHint:"嚐味道"},
+      {word:"scurry",   meaning:"急忙跑",    emoji:"🐭", hint:"move fast with small steps",    sentence:"The little mouse will ____ away when it sees a cat.",         sentHint:"急忙跑"},
+      {word:"scatter",  meaning:"四散",      emoji:"🌾", hint:"spread in many directions",     sentence:"The wind will ____ the seeds everywhere.",                   sentHint:"四散"},
+      {word:"jacket",   meaning:"夾克",      emoji:"🧥", hint:"a short coat",                  sentence:"Put on your ____ — it is cold outside!",                     sentHint:"夾克"},
+      {word:"secret",   meaning:"秘密",      emoji:"🤫", hint:"something you keep to yourself", sentence:"Can you keep a ____? Don't tell anyone!",                    sentHint:"秘密"},
+      {word:"honk",     meaning:"鳴叫",      emoji:"🪿", hint:"make a loud horn-like sound",   sentence:"The geese ____ as they fly south in autumn.",                 sentHint:"鳴叫"},
+      {word:"store",    meaning:"儲存",      emoji:"🐿️", hint:"save something for later",     sentence:"Squirrels ____ nuts in the ground for winter.",               sentHint:"儲存"},
+    ]
+  },
+  "Week 15": {
+    title: "🍎 My Autumn Book I",
+    words: [
+      {word:"crisp",    meaning:"清新爽脆",  emoji:"🍎", hint:"fresh, cool, and sharp",         sentence:"The ____ autumn air smells like fresh apples.",               sentHint:"清新"},
+      {word:"gray",     meaning:"灰色的",    emoji:"🩶", hint:"a color between black and white", sentence:"The ____ clouds covered the whole sky.",                     sentHint:"灰色的"},
+      {word:"rush",     meaning:"急衝",      emoji:"💨", hint:"move very fast",                 sentence:"The children ____ outside to play in the leaves.",            sentHint:"急衝"},
+      {word:"spider",   meaning:"蜘蛛",      emoji:"🕷️", hint:"eight-legged creature",          sentence:"A ____ spun a beautiful web in the garden.",                  sentHint:"蜘蛛"},
+      {word:"weave",    meaning:"編織",      emoji:"🧵", hint:"make something by crossing threads",sentence:"Spiders ____ webs to catch bugs.",                        sentHint:"編織"},
+      {word:"chilly",   meaning:"涼颼颼的",  emoji:"🥶", hint:"a little cold",                  sentence:"It is ____ outside today — bring a sweater!",                sentHint:"涼颼颼"},
+      {word:"zip",      meaning:"拉拉鍊",    emoji:"⚡", hint:"close with a zipper; move fast", sentence:"Please ____ up your coat before going outside.",              sentHint:"拉拉鍊"},
+      {word:"agree",    meaning:"同意",      emoji:"👍", hint:"say yes, have the same idea",    sentence:"Do you ____ that autumn is the most beautiful season?",       sentHint:"同意"},
+      {word:"chipmunk", meaning:"花栗鼠",    emoji:"🐿️", hint:"small striped animal",           sentence:"The ____ stored seeds in its chubby cheeks.",                sentHint:"花栗鼠"},
+      {word:"dig",      meaning:"挖",        emoji:"🪱", hint:"make a hole in the ground",      sentence:"Squirrels ____ holes to hide their nuts.",                   sentHint:"挖"},
+    ]
+  },
+  "Week 16": {
+    title: "🍃 My Autumn Book II",
+    words: [
+      {word:"autumn",   meaning:"秋天",      emoji:"🍂", hint:"season after summer",            sentence:"The ____ wind blows the leaves from the trees.",             sentHint:"秋天"},
+      {word:"whisper",  meaning:"輕聲說",    emoji:"🤫", hint:"speak very softly",              sentence:"The wind seems to ____ through the golden trees.",            sentHint:"輕聲說"},
+      {word:"fly",      meaning:"飛",        emoji:"🐦", hint:"move through the air",           sentence:"Birds ____ south when cold weather comes.",                   sentHint:"飛"},
+      {word:"shake",    meaning:"搖動",      emoji:"🍃", hint:"move back and forth quickly",    sentence:"The wind makes the tree branches ____.",                      sentHint:"搖動"},
+      {word:"spin",     meaning:"旋轉",      emoji:"🌀", hint:"go around in circles",           sentence:"Watch the spider ____ its web in the morning.",               sentHint:"旋轉"},
+      {word:"dash",     meaning:"衝刺",      emoji:"💨", hint:"run very fast",                  sentence:"The chipmunk will ____ back to its cozy hole.",               sentHint:"衝刺"},
+      {word:"empty",    meaning:"空的",      emoji:"🪣", hint:"with nothing inside",            sentence:"The tree branches look ____ without their leaves.",           sentHint:"空的"},
+      {word:"jar",      meaning:"玻璃罐",    emoji:"🫙", hint:"a glass container with a lid",   sentence:"Fill the ____ with autumn leaves and acorns.",               sentHint:"玻璃罐"},
+      {word:"fetch",    meaning:"去取回",    emoji:"🎾", hint:"go get something and bring it back",sentence:"Can you ____ my jacket from the classroom?",             sentHint:"去取回"},
+      {word:"lie",      meaning:"躺下",      emoji:"🍂", hint:"rest flat on the ground",        sentence:"Fallen leaves ____ on the ground in autumn.",                 sentHint:"躺下"},
+    ]
+  }
+};
+
+// ===== STATE =====
+let currentWeek = null;
+let currentWords = [];
+let qi = 0, score = 0, wrong = [], answered = false;
+const weeksDone = {};
+
+function clearFb() { document.getElementById('feedback').className = 'feedback'; }
+function fb(msg, type) { const el = document.getElementById('feedback'); el.innerHTML = msg; el.className = 'feedback show ' + type; }
+
+// ===== WEEK SELECT =====
+function showWeekSelect() {
+  currentWeek = null;
+  document.getElementById('gTitle').textContent = '✏️ FET Spelling W10–16';
+  document.getElementById('gProg').textContent = '';
+  document.getElementById('scoreLabel').textContent = 'Choose a week to practice!';
+  document.getElementById('scoreVal').textContent = '';
+  document.getElementById('dots').innerHTML = '';
+  document.getElementById('pbarFill').style.width = '0%';
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+  document.getElementById('finalCard').classList.remove('show');
+
+  const spellBtns = Object.keys(WEEKS).map(wk => {
+    const done = weeksDone[wk+'-spell'] ? ' done' : '';
+    return `<button class="week-btn${done}" onclick="beginMode('${wk}','spell')">
+      ${done ? '✅' : '✏️'}<br><b>${wk}</b><br>
+      <small style="font-family:Nunito;font-weight:700;font-size:0.78rem">${WEEKS[wk].title}</small>
+    </button>`;
+  }).join('');
+
+  const fillBtns = Object.keys(WEEKS).map(wk => {
+    const done = weeksDone[wk+'-fill'] ? ' done' : '';
+    return `<button class="week-btn${done}" style="${done ? '' : 'border-color:#6366f1'}" onclick="beginMode('${wk}','fill')">
+      ${done ? '✅' : '🔤'}<br><b>${wk}</b><br>
+      <small style="font-family:Nunito;font-weight:700;font-size:0.78rem">${WEEKS[wk].title}</small>
+    </button>`;
+  }).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div style="background:white;border-radius:20px;padding:20px 18px;box-shadow:0 6px 20px rgba(0,0,0,0.08);margin-bottom:14px">
+      <div style="font-family:'Fredoka One',cursive;font-size:1rem;color:#6366f1;margin-bottom:10px">✏️ Spelling — 看中文拼英文</div>
+      <div class="week-grid">${spellBtns}</div>
+    </div>
+    <div style="background:white;border-radius:20px;padding:20px 18px;box-shadow:0 6px 20px rgba(0,0,0,0.08);margin-bottom:14px">
+      <div style="font-family:'Fredoka One',cursive;font-size:1rem;color:#a855f7;margin-bottom:10px">🔤 Fill in Blank — 選出正確單字</div>
+      <div class="week-grid">${fillBtns}</div>
+    </div>`;
+}
+
+// ===== MODE =====
+let gameMode = 'spell';
+
+function beginMode(wk, mode) {
+  gameMode = mode;
+  currentWeek = wk;
+  currentWords = [...WEEKS[wk].words].sort(() => Math.random() - 0.5);
+  qi = 0; score = 0; wrong = []; answered = false;
+  document.getElementById('finalCard').classList.remove('show');
+  buildDots(currentWords.length);
+  if (mode === 'spell') showSpellQ();
+  else showFillQ();
+}
+
+// ===== SPELLING QUESTION =====
+function showSpellQ() {
+  answered = false;
+  const q = currentWords[qi];
+  const total = currentWords.length;
+  document.getElementById('pbarFill').style.width = ((qi / total) * 100) + '%';
+  document.getElementById('gTitle').textContent = `✏️ ${currentWeek}`;
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  const letterBoxes = q.word.split('').map((_, i) =>
+    `<input class="letter-box" id="lb${i}" maxlength="1" type="text"
+      oninput="handleLetterInput(${i}, ${q.word.length})"
+      onkeydown="handleKeyDown(event, ${i})"
+      autocomplete="off" autocorrect="off" spellcheck="false">`
+  ).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div class="spell-card" id="spellCard">
+      <span class="spell-emoji">${q.emoji}</span>
+      <div class="spell-meaning">${q.meaning}</div>
+      <div class="spell-hint">${q.hint} &nbsp; <span class="letter-count">${q.word.length} letters</span></div>
+      <div class="letter-boxes">${letterBoxes}</div>
+      <button class="check-btn" onclick="checkSpelling()">Check ✅</button>
+    </div>`;
+
+  setTimeout(() => document.getElementById('lb0')?.focus(), 50);
+  updateDot(qi, 'curr');
+}
+
+function handleLetterInput(idx, total) {
+  const el = document.getElementById(`lb${idx}`);
+  el.value = el.value.toUpperCase().slice(-1);
+  if (el.value && idx < total - 1) {
+    document.getElementById(`lb${idx+1}`)?.focus();
+  }
+}
+
+function handleKeyDown(e, idx) {
+  if (e.key === 'Backspace') {
+    const el = document.getElementById(`lb${idx}`);
+    if (!el.value && idx > 0) document.getElementById(`lb${idx-1}`)?.focus();
+  }
+  if (e.key === 'Enter') checkSpelling();
+}
+
+function checkSpelling() {
+  if (answered) return;
+  const q = currentWords[qi];
+  const letters = q.word.split('');
+  let typed = '';
+  let allCorrect = true;
+
+  letters.forEach((ch, i) => {
+    const box = document.getElementById(`lb${i}`);
+    const val = (box.value || '').toLowerCase();
+    typed += val;
+    box.classList.remove('correct','wrong');
+    if (val === ch.toLowerCase()) {
+      box.classList.add('correct');
+    } else {
+      box.classList.add('wrong');
+      allCorrect = false;
+    }
+  });
+
+  if (!typed.trim()) { fb('Please type the spelling first!', 'bad'); return; }
+
+  answered = true;
+  document.querySelectorAll('.letter-box').forEach(b => b.disabled = true);
+
+  if (allCorrect) {
+    score++;
+    fb(`✅ "${q.word}" — correct! ${q.meaning} 🎉`, 'ok');
+    popStars();
+    updateDot(qi, 'ok');
+  } else {
+    wrong.push(q);
+    fb(`❌ The correct spelling is: <b>${q.word}</b>`, 'bad');
+    letters.forEach((ch, i) => {
+      const box = document.getElementById(`lb${i}`);
+      box.value = ch.toUpperCase();
+      box.className = 'letter-box correct';
+    });
+    updateDot(qi, 'bad');
+    document.getElementById('spellCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('spellCard')?.classList.remove('shake'), 400);
+  }
+
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === currentWords.length - 1 ? 'See Results 🎊' : 'Next Word ➡️';
+  nb.className = 'next-btn show';
+}
+
+// ===== FILL IN BLANK =====
+function showFillQ() {
+  answered = false;
+  const q = currentWords[qi];
+  const total = currentWords.length;
+  document.getElementById('pbarFill').style.width = ((qi / total) * 100) + '%';
+  document.getElementById('gTitle').textContent = `🔤 ${currentWeek}`;
+  document.getElementById('scoreLabel').textContent = `Question ${qi+1} / ${total}`;
+  document.getElementById('scoreVal').textContent = `✅ ${score} ❌ ${wrong.length}`;
+  clearFb();
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  const allWords = WEEKS[currentWeek].words;
+  const distractors = allWords
+    .filter(w => w.word !== q.word)
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 5);
+  const opts = [...distractors, q].sort(() => Math.random() - 0.5);
+
+  const sentHtml = q.sentence.replace('____', `<span style="display:inline-block;min-width:80px;border-bottom:3px solid #6366f1;color:#6366f1;font-weight:900;text-align:center;padding:0 4px">____</span>`);
+  const optsHtml = opts.map(o =>
+    `<button class="fill-btn" data-val="${o.word}" onclick="pickFill(this)">${o.word}</button>`
+  ).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div style="display:inline-block;background:#f3e8ff;color:#7c3aed;font-family:'Fredoka One',cursive;font-size:0.8rem;letter-spacing:2px;text-transform:uppercase;border-radius:20px;padding:4px 14px;margin-bottom:12px">🔤 Fill in the Blank</div>
+    <div class="spell-card" id="spellCard">
+      <span class="spell-emoji">${q.emoji}</span>
+      <div style="font-size:1.05rem;font-weight:800;color:#333;text-align:center;line-height:1.8;margin-bottom:6px">${sentHtml}</div>
+      <div style="font-size:0.82rem;color:#aaa;font-weight:700;text-align:center;margin-bottom:16px">中文提示：${q.sentHint}</div>
+      <div class="fill-opts">${optsHtml}</div>
+    </div>`;
+
+  updateDot(qi, 'curr');
+}
+
+function pickFill(btn) {
+  if (answered) return; answered = true;
+  const q = currentWords[qi];
+  document.querySelectorAll('.fill-btn').forEach(b => b.disabled = true);
+  if (btn.dataset.val === q.word) {
+    btn.classList.add('correct'); score++;
+    fb(`✅ "${q.word}" — ${q.meaning}! ${q.hint}`, 'ok');
+    popStars(); updateDot(qi, 'ok');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelector(`[data-val="${q.word}"]`)?.classList.add('correct');
+    wrong.push(q);
+    fb(`❌ The answer is "${q.word}" — ${q.meaning}`, 'bad');
+    document.getElementById('spellCard')?.classList.add('shake');
+    setTimeout(() => document.getElementById('spellCard')?.classList.remove('shake'), 400);
+    updateDot(qi, 'bad');
+  }
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = qi === currentWords.length - 1 ? 'See Results 🎊' : 'Next Word ➡️';
+  nb.className = 'next-btn show';
+}
+
+function handleNext() {
+  qi++;
+  if (qi < currentWords.length) {
+    if (gameMode === 'spell') showSpellQ();
+    else showFillQ();
+  } else {
+    showFinal();
+  }
+}
+
+function showFinal() {
+  weeksDone[currentWeek + '-' + gameMode] = true;
+  const total = currentWords.length;
+  const pct = score / total;
+  const stars = pct === 1 ? '⭐⭐⭐' : pct >= 0.7 ? '⭐⭐' : '⭐';
+  const msg = pct === 1 ? 'Perfect spelling! You are a spelling master! 🏆' :
+              pct >= 0.7 ? 'Great job! Almost perfect! Keep it up!' :
+              'Keep practicing! You can do it! 💪';
+
+  document.getElementById('dots').innerHTML = '';
+  clearFb();
+  document.getElementById('content').innerHTML = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+  document.getElementById('pbarFill').style.width = '100%';
+
+  const wrongHtml = wrong.length > 0 ? `
+    <div class="wrong-rev">
+      <div class="wr-title">📝 Practice these spellings:</div>
+      ${wrong.map(q => `
+        <div class="wr-item">
+          ${q.emoji} ${q.meaning} → <span class="wr-ans">${q.word}</span>
+          <small style="color:#aaa"> (${q.hint})</small>
+        </div>`).join('')}
+    </div>` : '';
+
+  document.getElementById('finalCard').innerHTML = `
+    <div class="final-title">✏️ ${currentWeek} Done!</div>
+    <div class="final-score">${score} / ${total}</div>
+    <div class="final-stars">${stars}</div>
+    <div class="final-msg">${msg}</div>
+    ${wrongHtml}
+    <div class="final-btns">
+      <button class="retry-btn" onclick="beginMode(currentWeek, gameMode)">🔄 Retry This Week</button>
+      <button class="back-btn" onclick="showWeekSelect()">📚 Choose Another Week</button>
+    </div>`;
+  document.getElementById('finalCard').classList.add('show');
+  for (let i = 0; i < 4; i++) setTimeout(popStars, i * 250);
+}
+
+function buildDots(n) {
+  const c = document.getElementById('dots');
+  c.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' curr' : '');
+    d.id = 'dot' + i;
+    c.appendChild(d);
+  }
+}
+
+function updateDot(i, state) {
+  const d = document.getElementById('dot' + i);
+  if (!d) return;
+  d.className = 'dot ' + state;
+  const next = document.getElementById('dot' + (i+1));
+  if (next && state !== 'curr') next.classList.add('curr');
+}
+
+function popStars() {
+  const emojis = ['⭐','✨','🌟','🎉','✏️','📝','🏆','🍂'];
+  for (let i = 0; i < 4; i++) {
+    setTimeout(() => {
+      const s = document.createElement('div'); s.className = 'star-pop';
+      s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      s.style.left = (15 + Math.random() * 70) + 'vw';
+      s.style.top  = (20 + Math.random() * 50) + 'vh';
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }, i * 110);
+  }
+}
+
+window.onload = () => showWeekSelect();
+</script>
+</body>
+</html>
