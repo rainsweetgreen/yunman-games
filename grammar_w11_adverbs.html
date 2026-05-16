@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yunman — Adverbs Adventure!</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #fff8f0;
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+    padding: 16px;
+  }
+
+  h1 {
+    font-family: 'Fredoka One', cursive;
+    text-align: center;
+    font-size: 2rem;
+    color: #c05c00;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+  }
+
+  /* Progress bar */
+  .progress-bar-wrap {
+    background: #ffe5c8;
+    border-radius: 20px;
+    height: 14px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff9a3c, #ffce00);
+    border-radius: 20px;
+    transition: width 0.4s ease;
+  }
+
+  .score-display {
+    text-align: center;
+    font-weight: 800;
+    color: #c05c00;
+    margin-bottom: 12px;
+    font-size: 1rem;
+  }
+
+  /* Cards */
+  .card {
+    background: white;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    margin-bottom: 16px;
+  }
+
+  /* Phase titles */
+  .phase-badge {
+    display: inline-block;
+    background: #ff9a3c;
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.85rem;
+    border-radius: 20px;
+    padding: 3px 14px;
+    margin-bottom: 10px;
+  }
+
+  .phase-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.4rem;
+    color: #333;
+    margin-bottom: 8px;
+  }
+
+  /* PHASE 1 — Learn cards */
+  .learn-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 16px 0;
+  }
+
+  .learn-box {
+    border-radius: 16px;
+    padding: 18px 14px;
+    text-align: center;
+  }
+
+  .learn-box.time-box {
+    background: #fff3cd;
+    border: 2px solid #f0c040;
+  }
+
+  .learn-box.how-box {
+    background: #d4edda;
+    border: 2px solid #5cb85c;
+  }
+
+  .learn-box.special-box {
+    background: #e2d9f3;
+    border: 2px dashed #9b59b6;
+    grid-column: 1 / -1;
+  }
+
+  .learn-box .icon { font-size: 2rem; margin-bottom: 6px; }
+  .learn-box .type-label {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    margin-bottom: 4px;
+  }
+
+  .learn-box.time-box .type-label { color: #b8860b; }
+  .learn-box.how-box .type-label { color: #2e7d32; }
+  .learn-box.special-box .type-label { color: #6a1b9a; }
+
+  .learn-box .zh { font-size: 0.8rem; color: #888; margin-bottom: 10px; }
+
+  .word-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+  }
+
+  .word-pill {
+    background: rgba(0,0,0,0.06);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #444;
+  }
+
+  .example-sentence {
+    background: #f9f9f9;
+    border-left: 4px solid #ccc;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: 6px 0;
+    font-size: 0.9rem;
+    color: #333;
+  }
+
+  .example-sentence em {
+    font-style: normal;
+    font-weight: 800;
+    color: #c05c00;
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-block;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 14px;
+    padding: 12px 28px;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+
+  .btn:active { transform: scale(0.96); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #ff9a3c, #ff6b35);
+    color: white;
+    box-shadow: 0 4px 12px rgba(255,107,53,0.35);
+  }
+
+  .btn-primary:hover { box-shadow: 0 6px 16px rgba(255,107,53,0.45); }
+
+  .btn-center { display: block; margin: 16px auto 0; }
+
+  /* PHASE 2 — Sort game */
+  .sort-question {
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .sort-word {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2.5rem;
+    color: #333;
+    background: #fff8f0;
+    border: 3px dashed #ffb347;
+    border-radius: 20px;
+    padding: 14px 28px;
+    display: inline-block;
+    min-width: 180px;
+  }
+
+  .sort-context {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #666;
+    font-style: italic;
+  }
+
+  .sort-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 16px;
+  }
+
+  .sort-btn {
+    border-radius: 16px;
+    padding: 18px 10px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    text-align: center;
+  }
+
+  .sort-btn:active { transform: scale(0.95); }
+
+  .sort-btn.time-btn {
+    background: #fff3cd;
+    border-color: #f0c040;
+    color: #b8860b;
+  }
+
+  .sort-btn.how-btn {
+    background: #d4edda;
+    border-color: #5cb85c;
+    color: #2e7d32;
+  }
+
+  .sort-btn .btn-icon { font-size: 1.8rem; display: block; margin-bottom: 4px; }
+
+  /* Feedback */
+  .feedback {
+    text-align: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.3rem;
+    padding: 12px;
+    border-radius: 12px;
+    margin-top: 12px;
+    display: none;
+  }
+
+  .feedback.correct {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .feedback.wrong {
+    background: #f8d7da;
+    color: #721c24;
+  }
+
+  /* PHASE 3 — Fill blank */
+  .fill-sentence {
+    font-size: 1.2rem;
+    color: #333;
+    line-height: 2;
+    margin-bottom: 16px;
+    text-align: center;
+    font-weight: 700;
+  }
+
+  .blank-word {
+    display: inline-block;
+    min-width: 90px;
+    border-bottom: 3px solid #ff9a3c;
+    color: #ff9a3c;
+    font-weight: 800;
+    padding: 0 6px;
+    text-align: center;
+  }
+
+  .choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  .choice-btn {
+    background: #fff;
+    border: 2.5px solid #ddd;
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    color: #444;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  }
+
+  .choice-btn:hover { border-color: #ff9a3c; background: #fff8f0; }
+  .choice-btn:active { transform: scale(0.95); }
+  .choice-btn.selected-correct { border-color: #5cb85c; background: #d4edda; color: #155724; }
+  .choice-btn.selected-wrong { border-color: #e74c3c; background: #f8d7da; color: #721c24; }
+
+  /* Stars animation */
+  .stars-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  .star {
+    position: absolute;
+    font-size: 1.8rem;
+    animation: star-fly 1.2s ease-out forwards;
+  }
+
+  @keyframes star-fly {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-120px) scale(0.4); }
+  }
+
+  /* End screen */
+  .end-screen {
+    text-align: center;
+    display: none;
+  }
+
+  .end-screen .trophy { font-size: 5rem; margin-bottom: 12px; }
+  .end-screen .end-score {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2.5rem;
+    color: #c05c00;
+    margin-bottom: 8px;
+  }
+
+  .end-screen .end-msg {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 20px;
+  }
+
+  .wrong-list {
+    text-align: left;
+    margin: 16px 0;
+  }
+
+  .wrong-item {
+    background: #fff3f3;
+    border-left: 4px solid #e74c3c;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+  }
+
+  .wrong-item .wrong-word { font-weight: 800; color: #c0392b; }
+  .wrong-item .correct-ans { color: #2e7d32; font-weight: 700; }
+  .wrong-item .zh-hint { color: #888; font-size: 0.82rem; margin-top: 2px; }
+
+  /* Phase nav */
+  .phase-nav {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .phase-dot {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    background: #eee;
+    color: #999;
+    border: 2px solid #ddd;
+  }
+
+  .phase-dot.active { background: #ff9a3c; color: white; border-color: #ff9a3c; }
+  .phase-dot.done { background: #5cb85c; color: white; border-color: #5cb85c; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="stars-container" id="starsContainer"></div>
+
+<h1>🌟 Adverbs Adventure!</h1>
+<p class="subtitle">副詞大冒險 — 讓我們一起練習！</p>
+
+<div class="phase-nav" id="phaseNav">
+  <div class="phase-dot active" id="dot1">1</div>
+  <div class="phase-dot" id="dot2">2</div>
+  <div class="phase-dot" id="dot3">3</div>
+</div>
+
+<div class="progress-bar-wrap" id="progressWrap">
+  <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
+</div>
+<div class="score-display" id="scoreDisplay">⭐ 0 / 0</div>
+
+<!-- ===================== PHASE 1: LEARN ===================== -->
+<div id="phase1">
+  <div class="card">
+    <div class="phase-badge">關卡 1 of 3</div>
+    <div class="phase-title">📖 先來認識副詞！</div>
+    <p style="color:#555; font-size:0.9rem; margin-bottom:14px;">
+      副詞有兩種：形容<strong>時間</strong>的，和形容<strong>動作</strong>的。
+    </p>
+
+    <div class="learn-grid">
+      <div class="learn-box time-box">
+        <div class="icon">🕐</div>
+        <div class="type-label">時間副詞</div>
+        <div class="zh">When? 什麼時候？</div>
+        <div class="word-pills">
+          <span class="word-pill">now</span>
+          <span class="word-pill">soon</span>
+          <span class="word-pill">today</span>
+          <span class="word-pill">yesterday</span>
+          <span class="word-pill">tomorrow</span>
+          <span class="word-pill">later</span>
+        </div>
+      </div>
+
+      <div class="learn-box how-box">
+        <div class="icon">🏃</div>
+        <div class="type-label">動作副詞</div>
+        <div class="zh">How? 怎麼做的？（-ly 結尾）</div>
+        <div class="word-pills">
+          <span class="word-pill">slowly</span>
+          <span class="word-pill">quickly</span>
+          <span class="word-pill">loudly</span>
+          <span class="word-pill">happily</span>
+          <span class="word-pill">quietly</span>
+          <span class="word-pill">sadly</span>
+        </div>
+      </div>
+
+      <div class="learn-box special-box">
+        <div class="icon">⚠️</div>
+        <div class="type-label">特別記住！</div>
+        <div class="zh">early 雖然有 -ly，但它是<strong>時間副詞</strong>（意思：早）</div>
+        <div class="word-pills">
+          <span class="word-pill">early</span>
+          <span style="font-size:0.85rem; color:#7d3c98; font-weight:700;">→ When? 早上 / 很早</span>
+        </div>
+      </div>
+    </div>
+
+    <p style="font-family:'Fredoka One',cursive; color:#555; margin-bottom:8px;">例句看一看：</p>
+    <div class="example-sentence">I need to leave <em>soon</em>. → 什麼時候離開？<em>soon</em> = 時間副詞</div>
+    <div class="example-sentence">She walked <em>slowly</em>. → 怎麼走的？<em>slowly</em> = 動作副詞</div>
+    <div class="example-sentence">He woke up <em>early</em>. → 什麼時候起床？<em>early</em> = 時間副詞（特例！）</div>
+
+    <button class="btn btn-primary btn-center" onclick="startPhase2()">我學會了！開始練習 →</button>
+  </div>
+</div>
+
+<!-- ===================== PHASE 2: SORT ===================== -->
+<div id="phase2" class="hidden">
+  <div class="card">
+    <div class="phase-badge">關卡 2 of 3</div>
+    <div class="phase-title">🗂 分類遊戲</div>
+    <p style="color:#555; font-size:0.88rem; margin-bottom:16px;">
+      下面的副詞是<strong>時間副詞🕐</strong> 還是<strong>動作副詞🏃</strong>？點選正確答案！
+    </p>
+
+    <div class="sort-question">
+      <div class="sort-word" id="sortWord">—</div>
+      <div class="sort-context" id="sortContext"></div>
+    </div>
+
+    <div class="sort-buttons">
+      <button class="sort-btn time-btn" onclick="checkSort('time')">
+        <span class="btn-icon">🕐</span>
+        時間副詞<br><small>When?</small>
+      </button>
+      <button class="sort-btn how-btn" onclick="checkSort('how')">
+        <span class="btn-icon">🏃</span>
+        動作副詞<br><small>How?（-ly）</small>
+      </button>
+    </div>
+
+    <div class="feedback" id="sortFeedback"></div>
+
+    <div style="text-align:center; margin-top:14px; color:#aaa; font-size:0.85rem;" id="sortCounter"></div>
+  </div>
+</div>
+
+<!-- ===================== PHASE 3: FILL BLANK ===================== -->
+<div id="phase3" class="hidden">
+  <div class="card">
+    <div class="phase-badge">關卡 3 of 3</div>
+    <div class="phase-title">✏️ 填填看！</div>
+    <p style="color:#555; font-size:0.88rem; margin-bottom:16px;">選出正確的副詞填進句子裡！</p>
+
+    <div class="fill-sentence" id="fillSentence"></div>
+
+    <div class="choices" id="choicesDiv"></div>
+
+    <div class="feedback" id="fillFeedback"></div>
+
+    <div style="text-align:center; margin-top:14px; color:#aaa; font-size:0.85rem;" id="fillCounter"></div>
+  </div>
+</div>
+
+<!-- ===================== END SCREEN ===================== -->
+<div id="endScreen" class="card end-screen">
+  <div class="trophy" id="trophyIcon">🏆</div>
+  <div class="end-score" id="endScore"></div>
+  <div class="end-msg" id="endMsg"></div>
+  <div id="wrongSection" class="wrong-list"></div>
+  <button class="btn btn-primary btn-center" onclick="restartAll()">再玩一次 🔄</button>
+</div>
+
+<script>
+  // ── DATA ──────────────────────────────────────────────────────────
+
+  const sortData = [
+    { word: "slowly",    type: "how",  context: "She walked ___ to the door.",         zh: "-ly 結尾 → 動作副詞，形容怎麼走" },
+    { word: "today",     type: "time", context: "We have PE class ___.",                zh: "今天 → 時間副詞" },
+    { word: "quickly",   type: "how",  context: "He ran ___ to catch the bus.",         zh: "-ly 結尾 → 動作副詞，形容怎麼跑" },
+    { word: "yesterday", type: "time", context: "I saw a rainbow ___.",                 zh: "昨天 → 時間副詞" },
+    { word: "happily",   type: "how",  context: "The dog wagged its tail ___.",         zh: "-ly 結尾 → 動作副詞，形容怎麼搖尾巴" },
+    { word: "now",       type: "time", context: "Please sit down ___.",                 zh: "現在 → 時間副詞" },
+    { word: "loudly",    type: "how",  context: "She sang ___.",                        zh: "-ly 結尾 → 動作副詞，形容怎麼唱" },
+    { word: "tomorrow",  type: "time", context: "We will go to the park ___.",          zh: "明天 → 時間副詞" },
+    { word: "early",     type: "time", context: "He woke up ___ this morning.",         zh: "⭐ 特例！early 有 -ly 但是時間副詞（意思：早）" },
+    { word: "sadly",     type: "how",  context: "She shook her head ___.",              zh: "-ly 結尾 → 動作副詞，形容怎麼搖頭" },
+    { word: "soon",      type: "time", context: "Dinner will be ready ___.",            zh: "很快、即將 → 時間副詞" },
+    { word: "quietly",   type: "how",  context: "The cat moved ___ across the floor.",  zh: "-ly 結尾 → 動作副詞，形容怎麼移動" },
+  ];
+
+  const fillData = [
+    {
+      template: ["The turtle walked ", " to the finish line."],
+      blank: 1,
+      choices: ["slowly", "yesterday", "loudly"],
+      answer: "slowly",
+      zh: "烏龜怎麼走？慢慢地 → slowly（動作副詞）"
+    },
+    {
+      template: ["", ", we ate pizza for dinner."],
+      blank: 0,
+      choices: ["Yesterday", "Quietly", "Happily"],
+      answer: "Yesterday",
+      zh: "什麼時候吃披薩？昨天 → Yesterday（時間副詞）"
+    },
+    {
+      template: ["She shouted ", " because she was excited."],
+      blank: 1,
+      choices: ["soon", "loudly", "tomorrow"],
+      answer: "loudly",
+      zh: "她怎麼喊叫？大聲地 → loudly（動作副詞）"
+    },
+    {
+      template: ["We will visit grandma ", "."],
+      blank: 1,
+      choices: ["slowly", "tomorrow", "sadly"],
+      answer: "tomorrow",
+      zh: "什麼時候去看奶奶？明天 → tomorrow（時間副詞）"
+    },
+    {
+      template: ["The baby slept ", " in her room."],
+      blank: 1,
+      choices: ["quietly", "today", "now"],
+      answer: "quietly",
+      zh: "寶寶怎麼睡覺？安靜地 → quietly（動作副詞）"
+    },
+    {
+      template: ["Hurry up! The bus will leave ", "!"],
+      blank: 1,
+      choices: ["happily", "soon", "slowly"],
+      answer: "soon",
+      zh: "什麼時候離開？很快就要 → soon（時間副詞）"
+    },
+    {
+      template: ["He woke up ", " and got to school first."],
+      blank: 1,
+      choices: ["early", "loudly", "later"],
+      answer: "early",
+      zh: "⭐ 特例！early 有 -ly 但是時間副詞（什麼時候起床？很早）"
+    },
+    {
+      template: ["The children laughed ", " at the funny clown."],
+      blank: 1,
+      choices: ["yesterday", "happily", "soon"],
+      answer: "happily",
+      zh: "孩子們怎麼笑？開心地 → happily（動作副詞）"
+    },
+  ];
+
+  // ── STATE ─────────────────────────────────────────────────────────
+
+  let sortIndex = 0;
+  let fillIndex = 0;
+  let score = 0;
+  let totalQ = 0;
+  let wrongAnswers = [];
+  let sortAnswered = false;
+  let fillAnswered = false;
+
+  // Shuffle helper
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  const shuffledSort = shuffle([...sortData]);
+  const shuffledFill = shuffle([...fillData]);
+
+  const TOTAL = shuffledSort.length + shuffledFill.length;
+
+  // ── PROGRESS / SCORE ──────────────────────────────────────────────
+
+  function updateProgress() {
+    const done = sortIndex + fillIndex;
+    const pct = Math.round((done / TOTAL) * 100);
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('scoreDisplay').textContent = '⭐ ' + score + ' / ' + totalQ;
+  }
+
+  function setDots(active) {
+    for (let i = 1; i <= 3; i++) {
+      const d = document.getElementById('dot' + i);
+      d.className = 'phase-dot';
+      if (i < active) d.classList.add('done');
+      else if (i === active) d.classList.add('active');
+    }
+  }
+
+  // ── STARS ─────────────────────────────────────────────────────────
+
+  function spawnStars() {
+    const container = document.getElementById('starsContainer');
+    const emojis = ['⭐', '🌟', '✨', '💫'];
+    for (let i = 0; i < 6; i++) {
+      setTimeout(() => {
+        const s = document.createElement('div');
+        s.className = 'star';
+        s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        s.style.left = Math.random() * 90 + '%';
+        s.style.top = Math.random() * 60 + 20 + '%';
+        container.appendChild(s);
+        setTimeout(() => s.remove(), 1300);
+      }, i * 80);
+    }
+  }
+
+  // ── PHASE 1 → 2 ───────────────────────────────────────────────────
+
+  function startPhase2() {
+    document.getElementById('phase1').classList.add('hidden');
+    document.getElementById('phase2').classList.remove('hidden');
+    setDots(2);
+    loadSortQ();
+  }
+
+  // ── PHASE 2: SORT ─────────────────────────────────────────────────
+
+  function loadSortQ() {
+    sortAnswered = false;
+    document.querySelectorAll('.sort-btn').forEach(b => {
+      b.style.opacity = '1';
+      b.style.pointerEvents = 'auto';
+    });
+
+    const fb = document.getElementById('sortFeedback');
+    fb.style.display = 'none';
+
+    if (sortIndex >= shuffledSort.length) {
+      startPhase3();
+      return;
+    }
+
+    const q = shuffledSort[sortIndex];
+    document.getElementById('sortWord').textContent = q.word;
+    document.getElementById('sortContext').textContent = '句子提示：' + q.context;
+    document.getElementById('sortCounter').textContent =
+      '第 ' + (sortIndex + 1) + ' / ' + shuffledSort.length + ' 題';
+    updateProgress();
+  }
+
+  function checkSort(chosen) {
+    if (sortAnswered) return;
+    sortAnswered = true;
+    totalQ++;
+
+    const q = shuffledSort[sortIndex];
+    const fb = document.getElementById('sortFeedback');
+    fb.style.display = 'block';
+
+    document.querySelectorAll('.sort-btn').forEach(b => {
+      b.style.opacity = '0.5';
+      b.style.pointerEvents = 'none';
+    });
+
+    if (chosen === q.type) {
+      score++;
+      spawnStars();
+      fb.className = 'feedback correct';
+      const label = q.type === 'time' ? '時間副詞 🕐' : '動作副詞 🏃';
+      fb.innerHTML = '🎉 正確！' + q.word + ' 是' + label + '<br><small style="font-weight:400">' + q.zh + '</small>';
+    } else {
+      const correct = q.type === 'time' ? '時間副詞 🕐' : '動作副詞 🏃';
+      fb.className = 'feedback wrong';
+      fb.innerHTML = '不對喔！' + q.word + ' 是<strong>' + correct + '</strong><br><small style="font-weight:400">' + q.zh + '</small>';
+      wrongAnswers.push({ word: q.word, correct: correct, zh: q.zh, phase: '分類' });
+    }
+
+    updateProgress();
+
+    setTimeout(() => {
+      sortIndex++;
+      loadSortQ();
+    }, 2000);
+  }
+
+  // ── PHASE 3: FILL ─────────────────────────────────────────────────
+
+  function startPhase3() {
+    document.getElementById('phase2').classList.add('hidden');
+    document.getElementById('phase3').classList.remove('hidden');
+    setDots(3);
+    loadFillQ();
+  }
+
+  function loadFillQ() {
+    fillAnswered = false;
+
+    const fb = document.getElementById('fillFeedback');
+    fb.style.display = 'none';
+
+    if (fillIndex >= shuffledFill.length) {
+      showEnd();
+      return;
+    }
+
+    const q = shuffledFill[fillIndex];
+
+    // Build sentence with blank
+    let sentenceHTML = '';
+    q.template.forEach((part, i) => {
+      sentenceHTML += part;
+      if (i === q.blank - 1 || (q.blank === 0 && i === 0 && part === '')) {
+        sentenceHTML += '<span class="blank-word" id="blankSpan">______</span>';
+      }
+    });
+    // Handle blank at index 0 specially
+    if (q.blank === 0) {
+      sentenceHTML = '<span class="blank-word" id="blankSpan">______</span>' + q.template.join('');
+    } else {
+      sentenceHTML = '';
+      q.template.forEach((part, i) => {
+        sentenceHTML += part;
+        if (i === q.blank - 1) {
+          sentenceHTML += '<span class="blank-word" id="blankSpan">______</span>';
+        }
+      });
+    }
+
+    document.getElementById('fillSentence').innerHTML = sentenceHTML;
+
+    const shuffledChoices = shuffle([...q.choices]);
+    const choicesDiv = document.getElementById('choicesDiv');
+    choicesDiv.innerHTML = '';
+    shuffledChoices.forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'choice-btn';
+      btn.textContent = c;
+      btn.onclick = () => checkFill(c, btn);
+      choicesDiv.appendChild(btn);
+    });
+
+    document.getElementById('fillCounter').textContent =
+      '第 ' + (fillIndex + 1) + ' / ' + shuffledFill.length + ' 題';
+    updateProgress();
+  }
+
+  function checkFill(chosen, btn) {
+    if (fillAnswered) return;
+    fillAnswered = true;
+    totalQ++;
+
+    const q = shuffledFill[fillIndex];
+    const fb = document.getElementById('fillFeedback');
+    fb.style.display = 'block';
+
+    document.querySelectorAll('.choice-btn').forEach(b => {
+      b.style.pointerEvents = 'none';
+      b.style.opacity = '0.5';
+    });
+    btn.style.opacity = '1';
+
+    const blank = document.getElementById('blankSpan');
+
+    if (chosen === q.answer) {
+      score++;
+      spawnStars();
+      btn.className = 'choice-btn selected-correct';
+      fb.className = 'feedback correct';
+      fb.innerHTML = '🎉 答對了！<br><small style="font-weight:400">' + q.zh + '</small>';
+      if (blank) { blank.textContent = q.answer; blank.style.color = '#2e7d32'; blank.style.borderBottomColor = '#5cb85c'; }
+    } else {
+      btn.className = 'choice-btn selected-wrong';
+      fb.className = 'feedback wrong';
+      fb.innerHTML = '不對喔！正確答案是 <strong>' + q.answer + '</strong><br><small style="font-weight:400">' + q.zh + '</small>';
+      if (blank) { blank.textContent = q.answer; blank.style.color = '#e74c3c'; blank.style.borderBottomColor = '#e74c3c'; }
+      wrongAnswers.push({ word: q.answer, correct: q.answer, zh: q.zh, phase: '填空' });
+    }
+
+    updateProgress();
+
+    setTimeout(() => {
+      fillIndex++;
+      loadFillQ();
+    }, 2200);
+  }
+
+  // ── END ───────────────────────────────────────────────────────────
+
+  function showEnd() {
+    document.getElementById('phase3').classList.add('hidden');
+    document.getElementById('progressWrap').classList.add('hidden');
+    document.getElementById('scoreDisplay').classList.add('hidden');
+    document.getElementById('phaseNav').classList.add('hidden');
+
+    const end = document.getElementById('endScreen');
+    end.style.display = 'block';
+
+    const pct = Math.round((score / totalQ) * 100);
+    document.getElementById('endScore').textContent = '⭐ ' + score + ' / ' + totalQ + ' (' + pct + '%)';
+
+    let trophy = '🏆', msg = '';
+    if (pct >= 90) { trophy = '🏆'; msg = 'Amazing! 太棒了！你是副詞小達人！'; }
+    else if (pct >= 70) { trophy = '🌟'; msg = 'Great job! 做得很好！再練習一次會更厲害！'; }
+    else { trophy = '💪'; msg = '繼續加油！看看哪裡答錯了，再試一次！'; }
+
+    document.getElementById('trophyIcon').textContent = trophy;
+    document.getElementById('endMsg').textContent = msg;
+
+    if (wrongAnswers.length > 0) {
+      let html = '<p style="font-family:Fredoka One,cursive; color:#c0392b; margin-bottom:10px;">📋 再看一次這些：</p>';
+      wrongAnswers.forEach(w => {
+        html += `<div class="wrong-item">
+          <span class="wrong-word">${w.word}</span> → <span class="correct-ans">${w.correct}</span>
+          <div class="zh-hint">${w.zh}</div>
+        </div>`;
+      });
+      document.getElementById('wrongSection').innerHTML = html;
+    }
+  }
+
+  function restartAll() {
+    sortIndex = 0; fillIndex = 0; score = 0; totalQ = 0; wrongAnswers = [];
+    shuffle(shuffledSort); shuffle(shuffledFill);
+
+    document.getElementById('endScreen').style.display = 'none';
+    document.getElementById('progressWrap').classList.remove('hidden');
+    document.getElementById('scoreDisplay').classList.remove('hidden');
+    document.getElementById('phaseNav').classList.remove('hidden');
+    document.getElementById('phase2').classList.add('hidden');
+    document.getElementById('phase3').classList.add('hidden');
+    document.getElementById('phase1').classList.remove('hidden');
+    setDots(1);
+    updateProgress();
+  }
+
+  // init
+  updateProgress();
+</script>
+</body>
+</html>
