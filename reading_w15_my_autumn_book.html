@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Autumn Book — Seen Reading</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#fff8f0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+h1{font-family:'Fredoka One',cursive;color:#c2410c;font-size:1.6rem;text-align:center;margin-bottom:2px}
+.subtitle{color:#64748b;font-size:.88rem;margin-bottom:10px;text-align:center}
+
+/* TABS */
+.tabs{display:flex;gap:8px;background:#ffedd5;border-radius:99px;padding:5px;width:100%;max-width:540px;margin-bottom:14px}
+.tab{flex:1;padding:10px 8px;border-radius:99px;border:none;font-family:'Fredoka One',cursive;font-size:.9rem;cursor:pointer;background:transparent;color:#c2410c;transition:.2s}
+.tab.active{background:#c2410c;color:#fff;box-shadow:0 2px 8px rgba(194,65,12,.3)}
+
+/* DOTS */
+.dots{display:flex;gap:7px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+.dot{width:12px;height:12px;border-radius:50%;background:#e2e8f0;transition:.3s}
+.dot.done{background:#c2410c}
+.dot.active{background:#fdba74;box-shadow:0 0 0 3px #ffedd5}
+
+/* CARD */
+.card{background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.08);padding:22px;width:100%;max-width:540px;animation:popIn .35s ease}
+@keyframes popIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+/* PROGRESS */
+.prog-wrap{background:#e2e8f0;border-radius:99px;height:8px;margin-bottom:16px;overflow:hidden}
+.prog-bar{height:100%;background:linear-gradient(90deg,#c2410c,#fb923c);border-radius:99px;transition:.4s}
+
+/* TYPOGRAPHY */
+.phase-title{font-family:'Fredoka One',cursive;color:#c2410c;font-size:1.05rem;text-align:center;margin-bottom:14px}
+.q-num{font-size:.78rem;color:#94a3b8;text-align:center;margin-bottom:4px}
+.q-text{font-size:1rem;color:#1e293b;text-align:center;line-height:1.55;margin-bottom:16px;font-weight:700}
+.tag{display:inline-block;padding:3px 12px;border-radius:99px;font-size:.72rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
+.tag-setting{background:#fef3c7;color:#92400e}
+.tag-comp{background:#dbeafe;color:#1e40af}
+.tag-infer{background:#fce7f3;color:#9d174d}
+.tag-type{background:#dcfce7;color:#166534}
+
+/* MC OPTIONS */
+.opts{display:flex;flex-direction:column;gap:9px;margin-bottom:8px}
+.opt-btn{background:#fff7ed;border:2px solid #fed7aa;border-radius:13px;padding:12px 14px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;color:#1e293b;cursor:pointer;transition:.2s;text-align:left}
+.opt-btn:hover{background:#ffedd5;border-color:#fdba74}
+.opt-btn.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+.opt-btn.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+.opt-btn:disabled{cursor:default}
+
+/* FEEDBACK */
+.feedback{min-height:26px;text-align:center;font-weight:700;font-size:.9rem;margin-bottom:4px}
+.feedback.ok{color:#16a34a}
+.feedback.bad{color:#dc2626}
+
+/* PART B */
+.practice-badge{background:#fef3c7;border-radius:8px;padding:6px 12px;font-size:.8rem;font-weight:700;color:#92400e;text-align:center;margin-bottom:10px}
+.answer-area{width:100%;border:2px solid #fed7aa;border-radius:12px;padding:12px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:600;color:#1e293b;resize:none;outline:none;min-height:90px;line-height:1.5;transition:.2s}
+.answer-area:focus{border-color:#c2410c;box-shadow:0 0 0 3px #ffedd5}
+.hint-area{background:#fff7ed;border:2px solid #fed7aa;border-radius:12px;padding:12px;margin-top:10px;font-size:.9rem;line-height:1.6;color:#374151;display:none}
+.hint-area em{font-style:normal;color:#c2410c;font-weight:800}
+.hint-area .model-lbl{font-family:'Fredoka One',cursive;color:#16a34a;font-size:.9rem;margin-bottom:4px}
+.btn-row{display:flex;gap:8px;margin-top:12px}
+.hint-btn{flex:1;background:#ffedd5;border:2px solid #fed7aa;border-radius:12px;padding:11px;font-family:'Fredoka One',cursive;font-size:.95rem;color:#c2410c;cursor:pointer;transition:.2s}
+.hint-btn:hover{background:#fed7aa}
+
+/* LEARN CARD */
+.learn-box{background:#fff7ed;border-radius:14px;padding:14px;margin-bottom:14px;font-size:.88rem;line-height:1.7;color:#374151}
+.learn-box h3{font-family:'Fredoka One',cursive;color:#c2410c;margin-bottom:8px;font-size:1rem}
+.learn-box ul{padding-left:18px}
+.learn-box li{margin-bottom:4px}
+.learn-box em{font-style:normal;color:#c2410c;font-weight:800}
+.poem-stanza{background:#f9fafb;border-left:4px solid #fdba74;border-radius:8px;padding:10px 14px;margin-bottom:8px;font-size:.87rem;line-height:1.9;color:#374151}
+
+/* MATCH */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.match-left,.match-right{display:flex;flex-direction:column;gap:8px}
+.match-label{background:#fff7ed;border:2px solid #fed7aa;border-radius:11px;padding:10px;font-family:'Fredoka One',cursive;font-size:.9rem;color:#c2410c;text-align:center;cursor:pointer;transition:.2s;min-height:60px;display:flex;align-items:center;justify-content:center}
+.match-label.selected{background:#c2410c;color:#fff;border-color:#c2410c}
+.match-label.matched{background:#dcfce7;border-color:#4ade80;color:#166534;cursor:default}
+.match-desc{background:#f8fafc;border:2px solid #e2e8f0;border-radius:11px;padding:10px;font-size:.82rem;font-weight:700;color:#374151;text-align:center;cursor:pointer;transition:.2s;min-height:60px;display:flex;align-items:center;justify-content:center}
+.match-desc.selected{background:#ffedd5;border-color:#fdba74}
+.match-desc.matched{background:#dcfce7;border-color:#4ade80;color:#166534;cursor:default}
+.match-desc.wrong-flash{background:#fee2e2;border-color:#f87171;animation:shake .3s}
+
+/* VOCAB */
+.vocab-sent{font-size:.95rem;font-weight:700;color:#1e293b;margin-bottom:12px;line-height:1.55;text-align:center}
+.blank-word{color:#c2410c;font-weight:900;border-bottom:2px solid #c2410c;padding:0 4px}
+.vocab-opts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.vocab-btn{background:#fff7ed;border:2px solid #fed7aa;border-radius:99px;padding:10px 22px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;color:#c2410c;cursor:pointer;transition:.2s}
+.vocab-btn:hover{background:#ffedd5}
+.vocab-btn.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+.vocab-btn.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+.vocab-btn:disabled{cursor:default}
+
+/* NEXT BTN */
+.next-btn{display:block;width:100%;background:#c2410c;color:#fff;border:none;border-radius:14px;padding:13px;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;margin-top:12px;transition:.2s}
+.next-btn:hover{background:#9a3412}
+
+/* SCORE / DONE */
+.score-wrap{text-align:center;margin-bottom:16px}
+.score-num{font-family:'Fredoka One',cursive;font-size:2rem;color:#c2410c}
+.wrong-list{list-style:none;display:flex;flex-direction:column;gap:9px}
+.wrong-item{background:#fff7ed;border-left:4px solid #f59e0b;border-radius:10px;padding:9px 12px;font-size:.88rem;line-height:1.5}
+.wrong-item .wr-q{font-weight:700;color:#1e293b}
+.wrong-item .wr-a{color:#16a34a;font-weight:700}
+.wrong-item .wr-h{color:#64748b;font-size:.82rem}
+
+.star-pop{position:fixed;pointer-events:none;font-size:2rem;animation:flyUp .8s ease forwards;z-index:999}
+@keyframes flyUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-90px) scale(1.5)}}
+</style>
+</head>
+<body>
+
+<h1>🍂 My Autumn Book</h1>
+<p class="subtitle">Seen Reading — Week 15–16</p>
+
+<div class="tabs">
+  <button class="tab active" data-tab="game" onclick="switchTab('game')">📝 Reading Game</button>
+  <button class="tab" data-tab="vocab" onclick="switchTab('vocab')">📚 Vocabulary</button>
+</div>
+
+<div class="dots" id="dots"></div>
+<div id="root"></div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────────────
+
+const A_QS = [
+  {
+    tag:'tag-type', tagLabel:'Text Type 文章類型', emoji:'📖',
+    text:'Why is "My Autumn Book" fiction?\n"My Autumn Book" is fiction because…',
+    opts:[
+      'a. it tries to persuade you that autumn is the best season.',
+      'b. it is a made-up story about a girl who explores autumn.',
+      'c. it is a true story about what happens every autumn.'
+    ],
+    ans:1,
+    explain:'Fiction = a MADE-UP story. The girl in this poem is not a real person — the author invented her and her autumn adventure! 📖'
+  },
+  {
+    tag:'tag-setting', tagLabel:'Setting 場景 ⚠️', emoji:'🌳',
+    text:'Where does the girl go to explore the signs of autumn?\n先圈問題字：where / explore',
+    opts:[
+      'a. She stays inside her room and looks out the window.',
+      'b. She goes outside into the garden to investigate.',
+      'c. She flies south with the geese to find autumn.'
+    ],
+    ans:1,
+    explain:'Setting = WHERE the story happens. The girl rushes outside to investigate — she finds a spider in the garden shed, hears cicadas and woodpeckers, and collects leaves and acorns. 🌳 Setting is a real PLACE, not a feeling!'
+  },
+  {
+    tag:'tag-comp', tagLabel:'Comprehension', emoji:'🐿️',
+    text:'What do both squirrels and chipmunks do in autumn?',
+    opts:[
+      'a. They both weave webs in the garden shed.',
+      'b. They both get ready for winter by storing food.',
+      'c. They both fly south together for the winter.'
+    ],
+    ans:1,
+    explain:'Chipmunk packs seeds in its cheeks for the upcoming weeks. Squirrel buries its treasure of acorns. Both are storing food to prepare for winter! 🐿️'
+  },
+  {
+    tag:'tag-infer', tagLabel:'Theme 主題', emoji:'🍂',
+    text:'What is the theme (main message) of "My Autumn Book"?',
+    opts:[
+      'a. Autumn is the best season of all.',
+      'b. Only squirrels dig holes in autumn.',
+      'c. Many things change when autumn comes.'
+    ],
+    ans:2,
+    explain:'The poem shows us: leaves change color, animals prepare for winter, the weather turns cold and crisp — MANY things change in autumn! 🍂'
+  },
+];
+
+const B_Q = {
+  text:'What do the words crisp, chilly, and gray tell you about autumn?\nAnswer in a complete sentence.',
+  circleHint:'先圈問題字！(Circle the question words first!)\n→ What do the words / tell you / about autumn',
+  starter:'The words crisp, chilly, and gray tell me that autumn is …',
+  model:'The words crisp, chilly, and gray tell me that autumn is cold and cloudy.',
+};
+
+const MATCH_PAIRS = [
+  {label:'👧 Character', desc:'A girl who loves exploring and collecting things in autumn'},
+  {label:'📍 Setting',   desc:'Outside in the garden, then inside her room'},
+  {label:'💡 Theme',     desc:'Many things change when autumn comes'},
+];
+
+const VOCAB_QS = [
+  {
+    sent:'She rushes outside to ___ all the signs that autumn is coming.',
+    opts:['investigate','celebrate'],
+    ans:0,
+    explain:'investigate = 調查、探索'
+  },
+  {
+    sent:'The autumn air feels ___ and cool — like biting into an apple.',
+    opts:['crisp','warm'],
+    ans:0,
+    explain:'crisp = 清涼的、爽朗的'
+  },
+  {
+    sent:'Chipmunk ___ quickly past with seeds packed in its cheeks.',
+    opts:['scampers','whispers'],
+    ans:0,
+    explain:'scampers = 急忙奔跑'
+  },
+  {
+    sent:'Caterpillar knows it\'s time to ___ and sleep until spring.',
+    opts:['cocoon','migrate'],
+    ans:0,
+    explain:'cocoon = 結繭（包住自己等待變化）'
+  },
+  {
+    sent:'Geese fly south in ___, staying together in a perfect V shape.',
+    opts:['formation','celebration'],
+    ans:0,
+    explain:'formation = 隊形'
+  },
+  {
+    sent:'Squirrel digs a hole to bury its ___ of acorns for the winter.',
+    opts:['treasure','cocoon'],
+    ans:0,
+    explain:'treasure = 寶貝、珍貴的東西'
+  },
+  {
+    sent:'The dogwood tree shows off a new ___ gown — a deep, bright red.',
+    opts:['crimson','yellow'],
+    ans:0,
+    explain:'crimson = 深紅色'
+  },
+  {
+    sent:'Cicada warns everyone: Better ___! Summer is leaving!',
+    opts:['beware','prepare'],
+    ans:0,
+    explain:'beware = 小心、注意'
+  },
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────
+const GAME_PHASES = ['learn','partA','partB','partC','done'];
+let gPhase=0, gQi=0, gScore=0, gTotal=A_QS.length+MATCH_PAIRS.length, gWrongs=[];
+let matchState={sel:null,count:0};
+let vQi=0, vScore=0, vWrongs=[];
+let activeTab='game';
+
+// ── TAB SWITCH ────────────────────────────────────────────────────────
+function switchTab(tab){
+  activeTab=tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  renderActive();
+}
+function renderActive(){activeTab==='game'?renderGame():renderVocab();}
+
+// ── HELPERS ───────────────────────────────────────────────────────────
+function buildDots(n,cur,type){
+  const d=document.getElementById('dots');d.innerHTML='';
+  if(type==='vocab'){
+    for(let i=0;i<n;i++){
+      const el=document.createElement('div');
+      el.className='dot'+(i<cur?' done':i===cur?' active':'');
+      d.appendChild(el);
+    }
+  } else {
+    GAME_PHASES.forEach((_,i)=>{
+      const el=document.createElement('div');
+      el.className='dot'+(i<gPhase?' done':i===gPhase?' active':'');
+      d.appendChild(el);
+    });
+  }
+}
+function star(e){
+  const s=document.createElement('div');s.className='star-pop';
+  s.textContent=['⭐','🍂','✨','🌟'][Math.floor(Math.random()*4)];
+  s.style.left=(e.clientX-16)+'px';s.style.top=(e.clientY-16)+'px';
+  document.body.appendChild(s);setTimeout(()=>s.remove(),850);
+}
+function card(html){
+  const root=document.getElementById('root');root.innerHTML='';
+  const c=document.createElement('div');c.className='card';c.innerHTML=html;
+  root.appendChild(c);return c;
+}
+function progBar(cur,tot){
+  return `<div class="prog-wrap"><div class="prog-bar" style="width:${Math.round(cur/tot*100)}%"></div></div>`;
+}
+function nextBtn(label,fn){
+  const b=document.createElement('button');b.className='next-btn';b.textContent=label;
+  b.onclick=fn;return b;
+}
+
+// ── READING GAME ──────────────────────────────────────────────────────
+function renderGame(){
+  buildDots(GAME_PHASES.length,gPhase,'game');
+  const ph=GAME_PHASES[gPhase];
+  if(ph==='learn') phLearn();
+  else if(ph==='partA') phA();
+  else if(ph==='partB') phB();
+  else if(ph==='partC') phC();
+  else phDone();
+}
+
+function phLearn(){
+  const c=card(`
+    <div class="phase-title">📖 Story Review — My Autumn Book</div>
+
+    <div class="learn-box">
+      <h3>文章重點 Key Info</h3>
+      <ul>
+        <li>📝 <em>Text Type</em>: Fiction（虛構故事）— a made-up poem about a girl</li>
+        <li>👧 <em>Character</em>: A girl who loves exploring nature in autumn</li>
+        <li>📍 <em>Setting</em>: Outside in the garden → back inside her room</li>
+        <li>💡 <em>Theme</em>: Many things change when autumn comes</li>
+        <li>🌡️ <em>Words for autumn</em>: <em>crisp</em>（涼爽）, <em>chilly</em>（冷），<em>gray</em>（灰色）</li>
+      </ul>
+    </div>
+
+    <div class="learn-box">
+      <h3>🌿 Signs of Autumn — What the Girl Discovers</h3>
+      <div class="poem-stanza">
+        🕷️ <em>Spider</em> weaves a silken thread in the garden shed<br>
+        🦗 <em>Crickets</em> chirrup in the clover — warm days are over<br>
+        🦟 <em>Cicada</em> buzzes loudly: "Summer is leaving! Autumn coming!"<br>
+        🪶 <em>Woodpecker</em> drums: rap-a-tap-tap<br>
+        🐿️ <em>Chipmunk</em> scampers past, seeds packed in its cheeks<br>
+        🐿 <em>Squirrel</em> buries acorns — its treasure for winter<br>
+        🐛 <em>Caterpillar</em> cocooning — time to sleep<br>
+        🦅 <em>Geese</em> honk and fly south in formation
+      </div>
+    </div>
+
+    <div class="learn-box">
+      <h3>🍁 The Trees Dress Up</h3>
+      <div class="poem-stanza">
+        🔴 <em>Dogwood</em> — crimson red gown<br>
+        🟤 <em>Oak</em> — rust brown suit<br>
+        🟡 <em>Ash</em> — yellow cloak<br>
+        🔴 <em>Maple</em> — red leaves<br>
+        🟡 <em>Aspen</em> — crown of gold
+      </div>
+    </div>
+
+    <div class="learn-box">
+      <h3>📓 What the Girl Does</h3>
+      <div class="poem-stanza">
+        1. Rushes <em>outside</em> to <em>investigate</em> 🔍<br>
+        2. Collects <em>leaves and acorns</em> from different trees<br>
+        3. Goes back <em>inside</em> her room<br>
+        4. Uses scissors, glue, crayons, and paper<br>
+        5. Makes her own <em>autumn book</em> 📓
+      </div>
+    </div>
+  `);
+  c.appendChild(nextBtn('Start Part A 📝',()=>{gPhase=1;gQi=0;renderGame();}));
+}
+
+function phA(){
+  if(gQi>=A_QS.length){gPhase=2;renderGame();return;}
+  const q=A_QS[gQi];
+  const c=card(`
+    ${progBar(gQi,A_QS.length)}
+    <div class="phase-title">Part A — Multiple Choice</div>
+    <div style="text-align:center;margin-bottom:8px"><span class="tag ${q.tag}">${q.tagLabel}</span></div>
+    <div class="q-num">Question ${gQi+1} / ${A_QS.length}</div>
+    <div class="q-text">${q.emoji} ${q.text.replace(/\n/g,'<br>')}</div>
+    <div class="opts" id="opts"></div>
+    <div class="feedback" id="fb"></div>
+  `);
+  const og=c.querySelector('#opts');
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');b.className='opt-btn';b.textContent=o;
+    b.onclick=ev=>{
+      if(b.disabled)return;
+      og.querySelectorAll('.opt-btn').forEach(x=>x.disabled=true);
+      const fb=c.querySelector('#fb');
+      if(i===q.ans){
+        b.classList.add('correct');
+        fb.textContent='✅ '+q.explain;fb.className='feedback ok';
+        gScore++;star(ev);
+        setTimeout(()=>{gQi++;renderGame();},1200);
+      } else {
+        b.classList.add('wrong');
+        fb.textContent='❌ '+q.explain;fb.className='feedback bad';
+        gWrongs.push({q:q.text,a:q.opts[q.ans],h:q.explain});
+        setTimeout(()=>{gQi++;renderGame();},1500);
+      }
+    };
+    og.appendChild(b);
+  });
+}
+
+function phB(){
+  const q=B_Q;
+  let hint1=false,hint2=false;
+  const c=card(`
+    <div class="phase-title">Part B — Long Answer ✏️</div>
+    <div class="practice-badge">✏️ Practice — not scored. Just try your best!</div>
+    <div class="q-text">${q.text.replace(/\n/g,'<br>')}</div>
+    <textarea class="answer-area" id="ans" placeholder="Write your complete sentence here..."></textarea>
+    <div class="hint-area" id="hintArea"></div>
+    <div class="btn-row">
+      <button class="hint-btn" id="hintBtn">💡 Show Hint</button>
+    </div>
+  `);
+  const hintArea=c.querySelector('#hintArea');
+  const hintBtn=c.querySelector('#hintBtn');
+  hintBtn.onclick=()=>{
+    if(!hint1){
+      hint1=true;
+      hintArea.style.display='block';
+      hintArea.innerHTML=`
+        <div style="margin-bottom:8px;font-weight:800;color:#c2410c">先圈問題字！Circle the question words first:</div>
+        <div style="font-size:.92rem;color:#1e293b;margin-bottom:10px">${q.circleHint.replace(/\n/g,'<br>')}</div>
+        <div style="margin-bottom:6px;font-weight:800;color:#c2410c">Sentence starter:</div>
+        <div style="font-size:.95rem"><em>${q.starter}</em></div>
+        <button class="hint-btn" id="ansBtn" style="margin-top:10px;width:100%">👁 Show Full Model Answer</button>`;
+      c.querySelector('#ansBtn').onclick=()=>{
+        if(!hint2){
+          hint2=true;
+          hintArea.innerHTML=`<div class="model-lbl">✅ Model Answer:</div>
+            <div style="font-size:.92rem;color:#166534;font-weight:700;line-height:1.6">"${q.model}"</div>`;
+          hintBtn.style.display='none';
+        }
+      };
+    }
+  };
+  c.appendChild(nextBtn('Next — Part C ➜',()=>{gPhase=3;renderGame();}));
+}
+
+function phC(){
+  matchState={sel:null,count:0};
+  const descs=[...MATCH_PAIRS.map(p=>p.desc)].sort(()=>Math.random()-.5);
+  const c=card(`
+    <div class="phase-title">Part C — Story Elements Match 🔗</div>
+    <p style="text-align:center;font-size:.83rem;color:#64748b;margin-bottom:12px">
+      Tap a label on the left, then tap the matching description on the right.
+    </p>
+    <div class="match-grid">
+      <div class="match-left" id="labels"></div>
+      <div class="match-right" id="descs"></div>
+    </div>
+    <div class="feedback" id="fb"></div>
+  `);
+  const lb=c.querySelector('#labels'),db=c.querySelector('#descs');
+  MATCH_PAIRS.forEach(p=>{
+    const el=document.createElement('div');el.className='match-label';el.textContent=p.label;el.dataset.label=p.label;
+    el.onclick=()=>{
+      if(el.classList.contains('matched'))return;
+      lb.querySelectorAll('.match-label').forEach(x=>{if(!x.classList.contains('matched'))x.classList.remove('selected');});
+      el.classList.add('selected');matchState.sel=p.label;
+    };
+    lb.appendChild(el);
+  });
+  descs.forEach(desc=>{
+    const el=document.createElement('div');el.className='match-desc';el.textContent=desc;
+    el.onclick=ev=>{
+      if(el.classList.contains('matched')||!matchState.sel)return;
+      const pair=MATCH_PAIRS.find(p=>p.label===matchState.sel);
+      const fb=c.querySelector('#fb');
+      if(pair&&pair.desc===desc){
+        el.classList.add('matched');
+        lb.querySelectorAll('.match-label').forEach(x=>{if(x.dataset.label===matchState.sel)x.classList.add('matched');});
+        matchState.count++;gScore++;star(ev);
+        fb.textContent='✅ Matched!';fb.className='feedback ok';
+        matchState.sel=null;
+        if(matchState.count>=MATCH_PAIRS.length)setTimeout(()=>{gPhase=4;renderGame();},700);
+      } else {
+        el.classList.add('wrong-flash');fb.textContent='❌ Try again!';fb.className='feedback bad';
+        gWrongs.push({q:'Match: '+matchState.sel,a:pair?pair.desc:'?',h:'Think about Character (who), Setting (where), and Theme (main message).'});
+        setTimeout(()=>{
+          el.classList.remove('wrong-flash');
+          lb.querySelectorAll('.match-label').forEach(x=>{if(!x.classList.contains('matched'))x.classList.remove('selected');});
+          matchState.sel=null;
+        },700);
+      }
+    };
+    db.appendChild(el);
+  });
+}
+
+function phDone(){
+  const pct=Math.round(gScore/gTotal*100);
+  const emoji=pct>=90?'🌟':pct>=70?'😊':'💪';
+  let wHtml='';
+  if(gWrongs.length){
+    wHtml='<div style="margin-top:14px"><div style="font-family:\'Fredoka One\',cursive;color:#dc2626;margin-bottom:8px">Review ✏️</div><ul class="wrong-list">';
+    gWrongs.forEach(w=>{wHtml+=`<li class="wrong-item"><div class="wr-q">${w.q.replace(/\n/g,' ')}</div><div class="wr-a">✅ ${w.a}</div><div class="wr-h">💡 ${w.h}</div></li>`;});
+    wHtml+='</ul></div>';
+  }
+  const c=card(`
+    <div class="score-wrap">
+      <div style="font-size:3rem">${emoji}</div>
+      <div class="score-num">${gScore} / ${gTotal}</div>
+      <div style="color:#64748b;font-size:.88rem">${pct}% — ${pct>=90?'Excellent! 🎉':pct>=70?'Good job! 👍':'Keep practicing! 💪'}</div>
+      <div style="font-size:.8rem;color:#94a3b8;margin-top:4px">(Part B is practice — not included in score)</div>
+    </div>
+    ${wHtml}
+  `);
+  c.appendChild(nextBtn('Play Again 🔄',()=>{gPhase=0;gQi=0;gScore=0;gWrongs=[];matchState={sel:null,count:0};renderGame();}));
+}
+
+// ── VOCABULARY TAB ────────────────────────────────────────────────────
+function renderVocab(){
+  buildDots(VOCAB_QS.length,vQi,'vocab');
+  if(vQi>=VOCAB_QS.length){phVocabDone();return;}
+  const q=VOCAB_QS[vQi];
+  const displaySent=q.sent.replace('___',`<span class="blank-word">___</span>`);
+  const c=card(`
+    ${progBar(vQi,VOCAB_QS.length)}
+    <div class="phase-title">Vocabulary 📚</div>
+    <div class="q-num">Word ${vQi+1} / ${VOCAB_QS.length}</div>
+    <div class="q-text vocab-sent">${displaySent}</div>
+    <div class="vocab-opts" id="vopts"></div>
+    <div class="feedback" id="fb"></div>
+  `);
+  const vo=c.querySelector('#vopts');
+  const shuffled=Math.random()<.5?[...q.opts]:[q.opts[1],q.opts[0]];
+  const corrIdx=shuffled.indexOf(q.opts[q.ans]);
+  shuffled.forEach((o,i)=>{
+    const b=document.createElement('button');b.className='vocab-btn';b.textContent=o;
+    b.onclick=ev=>{
+      if(b.disabled)return;
+      vo.querySelectorAll('.vocab-btn').forEach(x=>x.disabled=true);
+      const fb=c.querySelector('#fb');
+      if(i===corrIdx){
+        b.classList.add('correct');fb.textContent='✅ '+q.explain;fb.className='feedback ok';
+        vScore++;star(ev);
+        setTimeout(()=>{vQi++;renderVocab();},1100);
+      } else {
+        b.classList.add('wrong');fb.textContent='❌ '+q.explain;fb.className='feedback bad';
+        vWrongs.push({q:q.sent,a:q.opts[q.ans],h:q.explain});
+        setTimeout(()=>{vQi++;renderVocab();},1300);
+      }
+    };
+    vo.appendChild(b);
+  });
+}
+
+function phVocabDone(){
+  const pct=Math.round(vScore/VOCAB_QS.length*100);
+  const emoji=pct>=90?'🌟':pct>=70?'😊':'💪';
+  let wHtml='';
+  if(vWrongs.length){
+    wHtml='<div style="margin-top:14px"><div style="font-family:\'Fredoka One\',cursive;color:#dc2626;margin-bottom:8px">Review ✏️</div><ul class="wrong-list">';
+    vWrongs.forEach(w=>{wHtml+=`<li class="wrong-item"><div class="wr-q">${w.q}</div><div class="wr-a">✅ ${w.a}</div><div class="wr-h">💡 ${w.h}</div></li>`;});
+    wHtml+='</ul></div>';
+  }
+  const c=card(`
+    <div class="score-wrap">
+      <div style="font-size:3rem">${emoji}</div>
+      <div class="score-num">${vScore} / ${VOCAB_QS.length}</div>
+      <div style="color:#64748b;font-size:.88rem">${pct}%</div>
+    </div>
+    ${wHtml}
+  `);
+  c.appendChild(nextBtn('Play Again 🔄',()=>{vQi=0;vScore=0;vWrongs=[];renderVocab();}));
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────
+renderGame();
+</script>
+</body>
+</html>
