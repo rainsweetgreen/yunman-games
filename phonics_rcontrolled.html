@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phonics — r-Controlled Vowels ar er ir ur or</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#fff8f0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+h1{font-family:'Fredoka One',cursive;color:#0369a1;font-size:1.7rem;text-align:center;margin-bottom:3px}
+.subtitle{color:#64748b;font-size:.88rem;margin-bottom:14px;text-align:center}
+
+.dots{display:flex;gap:6px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+.dot{width:11px;height:11px;border-radius:50%;background:#e2e8f0;transition:.3s}
+.dot.done{background:#0369a1}.dot.active{background:#7dd3fc;box-shadow:0 0 0 3px #e0f2fe}
+
+.card{background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.08);padding:22px;width:100%;max-width:540px;animation:popIn .35s ease}
+@keyframes popIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+.prog-wrap{background:#e2e8f0;border-radius:99px;height:8px;margin-bottom:14px;overflow:hidden}
+.prog-bar{height:100%;background:linear-gradient(90deg,#0369a1,#38bdf8);border-radius:99px;transition:.4s}
+
+.phase-title{font-family:'Fredoka One',cursive;color:#0369a1;font-size:1.1rem;text-align:center;margin-bottom:14px}
+.q-num{font-size:.78rem;color:#94a3b8;text-align:center;margin-bottom:5px}
+
+/* learn */
+.learn-box{background:#e0f2fe;border-radius:14px;padding:14px;margin-bottom:10px}
+.learn-box h3{font-family:'Fredoka One',cursive;color:#0369a1;margin-bottom:6px;font-size:1rem}
+.sound-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px}
+.sound-card{border-radius:12px;padding:10px 6px;text-align:center;border:2px solid}
+.sound-card .sound{font-family:'Fredoka One',cursive;font-size:1.3rem}
+.sound-card .ex{font-size:.75rem;font-weight:700;margin-top:4px}
+.ar-c{background:#fef3c7;border-color:#f59e0b;color:#92400e}
+.er-c{background:#dcfce7;border-color:#4ade80;color:#166534}
+.ir-c{background:#fce7f3;border-color:#f9a8d4;color:#9d174d}
+.ur-c{background:#ede9fe;border-color:#c4b5fd;color:#5b21b6}
+.or-c{background:#fee2e2;border-color:#fca5a5;color:#991b1b}
+.warn-box{background:#fef9c3;border:2px solid #fbbf24;border-radius:10px;padding:10px 12px;font-size:.88rem;font-weight:700;color:#78350f;margin-top:6px;line-height:1.6}
+.pair-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.pair-pill{border-radius:8px;padding:5px 12px;font-size:.88rem;font-weight:800}
+
+/* Part A — test format */
+.clue-box{text-align:center;background:#f0f9ff;border:2px dashed #38bdf8;border-radius:14px;padding:16px;margin-bottom:14px}
+.clue-emoji{font-size:2.8rem;margin-bottom:6px}
+.clue-zh{font-family:'Fredoka One',cursive;font-size:1.1rem;color:#0369a1}
+.clue-en{font-size:.85rem;color:#64748b;margin-top:2px}
+.word-opts{display:flex;flex-direction:column;gap:9px;margin-bottom:8px}
+.word-opt{background:#e0f2fe;border:2px solid #7dd3fc;border-radius:13px;padding:13px 16px;font-family:'Fredoka One',cursive;font-size:1.2rem;color:#0c4a6e;cursor:pointer;transition:.2s;text-align:center;letter-spacing:.5px}
+.word-opt:hover{background:#bae6fd;border-color:#38bdf8}
+.word-opt.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+.word-opt.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+.word-opt:disabled{cursor:default}
+.read-tip{background:#fef9c3;border-radius:8px;padding:6px 10px;font-size:.8rem;font-weight:700;color:#78350f;text-align:center;margin-bottom:12px}
+
+/* Part B — classify */
+.word-display{font-family:'Fredoka One',cursive;font-size:3rem;color:#1e293b;text-align:center;background:#f0f9ff;border:3px dashed #7dd3fc;border-radius:16px;padding:20px;margin-bottom:12px;letter-spacing:2px}
+.vowel-btn-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
+.vowel-btn{font-family:'Fredoka One',cursive;font-size:1.1rem;border:2.5px solid;border-radius:12px;padding:10px 18px;cursor:pointer;transition:.15s}
+.vowel-btn:active{transform:scale(.93)}
+.vowel-btn.ar-c{background:#fef3c7;border-color:#f59e0b;color:#92400e}
+.vowel-btn.er-c{background:#dcfce7;border-color:#4ade80;color:#166534}
+.vowel-btn.ir-c{background:#fce7f3;border-color:#f9a8d4;color:#9d174d}
+.vowel-btn.ur-c{background:#ede9fe;border-color:#c4b5fd;color:#5b21b6}
+.vowel-btn.or-c{background:#fee2e2;border-color:#fca5a5;color:#991b1b}
+
+/* feedback */
+.feedback{min-height:24px;text-align:center;font-weight:700;font-size:.92rem;margin-top:8px}
+.feedback.ok{color:#16a34a}.feedback.bad{color:#dc2626}
+
+/* next / score */
+.next-btn{display:block;width:100%;background:#0369a1;color:#fff;border:none;border-radius:14px;padding:13px;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;margin-top:10px;transition:.2s}
+.next-btn:hover{background:#075985}
+.score-wrap{text-align:center;margin-bottom:14px}
+.score-num{font-family:'Fredoka One',cursive;font-size:2.2rem;color:#0369a1}
+.wrong-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.wrong-item{background:#fff7ed;border-left:4px solid #f59e0b;border-radius:10px;padding:9px 12px;font-size:.88rem;line-height:1.5}
+.wrong-item .wr-q{font-weight:700;color:#1e293b}
+.wrong-item .wr-a{color:#16a34a;font-weight:700}
+.wrong-item .wr-h{color:#64748b;font-size:.82rem}
+.counter{text-align:center;color:#94a3b8;font-size:.82rem;margin-top:8px}
+.star-pop{position:fixed;pointer-events:none;font-size:2rem;animation:flyUp .8s ease forwards;z-index:999}
+@keyframes flyUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-90px) scale(1.5)}}
+</style>
+</head>
+<body>
+<h1>🌟 r-Controlled Vowels</h1>
+<p class="subtitle">ar · er · ir · ur · or 綜合練習</p>
+
+<div class="dots" id="dots"></div>
+<div id="root"></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────
+
+// Part A: test-format (see 3 options, read aloud, click correct one)
+// Directly targets exam errors and minimal pairs
+const A_QS = [
+  // ⚠️ Her exact exam errors first
+  { emoji:'🦈', zh:'大白鯊',       en:'a big fish with sharp teeth',
+    opts:['shake','shark','shirk'], ans:1,
+    explain:'shark = 大白鯊，有 /ar/ 音：sh-AR-k 🦈  (shake 是長母音 /eɪ/，不一樣！)' },
+  { emoji:'🍼', zh:'出生的（born）', en:'what you are when you come into the world',
+    opts:['barn','burn','born'], ans:2,
+    explain:'born = 出生，有 /or/ 音：b-OR-n 🍼  (burn 是 /ur/ 音，不一樣！)' },
+  { emoji:'🏠', zh:'門廊',         en:'a covered area outside the front door',
+    opts:['parch','perch','porch'], ans:2,
+    explain:'porch = 門廊，有 /or/ 音：p-OR-ch 🏠  (perch 是 /er/ 音，不一樣！)' },
+  // Practice more ar/or/ur minimal pairs
+  { emoji:'🔥', zh:'燃燒',         en:'what fire does to wood',
+    opts:['barn','burn','born'], ans:1,
+    explain:'burn = 燃燒，有 /ur/ 音：b-UR-n 🔥  (born 是 /or/，barn 是 /ar/)' },
+  { emoji:'🌾', zh:'穀倉',         en:'a farm building for animals',
+    opts:['barn','burn','born'], ans:0,
+    explain:'barn = 穀倉，有 /ar/ 音：b-AR-n 🌾  (burn=/ur/, born=/or/)' },
+  { emoji:'🐦', zh:'棲木',         en:'a branch or rod where a bird sits',
+    opts:['parch','perch','porch'], ans:1,
+    explain:'perch = 棲木，有 /er/ 音：p-ER-ch 🐦  (porch = 門廊 /or/，不同！)' },
+  { emoji:'👕', zh:'上衣 / 襯衫',   en:'a shirt you wear on top',
+    opts:['shark','shirt','short'], ans:1,
+    explain:'shirt = 襯衫，有 /ir/ 音：sh-IR-t 👕' },
+  { emoji:'🐄', zh:'畜群',         en:'a group of cows or animals',
+    opts:['hard','herd','horde'], ans:1,
+    explain:'herd = 畜群，有 /er/ 音：h-ER-d 🐄  (hard = /ar/，不一樣！)' },
+  { emoji:'💎', zh:'堅硬的',        en:'the opposite of soft',
+    opts:['hard','herd','horde'], ans:0,
+    explain:'hard = 堅硬，有 /ar/ 音：h-AR-d 💎  (herd = 畜群 /er/)' },
+  { emoji:'🌽', zh:'玉米',         en:'a yellow vegetable that grows on a cob',
+    opts:['curl','core','corn'], ans:2,
+    explain:'corn = 玉米，有 /or/ 音：c-OR-n 🌽  (curl = /ur/ 捲曲)' },
+];
+
+// Part B: identify the r-controlled vowel (ar/er/ir/ur/or)
+const B_QS = [
+  { word:'shark',  vowel:'ar', explain:'sh-AR-k → ar (like car, star)' },
+  { word:'herd',   vowel:'er', explain:'h-ER-d → er (like her, fern)' },
+  { word:'bird',   vowel:'ir', explain:'b-IR-d → ir (like girl, first)' },
+  { word:'burn',   vowel:'ur', explain:'b-UR-n → ur (like fur, hurt)' },
+  { word:'born',   vowel:'or', explain:'b-OR-n → or (like corn, porch)' },
+  { word:'park',   vowel:'ar', explain:'p-AR-k → ar (like car, barn)' },
+  { word:'fern',   vowel:'er', explain:'f-ER-n → er (like her, herd)' },
+  { word:'shirt',  vowel:'ir', explain:'sh-IR-t → ir (like bird, girl)' },
+  { word:'curl',   vowel:'ur', explain:'c-UR-l → ur (like burn, fur)' },
+  { word:'porch',  vowel:'or', explain:'p-OR-ch → or (like born, corn)' },
+  { word:'star',   vowel:'ar', explain:'st-AR → ar (like car, park)' },
+  { word:'perch',  vowel:'er', explain:'p-ER-ch → er (like herd, fern)' },
+  { word:'girl',   vowel:'ir', explain:'g-IR-l → ir (like bird, shirt)' },
+  { word:'hurt',   vowel:'ur', explain:'h-UR-t → ur (like burn, curl)' },
+  { word:'corn',   vowel:'or', explain:'c-OR-n → or (like born, porch)' },
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────
+const PHASES = ['learn','partA','partB','done'];
+let ph=0, qi=0, score=0, total=0, wrongs=[];
+const TOTAL = A_QS.length + B_QS.length;
+
+// ── HELPERS ───────────────────────────────────────────────────────────
+function star(e){
+  const s=document.createElement('div');s.className='star-pop';
+  s.textContent=['⭐','🌟','✨'][Math.floor(Math.random()*3)];
+  s.style.left=(e.clientX-16)+'px';s.style.top=(e.clientY-16)+'px';
+  document.body.appendChild(s);setTimeout(()=>s.remove(),850);
+}
+function buildDots(cur){
+  const d=document.getElementById('dots');d.innerHTML='';
+  PHASES.slice(0,-1).forEach((_,i)=>{
+    const el=document.createElement('div');
+    el.className='dot'+(i<cur?' done':i===cur?' active':'');
+    d.appendChild(el);
+  });
+}
+function card(html){
+  const root=document.getElementById('root');root.innerHTML='';
+  const c=document.createElement('div');c.className='card';c.innerHTML=html;
+  root.appendChild(c);return c;
+}
+function progBar(cur,tot){
+  return`<div class="prog-wrap"><div class="prog-bar" style="width:${Math.round(cur/tot*100)}%"></div></div>`;
+}
+function nb(label,fn){
+  const b=document.createElement('button');b.className='next-btn';b.textContent=label;
+  b.onclick=fn;return b;
+}
+
+// ── PHASE: LEARN ──────────────────────────────────────────────────────
+function phLearn(){
+  buildDots(0);
+  const c=card(`
+    <div class="phase-title">📖 r-Controlled Vowels — 認識 5 種聲音</div>
+    <div class="sound-grid">
+      <div class="sound-card ar-c"><div class="sound">ar</div><div class="ex">car · star<br>park · barn<br>shark · hard</div></div>
+      <div class="sound-card er-c"><div class="sound">er</div><div class="ex">her · fern<br>herd · perch<br>term · herb</div></div>
+      <div class="sound-card ir-c"><div class="sound">ir</div><div class="ex">bird · girl<br>shirt · first<br>dirt · third</div></div>
+      <div class="sound-card ur-c"><div class="sound">ur</div><div class="ex">fur · burn<br>hurt · curl<br>turn · purple</div></div>
+      <div class="sound-card or-c"><div class="sound">or</div><div class="ex">corn · born<br>porch · fork<br>sport · horn</div></div>
+    </div>
+
+    <div class="warn-box">
+      ⚠️ <strong>容易混淆！</strong><br>
+      er / ir / ur 三個聽起來很像 → 都是 /ɜr/ 的音<br>
+      but <strong>or</strong> 聽起來不同 → /ɔr/ 更圓更低<br><br>
+      練習對比：<br>
+      <div class="pair-row">
+        <span class="pair-pill" style="background:#fee2e2;border:2px solid #fca5a5;color:#991b1b">born /ɔr/</span>
+        <span style="font-weight:800;align-self:center">vs</span>
+        <span class="pair-pill" style="background:#ede9fe;border:2px solid #c4b5fd;color:#5b21b6">burn /ɜr/</span>
+      </div>
+      <div class="pair-row" style="margin-top:6px">
+        <span class="pair-pill" style="background:#fee2e2;border:2px solid #fca5a5;color:#991b1b">porch /ɔr/</span>
+        <span style="font-weight:800;align-self:center">vs</span>
+        <span class="pair-pill" style="background:#dcfce7;border:2px solid #4ade80;color:#166534">perch /ɜr/</span>
+      </div>
+    </div>
+  `);
+  c.appendChild(nb('開始 Part A — 看詞選詞 📝',()=>{ph=1;qi=0;renderGame();}));
+}
+
+// ── PHASE: PART A ─────────────────────────────────────────────────────
+function phA(){
+  if(qi>=A_QS.length){ph=2;qi=0;renderGame();return;}
+  buildDots(1);
+  const q=A_QS[qi];
+  const c=card(`
+    ${progBar(qi,A_QS.length)}
+    <div class="phase-title">Part A — 讀出來，點正確的字！</div>
+    <div class="read-tip">📢 先把三個字都念出來，再點答案！</div>
+    <div class="clue-box">
+      <div class="clue-emoji">${q.emoji}</div>
+      <div class="clue-zh">${q.zh}</div>
+      <div class="clue-en">${q.en}</div>
+    </div>
+    <div class="word-opts" id="opts"></div>
+    <div class="feedback" id="fb"></div>
+    <div class="counter">第 ${qi+1} / ${A_QS.length} 題</div>
+  `);
+  const og=c.querySelector('#opts');
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');b.className='word-opt';b.textContent=o;
+    b.onclick=ev=>{
+      if(b.disabled)return;
+      og.querySelectorAll('.word-opt').forEach(x=>x.disabled=true);
+      const fb=c.querySelector('#fb');total++;
+      if(i===q.ans){
+        b.classList.add('correct');fb.className='feedback ok';
+        fb.innerHTML='✅ '+q.explain;score++;star(ev);
+        setTimeout(()=>{qi++;renderGame();},1300);
+      } else {
+        b.classList.add('wrong');fb.className='feedback bad';
+        fb.innerHTML='❌ 正確是 <strong>'+q.opts[q.ans]+'</strong>　'+q.explain;
+        wrongs.push({q:q.opts.join(' / '),a:q.opts[q.ans],h:q.explain});
+        setTimeout(()=>{qi++;renderGame();},1800);
+      }
+    };
+    og.appendChild(b);
+  });
+}
+
+// ── PHASE: PART B ─────────────────────────────────────────────────────
+function phB(){
+  if(qi>=B_QS.length){ph=3;renderGame();return;}
+  buildDots(2);
+  const q=B_QS[qi];
+  const c=card(`
+    ${progBar(qi,B_QS.length)}
+    <div class="phase-title">Part B — 這個字用哪種 r-vowel？</div>
+    <div class="word-display">${q.word}</div>
+    <div class="vowel-btn-row" id="vbtns"></div>
+    <div class="feedback" id="fb"></div>
+    <div class="counter">第 ${qi+1} / ${B_QS.length} 題</div>
+  `);
+  const vr=c.querySelector('#vbtns');
+  const vowels=[
+    {v:'ar',cls:'ar-c'},{v:'er',cls:'er-c'},{v:'ir',cls:'ir-c'},
+    {v:'ur',cls:'ur-c'},{v:'or',cls:'or-c'}
+  ];
+  vowels.forEach(({v,cls})=>{
+    const b=document.createElement('button');
+    b.className='vowel-btn '+cls;b.textContent=v;
+    b.onclick=ev=>{
+      if(b.disabled)return;
+      vr.querySelectorAll('.vowel-btn').forEach(x=>x.disabled=true);
+      const fb=c.querySelector('#fb');total++;
+      if(v===q.vowel){
+        b.style.outline='3px solid #16a34a';
+        fb.className='feedback ok';fb.innerHTML='✅ '+q.explain;
+        score++;star(ev);
+        setTimeout(()=>{qi++;renderGame();},1200);
+      } else {
+        b.style.background='#fee2e2';b.style.borderColor='#f87171';
+        fb.className='feedback bad';fb.innerHTML='❌ 應該是 <strong>'+q.vowel+'</strong> — '+q.explain;
+        wrongs.push({q:q.word,a:q.vowel,h:q.explain});
+        setTimeout(()=>{qi++;renderGame();},1600);
+      }
+    };
+    vr.appendChild(b);
+  });
+}
+
+// ── DONE ──────────────────────────────────────────────────────────────
+function phDone(){
+  buildDots(3);
+  const pct=Math.round(score/total*100);
+  const emoji=pct>=90?'🌟':pct>=70?'😊':'💪';
+  let wHtml='';
+  if(wrongs.length){
+    wHtml='<div style="margin-top:14px"><div style="font-family:Fredoka One,cursive;color:#dc2626;margin-bottom:8px">Review ✏️</div><ul class="wrong-list">';
+    wrongs.forEach(w=>{wHtml+=`<li class="wrong-item"><div class="wr-q">${w.q}</div><div class="wr-a">✅ ${w.a}</div><div class="wr-h">💡 ${w.h}</div></li>`;});
+    wHtml+='</ul></div>';
+  }
+  const c=card(`
+    <div class="score-wrap">
+      <div style="font-size:3rem">${emoji}</div>
+      <div class="score-num">${score} / ${total}</div>
+      <div style="color:#64748b;font-size:.88rem">${pct}%</div>
+    </div>${wHtml}`);
+  c.appendChild(nb('再玩一次 🔄',()=>{ph=0;qi=0;score=0;total=0;wrongs=[];renderGame();}));
+}
+
+function renderGame(){
+  if(ph===0)phLearn();
+  else if(ph===1)phA();
+  else if(ph===2)phB();
+  else phDone();
+}
+renderGame();
+</script>
+</body>
+</html>

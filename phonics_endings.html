@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phonics — Inflectional Endings -s -es -ed -ing</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#fff8f0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+h1{font-family:'Fredoka One',cursive;color:#7c3aed;font-size:1.7rem;text-align:center;margin-bottom:3px}
+.subtitle{color:#64748b;font-size:.88rem;margin-bottom:14px;text-align:center}
+
+.dots{display:flex;gap:6px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+.dot{width:11px;height:11px;border-radius:50%;background:#e2e8f0;transition:.3s}
+.dot.done{background:#7c3aed}.dot.active{background:#c4b5fd;box-shadow:0 0 0 3px #ede9fe}
+
+.card{background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.08);padding:22px;width:100%;max-width:540px;animation:popIn .35s ease}
+@keyframes popIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+.prog-wrap{background:#e2e8f0;border-radius:99px;height:8px;margin-bottom:14px;overflow:hidden}
+.prog-bar{height:100%;background:linear-gradient(90deg,#7c3aed,#a78bfa);border-radius:99px;transition:.4s}
+
+.phase-title{font-family:'Fredoka One',cursive;color:#7c3aed;font-size:1.1rem;text-align:center;margin-bottom:14px}
+.q-num{font-size:.78rem;color:#94a3b8;text-align:center;margin-bottom:5px}
+
+/* learn */
+.rule-card{border-radius:14px;padding:13px;margin-bottom:10px;border:2px solid}
+.rule-card h3{font-family:'Fredoka One',cursive;font-size:1rem;margin-bottom:6px}
+.rule-s{background:#e0f2fe;border-color:#7dd3fc}.rule-s h3{color:#0369a1}
+.rule-es{background:#fce7f3;border-color:#f9a8d4}.rule-es h3{color:#9d174d}
+.rule-ed{background:#dcfce7;border-color:#4ade80}.rule-ed h3{color:#166534}
+.rule-ing{background:#fef3c7;border-color:#fcd34d}.rule-ing h3{color:#92400e}
+.rule-card p{font-size:.87rem;line-height:1.65;color:#1e293b}
+.rule-card em{font-style:normal;font-weight:800}
+.rule-card .ex{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px}
+.rule-card .ex span{border-radius:8px;padding:4px 12px;font-size:.85rem;font-weight:700}
+.highlight-box{background:#fff7ed;border:2px solid #f59e0b;border-radius:10px;padding:10px 14px;font-size:.9rem;font-weight:700;color:#78350f;line-height:1.7;margin-top:6px}
+.highlight-box .big{font-size:1.05rem;color:#c2410c}
+
+/* Part A — read words, click the one spelled correctly */
+.base-display{text-align:center;margin-bottom:12px}
+.base-word{font-family:'Fredoka One',cursive;font-size:1.8rem;color:#7c3aed;background:#ede9fe;border-radius:12px;padding:10px 20px;display:inline-block}
+.base-ending{font-size:1rem;color:#6d28d9;font-weight:700;margin-top:6px}
+.word-opts{display:flex;flex-direction:column;gap:9px;margin-bottom:8px}
+.word-opt{background:#ede9fe;border:2px solid #c4b5fd;border-radius:13px;padding:13px 16px;font-family:'Fredoka One',cursive;font-size:1.2rem;color:#4c1d95;cursor:pointer;transition:.2s;text-align:center;letter-spacing:.5px}
+.word-opt:hover{background:#ddd6fe;border-color:#a78bfa}
+.word-opt.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+.word-opt.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+.word-opt:disabled{cursor:default}
+.read-tip{background:#fef9c3;border-radius:8px;padding:6px 10px;font-size:.8rem;font-weight:700;color:#78350f;text-align:center;margin-bottom:12px}
+
+/* Part B — complete the word */
+.context-sent{font-size:1rem;font-weight:700;color:#1e293b;text-align:center;line-height:1.8;background:#f5f3ff;border-radius:12px;padding:14px;margin-bottom:14px;border:2px dashed #c4b5fd}
+.context-sent .blank{color:#7c3aed;font-weight:900;border-bottom:3px solid #7c3aed;padding:0 6px;min-width:80px;display:inline-block;text-align:center}
+.context-sent .blank.filled-ok{color:#166534;border-bottom-color:#4ade80}
+.context-sent .blank.filled-err{color:#991b1b;border-bottom-color:#f87171}
+.choices{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:8px}
+.choice-btn{background:#fff;border:2.5px solid #c4b5fd;border-radius:12px;padding:10px 18px;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;color:#4c1d95;cursor:pointer;transition:.15s}
+.choice-btn:hover{border-color:#7c3aed;background:#ede9fe}
+.choice-btn.correct{border-color:#4ade80;background:#dcfce7;color:#166534}
+.choice-btn.wrong{border-color:#f87171;background:#fee2e2;color:#991b1b}
+
+/* feedback */
+.feedback{min-height:24px;text-align:center;font-weight:700;font-size:.92rem;margin-top:8px}
+.feedback.ok{color:#16a34a}.feedback.bad{color:#dc2626}
+
+.next-btn{display:block;width:100%;background:#7c3aed;color:#fff;border:none;border-radius:14px;padding:13px;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;margin-top:10px;transition:.2s}
+.next-btn:hover{background:#6d28d9}
+.score-wrap{text-align:center;margin-bottom:14px}
+.score-num{font-family:'Fredoka One',cursive;font-size:2.2rem;color:#7c3aed}
+.wrong-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.wrong-item{background:#fff7ed;border-left:4px solid #f59e0b;border-radius:10px;padding:9px 12px;font-size:.88rem;line-height:1.5}
+.wrong-item .wr-q{font-weight:700;color:#1e293b}
+.wrong-item .wr-a{color:#16a34a;font-weight:700}
+.wrong-item .wr-h{color:#64748b;font-size:.82rem}
+.counter{text-align:center;color:#94a3b8;font-size:.82rem;margin-top:8px}
+.star-pop{position:fixed;pointer-events:none;font-size:2rem;animation:flyUp .8s ease forwards;z-index:999}
+@keyframes flyUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-90px) scale(1.5)}}
+</style>
+</head>
+<body>
+<h1>✏️ Inflectional Endings</h1>
+<p class="subtitle">-s · -es · -ed · -ing 綜合練習</p>
+
+<div class="dots" id="dots"></div>
+<div id="root"></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────
+
+// Part A: see base word + ending → click the CORRECTLY spelled form
+// Focus: doubling rule (chop→chopped, win→winning) — her exam error
+const A_QS = [
+  { base:'chop', ending:'-ed',
+    opts:['choped','chopeed','chopped'], ans:2,
+    explain:'chop = CVC（子音+短母音+子音）→ 加 -ed 前先雙寫 p → ch-o-pp-ed 🪓' },
+  { base:'win',  ending:'-ing',
+    opts:['wining','winning','wineing'], ans:1,
+    explain:'win = CVC → 加 -ing 前先雙寫 n → w-i-nn-ing 🏆' },
+  { base:'paint',ending:'-ed',
+    opts:['paintted','paited','painted'], ans:2,
+    explain:'paint 結尾是兩個子音 nt → 不需雙寫，直接加 -ed → painted 🎨' },
+  { base:'run',  ending:'-ing',
+    opts:['runing','running','runned'], ans:1,
+    explain:'run = CVC → 加 -ing 前先雙寫 n → r-u-nn-ing 🏃' },
+  { base:'fox',  ending:'-es',
+    opts:['foxs','foxes','foxe'], ans:1,
+    explain:'fox 結尾是 x → 加 -es → foxes 🦊' },
+  { base:'catch',ending:'-ing',
+    opts:['catchs','catches','catching'], ans:2,
+    explain:'catch + -ing → catching（動詞加 -ing 不加 -es）⚽' },
+  { base:'cup',  ending:'-s',
+    opts:['cups','cupes','cupped'], ans:0,
+    explain:'cup + -s → cups（只是複數，不需雙寫）☕' },
+  { base:'smile',ending:'-ing',
+    opts:['smileing','smiling','smilling'], ans:1,
+    explain:'smile 結尾是 e → 去掉 e，加 -ing → smiling 😊' },
+  { base:'stop', ending:'-ed',
+    opts:['stoped','stopped','stoppeed'], ans:1,
+    explain:'stop = CVC → 加 -ed 前先雙寫 p → stopped 🛑' },
+  { base:'dish', ending:'-es',
+    opts:['dishs','dishse','dishes'], ans:2,
+    explain:'dish 結尾是 sh → 加 -es → dishes 🍽️' },
+];
+
+// Part B: see context sentence with blank, choose the correctly formed word
+const B_QS = [
+  { before:'My dad is', after:'the onions right now.',
+    emoji:'🧅', hint:'chop + -ing = ?',
+    choices:['choping','chopping','chopeing'], ans:1,
+    explain:'chop = CVC → 雙寫 p → chopping 🧅' },
+  { before:'Yesterday, the dog', after:'the ball three times.',
+    emoji:'🐕', hint:'catch + -ed = ?',
+    choices:['catched','caught','catching'], ans:1,
+    explain:'catch → caught（不規則動詞，記住！）🐕' },
+  { before:'She', after:'two boxes of crayons.',
+    emoji:'🖍️', hint:'box + -es = ?',
+    choices:['boxs','boxes','boxies'], ans:1,
+    explain:'box 結尾 x → 加 -es → boxes 📦' },
+  { before:'The rabbit is', after:'in the park.',
+    emoji:'🐰', hint:'run + -ing = ?',
+    choices:['runing','running','runnning'], ans:1,
+    explain:'run = CVC → 雙寫 n → running 🐰' },
+  { before:'She', after:'her name neatly on the paper.',
+    emoji:'✏️', hint:'write + -ed = ?',
+    choices:['writed','wrote','writeed'], ans:1,
+    explain:'write → wrote（不規則動詞，記住！）✏️' },
+  { before:'I see three', after:'on the shelf.',
+    emoji:'🪴', hint:'plant + -s = ?',
+    choices:['plants','plantsies','planttes'], ans:0,
+    explain:'plant + -s → plants（普通複數直接加 -s）🪴' },
+  { before:'Mom is', after:'the towels nicely.',
+    emoji:'🏖️', hint:'pack + -ing = ?',
+    choices:['packing','packking','packinng'], ans:0,
+    explain:'pack 結尾兩個子音 ck → 不需雙寫，直接加 -ing → packing 🏖️' },
+  { before:'The baby', after:'in her room last night.',
+    emoji:'😴', hint:'sleep + -ed = ?',
+    choices:['sleeped','slept','sleeping'], ans:1,
+    explain:'sleep → slept（不規則動詞，記住！）😴' },
+];
+
+// ── DOUBLING RULE EXPLAINER ───────────────────────────────────────────
+// Used in the learn phase
+
+// ── STATE ─────────────────────────────────────────────────────────────
+const PHASES=['learn','partA','partB','done'];
+let ph=0,qi=0,score=0,total=0,wrongs=[];
+
+// ── HELPERS ───────────────────────────────────────────────────────────
+function star(e){
+  const s=document.createElement('div');s.className='star-pop';
+  s.textContent=['⭐','✨','🌟'][Math.floor(Math.random()*3)];
+  s.style.left=(e.clientX-16)+'px';s.style.top=(e.clientY-16)+'px';
+  document.body.appendChild(s);setTimeout(()=>s.remove(),850);
+}
+function buildDots(cur){
+  const d=document.getElementById('dots');d.innerHTML='';
+  PHASES.slice(0,-1).forEach((_,i)=>{
+    const el=document.createElement('div');
+    el.className='dot'+(i<cur?' done':i===cur?' active':'');
+    d.appendChild(el);
+  });
+}
+function card(html){
+  const root=document.getElementById('root');root.innerHTML='';
+  const c=document.createElement('div');c.className='card';c.innerHTML=html;
+  root.appendChild(c);return c;
+}
+function progBar(cur,tot){
+  return`<div class="prog-wrap"><div class="prog-bar" style="width:${Math.round(cur/tot*100)}%"></div></div>`;
+}
+function nb(label,fn){
+  const b=document.createElement('button');b.className='next-btn';b.textContent=label;
+  b.onclick=fn;return b;
+}
+
+// ── LEARN ─────────────────────────────────────────────────────────────
+function phLearn(){
+  buildDots(0);
+  const c=card(`
+    <div class="phase-title">📖 Endings Rules — 加字尾的規則</div>
+
+    <div class="rule-card rule-s">
+      <h3>-s　普通複數 / 第三人稱單數</h3>
+      <p>大部分名詞和動詞直接加 <em>-s</em></p>
+      <div class="ex">
+        <span style="background:#bae6fd;color:#0c4a6e">cat→cats</span>
+        <span style="background:#bae6fd;color:#0c4a6e">dog→dogs</span>
+        <span style="background:#bae6fd;color:#0c4a6e">cup→cups</span>
+        <span style="background:#bae6fd;color:#0c4a6e">run→runs</span>
+      </div>
+    </div>
+
+    <div class="rule-card rule-es">
+      <h3>-es　結尾是 s / sh / ch / x / z</h3>
+      <p>字尾是 s, sh, ch, x, z → 加 <em>-es</em>（多一個音節）</p>
+      <div class="ex">
+        <span style="background:#fbcfe8;color:#9d174d">fox→foxes</span>
+        <span style="background:#fbcfe8;color:#9d174d">dish→dishes</span>
+        <span style="background:#fbcfe8;color:#9d174d">catch→catches</span>
+        <span style="background:#fbcfe8;color:#9d174d">buzz→buzzes</span>
+      </div>
+    </div>
+
+    <div class="rule-card rule-ed">
+      <h3>-ed　過去式</h3>
+      <p>直接加 -ed：paint→<em>painted</em>，walk→<em>walked</em></p>
+      <div class="highlight-box">
+        ⭐ <span class="big">CVC 雙寫規則</span>（重要！考試考這個！）<br>
+        如果字是「子音＋短母音＋子音」結尾 → <strong>先雙寫最後一個子音</strong><br>
+        chop = ch + <em>o</em> + p → chop<strong>p</strong>ed ✅（不是 choped ❌）<br>
+        stop = st + <em>o</em> + p → stop<strong>p</strong>ed ✅
+      </div>
+    </div>
+
+    <div class="rule-card rule-ing">
+      <h3>-ing　進行式</h3>
+      <p>直接加：catch→<em>catching</em>，paint→<em>painting</em></p>
+      <div class="highlight-box">
+        ⭐ <span class="big">CVC → 同樣雙寫！</span><br>
+        win = w + <em>i</em> + n → win<strong>n</strong>ing ✅（不是 wining ❌）<br>
+        run = r + <em>u</em> + n → run<strong>n</strong>ing ✅<br><br>
+        字尾是 e → 去掉 e 再加 -ing：smile→<em>smiling</em>，make→<em>making</em>
+      </div>
+    </div>
+  `);
+  c.appendChild(nb('開始 Part A — 選正確拼法 📝',()=>{ph=1;qi=0;renderGame();}));
+}
+
+// ── PART A ────────────────────────────────────────────────────────────
+function phA(){
+  if(qi>=A_QS.length){ph=2;qi=0;renderGame();return;}
+  buildDots(1);
+  const q=A_QS[qi];
+  const c=card(`
+    ${progBar(qi,A_QS.length)}
+    <div class="phase-title">Part A — 哪個拼法正確？</div>
+    <div class="read-tip">📢 把三個都念出來，找出正確的！</div>
+    <div class="base-display">
+      <div class="base-word">${q.base}</div>
+      <div class="base-ending">加 ${q.ending} →</div>
+    </div>
+    <div class="word-opts" id="opts"></div>
+    <div class="feedback" id="fb"></div>
+    <div class="counter">第 ${qi+1} / ${A_QS.length} 題</div>
+  `);
+  const og=c.querySelector('#opts');
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');b.className='word-opt';b.textContent=o;
+    b.onclick=ev=>{
+      if(b.disabled)return;
+      og.querySelectorAll('.word-opt').forEach(x=>x.disabled=true);
+      const fb=c.querySelector('#fb');total++;
+      if(i===q.ans){
+        b.classList.add('correct');fb.className='feedback ok';
+        fb.innerHTML='✅ '+q.explain;score++;star(ev);
+        setTimeout(()=>{qi++;renderGame();},1300);
+      } else {
+        b.classList.add('wrong');fb.className='feedback bad';
+        fb.innerHTML='❌ 正確是 <strong>'+q.opts[q.ans]+'</strong>　'+q.explain;
+        wrongs.push({q:q.base+q.ending,a:q.opts[q.ans],h:q.explain});
+        setTimeout(()=>{qi++;renderGame();},1800);
+      }
+    };
+    og.appendChild(b);
+  });
+}
+
+// ── PART B ────────────────────────────────────────────────────────────
+function phB(){
+  if(qi>=B_QS.length){ph=3;renderGame();return;}
+  buildDots(2);
+  const q=B_QS[qi];
+  const c=card(`
+    ${progBar(qi,B_QS.length)}
+    <div class="phase-title">Part B — 填入正確的字！</div>
+    <div class="context-sent">
+      ${q.emoji} ${q.before} <span class="blank" id="blk">______</span> ${q.after}
+    </div>
+    <div style="text-align:center;font-size:.82rem;color:#7c3aed;font-weight:700;margin-bottom:10px">${q.hint}</div>
+    <div class="choices" id="ch"></div>
+    <div class="feedback" id="fb"></div>
+    <div class="counter">第 ${qi+1} / ${B_QS.length} 題</div>
+  `);
+  const ch=c.querySelector('#ch');
+  // shuffle choices
+  const idxs=[0,1,2].sort(()=>Math.random()-.5);
+  idxs.forEach(i=>{
+    const b=document.createElement('button');b.className='choice-btn';b.textContent=q.choices[i];
+    b.onclick=ev=>{
+      if(b.disabled)return;
+      ch.querySelectorAll('.choice-btn').forEach(x=>{x.disabled=true;x.style.opacity='.5';});
+      b.style.opacity='1';
+      const fb=c.querySelector('#fb');
+      const blk=c.querySelector('#blk');
+      total++;
+      if(i===q.ans){
+        b.classList.add('correct');fb.className='feedback ok';
+        fb.innerHTML='✅ '+q.explain;
+        if(blk){blk.textContent=q.choices[q.ans];blk.className='blank filled-ok';}
+        score++;star(ev);
+        setTimeout(()=>{qi++;renderGame();},1300);
+      } else {
+        b.classList.add('wrong');fb.className='feedback bad';
+        fb.innerHTML='❌ 正確是 <strong>'+q.choices[q.ans]+'</strong>　'+q.explain;
+        if(blk){blk.textContent=q.choices[q.ans];blk.className='blank filled-err';}
+        wrongs.push({q:q.before+'_'+q.after,a:q.choices[q.ans],h:q.explain});
+        setTimeout(()=>{qi++;renderGame();},1800);
+      }
+    };
+    ch.appendChild(b);
+  });
+}
+
+// ── DONE ──────────────────────────────────────────────────────────────
+function phDone(){
+  buildDots(3);
+  const pct=Math.round(score/total*100);
+  const emoji=pct>=90?'🌟':pct>=70?'😊':'💪';
+  let wHtml='';
+  if(wrongs.length){
+    wHtml='<div style="margin-top:14px"><div style="font-family:Fredoka One,cursive;color:#dc2626;margin-bottom:8px">Review ✏️</div><ul class="wrong-list">';
+    wrongs.forEach(w=>{wHtml+=`<li class="wrong-item"><div class="wr-q">${w.q}</div><div class="wr-a">✅ ${w.a}</div><div class="wr-h">💡 ${w.h}</div></li>`;});
+    wHtml+='</ul></div>';
+  }
+  const c=card(`
+    <div class="score-wrap">
+      <div style="font-size:3rem">${emoji}</div>
+      <div class="score-num">${score} / ${total}</div>
+      <div style="color:#64748b;font-size:.88rem">${pct}%</div>
+    </div>${wHtml}`);
+  c.appendChild(nb('再玩一次 🔄',()=>{ph=0;qi=0;score=0;total=0;wrongs=[];renderGame();}));
+}
+
+function renderGame(){
+  if(ph===0)phLearn();
+  else if(ph===1)phA();
+  else if(ph===2)phB();
+  else phDone();
+}
+renderGame();
+</script>
+</body>
+</html>
