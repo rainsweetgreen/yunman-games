@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phonics W14 — Long u</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#fff8f0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+h1{font-family:'Fredoka One',cursive;color:#0369a1;font-size:1.7rem;text-align:center;margin-bottom:2px}
+.subtitle{color:#64748b;font-size:.85rem;margin-bottom:12px;text-align:center}
+.dots{display:flex;gap:5px;justify-content:center;margin-bottom:10px;flex-wrap:wrap}
+.dot{width:10px;height:10px;border-radius:50%;background:#e2e8f0;transition:.3s}
+.dot.done{background:#0369a1}.dot.active{background:#7dd3fc;box-shadow:0 0 0 3px #e0f2fe}
+.card{background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.08);padding:20px;width:100%;max-width:540px;animation:popIn .3s ease}
+@keyframes popIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.prog-wrap{background:#e2e8f0;border-radius:99px;height:8px;margin-bottom:12px;overflow:hidden}
+.prog-bar{height:100%;background:linear-gradient(90deg,#0369a1,#38bdf8);border-radius:99px;transition:.4s}
+.phase-title{font-family:'Fredoka One',cursive;color:#0369a1;font-size:1.05rem;text-align:center;margin-bottom:12px}
+.counter{text-align:center;color:#94a3b8;font-size:.8rem;margin-top:8px}
+/* learn */
+.vowel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.vowel-card{border-radius:12px;padding:10px 6px;text-align:center;border:2px solid}
+.vowel-card .pat{font-family:'Fredoka One',cursive;font-size:1.4rem}
+.vowel-card .words{font-size:.75rem;font-weight:700;margin-top:4px;line-height:1.6}
+.ue-c{background:#e0f2fe;border-color:#7dd3fc}.ue-c .pat{color:#0c4a6e}
+.ew-c{background:#ede9fe;border-color:#c4b5fd}.ew-c .pat{color:#5b21b6}
+.ui-c{background:#d1fae5;border-color:#6ee7b7}.ui-c .pat{color:#065f46}
+.rule-tip{background:#fef9c3;border-radius:8px;padding:8px 12px;font-size:.83rem;font-weight:700;color:#78350f;margin-bottom:10px;line-height:1.6}
+/* typing */
+.clue-box{text-align:center;background:#f0f9ff;border:2px dashed #38bdf8;border-radius:14px;padding:14px;margin-bottom:12px}
+.clue-emoji{font-size:2.5rem;margin-bottom:4px}
+.clue-zh{font-family:'Fredoka One',cursive;font-size:1.1rem;color:#0369a1}
+.clue-en{font-size:.82rem;color:#64748b;margin-top:2px}
+.hint-pattern{font-size:.85rem;font-weight:700;color:#0369a1;margin-top:4px}
+.type-input{width:100%;border:2.5px solid #7dd3fc;border-radius:12px;padding:12px 14px;font-family:'Fredoka One',cursive;font-size:1.3rem;color:#1e293b;outline:none;text-align:center;transition:.2s;letter-spacing:2px}
+.type-input:focus{border-color:#0369a1;box-shadow:0 0 0 3px #e0f2fe}
+.type-input.ok{border-color:#4ade80;background:#dcfce7;color:#166534}
+.type-input.err{border-color:#f87171;background:#fee2e2;color:#991b1b;animation:shake .3s}
+/* sort */
+.sort-word-display{font-family:'Fredoka One',cursive;font-size:2.8rem;color:#1e293b;text-align:center;background:#f0f9ff;border:3px dashed #7dd3fc;border-radius:16px;padding:18px;margin-bottom:12px;letter-spacing:2px}
+.sort-bucket-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.bucket-btn{font-family:'Fredoka One',cursive;font-size:1.1rem;border:2.5px solid;border-radius:12px;padding:12px 24px;cursor:pointer;transition:.15s}
+.bucket-btn:active{transform:scale(.93)}
+.bucket-ue{background:#e0f2fe;border-color:#7dd3fc;color:#0c4a6e}
+.bucket-ew{background:#ede9fe;border-color:#c4b5fd;color:#5b21b6}
+.bucket-ui{background:#d1fae5;border-color:#6ee7b7;color:#065f46}
+/* shared */
+.read-tip{background:#fef9c3;border-radius:8px;padding:6px 10px;font-size:.8rem;font-weight:700;color:#78350f;text-align:center;margin-bottom:10px}
+.feedback{min-height:24px;text-align:center;font-weight:700;font-size:.9rem;margin-top:8px}
+.feedback.ok{color:#16a34a}.feedback.bad{color:#dc2626}
+.next-btn{display:block;width:100%;background:#0369a1;color:#fff;border:none;border-radius:14px;padding:13px;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;margin-top:12px;transition:.2s}
+.next-btn:hover{background:#075985}
+.score-wrap{text-align:center;margin-bottom:14px}
+.score-num{font-family:'Fredoka One',cursive;font-size:2.2rem;color:#0369a1}
+.wrong-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.wrong-item{background:#fff7ed;border:1.5px solid #fdba74;border-radius:12px;padding:10px 12px;font-size:.85rem}
+.wrong-item .wq{font-weight:800;color:#1e293b;margin-bottom:2px}
+.wrong-item .wa{color:#16a34a;font-weight:700}
+.wrong-item .wh{color:#64748b;font-size:.78rem;margin-top:2px}
+.star{position:fixed;font-size:2rem;pointer-events:none;animation:flyUp .9s ease forwards;z-index:999}
+@keyframes flyUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-120px) scale(1.6)}}
+</style>
+</head>
+<body>
+<h1>🔵 Long u Phonics</h1>
+<p class="subtitle">ue · ew · ui — Week 14</p>
+<div class="dots" id="dots"></div>
+<div id="app"></div>
+
+<script>
+// ── data ──────────────────────────────────────────────────────────────────
+const W14A = [
+  { emoji:'👔', zh:'西裝、套裝',   en:'a formal outfit',    hint:'Use -ui- (middle)', answer:'suit',  explain:'suit → ui 在中間: s-UI-t 👔' },
+  { emoji:'📅', zh:'到期日、應得', en:'overdue / owed',      hint:'Use -ue (end)',     answer:'due',   explain:'due → ue 在結尾: d-UE 📅' },
+  { emoji:'🔵', zh:'藍色',        en:'the colour blue',     hint:'Use -ue (end)',     answer:'blue',  explain:'blue → ue 在結尾: bl-UE 🔵' },
+  { emoji:'🍎', zh:'水果',        en:'something sweet you eat', hint:'Use -ui- (middle)', answer:'fruit', explain:'fruit → ui 在中間: fr-UI-t 🍎' },
+  { emoji:'✅', zh:'真的、正確',   en:'not false',           hint:'Use -ue (end)',     answer:'true',  explain:'true → ue 在結尾: tr-UE ✅' },
+];
+
+// Part B — sort word into ue / ew / ui bucket
+const SORT = [
+  { word:'new',    bucket:'ew' },
+  { word:'clue',   bucket:'ue' },
+  { word:'juice',  bucket:'ui' },
+  { word:'drew',   bucket:'ew' },
+  { word:'glue',   bucket:'ue' },
+  { word:'cruise', bucket:'ui' },
+  { word:'flew',   bucket:'ew' },
+  { word:'true',   bucket:'ue' },
+  { word:'fruit',  bucket:'ui' },
+];
+
+// ── state ─────────────────────────────────────────────────────────────────
+const PHASES = ['learn','phType','phSort','done'];
+const PHASE_LABELS = ['📖 Learn','W14A 拼寫','W14B 分類','🏆'];
+const TOTAL_Q = W14A.length + SORT.length;
+let phase = 0, qi = 0, score = 0, wrongs = [], typed = false;
+
+// ── helpers ───────────────────────────────────────────────────────────────
+const app = () => document.getElementById('app');
+const prog = (n, tot) => `<div class="prog-wrap"><div class="prog-bar" style="width:${tot?Math.round(n/tot*100):0}%"></div></div>`;
+
+function buildDots() {
+  const el = document.getElementById('dots');
+  el.innerHTML = PHASES.map((_, i) =>
+    `<div class="dot ${i < phase ? 'done' : i === phase ? 'active' : ''}"></div>`
+  ).join('');
+}
+
+function star(e) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  s.textContent = ['⭐','🌟','✨'][Math.floor(Math.random()*3)];
+  s.style.left = (e.clientX - 20) + 'px';
+  s.style.top  = (e.clientY - 20) + 'px';
+  document.body.appendChild(s);
+  setTimeout(() => s.remove(), 900);
+}
+
+function nextPhase() {
+  phase++;
+  qi = 0;
+  buildDots();
+  renderGame();
+}
+
+function renderGame() {
+  const p = PHASES[phase];
+  if (p === 'learn')   phLearn();
+  else if (p === 'phType') phType();
+  else if (p === 'phSort') phSort();
+  else                 phDone();
+}
+
+// ── LEARN ─────────────────────────────────────────────────────────────────
+function phLearn() {
+  app().innerHTML = `
+    <div class="card">
+      ${prog(0, TOTAL_Q)}
+      <div class="phase-title">📖 Long u — 三種拼法</div>
+      <div class="vowel-grid">
+        <div class="vowel-card ue-c">
+          <div class="pat">ue</div>
+          <div class="words">blue · true<br>due · clue<br>glue · cue</div>
+        </div>
+        <div class="vowel-card ew-c">
+          <div class="pat">ew</div>
+          <div class="words">new · drew<br>flew · chew<br>grew · screw</div>
+        </div>
+        <div class="vowel-card ui-c">
+          <div class="pat">ui</div>
+          <div class="words">suit · fruit<br>juice · cruise</div>
+        </div>
+      </div>
+      <div class="rule-tip">
+        💡 ue → 常在字尾 (blue, true)<br>
+        💡 ew → 常在字尾 (new, flew)<br>
+        💡 ui → 常在字中 (suit, fruit)
+      </div>
+      <button class="next-btn" onclick="nextPhase()">開始練習 →</button>
+    </div>`;
+}
+
+// ── PART A: TYPING ────────────────────────────────────────────────────────
+function phType() {
+  if (qi >= W14A.length) { nextPhase(); return; }
+  typed = false;
+  const q = W14A[qi];
+  app().innerHTML = `
+    <div class="card">
+      ${prog(qi, TOTAL_Q)}
+      <div class="phase-title">W14A — Long u 拼寫練習</div>
+      <div class="clue-box">
+        <div class="clue-emoji">${q.emoji}</div>
+        <div class="clue-zh">${q.zh}</div>
+        <div class="clue-en">${q.en}</div>
+        <div class="hint-pattern">${q.hint}</div>
+      </div>
+      <input id="ti" class="type-input" placeholder="Type the word…" autocomplete="off" autocorrect="off" spellcheck="false">
+      <div class="feedback" id="fb"></div>
+      <button class="next-btn" id="cb" onclick="checkType()">Check ✓</button>
+      <div class="counter">第 ${qi+1} / ${W14A.length} 題</div>
+    </div>`;
+  const inp = document.getElementById('ti');
+  inp.focus();
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') checkType(); });
+}
+
+function checkType() {
+  if (typed) { qi++; phType(); return; }
+  const inp = document.getElementById('ti');
+  const val = inp.value.trim().toLowerCase();
+  const q   = W14A[qi];
+  const fb  = document.getElementById('fb');
+  const cb  = document.getElementById('cb');
+  if (!val) return;
+  typed = true;
+  inp.disabled = true;
+  if (val === q.answer) {
+    inp.classList.add('ok');
+    fb.className = 'feedback ok';
+    fb.textContent = '✅ 答對了！' + q.explain;
+    score++;
+    star({clientX: window.innerWidth/2, clientY: window.innerHeight/2});
+  } else {
+    inp.classList.add('err');
+    fb.className = 'feedback bad';
+    fb.textContent = `❌ 正確答案：${q.answer}　${q.explain}`;
+    wrongs.push({q: q.zh + ' ' + q.emoji, a: q.answer, h: q.explain});
+  }
+  cb.textContent = '下一題 →';
+}
+
+// ── PART B: SORT ──────────────────────────────────────────────────────────
+function phSort() {
+  if (qi >= SORT.length) { nextPhase(); return; }
+  const q = SORT[qi];
+  app().innerHTML = `
+    <div class="card">
+      ${prog(W14A.length + qi, TOTAL_Q)}
+      <div class="phase-title">W14B — ue · ew · ui？點選正確格子！</div>
+      <div class="read-tip">看這個字，它的長母音 u 是哪種拼法？</div>
+      <div class="sort-word-display">${q.word}</div>
+      <div class="sort-bucket-row">
+        <button class="bucket-btn bucket-ue" onclick="checkSort('ue',this)">ue</button>
+        <button class="bucket-btn bucket-ew" onclick="checkSort('ew',this)">ew</button>
+        <button class="bucket-btn bucket-ui" onclick="checkSort('ui',this)">ui</button>
+      </div>
+      <div class="feedback" id="fb"></div>
+      <div class="counter">第 ${qi+1} / ${SORT.length} 題</div>
+    </div>`;
+}
+
+function checkSort(chosen, btn) {
+  const q  = SORT[qi];
+  const fb = document.getElementById('fb');
+  document.querySelectorAll('.bucket-btn').forEach(x => x.disabled = true);
+  if (chosen === q.bucket) {
+    btn.style.background = '#dcfce7';
+    btn.style.borderColor = '#4ade80';
+    fb.className = 'feedback ok';
+    fb.textContent = `✅ 對！${q.word} 用 -${q.bucket}-`;
+    score++;
+    star({clientX: window.innerWidth/2, clientY: window.innerHeight/2});
+  } else {
+    btn.style.background = '#fee2e2';
+    btn.style.borderColor = '#f87171';
+    fb.className = 'feedback bad';
+    fb.textContent = `❌ ${q.word} 應該用 -${q.bucket}-`;
+    wrongs.push({q: q.word, a: `-${q.bucket}-`, h: `${q.word} → ${q.bucket} 拼法`});
+  }
+  setTimeout(() => { qi++; phSort(); }, 1000);
+}
+
+// ── DONE ──────────────────────────────────────────────────────────────────
+function phDone() {
+  const pct = Math.round(score / TOTAL_Q * 100);
+  const medal = pct >= 90 ? '🏆' : pct >= 70 ? '🥈' : '💪';
+  app().innerHTML = `
+    <div class="card">
+      <div class="score-wrap">
+        <div style="font-size:3rem">${medal}</div>
+        <div class="score-num">${score} / ${TOTAL_Q}</div>
+        <div style="color:#64748b;font-size:.9rem;margin-top:4px">${pct}% — ${pct>=90?'太棒了！':pct>=70?'很不錯！':'繼續加油！'}</div>
+      </div>
+      ${wrongs.length ? `
+        <div style="font-family:'Fredoka One',cursive;color:#dc2626;margin-bottom:8px;font-size:.95rem">❌ 錯題複習</div>
+        <ul class="wrong-list">
+          ${wrongs.map(w=>`
+            <li class="wrong-item">
+              <div class="wq">📝 ${w.q}</div>
+              <div class="wa">✅ ${w.a}</div>
+              <div class="wh">${w.h}</div>
+            </li>`).join('')}
+        </ul>` : '<div style="text-align:center;color:#16a34a;font-weight:800;margin-bottom:8px">🎉 全部答對！</div>'}
+      <button class="next-btn" style="margin-top:16px" onclick="restartGame()">再玩一次 🔄</button>
+    </div>`;
+}
+
+function restartGame() {
+  phase = 0; qi = 0; score = 0; wrongs = []; typed = false;
+  buildDots();
+  renderGame();
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+buildDots();
+renderGame();
+</script>
+</body>
+</html>

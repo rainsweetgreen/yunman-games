@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phonics W13 — Long o & Prefixes</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#fff8f0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+h1{font-family:'Fredoka One',cursive;color:#0369a1;font-size:1.7rem;text-align:center;margin-bottom:2px}
+.subtitle{color:#64748b;font-size:.85rem;margin-bottom:12px;text-align:center}
+.dots{display:flex;gap:5px;justify-content:center;margin-bottom:10px;flex-wrap:wrap}
+.dot{width:10px;height:10px;border-radius:50%;background:#e2e8f0;transition:.3s}
+.dot.done{background:#0369a1}.dot.active{background:#7dd3fc;box-shadow:0 0 0 3px #e0f2fe}
+.card{background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.08);padding:20px;width:100%;max-width:540px;animation:popIn .3s ease}
+@keyframes popIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.prog-wrap{background:#e2e8f0;border-radius:99px;height:8px;margin-bottom:12px;overflow:hidden}
+.prog-bar{height:100%;background:linear-gradient(90deg,#0369a1,#38bdf8);border-radius:99px;transition:.4s}
+.phase-title{font-family:'Fredoka One',cursive;color:#0369a1;font-size:1.05rem;text-align:center;margin-bottom:12px}
+.counter{text-align:center;color:#94a3b8;font-size:.8rem;margin-top:8px}
+/* learn */
+.vowel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.vowel-card{border-radius:12px;padding:10px 6px;text-align:center;border:2px solid}
+.vowel-card .pat{font-family:'Fredoka One',cursive;font-size:1.4rem}
+.vowel-card .words{font-size:.75rem;font-weight:700;margin-top:4px;line-height:1.6}
+.oa-c{background:#fef3c7;border-color:#f59e0b}.oa-c .pat{color:#92400e}
+.ow-c{background:#dcfce7;border-color:#4ade80}.ow-c .pat{color:#166534}
+.oe-c{background:#fce7f3;border-color:#f9a8d4}.oe-c .pat{color:#9d174d}
+.rule-tip{background:#fef9c3;border-radius:8px;padding:8px 12px;font-size:.83rem;font-weight:700;color:#78350f;margin-bottom:10px;line-height:1.6}
+.prefix-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.prefix-card{border-radius:12px;padding:10px;border:2px solid}
+.re-card{background:#fef3c7;border-color:#fbbf24}
+.un-card{background:#fee2e2;border-color:#fca5a5}
+.prefix-card h4{font-family:'Fredoka One',cursive;font-size:1.1rem;margin-bottom:4px}
+.re-card h4{color:#92400e}.un-card h4{color:#991b1b}
+.prefix-card .ex{font-size:.78rem;font-weight:700;color:#374151;line-height:1.7}
+/* typing */
+.clue-box{text-align:center;background:#f0f9ff;border:2px dashed #38bdf8;border-radius:14px;padding:14px;margin-bottom:12px}
+.clue-emoji{font-size:2.5rem;margin-bottom:4px}
+.clue-zh{font-family:'Fredoka One',cursive;font-size:1.1rem;color:#0369a1}
+.clue-en{font-size:.82rem;color:#64748b;margin-top:2px}
+.hint-pattern{font-size:.85rem;font-weight:700;color:#0369a1;margin-top:4px}
+.type-input{width:100%;border:2.5px solid #7dd3fc;border-radius:12px;padding:12px 14px;font-family:'Fredoka One',cursive;font-size:1.3rem;color:#1e293b;outline:none;text-align:center;transition:.2s;letter-spacing:2px}
+.type-input:focus{border-color:#0369a1;box-shadow:0 0 0 3px #e0f2fe}
+.type-input.ok{border-color:#4ade80;background:#dcfce7;color:#166534}
+.type-input.err{border-color:#f87171;background:#fee2e2;color:#991b1b;animation:shake .3s}
+/* MC */
+.word-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+.word-opt{background:#e0f2fe;border:2px solid #7dd3fc;border-radius:13px;padding:12px;font-family:'Fredoka One',cursive;font-size:1.2rem;color:#0c4a6e;cursor:pointer;transition:.2s;text-align:center}
+.word-opt:hover{background:#bae6fd;border-color:#38bdf8}
+.word-opt.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+.word-opt.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+.word-opt:disabled{cursor:default}
+/* sort */
+.sort-word-display{font-family:'Fredoka One',cursive;font-size:2.8rem;color:#1e293b;text-align:center;background:#f0f9ff;border:3px dashed #7dd3fc;border-radius:16px;padding:18px;margin-bottom:12px;letter-spacing:2px}
+.sort-bucket-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.bucket-btn{font-family:'Fredoka One',cursive;font-size:1.1rem;border:2.5px solid;border-radius:12px;padding:12px 24px;cursor:pointer;transition:.15s}
+.bucket-btn:active{transform:scale(.93)}
+.bucket-oa{background:#fef3c7;border-color:#f59e0b;color:#92400e}
+.bucket-ow{background:#dcfce7;border-color:#4ade80;color:#166534}
+.bucket-oe{background:#fce7f3;border-color:#f9a8d4;color:#9d174d}
+/* prefix */
+.prefix-q-box{text-align:center;background:#fff7ed;border:2px dashed #fbbf24;border-radius:14px;padding:14px;margin-bottom:12px}
+.prefix-blank{font-family:'Fredoka One',cursive;font-size:2.2rem;color:#374151}
+.prefix-btn-row{display:flex;gap:14px;justify-content:center}
+.prefix-btn{font-family:'Fredoka One',cursive;font-size:1.2rem;border:2.5px solid;border-radius:12px;padding:12px 28px;cursor:pointer;transition:.15s}
+.prefix-btn:active{transform:scale(.93)}
+.prefix-btn.re-btn{background:#fef3c7;border-color:#fbbf24;color:#92400e}
+.prefix-btn.un-btn{background:#fee2e2;border-color:#fca5a5;color:#991b1b}
+/* shared */
+.read-tip{background:#fef9c3;border-radius:8px;padding:6px 10px;font-size:.8rem;font-weight:700;color:#78350f;text-align:center;margin-bottom:10px}
+.feedback{min-height:24px;text-align:center;font-weight:700;font-size:.9rem;margin-top:8px}
+.feedback.ok{color:#16a34a}.feedback.bad{color:#dc2626}
+.next-btn{display:block;width:100%;background:#0369a1;color:#fff;border:none;border-radius:14px;padding:13px;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;margin-top:12px;transition:.2s}
+.next-btn:hover{background:#075985}
+.score-wrap{text-align:center;margin-bottom:14px}
+.score-num{font-family:'Fredoka One',cursive;font-size:2.2rem;color:#0369a1}
+.wrong-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.wrong-item{background:#fff7ed;border-left:4px solid #f59e0b;border-radius:10px;padding:9px 12px;font-size:.87rem;line-height:1.5}
+.wrong-item .wr-q{font-weight:700;color:#1e293b}
+.wrong-item .wr-a{color:#16a34a;font-weight:700}
+.wrong-item .wr-h{color:#64748b;font-size:.82rem}
+.star-pop{position:fixed;pointer-events:none;font-size:2rem;animation:flyUp .8s ease forwards;z-index:999}
+@keyframes flyUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-90px) scale(1.5)}}
+</style>
+</head>
+<body>
+<h1>🌊 Long o & Prefixes</h1>
+<p class="subtitle">oa · ow · oe　&　re- · un-　Week 13</p>
+<div class="dots" id="dots"></div>
+<div id="root"></div>
+<script>
+const W13A = [
+  {emoji:'🧥',zh:'外套',en:'you wear this to stay warm',hint:'Use -oa- (middle)',answer:'coat',explain:'coat → oa in the middle: c-OA-t 🧥'},
+  {emoji:'🐸',zh:'蟾蜍',en:'a frog-like animal that lives on land',hint:'Use -oa- (middle)',answer:'toad',explain:'toad → oa in the middle: t-OA-d 🐸'},
+  {emoji:'💨',zh:'吹（風吹）',en:'what the wind does',hint:'Use -ow (end)',answer:'blow',explain:'blow → ow at the end: bl-OW 💨'},
+  {emoji:'🎭',zh:'展示',en:'a performance you watch',hint:'Use -ow (end)',answer:'show',explain:'show → ow at the end: sh-OW 🎭'},
+  {emoji:'🚢',zh:'漂浮',en:'to drift gently on water',hint:'Use -oa- (middle)',answer:'float',explain:'float → oa in the middle: fl-OA-t 🚢'},
+];
+const W13B = [
+  {clue:'短跑衝刺',opts:['strip','sprint','splint'],ans:1,explain:'sprint = 短距離衝刺 → spr- blend 🏃'},
+  {clue:'水花四濺',opts:['thrash','splash','squash'],ans:1,explain:'splash = 濺起水花 → spl- blend 💦'},
+  {clue:'碎片、廢料',opts:['scrap','splat','school'],ans:0,explain:'scrap = 碎片 → scr- blend ♻️'},
+  {clue:'街道',opts:['three','spree','street'],ans:2,explain:'street = 街道 → str- blend 🏙️'},
+  {clue:'壓扁',opts:['squish','spring','string'],ans:0,explain:'squish = 壓扁 → squ- blend 😝'},
+];
+const W13C = [
+  {word:'road', bucket:'oa',explain:'r-OA-d → oa in the middle 🛣️'},
+  {word:'show', bucket:'ow',explain:'sh-OW → ow at the end 🎭'},
+  {word:'toe',  bucket:'oe',explain:'t-OE → oe at the end 🦶'},
+  {word:'blow', bucket:'ow',explain:'bl-OW → ow at the end 💨'},
+  {word:'doe',  bucket:'oe',explain:'d-OE → oe at the end 🦌 (a female deer)'},
+  {word:'glow', bucket:'ow',explain:'gl-OW → ow at the end ✨'},
+];
+const W14B = [
+  {word:'do',  prefix:'un',meaning:'撤銷/復原', explain:'undo = un- (反) + do → 取消動作 ↩️'},
+  {word:'zip', prefix:'un',meaning:'拉開拉鍊',  explain:'unzip = un- (反) + zip → 把拉鍊拉開 🤐'},
+  {word:'tie', prefix:'re',meaning:'重新打結',  explain:'retie = re- (again) + tie → 重新綁好 🎀'},
+  {word:'set', prefix:'re',meaning:'重新設定',  explain:'reset = re- (again) + set → 重新設定 🔄'},
+  {word:'box', prefix:'un',meaning:'拆箱',      explain:'unbox = un- (反) + box → 打開箱子 📦'},
+];
+
+const PHASES=['learn','w13a','w13b','w13c','w14b','done'];
+let ph=0,qi=0,score=0,total=0,wrongs=[],typed=false;
+
+function star(e){
+  const s=document.createElement('div');s.className='star-pop';
+  s.textContent=['⭐','🌟','✨','💫'][Math.floor(Math.random()*4)];
+  s.style.left=(e?e.clientX-16:150)+'px';s.style.top=(e?e.clientY-16:200)+'px';
+  document.body.appendChild(s);setTimeout(()=>s.remove(),850);
+}
+function buildDots(cur){
+  const d=document.getElementById('dots');d.innerHTML='';
+  PHASES.forEach((_,i)=>{
+    const el=document.createElement('div');
+    el.className='dot'+(i<cur?' done':i===cur?' active':'');
+    d.appendChild(el);
+  });
+}
+function card(html){
+  const root=document.getElementById('root');root.innerHTML='';
+  const c=document.createElement('div');c.className='card';c.innerHTML=html;
+  root.appendChild(c);return c;
+}
+function prog(cur,tot){return`<div class="prog-wrap"><div class="prog-bar" style="width:${Math.round(cur/tot*100)}%"></div></div>`;}
+function nb(label,fn){const b=document.createElement('button');b.className='next-btn';b.textContent=label;b.onclick=fn;return b;}
+function nextPhase(){ph++;qi=0;renderGame();}
+
+function renderGame(){
+  buildDots(ph);
+  const p=PHASES[ph];
+  if(p==='learn') phLearn();
+  else if(p==='w13a') phType(W13A,'Part A — Long o 拼寫練習 ✏️');
+  else if(p==='w13b') phBlend();
+  else if(p==='w13c') phSort();
+  else if(p==='w14b') phPrefix();
+  else phDone();
+}
+
+function phLearn(){
+  const c=card(`
+    <div class="phase-title">📖 本週規則</div>
+    <p style="font-family:'Fredoka One',cursive;color:#0369a1;margin-bottom:8px">🅾 Long o — 三種拼法</p>
+    <div class="vowel-grid">
+      <div class="vowel-card oa-c"><div class="pat">oa</div><div class="words">boat · coat<br>road · toad<br>float · soap</div></div>
+      <div class="vowel-card ow-c"><div class="pat">ow</div><div class="words">blow · show<br>snow · crow<br>slow · grow</div></div>
+      <div class="vowel-card oe-c"><div class="pat">oe</div><div class="words">toe · doe<br>（字尾用）</div></div>
+    </div>
+    <div class="rule-tip">💡 oa → 通常在字的<strong>中間</strong>（如 b<u>oa</u>t）<br>💡 ow → 通常在字的<strong>結尾</strong>（如 bl<u>ow</u>）</div>
+    <p style="font-family:'Fredoka One',cursive;color:#92400e;margin-bottom:8px">✏️ Prefixes 前綴</p>
+    <div class="prefix-grid">
+      <div class="prefix-card re-card">
+        <h4>re- = again 再次</h4>
+        <div class="ex">re<strong>play</strong> = play again<br>re<strong>fill</strong> = fill again<br>re<strong>try</strong> = try again<br>re<strong>set</strong> = set again<br>re<strong>tie</strong> = tie again</div>
+      </div>
+      <div class="prefix-card un-card">
+        <h4>un- = not / opposite</h4>
+        <div class="ex">un<strong>zip</strong> = open zip<br>un<strong>pack</strong> = take out<br>un<strong>lock</strong> = open lock<br>un<strong>do</strong> = reverse<br>un<strong>box</strong> = open box</div>
+      </div>
+    </div>
+  `);
+  c.appendChild(nb('開始練習！→',()=>nextPhase()));
+}
+
+function phType(data,title){
+  if(qi>=data.length){nextPhase();return;}
+  typed=false;
+  const q=data[qi];
+  const c=card(`
+    ${prog(qi,data.length)}
+    <div class="phase-title">${title}</div>
+    <div class="read-tip">📢 先把這個字念出來，再拼出來！</div>
+    <div class="clue-box">
+      <div class="clue-emoji">${q.emoji}</div>
+      <div class="clue-zh">${q.zh}</div>
+      <div class="clue-en">${q.en}</div>
+      <div class="hint-pattern">✏️ 提示：${q.hint}</div>
+    </div>
+    <input class="type-input" id="ti" type="text" placeholder="Type the word here..." autocomplete="off" autocorrect="off" spellcheck="false">
+    <div class="feedback" id="fb"></div>
+    <div class="counter">第 ${qi+1} / ${data.length} 題</div>
+  `);
+  const inp=c.querySelector('#ti');
+  const checkFn=()=>{
+    if(typed)return; typed=true; total++;
+    const val=inp.value.trim().toLowerCase();
+    const fb=c.querySelector('#fb');
+    if(val===q.answer){
+      inp.classList.add('ok');fb.className='feedback ok';fb.innerHTML='✅ '+q.explain;
+      score++;star(); setTimeout(()=>{qi++;phType(data,title);},1300);
+    } else {
+      inp.classList.add('err');fb.className='feedback bad';
+      fb.innerHTML='❌ 正確是 <strong>'+q.answer+'</strong>　'+q.explain;
+      wrongs.push({q:q.zh+' ('+q.en+')',a:q.answer,h:q.explain});
+      setTimeout(()=>{qi++;phType(data,title);},1800);
+    }
+  };
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkFn();});
+  c.appendChild(nb('✅ 送出答案',checkFn));
+  setTimeout(()=>inp.focus(),200);
+}
+
+function phBlend(){
+  if(qi>=W13B.length){nextPhase();return;}
+  const q=W13B[qi];
+  const c=card(`
+    ${prog(qi,W13B.length)}
+    <div class="phase-title">Part B — 圈出正確的字！</div>
+    <div class="read-tip">📢 把三個字都念出來，圈出符合意思的！</div>
+    <div style="text-align:center;background:#f0f9ff;border:2px dashed #38bdf8;border-radius:12px;padding:14px;margin-bottom:12px;font-family:'Fredoka One',cursive;font-size:1.2rem;color:#0369a1">${q.clue}</div>
+    <div class="word-opts" id="opts"></div>
+    <div class="feedback" id="fb"></div>
+    <div class="counter">第 ${qi+1} / ${W13B.length} 題</div>
+  `);
+  const og=c.querySelector('#opts');
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');b.className='word-opt';b.textContent=o;
+    b.onclick=ev=>{
+      if(b.disabled)return;
+      og.querySelectorAll('.word-opt').forEach(x=>x.disabled=true); total++;
+      const fb=c.querySelector('#fb');
+      if(i===q.ans){b.classList.add('correct');fb.className='feedback ok';fb.innerHTML='✅ '+q.explain;score++;star(ev);setTimeout(()=>{qi++;phBlend();},1200);}
+      else{b.classList.add('wrong');fb.className='feedback bad';fb.innerHTML='❌ 正確是 <strong>'+q.opts[q.ans]+'</strong>　'+q.explain;wrongs.push({q:q.clue,a:q.opts[q.ans],h:q.explain});setTimeout(()=>{qi++;phBlend();},1700);}
+    };
+    og.appendChild(b);
+  });
+}
+
+function phSort(){
+  if(qi>=W13C.length){nextPhase();return;}
+  const q=W13C[qi];
+  const c=card(`
+    ${prog(qi,W13C.length)}
+    <div class="phase-title">Part C — 這個字用 oa、ow 還是 oe？</div>
+    <div class="sort-word-display">${q.word}</div>
+    <div style="text-align:center;font-size:.82rem;color:#0369a1;font-weight:700;margin-bottom:10px">📢 先念出來，再選正確的拼法！</div>
+    <div class="sort-bucket-row" id="buckets"></div>
+    <div class="feedback" id="fb"></div>
+    <div class="counter">第 ${qi+1} / ${W13C.length} 題</div>
+  `);
+  const br=c.querySelector('#buckets');
+  [['oa','bucket-oa'],['ow','bucket-ow'],['oe','bucket-oe']].forEach(([v,cls])=>{
+    const b=document.createElement('button');b.className='bucket-btn '+cls;b.textContent=v;
+    b.onclick=ev=>{
+      if(b.disabled)return;
+      br.querySelectorAll('.bucket-btn').forEach(x=>x.disabled=true); total++;
+      const fb=c.querySelector('#fb');
+      if(v===q.bucket){b.style.outline='3px solid #16a34a';fb.className='feedback ok';fb.innerHTML='✅ '+q.explain;score++;star(ev);setTimeout(()=>{qi++;phSort();},1200);}
+      else{b.style.background='#fee2e2';b.style.borderColor='#f87171';fb.className='feedback bad';fb.innerHTML='❌ <strong>'+q.word+'</strong> 用 <strong>'+q.bucket+'</strong>　'+q.explain;wrongs.push({q:q.word,a:q.bucket,h:q.explain});setTimeout(()=>{qi++;phSort();},1700);}
+    };
+    br.appendChild(b);
+  });
+}
+
+function phPrefix(){
+  if(qi>=W14B.length){nextPhase();return;}
+  const q=W14B[qi];
+  const c=card(`
+    ${prog(qi,W14B.length)}
+    <div class="phase-title">Prefixes — re- 還是 un-？</div>
+    <div class="prefix-q-box">
+      <div class="prefix-blank">___ ${q.word}</div>
+      <div style="font-size:.88rem;color:#64748b;font-weight:700;margin-top:6px">意思：${q.meaning}</div>
+    </div>
+    <div class="prefix-btn-row" id="pbtns"></div>
+    <div class="feedback" id="fb"></div>
+    <div class="counter">第 ${qi+1} / ${W14B.length} 題</div>
+  `);
+  const pr=c.querySelector('#pbtns');
+  [['re-','re-btn'],['un-','un-btn']].forEach(([v,cls])=>{
+    const b=document.createElement('button');b.className='prefix-btn '+cls;b.textContent=v;
+    b.onclick=ev=>{
+      if(b.disabled)return;
+      pr.querySelectorAll('.prefix-btn').forEach(x=>x.disabled=true); total++;
+      const fb=c.querySelector('#fb');
+      const ans=q.prefix+'-';
+      if(v===ans){b.style.outline='3px solid #16a34a';fb.className='feedback ok';fb.innerHTML='✅ <strong>'+v+q.word+'</strong>　'+q.explain;score++;star(ev);setTimeout(()=>{qi++;phPrefix();},1300);}
+      else{b.style.background='#fee2e2';b.style.borderColor='#f87171';fb.className='feedback bad';fb.innerHTML='❌ 正確是 <strong>'+ans+q.word+'</strong>　'+q.explain;wrongs.push({q:'___ '+q.word,a:ans+q.word,h:q.explain});setTimeout(()=>{qi++;phPrefix();},1700);}
+    };
+    pr.appendChild(b);
+  });
+}
+
+function phDone(){
+  const pct=total?Math.round(score/total*100):100;
+  const emoji=pct>=90?'🌟':pct>=70?'😊':'💪';
+  let wHtml='';
+  if(wrongs.length){
+    wHtml='<div style="margin-top:14px"><div style="font-family:Fredoka One,cursive;color:#dc2626;margin-bottom:8px">Review ✏️</div><ul class="wrong-list">';
+    wrongs.forEach(w=>{wHtml+=`<li class="wrong-item"><div class="wr-q">${w.q}</div><div class="wr-a">✅ ${w.a}</div><div class="wr-h">💡 ${w.h}</div></li>`;});
+    wHtml+='</ul></div>';
+  }
+  const c=card(`<div class="score-wrap"><div style="font-size:3rem">${emoji}</div><div class="score-num">${score} / ${total}</div><div style="color:#64748b;font-size:.88rem">${pct}%</div></div>${wHtml}`);
+  c.appendChild(nb('再玩一次 🔄',()=>{ph=0;qi=0;score=0;total=0;wrongs=[];renderGame();}));
+}
+
+renderGame();
+</script>
+</body>
+</html>
