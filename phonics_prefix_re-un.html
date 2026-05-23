@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phonics — Prefixes re- & un-</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#fff8f0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+h1{font-family:'Fredoka One',cursive;color:#0369a1;font-size:1.7rem;text-align:center;margin-bottom:2px}
+.subtitle{color:#64748b;font-size:.85rem;margin-bottom:12px;text-align:center}
+.dots{display:flex;gap:6px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+.dot{width:11px;height:11px;border-radius:50%;background:#e2e8f0;transition:.3s}
+.dot.done{background:#0369a1}.dot.active{background:#7dd3fc;box-shadow:0 0 0 3px #e0f2fe}
+.card{background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.08);padding:22px;width:100%;max-width:540px;animation:popIn .3s ease}
+@keyframes popIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.prog-wrap{background:#e2e8f0;border-radius:99px;height:8px;margin-bottom:14px;overflow:hidden}
+.prog-bar{height:100%;background:linear-gradient(90deg,#0369a1,#38bdf8);border-radius:99px;transition:.4s}
+.phase-title{font-family:'Fredoka One',cursive;color:#0369a1;font-size:1.1rem;text-align:center;margin-bottom:14px}
+.counter{text-align:center;color:#94a3b8;font-size:.8rem;margin-top:8px}
+
+/* ── LEARN ── */
+.prefix-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.prefix-card{border-radius:14px;padding:14px;border:2px solid}
+.re-card{background:#fef3c7;border-color:#fbbf24}
+.un-card{background:#fee2e2;border-color:#fca5a5}
+.prefix-card .big{font-family:'Fredoka One',cursive;font-size:2rem;margin-bottom:2px}
+.re-card .big{color:#92400e}.un-card .big{color:#991b1b}
+.prefix-card .meaning{font-size:.82rem;font-weight:800;margin-bottom:8px}
+.re-card .meaning{color:#78350f}.un-card .meaning{color:#7f1d1d}
+.prefix-card .examples{font-size:.78rem;font-weight:700;color:#374151;line-height:1.85}
+.rule-tip{background:#fef9c3;border-radius:10px;padding:10px 14px;font-size:.85rem;font-weight:700;color:#78350f;margin-bottom:10px;line-height:1.7}
+.practice-list{background:#f0f9ff;border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.practice-list .ptitle{font-family:'Fredoka One',cursive;color:#0369a1;font-size:.9rem;margin-bottom:8px}
+.practice-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:.88rem;font-weight:700}
+.practice-row .word{color:#0c4a6e;min-width:90px}
+.practice-row .eq{color:#94a3b8}
+.practice-row .def{color:#374151}
+
+/* ── MEANING MATCH ── */
+.word-display{font-family:'Fredoka One',cursive;font-size:2.4rem;color:#1e293b;text-align:center;background:#f0f9ff;border:3px dashed #7dd3fc;border-radius:16px;padding:16px;margin-bottom:14px;letter-spacing:1px}
+.meaning-opts{display:flex;flex-direction:column;gap:9px;margin-bottom:8px}
+.meaning-opt{background:#e0f2fe;border:2px solid #7dd3fc;border-radius:13px;padding:13px 16px;font-family:'Fredoka One',cursive;font-size:1.05rem;color:#0c4a6e;cursor:pointer;transition:.2s;text-align:center}
+.meaning-opt:hover{background:#bae6fd;border-color:#38bdf8}
+.meaning-opt.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+.meaning-opt.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+
+/* ── PREFIX CHOICE ── */
+.root-box{text-align:center;background:#fff7ed;border:2px dashed #fbbf24;border-radius:14px;padding:18px;margin-bottom:12px}
+.root-blank{font-family:'Fredoka One',cursive;font-size:2rem;color:#374151;letter-spacing:1px}
+.root-blank span{color:#e2e8f0}
+.root-zh{font-size:.9rem;color:#78350f;font-weight:800;margin-top:6px}
+.prefix-btn-row{display:flex;gap:14px;justify-content:center}
+.prefix-btn{font-family:'Fredoka One',cursive;font-size:1.3rem;border:2.5px solid;border-radius:12px;padding:13px 32px;cursor:pointer;transition:.15s}
+.prefix-btn:active{transform:scale(.93)}
+.prefix-btn:disabled{cursor:default;opacity:.6}
+.re-btn{background:#fef3c7;border-color:#fbbf24;color:#92400e}
+.un-btn{background:#fee2e2;border-color:#fca5a5;color:#991b1b}
+.re-btn:hover:not(:disabled){background:#fde68a}
+.un-btn:hover:not(:disabled){background:#fecaca}
+
+/* ── SENTENCE FILL ── */
+.sentence-box{background:#f0f9ff;border:2px solid #bae6fd;border-radius:14px;padding:16px;margin-bottom:12px;font-size:1.05rem;font-weight:700;color:#1e293b;line-height:1.8;text-align:center}
+.sentence-box .blank{display:inline-block;border-bottom:3px solid #38bdf8;min-width:40px;font-family:'Fredoka One',cursive;color:#0369a1;text-align:center;padding:0 4px}
+.sentence-box .blank.filled-re{color:#92400e;border-color:#fbbf24}
+.sentence-box .blank.filled-un{color:#991b1b;border-color:#fca5a5}
+.sent-hint{text-align:center;font-size:.82rem;color:#64748b;font-weight:700;margin-bottom:10px}
+
+/* ── shared ── */
+.feedback{min-height:26px;text-align:center;font-weight:800;font-size:.92rem;margin-top:8px}
+.feedback.ok{color:#16a34a}.feedback.bad{color:#dc2626}
+.next-btn{display:block;width:100%;background:#0369a1;color:#fff;border:none;border-radius:14px;padding:13px;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;margin-top:12px;transition:.2s}
+.next-btn:hover{background:#075985}
+.score-wrap{text-align:center;margin-bottom:16px}
+.score-num{font-family:'Fredoka One',cursive;font-size:2.4rem;color:#0369a1}
+.wrong-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.wrong-item{background:#fff7ed;border:1.5px solid #fdba74;border-radius:12px;padding:10px 14px;font-size:.85rem}
+.wrong-item .wq{font-weight:800;color:#1e293b;margin-bottom:3px}
+.wrong-item .wa{color:#16a34a;font-weight:700}
+.wrong-item .wh{color:#64748b;font-size:.78rem;margin-top:2px}
+.star{position:fixed;font-size:2rem;pointer-events:none;animation:flyUp .9s ease forwards;z-index:999}
+@keyframes flyUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-130px) scale(1.7)}}
+</style>
+</head>
+<body>
+<h1>🔑 Prefixes re- & un-</h1>
+<p class="subtitle">再做一次 · 相反 · 解開 — 前綴大練習</p>
+<div class="dots" id="dots"></div>
+<div id="app"></div>
+
+<script>
+// ── DATA ────────────────────────────────────────────────────────────────
+// Phase 2 — meaning match
+const MEANING = [
+  { word:'replay',  opts:['play again','not play','play slowly'],  ans:0, explain:'re- = again → replay = play again 🎮' },
+  { word:'unseen',  opts:['seen again','cannot see','not seen'],   ans:2, explain:'un- = not → unseen = not seen 👀' },
+  { word:'unzip',   opts:['zip again','opposite of zip','zip up'], ans:1, explain:'un- = opposite of → unzip = opposite of zip 🤐' },
+  { word:'retry',   opts:['not try','try again','stop trying'],    ans:1, explain:'re- = again → retry = try again 💪' },
+  { word:'refill',  opts:['fill again','not fill','empty'],        ans:0, explain:'re- = again → refill = fill again 🧃' },
+  { word:'unlike',  opts:['like again','like more','not like'],    ans:2, explain:'un- = not → unlike = not like 🙅' },
+];
+
+// Phase 3 — choose prefix (homework words)
+const PREFIX = [
+  { root:'do',   zh:'復原、撤銷',  prefix:'un', full:'undo',   tip:'undo = 取消做過的事（opposite of doing）' },
+  { root:'zip',  zh:'拉開拉鍊',   prefix:'un', full:'unzip',  tip:'unzip = 把拉鍊拉開（opposite of zip）' },
+  { root:'tie',  zh:'重新打結',   prefix:'re', full:'retie',  tip:'retie = 再打一次結（tie again）' },
+  { root:'set',  zh:'重設/重新安置', prefix:'re', full:'reset', tip:'reset = 重新設定（set again）' },
+  { root:'box',  zh:'拆箱',       prefix:'un', full:'unbox',  tip:'unbox = 把東西從箱子裡取出（opposite of boxing up）' },
+  { root:'lock', zh:'解鎖',       prefix:'un', full:'unlock', tip:'unlock = 打開鎖（opposite of lock）' },
+  { root:'pack', zh:'拆包/整理行李', prefix:'un', full:'unpack', tip:'unpack = 把東西從袋子拿出來（opposite of pack）' },
+  { root:'play', zh:'重播',       prefix:'re', full:'replay', tip:'replay = 再播放一次（play again）' },
+];
+
+// Phase 4 — sentence fill
+const SENTENCES = [
+  { parts:['I have to ',' pack my suitcase.'], root:'pack', prefix:'un', full:'un', hint:'（把衣服從行李箱拿出來）', explain:'unpack = 把東西從行李箱拿出來 ✈️' },
+  { parts:['Can you ',' fill the ice bucket?'], root:'fill', prefix:'re', full:'re', hint:'（重新裝滿冰塊）', explain:'refill = 重新裝滿 🧊' },
+  { parts:['I will ',' lock the door.'], root:'lock', prefix:'un', full:'un', hint:'（把門打開）', explain:'unlock = 解鎖，打開 🚪' },
+  { parts:['The door is ',' locked.'], root:'locked', prefix:'un', full:'un', hint:'（門沒有鎖）', explain:'unlocked = 沒有鎖上的 🔓' },
+  { parts:['She will ',' make the cake.'], root:'make', prefix:'re', full:'re', hint:'（再做一個蛋糕）', explain:'remake = 重新製作 🎂' },
+  { parts:['He wants to ',' open the box.'], root:'open', prefix:'re', full:'re', hint:'（再打開一次）', explain:'reopen = 再次打開 📦' },
+];
+
+// ── STATE ────────────────────────────────────────────────────────────────
+const PHASES = ['learn','meaning','prefix','sentence','done'];
+const TOTAL_Q = MEANING.length + PREFIX.length + SENTENCES.length;
+let phase=0, qi=0, score=0, wrongs=[], answered=false;
+
+// ── HELPERS ──────────────────────────────────────────────────────────────
+const app = ()=>document.getElementById('app');
+const prog = (n,tot)=>`<div class="prog-wrap"><div class="prog-bar" style="width:${tot?Math.round(n/tot*100):0}%"></div></div>`;
+
+function buildDots(){
+  document.getElementById('dots').innerHTML = PHASES.map((_,i)=>
+    `<div class="dot ${i<phase?'done':i===phase?'active':''}"></div>`
+  ).join('');
+}
+function star(e){
+  const s=document.createElement('div');
+  s.className='star';
+  s.textContent=['⭐','🌟','✨'][Math.floor(Math.random()*3)];
+  s.style.left=(e.clientX-20)+'px';
+  s.style.top=(e.clientY-20)+'px';
+  document.body.appendChild(s);
+  setTimeout(()=>s.remove(),900);
+}
+function nextPhase(){phase++;qi=0;buildDots();renderGame();}
+function renderGame(){
+  const p=PHASES[phase];
+  if(p==='learn')   phLearn();
+  else if(p==='meaning')  phMeaning();
+  else if(p==='prefix')   phPrefix();
+  else if(p==='sentence') phSentence();
+  else phDone();
+}
+
+// ── PHASE 1: LEARN ───────────────────────────────────────────────────────
+function phLearn(){
+  app().innerHTML=`
+  <div class="card">
+    ${prog(0,TOTAL_Q)}
+    <div class="phase-title">📖 認識 re- 和 un-</div>
+    <div class="prefix-grid">
+      <div class="prefix-card re-card">
+        <div class="big">re-</div>
+        <div class="meaning">= again 再一次</div>
+        <div class="examples">
+          reset 重設<br>
+          remake 重做<br>
+          reopen 再開<br>
+          replay 重播<br>
+          refill 重裝<br>
+          retry 再試<br>
+          regrow 再長
+        </div>
+      </div>
+      <div class="prefix-card un-card">
+        <div class="big">un-</div>
+        <div class="meaning">= not / opposite 相反</div>
+        <div class="examples">
+          unsafe 不安全<br>
+          unlock 解鎖<br>
+          unpack 拆包<br>
+          unseen 沒看過<br>
+          unzip 拉開拉鍊<br>
+          unlike 不像<br>
+          unbox 拆箱
+        </div>
+      </div>
+    </div>
+    <div class="rule-tip">
+      💡 <strong>re-</strong> 放在字前面 = 做<em>同樣的事</em>，但<strong>再做一次</strong><br>
+      💡 <strong>un-</strong> 放在字前面 = 做<strong>相反的事</strong>或表示<strong>不是</strong>
+    </div>
+    <div class="practice-list">
+      <div class="ptitle">🔍 看看這些例子：</div>
+      <div class="practice-row"><span class="word">replay</span><span class="eq">=</span><span class="def">play <strong>again</strong> 🎮</span></div>
+      <div class="practice-row"><span class="word">unseen</span><span class="eq">=</span><span class="def"><strong>not</strong> seen 👀</span></div>
+      <div class="practice-row"><span class="word">unzip</span><span class="eq">=</span><span class="def"><strong>opposite of</strong> zip 🤐</span></div>
+      <div class="practice-row"><span class="word">retry</span><span class="eq">=</span><span class="def">try <strong>again</strong> 💪</span></div>
+    </div>
+    <button class="next-btn" onclick="nextPhase()">我懂了！開始練習 →</button>
+  </div>`;
+}
+
+// ── PHASE 2: MEANING MATCH ────────────────────────────────────────────────
+function phMeaning(){
+  if(qi>=MEANING.length){nextPhase();return;}
+  answered=false;
+  const q=MEANING[qi];
+  // highlight prefix
+  const isRe=q.word.startsWith('re');
+  const pfx=isRe?'re':'un';
+  const root=q.word.slice(pfx.length);
+  const wordHtml=`<span style="color:${isRe?'#92400e':'#991b1b'};background:${isRe?'#fde68a':'#fecaca'};border-radius:6px;padding:0 4px">${pfx}-</span>${root}`;
+
+  app().innerHTML=`
+  <div class="card">
+    ${prog(qi,TOTAL_Q)}
+    <div class="phase-title">💡 這個字是什麼意思？</div>
+    <div class="word-display">${wordHtml}</div>
+    <div class="meaning-opts">
+      ${q.opts.map((o,i)=>`<button class="meaning-opt" onclick="checkMeaning(${i},this)">${o}</button>`).join('')}
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div class="counter">第 ${qi+1} / ${MEANING.length} 題</div>
+  </div>`;
+}
+
+function checkMeaning(i,btn){
+  if(answered)return;
+  answered=true;
+  const q=MEANING[qi];
+  document.querySelectorAll('.meaning-opt').forEach(x=>x.disabled=true);
+  if(i===q.ans){
+    btn.classList.add('correct');
+    document.getElementById('fb').className='feedback ok';
+    document.getElementById('fb').textContent='✅ '+q.explain;
+    score++;
+    star({clientX:window.innerWidth/2,clientY:window.innerHeight/2});
+    setTimeout(()=>{qi++;phMeaning();},1100);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.meaning-opt')[q.ans].classList.add('correct');
+    document.getElementById('fb').className='feedback bad';
+    document.getElementById('fb').textContent='❌ '+q.explain;
+    wrongs.push({q:q.word,a:q.opts[q.ans],h:q.explain});
+    setTimeout(()=>{qi++;phMeaning();},1600);
+  }
+}
+
+// ── PHASE 3: CHOOSE PREFIX ────────────────────────────────────────────────
+function phPrefix(){
+  if(qi>=PREFIX.length){nextPhase();return;}
+  answered=false;
+  const q=PREFIX[qi];
+  app().innerHTML=`
+  <div class="card">
+    ${prog(MEANING.length+qi,TOTAL_Q)}
+    <div class="phase-title">✏️ re- 還是 un-？</div>
+    <div class="root-box">
+      <div class="root-blank"><span>___</span>${q.root}</div>
+      <div class="root-zh">${q.zh}</div>
+    </div>
+    <div class="prefix-btn-row">
+      <button class="prefix-btn re-btn" onclick="checkPrefix('re',this)">re-</button>
+      <button class="prefix-btn un-btn" onclick="checkPrefix('un',this)">un-</button>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div class="counter">第 ${qi+1} / ${PREFIX.length} 題</div>
+  </div>`;
+}
+
+function checkPrefix(chosen,btn){
+  if(answered)return;
+  answered=true;
+  const q=PREFIX[qi];
+  document.querySelectorAll('.prefix-btn').forEach(x=>x.disabled=true);
+  // update blank display
+  document.querySelector('.root-blank').innerHTML=
+    `<span style="color:${q.prefix==='re'?'#92400e':'#991b1b'};background:${q.prefix==='re'?'#fde68a':'#fecaca'};border-radius:6px;padding:0 4px">${q.prefix}-</span>${q.root}`;
+  if(chosen===q.prefix){
+    btn.style.background=q.prefix==='re'?'#fde68a':'#fecaca';
+    btn.style.boxShadow='0 0 0 3px #4ade80';
+    document.getElementById('fb').className='feedback ok';
+    document.getElementById('fb').textContent='✅ '+q.full+' — '+q.tip;
+    score++;
+    star({clientX:window.innerWidth/2,clientY:window.innerHeight/2});
+    setTimeout(()=>{qi++;phPrefix();},1200);
+  } else {
+    btn.style.background='#fee2e2';
+    btn.style.boxShadow='0 0 0 3px #f87171';
+    btn.style.animation='shake .3s';
+    document.getElementById('fb').className='feedback bad';
+    document.getElementById('fb').textContent='❌ 應該是 '+q.prefix+'- → '+q.full+' （'+q.tip+'）';
+    wrongs.push({q:'___'+q.root+'　'+q.zh,a:q.prefix+'-'+q.root+' ('+q.full+')',h:q.tip});
+    setTimeout(()=>{qi++;phPrefix();},1700);
+  }
+}
+
+// ── PHASE 4: SENTENCE FILL ────────────────────────────────────────────────
+function phSentence(){
+  if(qi>=SENTENCES.length){nextPhase();return;}
+  answered=false;
+  const q=SENTENCES[qi];
+  app().innerHTML=`
+  <div class="card">
+    ${prog(MEANING.length+PREFIX.length+qi,TOTAL_Q)}
+    <div class="phase-title">📝 填入正確前綴！</div>
+    <div class="sentence-box">
+      ${q.parts[0]}<span class="blank" id="bl">___</span>${q.parts[1]}
+    </div>
+    <div class="sent-hint">${q.hint}</div>
+    <div class="prefix-btn-row">
+      <button class="prefix-btn re-btn" onclick="checkSentence('re',this)">re-</button>
+      <button class="prefix-btn un-btn" onclick="checkSentence('un',this)">un-</button>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div class="counter">第 ${qi+1} / ${SENTENCES.length} 題</div>
+  </div>`;
+}
+
+function checkSentence(chosen,btn){
+  if(answered)return;
+  answered=true;
+  const q=SENTENCES[qi];
+  document.querySelectorAll('.prefix-btn').forEach(x=>x.disabled=true);
+  const bl=document.getElementById('bl');
+  bl.textContent=q.full+'-';
+  if(chosen===q.prefix){
+    bl.className=`blank filled-${q.prefix}`;
+    btn.style.boxShadow='0 0 0 3px #4ade80';
+    document.getElementById('fb').className='feedback ok';
+    document.getElementById('fb').textContent='✅ '+q.explain;
+    score++;
+    star({clientX:window.innerWidth/2,clientY:window.innerHeight/2});
+    setTimeout(()=>{qi++;phSentence();},1200);
+  } else {
+    bl.className=`blank filled-${q.prefix}`;
+    bl.textContent=q.prefix+'-';
+    btn.style.boxShadow='0 0 0 3px #f87171';
+    btn.style.animation='shake .3s';
+    document.getElementById('fb').className='feedback bad';
+    document.getElementById('fb').textContent='❌ 應該是 '+q.prefix+'- → '+q.explain;
+    wrongs.push({q:q.parts[0]+'___'+q.parts[1],a:q.prefix+'-',h:q.explain});
+    setTimeout(()=>{qi++;phSentence();},1700);
+  }
+}
+
+// ── DONE ─────────────────────────────────────────────────────────────────
+function phDone(){
+  const pct=Math.round(score/TOTAL_Q*100);
+  const medal=pct>=90?'🏆':pct>=70?'🥈':'💪';
+  app().innerHTML=`
+  <div class="card">
+    <div class="score-wrap">
+      <div style="font-size:3.2rem">${medal}</div>
+      <div class="score-num">${score} / ${TOTAL_Q}</div>
+      <div style="color:#64748b;font-size:.9rem;margin-top:4px">${pct}% — ${pct>=90?'前綴達人！🎉':pct>=70?'很棒！繼續加油！':'再練一次會更好 💪'}</div>
+    </div>
+    ${wrongs.length?`
+      <div style="font-family:'Fredoka One',cursive;color:#dc2626;margin-bottom:10px;font-size:.95rem">❌ 錯題複習</div>
+      <ul class="wrong-list">
+        ${wrongs.map(w=>`
+          <li class="wrong-item">
+            <div class="wq">📝 ${w.q}</div>
+            <div class="wa">✅ ${w.a}</div>
+            <div class="wh">${w.h}</div>
+          </li>`).join('')}
+      </ul>`
+    :'<div style="text-align:center;color:#16a34a;font-weight:800;font-size:1rem;margin-bottom:8px">🎉 全對！前綴高手！</div>'}
+    <button class="next-btn" style="margin-top:16px" onclick="restart()">再玩一次 🔄</button>
+  </div>`;
+}
+
+function restart(){phase=0;qi=0;score=0;wrongs=[];answered=false;buildDots();renderGame();}
+buildDots();
+renderGame();
+</script>
+</body>
+</html>
