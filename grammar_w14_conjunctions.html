@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yunman — Conjunctions & Transitions!</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#fff8f0;min-height:100vh;padding:16px}
+h1{font-family:'Fredoka One',cursive;text-align:center;font-size:1.9rem;color:#7c3aed;margin-bottom:4px}
+.subtitle{text-align:center;color:#888;font-size:.9rem;margin-bottom:14px}
+
+.prog-wrap{background:#e9d5ff;border-radius:20px;height:12px;margin-bottom:12px;overflow:hidden;max-width:540px;margin-left:auto;margin-right:auto}
+.prog-fill{height:100%;background:linear-gradient(90deg,#7c3aed,#a78bfa);border-radius:20px;transition:width .4s ease}
+.score-row{text-align:center;font-weight:800;color:#7c3aed;margin-bottom:14px;font-size:1rem}
+
+.phase-nav{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
+.pdot{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;background:#eee;border:2px solid #ddd;transition:.3s}
+.pdot.active{background:#7c3aed;border-color:#7c3aed}
+.pdot.done{background:#16a34a;border-color:#16a34a}
+
+.card{background:#fff;border-radius:20px;padding:22px;box-shadow:0 4px 16px rgba(0,0,0,.08);max-width:540px;margin:0 auto 16px;animation:popIn .3s ease}
+@keyframes popIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+
+.badge{display:inline-block;background:#7c3aed;color:#fff;font-family:'Fredoka One',cursive;font-size:.85rem;border-radius:20px;padding:3px 14px;margin-bottom:10px}
+.phase-title{font-family:'Fredoka One',cursive;font-size:1.25rem;color:#333;margin-bottom:6px}
+.q-num{font-size:.8rem;color:#94a3b8;text-align:center;margin-bottom:8px}
+
+/* LEARN */
+.conj-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0}
+.cbox{border-radius:14px;padding:14px 8px;text-align:center}
+.cbox .icon{font-size:1.8rem;margin-bottom:4px}
+.cbox .word{font-family:'Fredoka One',cursive;font-size:1.4rem;margin-bottom:2px}
+.cbox .zh{font-size:.8rem;color:#666;margin-bottom:6px}
+.cbox .ex{font-size:.75rem;color:#555;line-height:1.4;font-style:italic}
+.and-b{background:#dbeafe;border:2px solid #93c5fd}.and-b .word{color:#1e40af}
+.or-b{background:#fef9c3;border:2px solid #fcd34d}.or-b .word{color:#92400e}
+.but-b{background:#fce7f3;border:2px solid #f9a8d4}.but-b .word{color:#9d174d}
+.seq-row{display:flex;align-items:center;gap:6px;background:#f0fdf4;border:2px solid #86efac;border-radius:12px;padding:12px;margin-top:10px;flex-wrap:wrap;justify-content:center}
+.sc{background:#16a34a;color:#fff;border-radius:20px;padding:5px 14px;font-family:'Fredoka One',cursive;font-size:1rem}
+.arr{color:#16a34a;font-size:1.2rem;font-weight:900}
+.seq-zh{font-size:.78rem;color:#555;width:100%;text-align:center;margin-top:4px}
+
+/* PHASE 2 — SPOT */
+.sent-wrap{display:flex;flex-wrap:wrap;gap:5px;align-items:center;justify-content:center;background:#faf5ff;border:2px dashed #c4b5fd;border-radius:14px;padding:14px;margin-bottom:14px}
+.wb{display:inline-block;background:#f3f4f6;border:2px solid #e5e7eb;border-radius:8px;padding:4px 9px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;color:#374151;cursor:pointer;transition:.15s;line-height:1.3}
+.wb:hover{background:#ede9fe;border-color:#a78bfa}
+.wb.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+.wb.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+.wb:disabled{cursor:default}
+
+/* PHASE 3 — TRANSITION */
+.trans-sent{font-size:1.05rem;font-weight:700;color:#1e293b;text-align:center;background:#f0fdf4;border:2px dashed #86efac;border-radius:14px;padding:14px;margin-bottom:14px;line-height:1.8}
+.blank-slot{display:inline-block;min-width:66px;border-bottom:3px solid #16a34a;color:#16a34a;font-weight:800;text-align:center;padding:0 4px}
+.trans-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tb{background:#f0fdf4;border:2.5px solid #86efac;border-radius:14px;padding:12px;font-family:'Fredoka One',cursive;font-size:1.15rem;color:#166534;cursor:pointer;transition:.15s;text-align:center}
+.tb:hover{background:#dcfce7;border-color:#4ade80}
+.tb.correct{background:#dcfce7;border-color:#4ade80}
+.tb.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+.tb:disabled{cursor:default}
+
+/* PHASE 4 — COMPOUND */
+.cp-parts{background:#fff7ed;border:2px dashed #fb923c;border-radius:14px;padding:14px;margin-bottom:14px;text-align:center}
+.cp-sent{font-size:1rem;font-weight:700;color:#1e293b;line-height:1.9}
+.cp-plus{font-size:1.2rem;color:#fb923c;font-family:'Fredoka One',cursive;margin:2px 0}
+.cj-opts{display:flex;gap:10px;justify-content:center}
+.cjb{flex:1;max-width:110px;background:#fff7ed;border:2.5px solid #fb923c;border-radius:14px;padding:14px 8px;font-family:'Fredoka One',cursive;font-size:1.3rem;color:#c2410c;cursor:pointer;transition:.15s;text-align:center}
+.cjb:hover{background:#ffedd5;border-color:#f97316}
+.cjb.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+.cjb.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+.cjb:disabled{cursor:default}
+
+/* FEEDBACK */
+.fb{text-align:center;font-family:'Fredoka One',cursive;font-size:1.05rem;padding:10px;border-radius:12px;margin-top:8px;min-height:44px}
+.fb.ok{background:#dcfce7;color:#166534}
+.fb.bad{background:#fee2e2;color:#991b1b}
+
+/* NEXT BTN */
+.next-btn{display:block;width:100%;background:#7c3aed;color:#fff;border:none;border-radius:14px;padding:14px;font-family:'Fredoka One',cursive;font-size:1.2rem;cursor:pointer;margin-top:12px;transition:.2s}
+.next-btn:hover{background:#6d28d9}
+
+/* DONE */
+.score-big{font-family:'Fredoka One',cursive;font-size:3rem;color:#7c3aed;text-align:center;margin-bottom:4px}
+.score-msg{text-align:center;color:#666;margin-bottom:16px;font-size:1rem}
+.wrong-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.wi{background:#fff7ed;border-left:4px solid #f59e0b;border-radius:10px;padding:10px 12px;font-size:.9rem;line-height:1.6}
+.wi .wq{font-weight:700;color:#1e293b;margin-bottom:2px}
+.wi .wa{color:#16a34a;font-weight:700}
+.wi .wh{color:#64748b;font-size:.82rem;margin-top:2px}
+
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.star-pop{position:fixed;pointer-events:none;font-size:2rem;animation:flyUp .8s ease forwards;z-index:999}
+@keyframes flyUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-90px) scale(1.5)}}
+</style>
+</head>
+<body>
+
+<h1>✨ Conjunctions &amp; Transitions</h1>
+<p class="subtitle">Week 14 — CET Grammar</p>
+
+<div class="phase-nav" id="phaseNav"></div>
+<div class="prog-wrap"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+<div class="score-row" id="scoreRow">⭐ 0 / 0</div>
+<div id="root"></div>
+
+<script>
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+
+// Phase 2: tap the conjunction in the sentence
+// words = array of word strings, conjIdx = index of the conjunction word
+const CONJ_QS = [
+  {words:['Tom','is','sad,','and','he','cried','loudly.'],            conjIdx:3, explain:'"and" 用來連接兩個有關的動作'},
+  {words:['You','may','do','your','homework','now,','or','you','may','do','it','later.'], conjIdx:6, explain:'"or" 表示選擇 — 兩個都可以'},
+  {words:['It','is','raining','now,','but','I','still','want','to','play','outside.'], conjIdx:4, explain:'"but" 表示轉折 — 前後相反'},
+  {words:['Do','you','want','a','birthday','hat,','or','do','you','want','a','balloon?'], conjIdx:6, explain:'"or" 給出兩個選項'},
+  {words:['She','likes','dogs,','but','she','is','afraid','of','cats.'], conjIdx:3, explain:'"but" 表示轉折/對比'},
+  {words:['We','can','walk','to','school,','or','we','can','take','the','bus.'], conjIdx:5, explain:'"or" 表示兩種方式都可以'},
+];
+
+// Phase 3: fill in the transition word
+const TRANS_QS = [
+  {sent:'___, leaves appear on the trees in spring.',      ans:'First', opts:['First','Next','Then','Last'], explain:'First 第一 — 春天是四季的第一個'},
+  {sent:'___, the sunlight helps plants grow in summer.',  ans:'Next',  opts:['First','Next','Then','Last'], explain:'Next 接下來 — 夏天排第二'},
+  {sent:'___, leaves change colors in fall.',              ans:'Then',  opts:['First','Next','Then','Last'], explain:'Then 然後 — 秋天排第三'},
+  {sent:'___, trees and plants stop growing in winter.',   ans:'Last',  opts:['First','Next','Then','Last'], explain:'Last 最後 — 冬天是最後一個季節'},
+  {sent:'___, I wake up and brush my teeth.',              ans:'First', opts:['Next','First','Last','Then'], explain:'First 第一 — 起床是早上的第一件事'},
+  {sent:'___, I eat breakfast with my family.',            ans:'Next',  opts:['Last','Then','First','Next'], explain:'Next 接下來 — 刷牙後吃早飯'},
+  {sent:'___, I pack my bag and put on my shoes.',         ans:'Then',  opts:['Then','First','Last','Next'], explain:'Then 然後 — 再來整理書包'},
+  {sent:'___, I walk to school.',                          ans:'Last',  opts:['Next','Then','First','Last'], explain:'Last 最後 — 上學是最後一件事'},
+];
+
+// Phase 4: choose and / but / or to join the sentences
+const COMP_QS = [
+  {p1:"Mila fell off her bike,",   p2:"she bumped her head.",     ans:'and', explain:'"and" 連接兩個連續發生的事'},
+  {p1:"I love fall,",              p2:"I don\'t like winter.",    ans:'but', explain:'"but" 轉折 — 喜歡/不喜歡相反'},
+  {p1:"Do you live in Taipei,",    p2:"do you live in Hsinchu?",  ans:'or',  explain:'"or" 給出兩個選擇'},
+  {p1:"She was very tired,",       p2:"she went to bed early.",   ans:'and', explain:'"and" 連接兩個有關的事'},
+  {p1:"I like pizza,",             p2:"I don\'t like olives.",    ans:'but', explain:'"but" 表示喜好的對比'},
+  {p1:"Do you want juice,",        p2:"do you want water?",       ans:'or',  explain:'"or" 從兩個飲料中選一個'},
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+const PHASES = ['learn','conj','trans','comp','done'];
+const ICONS  = ['📌','🔍','⏩','🔗','🏆'];
+let phase = 0, qi = 0, score = 0, total = 0, wrongs = [];
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+function render() {
+  document.getElementById('root').innerHTML = '';
+  buildNav();
+  updateHUD();
+  phases[PHASES[phase]]();
+}
+
+function buildNav() {
+  const nav = document.getElementById('phaseNav');
+  nav.innerHTML = '';
+  PHASES.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'pdot' + (i < phase ? ' done' : i === phase ? ' active' : '');
+    d.textContent = ICONS[i];
+    nav.appendChild(d);
+  });
+}
+
+function updateHUD() {
+  const pct = phase >= PHASES.length - 1 ? 100 : (phase / (PHASES.length - 1)) * 100;
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('scoreRow').textContent = '⭐ ' + score + ' / ' + total;
+}
+
+function card(html) {
+  const c = document.createElement('div');
+  c.className = 'card';
+  if (html) c.innerHTML = html;
+  document.getElementById('root').appendChild(c);
+  return c;
+}
+
+function star(e) {
+  const s = document.createElement('div');
+  s.className = 'star-pop'; s.textContent = '⭐';
+  s.style.left = (e.clientX - 16) + 'px';
+  s.style.top  = (e.clientY - 16) + 'px';
+  document.body.appendChild(s);
+  setTimeout(() => s.remove(), 850);
+}
+
+function nextBtn(label, fn) {
+  const b = document.createElement('button');
+  b.className = 'next-btn'; b.textContent = label;
+  b.onclick = fn;
+  return b;
+}
+
+function advance() {
+  qi++;
+  if (qi >= currentPhaseLen()) { phase++; qi = 0; }
+  render();
+}
+
+function currentPhaseLen() {
+  if (PHASES[phase] === 'conj')  return CONJ_QS.length;
+  if (PHASES[phase] === 'trans') return TRANS_QS.length;
+  if (PHASES[phase] === 'comp')  return COMP_QS.length;
+  return 1;
+}
+
+// ─── PHASES ───────────────────────────────────────────────────────────────────
+const phases = {
+
+  learn() {
+    const c = card(`
+      <div class="badge">📌 Learn First!</div>
+      <div class="phase-title">Conjunctions &amp; Transition Words</div>
+      <div class="conj-grid">
+        <div class="cbox and-b">
+          <div class="icon">➕</div>
+          <div class="word">and</div>
+          <div class="zh">和、還有</div>
+          <div class="ex">I like cats and dogs.</div>
+        </div>
+        <div class="cbox or-b">
+          <div class="icon">❓</div>
+          <div class="word">or</div>
+          <div class="zh">或者、還是</div>
+          <div class="ex">Juice or water?</div>
+        </div>
+        <div class="cbox but-b">
+          <div class="icon">↔️</div>
+          <div class="word">but</div>
+          <div class="zh">但是、可是</div>
+          <div class="ex">I want to play, but it is raining.</div>
+        </div>
+      </div>
+      <div class="seq-row">
+        <span class="sc">First</span>
+        <span class="arr">→</span>
+        <span class="sc">Next</span>
+        <span class="arr">→</span>
+        <span class="sc">Then</span>
+        <span class="arr">→</span>
+        <span class="sc">Last</span>
+        <div class="seq-zh">順序詞 — 說明事情發生的先後 (第一 → 接著 → 然後 → 最後)</div>
+      </div>
+    `);
+    c.appendChild(nextBtn("OK, Let's Play! 🎉", () => { phase = 1; qi = 0; render(); }));
+  },
+
+  conj() {
+    const q = CONJ_QS[qi];
+    const c = card('');
+    c.innerHTML = `
+      <div class="badge">🔍 Phase 1 — Spot the Conjunction</div>
+      <div class="phase-title">Tap the conjunction! (and / or / but)</div>
+      <div class="q-num">Question ${qi + 1} of ${CONJ_QS.length}</div>
+      <div class="sent-wrap" id="sw"></div>
+      <div class="fb" id="fb"></div>
+    `;
+    const sw = c.querySelector('#sw');
+    const fbEl = c.querySelector('#fb');
+    let done = false, firstTry = true;
+
+    q.words.forEach((w, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'wb';
+      btn.textContent = w;
+      btn.onclick = (e) => {
+        if (done) return;
+        if (i === q.conjIdx) {
+          done = true;
+          total++;
+          btn.classList.add('correct');
+          sw.querySelectorAll('.wb').forEach(b => b.disabled = true);
+          fbEl.textContent = '✅ ' + q.explain;
+          fbEl.className = 'fb ok';
+          if (firstTry) { score++; star(e); }
+          updateHUD();
+          setTimeout(advance, 1300);
+        } else {
+          firstTry = false;
+          btn.classList.add('wrong');
+          setTimeout(() => btn.classList.remove('wrong'), 400);
+          fbEl.textContent = '❌ That\'s not a conjunction — keep looking!';
+          fbEl.className = 'fb bad';
+        }
+      };
+      sw.appendChild(btn);
+    });
+  },
+
+  trans() {
+    const q = TRANS_QS[qi];
+    const c = card('');
+    const dispSent = q.sent.replace('___', '<span class="blank-slot">___</span>');
+    c.innerHTML = `
+      <div class="badge">⏩ Phase 2 — Transition Words</div>
+      <div class="phase-title">Pick the right order word!</div>
+      <div class="q-num">Question ${qi + 1} of ${TRANS_QS.length}</div>
+      <div class="trans-sent">${dispSent}</div>
+      <div class="trans-opts" id="tops"></div>
+      <div class="fb" id="fb"></div>
+    `;
+    const tops = c.querySelector('#tops');
+    const fbEl = c.querySelector('#fb');
+    let done = false;
+
+    q.opts.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'tb';
+      btn.textContent = opt;
+      btn.onclick = (e) => {
+        if (done) return;
+        done = true; total++;
+        if (opt === q.ans) {
+          btn.classList.add('correct');
+          fbEl.textContent = '✅ ' + q.explain;
+          fbEl.className = 'fb ok';
+          score++; star(e);
+        } else {
+          btn.classList.add('wrong');
+          tops.querySelectorAll('.tb').forEach(b => {
+            if (b.textContent === q.ans) b.classList.add('correct');
+          });
+          fbEl.textContent = '❌ The answer is "' + q.ans + '". ' + q.explain;
+          fbEl.className = 'fb bad';
+          wrongs.push({ q: q.sent, a: q.ans, hint: q.explain });
+        }
+        tops.querySelectorAll('.tb').forEach(b => b.disabled = true);
+        updateHUD();
+        setTimeout(advance, 1500);
+      };
+      tops.appendChild(btn);
+    });
+  },
+
+  comp() {
+    const q = COMP_QS[qi];
+    const c = card('');
+    c.innerHTML = `
+      <div class="badge">🔗 Phase 3 — Compound Sentences</div>
+      <div class="phase-title">Pick the best conjunction!</div>
+      <div class="q-num">Question ${qi + 1} of ${COMP_QS.length}</div>
+      <div class="cp-parts">
+        <div class="cp-sent">${q.p1}</div>
+        <div class="cp-plus">+ ? +</div>
+        <div class="cp-sent">${q.p2}</div>
+      </div>
+      <div class="cj-opts" id="cjopts"></div>
+      <div class="fb" id="fb"></div>
+    `;
+    const cjopts = c.querySelector('#cjopts');
+    const fbEl   = c.querySelector('#fb');
+    let done = false;
+
+    ['and', 'but', 'or'].forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'cjb';
+      btn.textContent = opt;
+      btn.onclick = (e) => {
+        if (done) return;
+        done = true; total++;
+        if (opt === q.ans) {
+          btn.classList.add('correct');
+          fbEl.textContent = '✅ ' + q.explain;
+          fbEl.className = 'fb ok';
+          score++; star(e);
+        } else {
+          btn.classList.add('wrong');
+          cjopts.querySelectorAll('.cjb').forEach(b => {
+            if (b.textContent === q.ans) b.classList.add('correct');
+          });
+          fbEl.textContent = '❌ The answer is "' + q.ans + '". ' + q.explain;
+          fbEl.className = 'fb bad';
+          wrongs.push({ q: q.p1 + ' ___ ' + q.p2, a: q.ans, hint: q.explain });
+        }
+        cjopts.querySelectorAll('.cjb').forEach(b => b.disabled = true);
+        updateHUD();
+        setTimeout(advance, 1500);
+      };
+      cjopts.appendChild(btn);
+    });
+  },
+
+  done() {
+    const pct = total > 0 ? Math.round(score / total * 100) : 0;
+    const emoji = pct >= 90 ? '🏆' : pct >= 70 ? '🌟' : '💪';
+    const msg   = pct >= 90 ? "Amazing! You're a Conjunction Master! 🎉"
+                : pct >= 70 ? "Great job! Keep practising! 💪"
+                : "Good try! Let's review the tricky ones 📚";
+    const c = card(`
+      <div class="score-big">${emoji} ${score} / ${total}</div>
+      <div class="score-msg">${msg}</div>
+      ${wrongs.length > 0 ? `
+        <div style="font-family:'Fredoka One',cursive;color:#7c3aed;font-size:1rem;margin-bottom:10px">📝 Let's review:</div>
+        <ul class="wrong-list">
+          ${wrongs.map(w => `
+            <li class="wi">
+              <div class="wq">${w.q}</div>
+              <div class="wa">✅ ${w.a}</div>
+              <div class="wh">${w.hint}</div>
+            </li>`).join('')}
+        </ul>` : '<div style="text-align:center;font-size:1.5rem;margin:10px">🎊 No mistakes — Perfect!</div>'}
+    `);
+    c.appendChild(nextBtn('Play Again 🔄', () => {
+      phase = 0; qi = 0; score = 0; total = 0; wrongs = [];
+      render();
+    }));
+  }
+};
+
+// ─── START ────────────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
