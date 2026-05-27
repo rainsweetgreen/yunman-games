@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yunman — 3-Letter Blends!</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#fff8f0;min-height:100vh;padding:16px}
+h1{font-family:'Fredoka One',cursive;text-align:center;font-size:1.9rem;color:#0d9488;margin-bottom:4px}
+.subtitle{text-align:center;color:#888;font-size:.9rem;margin-bottom:14px}
+
+.prog-wrap{background:#ccfbf1;border-radius:20px;height:12px;margin-bottom:12px;overflow:hidden;max-width:540px;margin-left:auto;margin-right:auto}
+.prog-fill{height:100%;background:linear-gradient(90deg,#0d9488,#2dd4bf);border-radius:20px;transition:width .4s ease}
+.score-row{text-align:center;font-weight:800;color:#0d9488;margin-bottom:14px;font-size:1rem}
+
+.phase-nav{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
+.pdot{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;background:#eee;border:2px solid #ddd;transition:.3s}
+.pdot.active{background:#0d9488;border-color:#0d9488}
+.pdot.done{background:#16a34a;border-color:#16a34a}
+
+.card{background:#fff;border-radius:20px;padding:22px;box-shadow:0 4px 16px rgba(0,0,0,.08);max-width:540px;margin:0 auto 16px;animation:popIn .3s ease}
+@keyframes popIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+.badge{display:inline-block;background:#0d9488;color:#fff;font-family:'Fredoka One',cursive;font-size:.85rem;border-radius:20px;padding:3px 14px;margin-bottom:10px}
+.phase-title{font-family:'Fredoka One',cursive;font-size:1.25rem;color:#333;margin-bottom:8px}
+.q-num{font-size:.8rem;color:#94a3b8;text-align:center;margin-bottom:8px}
+
+/* ── LEARN ─────────────────────────────────────────────────────── */
+.learn-intro{background:#f0fdfa;border:2px solid #5eead4;border-radius:12px;padding:10px 14px;font-size:.9rem;color:#134e4a;margin-bottom:14px;line-height:1.6}
+.learn-intro strong{color:#0d9488}
+.blend-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:4px}
+.bcard{border-radius:14px;padding:12px 6px;text-align:center;border:2px solid}
+.bcard .blend{font-family:'Fredoka One',cursive;font-size:1.5rem}
+.bcard .full{font-size:.85rem;font-weight:800;margin:3px 0;color:#1e293b}
+.bcard .blend-part{color:inherit}
+.bcard .rest-part{color:#94a3b8}
+.bcard .emoji{font-size:1.4rem;margin-bottom:2px}
+.bcard .zh{font-size:.72rem;color:#555}
+
+.squ-c{background:#fef9c3;border-color:#fde047}.squ-c .blend{color:#854d0e}
+.thr-c{background:#fee2e2;border-color:#fca5a5}.thr-c .blend{color:#991b1b}
+.spl-c{background:#dbeafe;border-color:#93c5fd}.spl-c .blend{color:#1e40af}
+.scr-c{background:#fce7f3;border-color:#f9a8d4}.scr-c .blend{color:#9d174d}
+.str-c{background:#dcfce7;border-color:#86efac}.str-c .blend{color:#166534}
+.spr-c{background:#ede9fe;border-color:#c4b5fd}.spr-c .blend{color:#5b21b6}
+
+/* ── PHASE 2 — SPOT THE BLEND ──────────────────────────────────── */
+.word-display{text-align:center;background:#f0fdfa;border:3px dashed #5eead4;border-radius:16px;padding:18px;margin-bottom:16px}
+.word-blend{font-family:'Fredoka One',cursive;font-size:2.8rem;color:#0d9488;letter-spacing:2px}
+.word-rest{font-family:'Fredoka One',cursive;font-size:2.8rem;color:#94a3b8;letter-spacing:2px}
+.word-emoji{font-size:2rem;margin-bottom:4px}
+.blend-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.blend-btn{background:#f0fdfa;border:2.5px solid #5eead4;border-radius:14px;padding:14px;font-family:'Fredoka One',cursive;font-size:1.4rem;color:#0f766e;cursor:pointer;transition:.15s;text-align:center;letter-spacing:1px}
+.blend-btn:hover{background:#ccfbf1;border-color:#2dd4bf}
+.blend-btn.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+.blend-btn.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+.blend-btn:disabled{cursor:default}
+
+/* ── PHASE 3 — FILL THE BLANK ──────────────────────────────────── */
+.fill-display{text-align:center;background:#fff7ed;border:3px dashed #fb923c;border-radius:16px;padding:18px;margin-bottom:16px}
+.fill-blank{font-family:'Fredoka One',cursive;font-size:2.6rem;color:#ea580c;letter-spacing:2px;border-bottom:4px solid #ea580c;padding:0 6px;display:inline-block;min-width:80px}
+.fill-rest{font-family:'Fredoka One',cursive;font-size:2.6rem;color:#1e293b;letter-spacing:2px}
+
+/* ── PHASE 4 — PICK THE WORD ───────────────────────────────────── */
+.clue-box{text-align:center;background:#f0fdfa;border:2px dashed #5eead4;border-radius:16px;padding:16px;margin-bottom:16px}
+.clue-emoji{font-size:3rem;margin-bottom:4px}
+.clue-zh{font-family:'Fredoka One',cursive;font-size:1.3rem;color:#0d9488;margin-bottom:4px}
+.clue-sent{font-size:.95rem;color:#475569;font-weight:700;line-height:1.6}
+.clue-blank{display:inline-block;min-width:80px;border-bottom:2.5px solid #0d9488;color:#0d9488;font-weight:800;text-align:center}
+.word-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.word-btn{background:#f0fdfa;border:2.5px solid #5eead4;border-radius:14px;padding:13px;font-family:'Fredoka One',cursive;font-size:1.15rem;color:#0f766e;cursor:pointer;transition:.15s;text-align:center}
+.word-btn:hover{background:#ccfbf1;border-color:#2dd4bf}
+.word-btn.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+.word-btn.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+.word-btn:disabled{cursor:default}
+
+/* ── SHARED ─────────────────────────────────────────────────────── */
+.fb{text-align:center;font-family:'Fredoka One',cursive;font-size:1.05rem;padding:10px;border-radius:12px;margin-top:8px;min-height:44px}
+.fb.ok{background:#dcfce7;color:#166534}
+.fb.bad{background:#fee2e2;color:#991b1b}
+
+.next-btn{display:block;width:100%;background:#0d9488;color:#fff;border:none;border-radius:14px;padding:14px;font-family:'Fredoka One',cursive;font-size:1.2rem;cursor:pointer;margin-top:12px;transition:.2s}
+.next-btn:hover{background:#0f766e}
+
+/* ── DONE ───────────────────────────────────────────────────────── */
+.score-big{font-family:'Fredoka One',cursive;font-size:3rem;color:#0d9488;text-align:center;margin-bottom:4px}
+.score-msg{text-align:center;color:#666;margin-bottom:16px;font-size:1rem}
+.wrong-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.wi{background:#fff7ed;border-left:4px solid #f59e0b;border-radius:10px;padding:10px 12px;font-size:.9rem;line-height:1.6}
+.wi .wq{font-weight:700;color:#1e293b;margin-bottom:2px}
+.wi .wa{color:#0d9488;font-weight:700}
+.wi .wh{color:#64748b;font-size:.82rem;margin-top:2px}
+
+.star-pop{position:fixed;pointer-events:none;font-size:2rem;animation:flyUp .8s ease forwards;z-index:999}
+@keyframes flyUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-90px) scale(1.5)}}
+</style>
+</head>
+<body>
+
+<h1>🔤 3-Letter Blends</h1>
+<p class="subtitle">Week 15 — Consonant Blends &amp; Trigraphs</p>
+
+<div class="phase-nav" id="phaseNav"></div>
+<div class="prog-wrap"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+<div class="score-row" id="scoreRow">⭐ 0 / 0</div>
+<div id="root"></div>
+
+<script>
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+const WORDS = [
+  { blend:'squ', rest:'ish',  word:'squish',  emoji:'🫳', zh:'擠壓、捏扁', cls:'squ-c',
+    sent:'You ___ the sponge to get the water out.',   explain:'squ = s + kw 合在一起，像擠東西的聲音' },
+  { blend:'thr', rest:'ow',   word:'throw',   emoji:'🏈', zh:'丟、投擲',   cls:'thr-c',
+    sent:'___ the ball to your friend!',              explain:'thr = t + h + r 三個音快速連起來' },
+  { blend:'spl', rest:'int',  word:'splint',  emoji:'🩹', zh:'夾板',       cls:'spl-c',
+    sent:'A ___ supports a broken arm.',              explain:'spl = s + p + l 三音連讀' },
+  { blend:'scr', rest:'ape',  word:'scrape',  emoji:'🦵', zh:'刮傷、磨破', cls:'scr-c',
+    sent:'I fell and I ___ my knee.',                 explain:'scr = s + k + r 像刮東西的音' },
+  { blend:'str', rest:'ong',  word:'strong',  emoji:'💪', zh:'強壯',       cls:'str-c',
+    sent:'She is very ___ and can lift heavy boxes.', explain:'str = s + t + r 三音連讀，像"強"的力量' },
+  { blend:'spr', rest:'outs', word:'sprouts', emoji:'🌱', zh:'嫩芽、豆芽', cls:'spr-c',
+    sent:'___ grow from seeds in spring.',            explain:'spr = s + p + r 像植物往外伸展的感覺' },
+];
+
+// ─── PHASE 2: Spot the blend — for each word, which blend starts it?
+const SPOT_QS = WORDS.map((w, i) => ({
+  word: w.word, blend: w.blend, rest: w.rest, emoji: w.emoji, zh: w.zh, explain: w.explain,
+  opts: shuffle([w.blend, ...WORDS.filter((_,j)=>j!==i).map(x=>x.blend).slice(0,3)])
+}));
+
+// ─── PHASE 3: Fill the blank — ___rest → pick blend
+const FILL_QS = WORDS.map((w, i) => ({
+  rest: w.rest, ans: w.blend, word: w.word, explain: w.explain,
+  opts: shuffle([w.blend, ...WORDS.filter((_,j)=>j!==i).map(x=>x.blend).slice(0,3)])
+}));
+
+// ─── PHASE 4: Pick the word — emoji + sentence → full word
+const PICK_QS = WORDS.map((w, i) => ({
+  emoji: w.emoji, zh: w.zh, sent: w.sent, ans: w.word, explain: w.explain,
+  opts: shuffle([w.word, ...WORDS.filter((_,j)=>j!==i).map(x=>x.word).slice(0,3)])
+}));
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+const PHASES = ['learn','spot','fill','pick','done'];
+const ICONS  = ['📌','🔍','✏️','🧠','🏆'];
+let phase=0, qi=0, score=0, total=0, wrongs=[];
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+function shuffle(a){ return [...a].sort(()=>Math.random()-.5); }
+
+function render(){
+  document.getElementById('root').innerHTML='';
+  buildNav(); updateHUD();
+  phases[PHASES[phase]]();
+}
+function buildNav(){
+  const nav=document.getElementById('phaseNav'); nav.innerHTML='';
+  PHASES.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='pdot'+(i<phase?' done':i===phase?' active':'');
+    d.textContent=ICONS[i]; nav.appendChild(d);
+  });
+}
+function updateHUD(){
+  const pct=phase>=PHASES.length-1?100:(phase/(PHASES.length-1))*100;
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('scoreRow').textContent='⭐ '+score+' / '+total;
+}
+function card(html){
+  const c=document.createElement('div'); c.className='card';
+  if(html) c.innerHTML=html;
+  document.getElementById('root').appendChild(c); return c;
+}
+function star(e){
+  const s=document.createElement('div'); s.className='star-pop'; s.textContent='⭐';
+  s.style.left=(e.clientX-16)+'px'; s.style.top=(e.clientY-16)+'px';
+  document.body.appendChild(s); setTimeout(()=>s.remove(),850);
+}
+function nextBtn(label,fn){
+  const b=document.createElement('button'); b.className='next-btn'; b.textContent=label;
+  b.onclick=fn; return b;
+}
+function advance(){
+  qi++;
+  const lens={spot:SPOT_QS.length, fill:FILL_QS.length, pick:PICK_QS.length};
+  const cur=PHASES[phase];
+  if(cur in lens && qi>=lens[cur]){ phase++; qi=0; }
+  render();
+}
+
+// ─── PHASES ───────────────────────────────────────────────────────────────────
+const phases={
+
+  learn(){
+    const c=card(`
+      <div class="badge">📌 Learn First!</div>
+      <div class="phase-title">3-Letter Blends — 三字母混合音</div>
+      <div class="learn-intro">
+        三個子音字母放在一起，<strong>每個音都要發出來</strong>，快速連讀！<br>
+        These are all the blends on your test 👇
+      </div>
+      <div class="blend-grid">
+        ${WORDS.map(w=>`
+          <div class="bcard ${w.cls}">
+            <div class="emoji">${w.emoji}</div>
+            <div class="blend">${w.blend}</div>
+            <div class="full"><span class="blend-part" style="color:inherit">${w.blend}</span><span class="rest-part">${w.rest}</span></div>
+            <div class="zh">${w.zh}</div>
+          </div>`).join('')}
+      </div>
+    `);
+    c.appendChild(nextBtn("OK, Let's Play! 🎉",()=>{ phase=1; qi=0; render(); }));
+  },
+
+  spot(){
+    const q=SPOT_QS[qi];
+    const wData=WORDS.find(w=>w.word===q.word);
+    const c=card('');
+    c.innerHTML=`
+      <div class="badge">🔍 Phase 1 — Spot the Blend</div>
+      <div class="phase-title">What 3-letter blend starts this word?</div>
+      <div class="q-num">Question ${qi+1} of ${SPOT_QS.length}</div>
+      <div class="word-display">
+        <div class="word-emoji">${q.emoji}</div>
+        <span class="word-blend">${q.blend}</span><span class="word-rest">${q.rest}</span>
+        <div style="font-size:.8rem;color:#94a3b8;margin-top:4px">${q.zh}</div>
+      </div>
+      <div class="blend-opts" id="opts"></div>
+      <div class="fb" id="fb"></div>
+    `;
+    const optsDiv=c.querySelector('#opts');
+    const fbEl=c.querySelector('#fb');
+    let done=false;
+    q.opts.forEach(opt=>{
+      const btn=document.createElement('button'); btn.className='blend-btn'; btn.textContent=opt;
+      btn.onclick=(e)=>{
+        if(done) return; done=true; total++;
+        if(opt===q.blend){
+          btn.classList.add('correct'); score++; star(e);
+          fbEl.textContent='✅ '+q.explain; fbEl.className='fb ok';
+        } else {
+          btn.classList.add('wrong');
+          optsDiv.querySelectorAll('.blend-btn').forEach(b=>{ if(b.textContent===q.blend) b.classList.add('correct'); });
+          fbEl.textContent='❌ The answer is "'+q.blend+'". '+q.explain; fbEl.className='fb bad';
+          wrongs.push({q:q.word, a:q.blend, hint:q.explain});
+        }
+        optsDiv.querySelectorAll('.blend-btn').forEach(b=>b.disabled=true);
+        updateHUD(); setTimeout(advance,1400);
+      };
+      optsDiv.appendChild(btn);
+    });
+  },
+
+  fill(){
+    const q=FILL_QS[qi];
+    const c=card('');
+    c.innerHTML=`
+      <div class="badge">✏️ Phase 2 — Fill the Blend</div>
+      <div class="phase-title">What 3 letters fill the blank?</div>
+      <div class="q-num">Question ${qi+1} of ${FILL_QS.length}</div>
+      <div class="fill-display">
+        <span class="fill-blank">___</span><span class="fill-rest">${q.rest}</span>
+      </div>
+      <div class="blend-opts" id="opts"></div>
+      <div class="fb" id="fb"></div>
+    `;
+    const optsDiv=c.querySelector('#opts');
+    const fbEl=c.querySelector('#fb');
+    let done=false;
+    q.opts.forEach(opt=>{
+      const btn=document.createElement('button'); btn.className='blend-btn'; btn.textContent=opt;
+      btn.onclick=(e)=>{
+        if(done) return; done=true; total++;
+        const fullWord=opt+q.rest;
+        if(opt===q.ans){
+          btn.classList.add('correct'); score++; star(e);
+          c.querySelector('.fill-blank').textContent=q.ans;
+          c.querySelector('.fill-blank').style.color='#0d9488';
+          fbEl.textContent='✅ '+opt+q.rest+' — '+q.explain; fbEl.className='fb ok';
+        } else {
+          btn.classList.add('wrong');
+          optsDiv.querySelectorAll('.blend-btn').forEach(b=>{ if(b.textContent===q.ans) b.classList.add('correct'); });
+          fbEl.textContent='❌ The answer is "'+q.ans+'". '+q.word+' = '+q.ans+q.rest; fbEl.className='fb bad';
+          wrongs.push({q:'___'+q.rest, a:q.word, hint:q.explain});
+        }
+        optsDiv.querySelectorAll('.blend-btn').forEach(b=>b.disabled=true);
+        updateHUD(); setTimeout(advance,1400);
+      };
+      optsDiv.appendChild(btn);
+    });
+  },
+
+  pick(){
+    const q=PICK_QS[qi];
+    const dispSent=q.sent.replace('___','<span class="clue-blank">___</span>');
+    const c=card('');
+    c.innerHTML=`
+      <div class="badge">🧠 Phase 3 — Pick the Word</div>
+      <div class="phase-title">Which word fits?</div>
+      <div class="q-num">Question ${qi+1} of ${PICK_QS.length}</div>
+      <div class="clue-box">
+        <div class="clue-emoji">${q.emoji}</div>
+        <div class="clue-zh">${q.zh}</div>
+        <div class="clue-sent">${dispSent}</div>
+      </div>
+      <div class="word-opts" id="opts"></div>
+      <div class="fb" id="fb"></div>
+    `;
+    const optsDiv=c.querySelector('#opts');
+    const fbEl=c.querySelector('#fb');
+    let done=false;
+    q.opts.forEach(opt=>{
+      const btn=document.createElement('button'); btn.className='word-btn'; btn.textContent=opt;
+      btn.onclick=(e)=>{
+        if(done) return; done=true; total++;
+        if(opt===q.ans){
+          btn.classList.add('correct'); score++; star(e);
+          fbEl.textContent='✅ '+q.ans+' — '+WORDS.find(w=>w.word===q.ans).explain;
+          fbEl.className='fb ok';
+        } else {
+          btn.classList.add('wrong');
+          optsDiv.querySelectorAll('.word-btn').forEach(b=>{ if(b.textContent===q.ans) b.classList.add('correct'); });
+          const ex=WORDS.find(w=>w.word===q.ans).explain;
+          fbEl.textContent='❌ The answer is "'+q.ans+'". '+ex; fbEl.className='fb bad';
+          wrongs.push({q:q.sent, a:q.ans, hint:q.zh+' — '+ex});
+        }
+        optsDiv.querySelectorAll('.word-btn').forEach(b=>b.disabled=true);
+        updateHUD(); setTimeout(advance,1500);
+      };
+      optsDiv.appendChild(btn);
+    });
+  },
+
+  done(){
+    const pct=total>0?Math.round(score/total*100):0;
+    const emoji=pct>=90?'🏆':pct>=70?'🌟':'💪';
+    const msg=pct>=90?"Amazing! You're a Blends Master! 🎉"
+             :pct>=70?"Great job! Keep practising! 💪"
+             :"Good try! Let's review the tricky ones 📚";
+    const c=card(`
+      <div class="score-big">${emoji} ${score} / ${total}</div>
+      <div class="score-msg">${msg}</div>
+      ${wrongs.length>0?`
+        <div style="font-family:'Fredoka One',cursive;color:#0d9488;font-size:1rem;margin-bottom:10px">📝 Let's review:</div>
+        <ul class="wrong-list">
+          ${wrongs.map(w=>`
+            <li class="wi">
+              <div class="wq">${w.q}</div>
+              <div class="wa">✅ ${w.a}</div>
+              <div class="wh">${w.hint}</div>
+            </li>`).join('')}
+        </ul>`
+      :'<div style="text-align:center;font-size:1.5rem;margin:10px">🎊 No mistakes — Perfect!</div>'}
+    `);
+    c.appendChild(nextBtn('Play Again 🔄',()=>{ phase=0; qi=0; score=0; total=0; wrongs=[]; render(); }));
+  }
+};
+
+// ─── START ────────────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
