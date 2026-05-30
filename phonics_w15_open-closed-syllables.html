@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phonics W15 — Open &amp; Closed Syllables</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#fff8f0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+h1{font-family:'Fredoka One',cursive;color:#7c3aed;font-size:1.7rem;text-align:center;margin-bottom:2px}
+.subtitle{color:#64748b;font-size:.85rem;margin-bottom:12px;text-align:center}
+.dots{display:flex;gap:5px;justify-content:center;margin-bottom:10px;flex-wrap:wrap}
+.dot{width:10px;height:10px;border-radius:50%;background:#e2e8f0;transition:.3s}
+.dot.done{background:#7c3aed}.dot.active{background:#c4b5fd;box-shadow:0 0 0 3px #ede9fe}
+.card{background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.08);padding:20px;width:100%;max-width:540px;animation:popIn .3s ease}
+@keyframes popIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.prog-wrap{background:#e2e8f0;border-radius:99px;height:8px;margin-bottom:12px;overflow:hidden}
+.prog-bar{height:100%;background:linear-gradient(90deg,#7c3aed,#c4b5fd);border-radius:99px;transition:.4s}
+.phase-title{font-family:'Fredoka One',cursive;color:#7c3aed;font-size:1.05rem;text-align:center;margin-bottom:12px}
+.counter{text-align:center;color:#94a3b8;font-size:.8rem;margin-top:8px}
+/* learn */
+.rule-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.rule-card{border-radius:14px;padding:14px 10px;text-align:center;border:2px solid}
+.rule-card .pat{font-family:'Fredoka One',cursive;font-size:1.2rem;margin-bottom:6px}
+.rule-card .rule{font-size:.76rem;font-weight:700;line-height:1.6;margin-bottom:6px}
+.rule-card .exs{font-size:.78rem;color:#475569;line-height:1.8}
+.open-c{background:#ede9fe;border-color:#c4b5fd}.open-c .pat{color:#5b21b6}
+.closed-c{background:#fce7f3;border-color:#f9a8d4}.closed-c .pat{color:#9d174d}
+.rule-tip{background:#fef9c3;border-radius:8px;padding:8px 12px;font-size:.82rem;font-weight:700;color:#78350f;margin-bottom:10px;line-height:1.7}
+/* missing syllable */
+.syl-display{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.syl-box{font-family:'Fredoka One',cursive;font-size:1.6rem;background:#f0f9ff;border:2.5px solid #7dd3fc;border-radius:12px;padding:10px 18px;color:#0369a1}
+.syl-sep{font-family:'Fredoka One',cursive;font-size:1.4rem;color:#94a3b8}
+.type-input{width:100%;border:2.5px solid #c4b5fd;border-radius:12px;padding:12px 14px;font-family:'Fredoka One',cursive;font-size:1.3rem;color:#1e293b;outline:none;text-align:center;transition:.2s;letter-spacing:2px}
+.type-input:focus{border-color:#7c3aed;box-shadow:0 0 0 3px #ede9fe}
+.type-input.ok{border-color:#4ade80;background:#dcfce7;color:#166534}
+.type-input.err{border-color:#f87171;background:#fee2e2;color:#991b1b;animation:shake .3s}
+.word-hint{text-align:center;font-size:.82rem;color:#64748b;margin-bottom:10px}
+/* open/closed sort */
+.syl-big{font-family:'Fredoka One',cursive;font-size:3rem;color:#1e293b;text-align:center;background:#f5f3ff;border:3px dashed #c4b5fd;border-radius:16px;padding:20px;margin-bottom:8px;letter-spacing:3px}
+.syl-ends{text-align:center;font-size:.82rem;color:#64748b;margin-bottom:12px}
+.oc-row{display:flex;gap:12px;justify-content:center}
+.oc-btn{font-family:'Fredoka One',cursive;font-size:1.2rem;border:2.5px solid;border-radius:14px;padding:14px 32px;cursor:pointer;transition:.15s;flex:1;max-width:200px}
+.oc-btn:active{transform:scale(.93)}
+.oc-open{background:#ede9fe;border-color:#c4b5fd;color:#5b21b6}
+.oc-closed{background:#fce7f3;border-color:#f9a8d4;color:#9d174d}
+/* shared */
+.read-tip{background:#fef9c3;border-radius:8px;padding:6px 10px;font-size:.8rem;font-weight:700;color:#78350f;text-align:center;margin-bottom:10px}
+.feedback{min-height:24px;text-align:center;font-weight:700;font-size:.9rem;margin-top:8px}
+.feedback.ok{color:#16a34a}.feedback.bad{color:#dc2626}
+.next-btn{display:block;width:100%;background:#7c3aed;color:#fff;border:none;border-radius:14px;padding:13px;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;margin-top:12px;transition:.2s}
+.next-btn:hover{background:#5b21b6}
+.score-wrap{text-align:center;margin-bottom:14px}
+.score-num{font-family:'Fredoka One',cursive;font-size:2.2rem;color:#7c3aed}
+.wrong-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.wrong-item{background:#fff7ed;border:1.5px solid #fdba74;border-radius:12px;padding:10px 12px;font-size:.85rem}
+.wrong-item .wq{font-weight:800;color:#1e293b;margin-bottom:2px}
+.wrong-item .wa{color:#16a34a;font-weight:700}
+.wrong-item .wh{color:#64748b;font-size:.78rem;margin-top:2px}
+.star{position:fixed;font-size:2rem;pointer-events:none;animation:flyUp .9s ease forwards;z-index:999}
+@keyframes flyUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-120px) scale(1.6)}}
+</style>
+</head>
+<body>
+<h1>🟣 Open &amp; Closed Syllables</h1>
+<p class="subtitle">Week 15 — 音節開放 vs 封閉</p>
+<div class="dots" id="dots"></div>
+<div id="app"></div>
+
+<script>
+// ── data ──────────────────────────────────────────────────────────────────
+// Part A: missing syllable — show one half, student types the other
+const MISSING = [
+  { given:'mu', side:'left',  missing:'sic', word:'music',  emoji:'🎵', hint:'mu - ___' },
+  { given:'ro', side:'left',  missing:'bot', word:'robot',  emoji:'🤖', hint:'ro - ___' },
+  { given:'on', side:'right', missing:'up',  word:'upon',   emoji:'⬆️', hint:' ___ - on' },
+  { given:'ex', side:'left',  missing:'it',  word:'exit',   emoji:'🚪', hint:'ex - ___' },
+  { given:'lim',side:'left',  missing:'it',  word:'limit',  emoji:'🛑', hint:'lim - ___' },
+];
+
+// Part B: open or closed syllable?
+const OC = [
+  { syl:'mu',  type:'open',   ends:'ends in vowel u',   explain:'mu → 結尾是母音 u → OPEN → 長母音 /mjuː/' },
+  { syl:'sic', type:'closed', ends:'ends in consonant c', explain:'sic → 結尾是子音 c → CLOSED → 短母音 /ɪ/' },
+  { syl:'ro',  type:'open',   ends:'ends in vowel o',   explain:'ro → 結尾是母音 o → OPEN → 長母音 /roʊ/' },
+  { syl:'bot', type:'closed', ends:'ends in consonant t', explain:'bot → 結尾是子音 t → CLOSED → 短母音 /ɒ/' },
+  { syl:'spi', type:'open',   ends:'ends in vowel i',   explain:'spi → 結尾是母音 i → OPEN → 長母音 /aɪ/' },
+  { syl:'top', type:'closed', ends:'ends in consonant p', explain:'top → 結尾是子音 p → CLOSED → 短母音 /ɒ/' },
+  { syl:'be',  type:'open',   ends:'ends in vowel e',   explain:'be → 結尾是母音 e → OPEN → 長母音 /biː/' },
+  { syl:'gin', type:'closed', ends:'ends in consonant n', explain:'gin → 結尾是子音 n → CLOSED → 短母音 /ɪ/' },
+  { syl:'to',  type:'open',   ends:'ends in vowel o',   explain:'to → 結尾是母音 o → OPEN → 長母音 /toʊ/' },
+  { syl:'sev', type:'closed', ends:'ends in consonant v', explain:'sev → 結尾是子音 v → CLOSED → 短母音 /ɛ/' },
+];
+
+// ── state ─────────────────────────────────────────────────────────────────
+const PHASES = ['learn','phMiss','phOC','done'];
+const TOTAL_Q = MISSING.length + OC.length;
+let phase = 0, qi = 0, score = 0, wrongs = [], typed = false;
+
+// ── helpers ───────────────────────────────────────────────────────────────
+const app = () => document.getElementById('app');
+const prog = n => `<div class="prog-wrap"><div class="prog-bar" style="width:${Math.round(n/TOTAL_Q*100)}%"></div></div>`;
+
+function buildDots() {
+  document.getElementById('dots').innerHTML = PHASES.map((_,i) =>
+    `<div class="dot ${i<phase?'done':i===phase?'active':''}"></div>`).join('');
+}
+
+function star(e) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  s.textContent = ['⭐','🌟','✨'][Math.floor(Math.random()*3)];
+  s.style.left = (e.clientX-20)+'px';
+  s.style.top  = (e.clientY-20)+'px';
+  document.body.appendChild(s);
+  setTimeout(()=>s.remove(),900);
+}
+
+function nextPhase() { phase++; qi=0; buildDots(); renderGame(); }
+
+function renderGame() {
+  const p = PHASES[phase];
+  if (p==='learn')  phLearn();
+  else if (p==='phMiss') phMiss();
+  else if (p==='phOC')   phOC();
+  else phDone();
+}
+
+// ── LEARN ─────────────────────────────────────────────────────────────────
+function phLearn() {
+  app().innerHTML = `
+    <div class="card">
+      ${prog(0)}
+      <div class="phase-title">📖 開放音節 vs 封閉音節</div>
+      <div class="rule-row">
+        <div class="rule-card open-c">
+          <div class="pat">🔓 Open</div>
+          <div class="rule">結尾是<b>母音</b><br>母音唸<b>長音</b></div>
+          <div class="exs">
+            mu · sic → <b>mu</b> = /mjuː/<br>
+            ro · bot → <b>ro</b> = /roʊ/<br>
+            spi · der → <b>spi</b> = /spaɪ/<br>
+            be · gin → <b>be</b> = /biː/
+          </div>
+        </div>
+        <div class="rule-card closed-c">
+          <div class="pat">🔒 Closed</div>
+          <div class="rule">結尾是<b>子音</b><br>母音唸<b>短音</b></div>
+          <div class="exs">
+            mu · <b>sic</b> = /sɪk/<br>
+            ro · <b>bot</b> = /bɒt/<br>
+            <b>top</b> · ic = /tɒp/<br>
+            <b>sev</b> · en = /sɛv/
+          </div>
+        </div>
+      </div>
+      <div class="rule-tip">
+        💡 記憶口訣：<br>
+        🔓 Open = 母音收尾 → 母音說自己的名字（長音）<br>
+        🔒 Closed = 子音關門 → 母音唸短音
+      </div>
+      <button class="next-btn" onclick="nextPhase()">開始練習 →</button>
+    </div>`;
+}
+
+// ── PART A: MISSING SYLLABLE ───────────────────────────────────────────────
+function phMiss() {
+  if (qi >= MISSING.length) { nextPhase(); return; }
+  typed = false;
+  const q = MISSING[qi];
+  const leftBox  = q.side==='left'  ? `<div class="syl-box">${q.given}</div>` : `<input id="ti" class="type-input" style="width:120px" placeholder="???" autocomplete="off" autocorrect="off" spellcheck="false">`;
+  const rightBox = q.side==='right' ? `<div class="syl-box">${q.given}</div>` : `<input id="ti" class="type-input" style="width:120px" placeholder="???" autocomplete="off" autocorrect="off" spellcheck="false">`;
+  app().innerHTML = `
+    <div class="card">
+      ${prog(qi)}
+      <div class="phase-title">W15A — 填入缺少的音節</div>
+      <div class="read-tip">看到 ${q.emoji} 這個字，缺少哪個音節？</div>
+      <div class="syl-display">
+        ${leftBox}
+        <div class="syl-sep">-</div>
+        ${rightBox}
+      </div>
+      <div class="word-hint">完整的字是：${q.word.split('').map((c,i)=>i===0?c.toUpperCase():c).join('')} ${q.emoji}</div>
+      <div class="feedback" id="fb"></div>
+      <button class="next-btn" id="cb" onclick="checkMiss()">Check ✓</button>
+      <div class="counter">第 ${qi+1} / ${MISSING.length} 題</div>
+    </div>`;
+  const inp = document.getElementById('ti');
+  if (inp) {
+    inp.focus();
+    inp.addEventListener('keydown', e=>{ if(e.key==='Enter') checkMiss(); });
+  }
+}
+
+function checkMiss() {
+  if (typed) { qi++; phMiss(); return; }
+  const inp = document.getElementById('ti');
+  const val = inp.value.trim().toLowerCase();
+  const q   = MISSING[qi];
+  const fb  = document.getElementById('fb');
+  const cb  = document.getElementById('cb');
+  if (!val) return;
+  typed = true;
+  inp.disabled = true;
+  if (val === q.missing) {
+    inp.classList.add('ok');
+    fb.className='feedback ok';
+    fb.textContent=`✅ 正確！${q.word} = ${q.side==='left'?q.given:q.missing} - ${q.side==='left'?q.missing:q.given}`;
+    score++;
+    star({clientX:window.innerWidth/2,clientY:window.innerHeight/2});
+  } else {
+    inp.classList.add('err');
+    fb.className='feedback bad';
+    fb.textContent=`❌ 正確答案：${q.missing}　(${q.word})`;
+    wrongs.push({q:`${q.emoji} ${q.hint}`, a:q.missing, h:`${q.word} = ${q.side==='left'?q.given:q.missing}-${q.side==='left'?q.missing:q.given}`});
+  }
+  cb.textContent='下一題 →';
+}
+
+// ── PART B: OPEN OR CLOSED? ───────────────────────────────────────────────
+function phOC() {
+  if (qi >= OC.length) { nextPhase(); return; }
+  const q = OC[qi];
+  app().innerHTML = `
+    <div class="card">
+      ${prog(MISSING.length + qi)}
+      <div class="phase-title">W15B — Open 還是 Closed？</div>
+      <div class="read-tip">這個音節結尾是母音還是子音？</div>
+      <div class="syl-big">${q.syl}</div>
+      <div class="syl-ends">${q.ends}</div>
+      <div class="oc-row">
+        <button class="oc-btn oc-open"  onclick="checkOC('open',this)">🔓 Open</button>
+        <button class="oc-btn oc-closed" onclick="checkOC('closed',this)">🔒 Closed</button>
+      </div>
+      <div class="feedback" id="fb"></div>
+      <div class="counter">第 ${qi+1} / ${OC.length} 題</div>
+    </div>`;
+}
+
+function checkOC(chosen, btn) {
+  const q  = OC[qi];
+  const fb = document.getElementById('fb');
+  document.querySelectorAll('.oc-btn').forEach(x=>x.disabled=true);
+  if (chosen === q.type) {
+    btn.style.background='#dcfce7'; btn.style.borderColor='#4ade80';
+    fb.className='feedback ok';
+    fb.textContent=`✅ ${q.explain}`;
+    score++;
+    star({clientX:window.innerWidth/2,clientY:window.innerHeight/2});
+  } else {
+    btn.style.background='#fee2e2'; btn.style.borderColor='#f87171';
+    fb.className='feedback bad';
+    fb.textContent=`❌ ${q.explain}`;
+    wrongs.push({q:`音節：${q.syl}`,a:q.type,h:q.explain});
+  }
+  setTimeout(()=>{ qi++; phOC(); },1100);
+}
+
+// ── DONE ──────────────────────────────────────────────────────────────────
+function phDone() {
+  const pct = Math.round(score/TOTAL_Q*100);
+  const medal = pct>=90?'🏆':pct>=70?'🥈':'💪';
+  app().innerHTML = `
+    <div class="card">
+      <div class="score-wrap">
+        <div style="font-size:3rem">${medal}</div>
+        <div class="score-num">${score} / ${TOTAL_Q}</div>
+        <div style="color:#64748b;font-size:.9rem;margin-top:4px">${pct}% — ${pct>=90?'太棒了！':pct>=70?'很不錯！':'繼續加油！'}</div>
+      </div>
+      ${wrongs.length?`
+        <div style="font-family:'Fredoka One',cursive;color:#dc2626;margin-bottom:8px;font-size:.95rem">❌ 錯題複習</div>
+        <ul class="wrong-list">
+          ${wrongs.map(w=>`
+            <li class="wrong-item">
+              <div class="wq">📝 ${w.q}</div>
+              <div class="wa">✅ ${w.a}</div>
+              <div class="wh">${w.h}</div>
+            </li>`).join('')}
+        </ul>`:'<div style="text-align:center;color:#16a34a;font-weight:800;margin-bottom:8px">🎉 全部答對！</div>'}
+      <button class="next-btn" style="margin-top:16px" onclick="restartGame()">再玩一次 🔄</button>
+    </div>`;
+}
+
+function restartGame() {
+  phase=0; qi=0; score=0; wrongs=[]; typed=false;
+  buildDots(); renderGame();
+}
+
+buildDots();
+renderGame();
+</script>
+</body>
+</html>

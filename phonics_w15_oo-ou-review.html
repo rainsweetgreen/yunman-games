@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phonics W15 — oo / ou + oa / ow / oe Review</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#fff8f0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+h1{font-family:'Fredoka One',cursive;color:#0369a1;font-size:1.7rem;text-align:center;margin-bottom:2px}
+.subtitle{color:#64748b;font-size:.85rem;margin-bottom:12px;text-align:center}
+.dots{display:flex;gap:5px;justify-content:center;margin-bottom:10px;flex-wrap:wrap}
+.dot{width:10px;height:10px;border-radius:50%;background:#e2e8f0;transition:.3s}
+.dot.done{background:#0369a1}.dot.active{background:#7dd3fc;box-shadow:0 0 0 3px #e0f2fe}
+.card{background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.08);padding:20px;width:100%;max-width:540px;animation:popIn .3s ease}
+@keyframes popIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.prog-wrap{background:#e2e8f0;border-radius:99px;height:8px;margin-bottom:12px;overflow:hidden}
+.prog-bar{height:100%;background:linear-gradient(90deg,#0369a1,#38bdf8);border-radius:99px;transition:.4s}
+.phase-title{font-family:'Fredoka One',cursive;color:#0369a1;font-size:1.05rem;text-align:center;margin-bottom:12px}
+.counter{text-align:center;color:#94a3b8;font-size:.8rem;margin-top:8px}
+/* learn grid */
+.vowel-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px}
+.vowel-card{border-radius:12px;padding:10px 8px;text-align:center;border:2px solid}
+.vowel-card .pat{font-family:'Fredoka One',cursive;font-size:1.5rem}
+.vowel-card .sound{font-size:.75rem;font-weight:700;color:#475569;margin:2px 0}
+.vowel-card .words{font-size:.75rem;font-weight:700;line-height:1.7}
+.oo-c{background:#e0f2fe;border-color:#38bdf8}.oo-c .pat{color:#0c4a6e}
+.ou-c{background:#f0fdf4;border-color:#86efac}.ou-c .pat{color:#14532d}
+.oa-c{background:#fef9c3;border-color:#fde047}.oa-c .pat{color:#78350f}
+.ow-c{background:#ede9fe;border-color:#c4b5fd}.ow-c .pat{color:#5b21b6}
+.oe-c{background:#fff1f2;border-color:#fda4af}.oe-c .pat{color:#9f1239}
+.rule-tip{background:#fef9c3;border-radius:8px;padding:8px 12px;font-size:.82rem;font-weight:700;color:#78350f;margin-bottom:10px;line-height:1.7}
+/* Part A — a vs b */
+.ab-row{display:flex;gap:12px;justify-content:center;margin-top:10px}
+.ab-btn{font-family:'Fredoka One',cursive;font-size:1.3rem;border:2.5px solid #7dd3fc;border-radius:16px;padding:16px 28px;cursor:pointer;background:#fff;transition:.15s;flex:1;max-width:200px;text-align:center}
+.ab-btn:hover{background:#f0f9ff}
+.ab-btn:active{transform:scale(.93)}
+.ab-label{font-size:.72rem;font-weight:700;color:#94a3b8;margin-bottom:2px}
+.ab-word{font-size:1.3rem;color:#1e293b}
+.moon-icon{font-size:2.5rem;text-align:center;margin-bottom:6px}
+.moon-hint{text-align:center;color:#64748b;font-size:.82rem;margin-bottom:8px}
+/* Part B — sort */
+.sort-word-display{font-family:'Fredoka One',cursive;font-size:2.6rem;color:#1e293b;text-align:center;background:#f0f9ff;border:3px dashed #7dd3fc;border-radius:16px;padding:18px;margin-bottom:12px;letter-spacing:2px}
+.bucket-row{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.bucket-btn{font-family:'Fredoka One',cursive;font-size:1.1rem;border:2.5px solid;border-radius:12px;padding:12px 10px;cursor:pointer;transition:.15s;text-align:center}
+.bucket-btn:active{transform:scale(.93)}
+.bucket-oo{background:#e0f2fe;border-color:#38bdf8;color:#0c4a6e}
+.bucket-ou{background:#f0fdf4;border-color:#86efac;color:#14532d}
+.bucket-oa{background:#fef9c3;border-color:#fde047;color:#78350f}
+.bucket-ow{background:#ede9fe;border-color:#c4b5fd;color:#5b21b6}
+.bucket-oe{background:#fff1f2;border-color:#fda4af;color:#9f1239}
+/* shared */
+.read-tip{background:#fef9c3;border-radius:8px;padding:6px 10px;font-size:.8rem;font-weight:700;color:#78350f;text-align:center;margin-bottom:10px}
+.feedback{min-height:24px;text-align:center;font-weight:700;font-size:.9rem;margin-top:8px}
+.feedback.ok{color:#16a34a}.feedback.bad{color:#dc2626}
+.next-btn{display:block;width:100%;background:#0369a1;color:#fff;border:none;border-radius:14px;padding:13px;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;margin-top:12px;transition:.2s}
+.next-btn:hover{background:#075985}
+.score-wrap{text-align:center;margin-bottom:14px}
+.score-num{font-family:'Fredoka One',cursive;font-size:2.2rem;color:#0369a1}
+.wrong-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.wrong-item{background:#fff7ed;border:1.5px solid #fdba74;border-radius:12px;padding:10px 12px;font-size:.85rem}
+.wrong-item .wq{font-weight:800;color:#1e293b;margin-bottom:2px}
+.wrong-item .wa{color:#16a34a;font-weight:700}
+.wrong-item .wh{color:#64748b;font-size:.78rem;margin-top:2px}
+.star{position:fixed;font-size:2rem;pointer-events:none;animation:flyUp .9s ease forwards;z-index:999}
+@keyframes flyUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-120px) scale(1.6)}}
+</style>
+</head>
+<body>
+<h1>🌙 oo · ou · oa · ow · oe</h1>
+<p class="subtitle">Week 15 — Moon Sound + Long-O Review</p>
+<div class="dots" id="dots"></div>
+<div id="app"></div>
+
+<script>
+// ── data ──────────────────────────────────────────────────────────────────
+// Part A: which word has the moon /uː/ sound?
+const MOON = [
+  { a:'Sun ☀️',  b:'Soon ⏰', correct:'b', explain:'Soon /suːn/ 有 moon 音　Sun /sʌn/ 是短母音' },
+  { a:'Pill 💊', b:'Pool 🏊', correct:'b', explain:'Pool /puːl/ 有 moon 音　Pill /pɪl/ 是短母音' },
+  { a:'School 🏫',b:'Skill 🏋️',correct:'a', explain:'School /skuːl/ 有 moon 音　Skill /skɪl/ 是短母音' },
+  { a:'Cool 😎', b:'Carl 👦', correct:'a', explain:'Cool /kuːl/ 有 moon 音　Carl /kɑːrl/ 是 r 控制母音' },
+  { a:'Foul ⚾', b:'Food 🍔', correct:'b', explain:'Food /fuːd/ 有 moon 音　Foul /faʊl/ 是雙母音 /aʊ/' },
+];
+
+// Part B: sort word into correct spelling bucket
+// oo words (moon /uː/), ou words (/uː/), oa (long-o), ow (long-o), oe (long-o)
+const SORT = [
+  { word:'moon',   bucket:'oo', explain:'moon → oo 拼長母音 /uː/' },
+  { word:'soup',   bucket:'ou', explain:'soup → ou 拼長母音 /uː/' },
+  { word:'boat',   bucket:'oa', explain:'boat → oa 拼長母音 /oʊ/' },
+  { word:'snow',   bucket:'ow', explain:'snow → ow 拼長母音 /oʊ/' },
+  { word:'toe',    bucket:'oe', explain:'toe → oe 拼長母音 /oʊ/' },
+  { word:'pool',   bucket:'oo', explain:'pool → oo 拼長母音 /uː/' },
+  { word:'group',  bucket:'ou', explain:'group → ou 拼長母音 /uː/' },
+  { word:'road',   bucket:'oa', explain:'road → oa 拼長母音 /oʊ/' },
+  { word:'grow',   bucket:'ow', explain:'grow → ow 拼長母音 /oʊ/' },
+  { word:'goes',   bucket:'oe', explain:'goes → oe 拼長母音 /oʊ/' },
+  { word:'zoom',   bucket:'oo', explain:'zoom → oo 拼長母音 /uː/' },
+  { word:'coat',   bucket:'oa', explain:'coat → oa 拼長母音 /oʊ/' },
+  { word:'blow',   bucket:'ow', explain:'blow → ow 拼長母音 /oʊ/' },
+  { word:'hoe',    bucket:'oe', explain:'hoe → oe 拼長母音 /oʊ/' },
+  { word:'food',   bucket:'oo', explain:'food → oo 拼長母音 /uː/' },
+];
+
+// ── state ─────────────────────────────────────────────────────────────────
+const PHASES = ['learn','phMoon','phSort','done'];
+const TOTAL_Q = MOON.length + SORT.length;
+let phase = 0, qi = 0, score = 0, wrongs = [];
+
+// ── helpers ───────────────────────────────────────────────────────────────
+const app = () => document.getElementById('app');
+const prog = n => `<div class="prog-wrap"><div class="prog-bar" style="width:${Math.round(n/TOTAL_Q*100)}%"></div></div>`;
+
+function buildDots() {
+  document.getElementById('dots').innerHTML = PHASES.map((_,i) =>
+    `<div class="dot ${i<phase?'done':i===phase?'active':''}"></div>`).join('');
+}
+
+function star(e) {
+  const s = document.createElement('div');
+  s.className='star';
+  s.textContent=['⭐','🌟','✨'][Math.floor(Math.random()*3)];
+  s.style.left=(e.clientX-20)+'px';
+  s.style.top=(e.clientY-20)+'px';
+  document.body.appendChild(s);
+  setTimeout(()=>s.remove(),900);
+}
+
+function nextPhase() { phase++; qi=0; buildDots(); renderGame(); }
+
+function renderGame() {
+  const p = PHASES[phase];
+  if (p==='learn')   phLearn();
+  else if (p==='phMoon') phMoon();
+  else if (p==='phSort') phSort();
+  else phDone();
+}
+
+// ── LEARN ─────────────────────────────────────────────────────────────────
+function phLearn() {
+  app().innerHTML = `
+    <div class="card">
+      ${prog(0)}
+      <div class="phase-title">📖 五種拼法一次看！</div>
+      <div class="vowel-grid">
+        <div class="vowel-card oo-c">
+          <div class="pat">oo</div>
+          <div class="sound">🌙 moon sound /uː/</div>
+          <div class="words">moon · pool · food<br>cool · school · zoom<br>boot · spoon · room</div>
+        </div>
+        <div class="vowel-card ou-c">
+          <div class="pat">ou</div>
+          <div class="sound">🌙 moon sound /uː/</div>
+          <div class="words">soup · group · you<br>through · routine</div>
+        </div>
+        <div class="vowel-card oa-c">
+          <div class="pat">oa</div>
+          <div class="sound">🐸 long-o /oʊ/</div>
+          <div class="words">boat · road · coat<br>soap · toad · foam</div>
+        </div>
+        <div class="vowel-card ow-c">
+          <div class="pat">ow</div>
+          <div class="sound">🌨️ long-o /oʊ/</div>
+          <div class="words">snow · grow · blow<br>flow · crow · show</div>
+        </div>
+      </div>
+      <div class="vowel-grid" style="grid-template-columns:1fr">
+        <div class="vowel-card oe-c">
+          <div class="pat">oe</div>
+          <div class="sound">👣 long-o /oʊ/</div>
+          <div class="words">toe · doe · goes · foe · hoe</div>
+        </div>
+      </div>
+      <div class="rule-tip">
+        💡 <b>oo / ou</b> → 月亮音 🌙 /uː/（嘴唇用力向前噘）<br>
+        💡 <b>oa / ow / oe</b> → 長 o 音 /oʊ/（嘴巴由大到小）
+      </div>
+      <button class="next-btn" onclick="nextPhase()">開始練習 →</button>
+    </div>`;
+}
+
+// ── PART A: MOON SOUND ────────────────────────────────────────────────────
+function phMoon() {
+  if (qi >= MOON.length) { nextPhase(); return; }
+  const q = MOON[qi];
+  app().innerHTML = `
+    <div class="card">
+      ${prog(qi)}
+      <div class="phase-title">W15A — 哪個字有 moon 音 🌙？</div>
+      <div class="moon-icon">🌙</div>
+      <div class="moon-hint">moon /uː/ — 嘴唇向前噘，像吹口哨</div>
+      <div class="read-tip">聽一聽，哪個字的母音和 moon 一樣？點選 a 或 b</div>
+      <div class="ab-row">
+        <button class="ab-btn" onclick="checkMoon('a',this)">
+          <div class="ab-label">a</div>
+          <div class="ab-word">${q.a}</div>
+        </button>
+        <button class="ab-btn" onclick="checkMoon('b',this)">
+          <div class="ab-label">b</div>
+          <div class="ab-word">${q.b}</div>
+        </button>
+      </div>
+      <div class="feedback" id="fb"></div>
+      <div class="counter">第 ${qi+1} / ${MOON.length} 題</div>
+    </div>`;
+}
+
+function checkMoon(chosen, btn) {
+  const q  = MOON[qi];
+  const fb = document.getElementById('fb');
+  document.querySelectorAll('.ab-btn').forEach(x=>x.disabled=true);
+  if (chosen === q.correct) {
+    btn.style.background='#dcfce7'; btn.style.borderColor='#4ade80';
+    fb.className='feedback ok';
+    fb.textContent=`✅ ${q.explain}`;
+    score++;
+    star({clientX:window.innerWidth/2,clientY:window.innerHeight/2});
+  } else {
+    btn.style.background='#fee2e2'; btn.style.borderColor='#f87171';
+    fb.className='feedback bad';
+    fb.textContent=`❌ ${q.explain}`;
+    wrongs.push({q:`a: ${q.a}  b: ${q.b}`, a:q.correct==='a'?q.a:q.b, h:q.explain});
+  }
+  setTimeout(()=>{ qi++; phMoon(); },1200);
+}
+
+// ── PART B: SORT ──────────────────────────────────────────────────────────
+function phSort() {
+  if (qi >= SORT.length) { nextPhase(); return; }
+  const q = SORT[qi];
+  // show 4 or 5 buckets depending on word
+  const buckets = ['oo','ou','oa','ow','oe'];
+  app().innerHTML = `
+    <div class="card">
+      ${prog(MOON.length + qi)}
+      <div class="phase-title">W15B — 這個字用哪種拼法？</div>
+      <div class="sort-word-display">${q.word}</div>
+      <div class="bucket-row">
+        ${buckets.map(b=>`<button class="bucket-btn bucket-${b}" onclick="checkSort('${b}',this)">${b}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+      <div class="counter">第 ${qi+1} / ${SORT.length} 題</div>
+    </div>`;
+}
+
+function checkSort(chosen, btn) {
+  const q  = SORT[qi];
+  const fb = document.getElementById('fb');
+  document.querySelectorAll('.bucket-btn').forEach(x=>x.disabled=true);
+  if (chosen === q.bucket) {
+    btn.style.opacity='1'; btn.style.outline='3px solid #16a34a';
+    fb.className='feedback ok';
+    fb.textContent=`✅ ${q.explain}`;
+    score++;
+    star({clientX:window.innerWidth/2,clientY:window.innerHeight/2});
+  } else {
+    btn.style.background='#fee2e2'; btn.style.borderColor='#f87171';
+    fb.className='feedback bad';
+    fb.textContent=`❌ ${q.word} 應該用 ${q.bucket} ！${q.explain}`;
+    wrongs.push({q:q.word, a:q.bucket, h:q.explain});
+  }
+  setTimeout(()=>{ qi++; phSort(); },1100);
+}
+
+// ── DONE ──────────────────────────────────────────────────────────────────
+function phDone() {
+  const pct = Math.round(score/TOTAL_Q*100);
+  const medal = pct>=90?'🏆':pct>=70?'🥈':'💪';
+  app().innerHTML = `
+    <div class="card">
+      <div class="score-wrap">
+        <div style="font-size:3rem">${medal}</div>
+        <div class="score-num">${score} / ${TOTAL_Q}</div>
+        <div style="color:#64748b;font-size:.9rem;margin-top:4px">${pct}% — ${pct>=90?'太棒了！':pct>=70?'很不錯！':'繼續加油！'}</div>
+      </div>
+      ${wrongs.length?`
+        <div style="font-family:'Fredoka One',cursive;color:#dc2626;margin-bottom:8px;font-size:.95rem">❌ 錯題複習</div>
+        <ul class="wrong-list">
+          ${wrongs.map(w=>`
+            <li class="wrong-item">
+              <div class="wq">📝 ${w.q}</div>
+              <div class="wa">✅ ${w.a}</div>
+              <div class="wh">${w.h}</div>
+            </li>`).join('')}
+        </ul>`:'<div style="text-align:center;color:#16a34a;font-weight:800;margin-bottom:8px">🎉 全部答對！</div>'}
+      <button class="next-btn" style="margin-top:16px" onclick="restartGame()">再玩一次 🔄</button>
+    </div>`;
+}
+
+function restartGame() {
+  phase=0; qi=0; score=0; wrongs=[];
+  buildDots(); renderGame();
+}
+
+buildDots();
+renderGame();
+</script>
+</body>
+</html>
