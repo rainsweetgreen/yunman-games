@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 5 — Prepositions</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#fff8f0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+h1{font-family:'Fredoka One',cursive;color:#0f766e;font-size:1.7rem;text-align:center;margin-bottom:4px}
+.subtitle{color:#64748b;font-size:.9rem;margin-bottom:14px;text-align:center}
+.dots{display:flex;gap:7px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+.dot{width:12px;height:12px;border-radius:50%;background:#e2e8f0;transition:.3s}
+.dot.done{background:#0d9488}.dot.active{background:#2dd4bf;box-shadow:0 0 0 3px #99f6e4}
+.card{background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.08);padding:22px;width:100%;max-width:540px;animation:popIn .35s ease}
+@keyframes popIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.prog-wrap{background:#e2e8f0;border-radius:99px;height:8px;margin-bottom:16px;overflow:hidden}
+.prog-bar{height:100%;background:linear-gradient(90deg,#0d9488,#2dd4bf);border-radius:99px;transition:.4s}
+.phase-title{font-family:'Fredoka One',cursive;color:#0f766e;font-size:1.05rem;text-align:center;margin-bottom:14px}
+.q-num{font-size:.78rem;color:#94a3b8;text-align:center;margin-bottom:6px}
+/* learn */
+.learn-section{margin-bottom:12px}
+.learn-head{font-family:'Fredoka One',cursive;font-size:1rem;color:#0f766e;margin-bottom:6px}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:6px}
+.chip{padding:7px 14px;border-radius:99px;font-weight:800;font-size:.95rem}
+.chip.place{background:#ccfbf1;color:#134e4a}
+.chip.dir{background:#ede9fe;color:#4c1d95}
+.ex{font-size:.82rem;color:#475569;margin:3px 0 8px;padding-left:4px;line-height:1.5}
+.ex em{font-style:normal;color:#0d9488;font-weight:800}
+.rule-box{background:#fef9c3;border-radius:10px;padding:10px 12px;font-size:.85rem;font-weight:700;color:#78350f;line-height:1.6;margin-bottom:10px}
+/* Part A */
+.sent-tap{font-size:1.1rem;color:#1e293b;line-height:2.4;font-weight:600;text-align:center;margin-bottom:14px}
+.word-btn{display:inline-block;margin:2px 3px;padding:4px 8px;border-radius:8px;border:2px solid transparent;cursor:pointer;font-size:1.05rem;font-weight:700;background:#f1f5f9;transition:.15s}
+.word-btn:hover{background:#e0f2fe;border-color:#7dd3fc}
+.word-btn.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+.word-btn.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+/* Part B */
+.sent-blank{font-size:1.05rem;font-weight:700;color:#1e293b;text-align:center;line-height:1.8;margin-bottom:14px}
+.blank{display:inline-block;min-width:72px;border-bottom:2.5px solid #0d9488;color:#0d9488;font-weight:800;text-align:center}
+.opts2{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-bottom:8px}
+.opt-btn{background:#f0fdfa;border:2px solid #99f6e4;border-radius:12px;padding:10px 18px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;color:#134e4a;cursor:pointer;transition:.2s}
+.opt-btn:hover{background:#ccfbf1;border-color:#5eead4}
+.opt-btn.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+.opt-btn.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+.opt-btn:disabled{cursor:default}
+/* Part C */
+.sent-phrase{font-size:1.05rem;font-weight:700;color:#1e293b;text-align:center;margin-bottom:14px;line-height:1.8}
+.chunk-btn{display:inline-block;margin:3px 4px;padding:6px 12px;border-radius:10px;border:2px dashed #94a3b8;cursor:pointer;font-size:1rem;font-weight:700;background:#f8fafc;transition:.15s}
+.chunk-btn:hover{background:#e0f2fe;border-color:#7dd3fc}
+.chunk-btn.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+.chunk-btn.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+/* Part D */
+.mc-sent{font-size:1.05rem;font-weight:700;color:#1e293b;text-align:center;margin-bottom:16px;line-height:1.8}
+.mc-opts{display:flex;flex-direction:column;gap:10px;margin-bottom:8px}
+.mc-btn{background:#f0fdfa;border:2px solid #99f6e4;border-radius:14px;padding:13px 16px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;color:#134e4a;cursor:pointer;transition:.2s;text-align:center}
+.mc-btn:hover{background:#ccfbf1;border-color:#5eead4}
+.mc-btn.correct{background:#dcfce7;border-color:#4ade80;color:#166534}
+.mc-btn.wrong{background:#fee2e2;border-color:#f87171;color:#991b1b;animation:shake .3s}
+.mc-btn:disabled{cursor:default}
+/* Part E — Picture questions */
+.pic-scene{position:relative;width:160px;height:140px;background:#e0f7fa;border-radius:16px;margin:0 auto 18px;border:2px solid #b2ebf2}
+.pic-box{position:absolute;background:#f59e0b;border-radius:6px;border:3px solid #d97706}
+.pic-table-top{position:absolute;background:#92400e;border-radius:4px}
+.pic-table-leg{position:absolute;background:#92400e;border-radius:2px}
+.pic-emoji{position:absolute;font-size:1.8rem;line-height:1;user-select:none}
+.pic-cloud{position:absolute;background:#fff;border-radius:50px;opacity:.8}
+.pic-tree-top{position:absolute;background:#16a34a;border-radius:50%}
+.pic-tree-trunk{position:absolute;background:#92400e;border-radius:2px}
+.pic-fence{position:absolute;font-size:.7rem;letter-spacing:2px}
+/* shared */
+.feedback{min-height:26px;text-align:center;font-weight:700;font-size:.9rem;margin-top:8px}
+.feedback.ok{color:#16a34a}.feedback.bad{color:#dc2626}
+.next-btn{display:block;width:100%;background:#0d9488;color:#fff;border:none;border-radius:14px;padding:13px;font-family:'Fredoka One',cursive;font-size:1.15rem;cursor:pointer;margin-top:12px;transition:.2s}
+.next-btn:hover{background:#0f766e}
+.score-wrap{text-align:center;margin-bottom:16px}
+.score-num{font-family:'Fredoka One',cursive;font-size:2.4rem;color:#0d9488}
+.wrong-list{list-style:none;display:flex;flex-direction:column;gap:9px}
+.wrong-item{background:#fff7ed;border-left:4px solid #f59e0b;border-radius:10px;padding:10px 12px;font-size:.88rem;line-height:1.5}
+.wrong-item .wq{font-weight:800;color:#1e293b}
+.wrong-item .wa{color:#16a34a;font-weight:700}
+.wrong-item .wh{color:#64748b;font-size:.8rem;margin-top:2px}
+.star-pop{position:fixed;pointer-events:none;font-size:2rem;animation:flyUp .85s ease forwards;z-index:999}
+@keyframes flyUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-100px) scale(1.6)}}
+</style>
+</head>
+<body>
+
+<h1>📍 Prepositions</h1>
+<p class="subtitle">Unit 5 — Where is it? · CET Grammar</p>
+<div class="dots" id="dots"></div>
+<div id="app"></div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+
+const PART_A = [
+  { words:['The','cat','sits','on','the','mat','.'],        prep:'on',   explain:'on = 在…上面　on the mat 在墊子上' },
+  { words:['Mia','hides','under','the','table','.'],        prep:'under',explain:'under = 在…下面　under the table 在桌子下' },
+  { words:['We','play','in','the','garden','.'],            prep:'in',   explain:'in = 在…裡面　in the garden 在花園裡' },
+  { words:['The','bird','flies','over','the','fence','.'],  prep:'over', explain:'over = 越過　over the fence 越過柵欄' },
+];
+
+const PART_B = [
+  { before:'The dog stands', blank:'between', after:'the two trees.',   opts:['between','near','over','in'],      explain:'between = 在…之間（兩者中間）' },
+  { before:'Stars shine', blank:'above', after:'the clouds.',           opts:['above','under','on','beside'],     explain:'above = 在…上方（不接觸）' },
+  { before:'The kids run', blank:'around', after:'the playground.',     opts:['around','over','next to','above'], explain:'around = 繞著' },
+  { before:'Leo sits', blank:'next to', after:'his best friend.',       opts:['next to','in','above','between'],  explain:'next to = 緊鄰旁邊（＝beside）' },
+  { before:'The cat is', blank:'in front of', after:'the door.',        opts:['in front of','behind','over','near'], explain:'in front of = 在…前面' },
+];
+
+const PART_C = [
+  { subj:'The butterfly lands', phrase:'on the flower.',     explain:'on the flower = 介系詞片語' },
+  { subj:'Tom hides',           phrase:'under the bed.',     explain:'under the bed = 介系詞片語' },
+  { subj:'The plane flies',     phrase:'above the clouds.',  explain:'above the clouds = 介系詞片語' },
+  { subj:'The twins sit',       phrase:'between their mom and dad.', explain:'between their mom and dad = 介系詞片語' },
+];
+
+const PART_D = [
+  { before:'The cat sleeps',    opts:['over the rainbow','near the fireplace'],  ans:1, explain:'near the fireplace 在壁爐旁 — 貓咪喜歡溫暖的地方！' },
+  { before:'We find many leaves', opts:['on the desk','under the tree'],         ans:1, explain:'under the tree 在樹下 — 葉子落在樹下' },
+  { before:'Tina puts her toys', opts:['on the floor','around the mountain'],    ans:0, explain:'on the floor 在地板上 — 玩具放地板上' },
+  { before:'The baby is safe',   opts:['in front of the car','in the crib'],     ans:1, explain:'in the crib 在嬰兒床裡 — 安全又合理！' },
+];
+
+// Part E: picture questions
+// scene = HTML string for the visual; sentence = text with blank; opts = choices; ans = correct string
+const PART_E = [
+  {
+    sentence: 'The cat is ___ the box.',
+    scene: `<div class="pic-scene" style="background:#e8f5e9">
+      <div class="pic-box" style="width:60px;height:44px;bottom:28px;left:50px"></div>
+      <div class="pic-emoji" style="bottom:70px;left:54px">🐱</div>
+    </div>`,
+    opts:['on','under','next to','in'],
+    ans:'on',
+    explain:'on = 在上面 — 貓咪站在箱子頂部'
+  },
+  {
+    sentence: 'The dog is ___ the table.',
+    scene: `<div class="pic-scene" style="background:#fff3e0">
+      <div class="pic-table-top" style="width:110px;height:10px;top:40px;left:25px"></div>
+      <div class="pic-table-leg" style="width:8px;height:45px;bottom:20px;left:32px"></div>
+      <div class="pic-table-leg" style="width:8px;height:45px;bottom:20px;right:32px"></div>
+      <div class="pic-emoji" style="bottom:22px;left:62px">🐶</div>
+    </div>`,
+    opts:['on','under','above','in front of'],
+    ans:'under',
+    explain:'under = 在下面 — 狗狗躲在桌子底下'
+  },
+  {
+    sentence: 'The bird flies ___ the house.',
+    scene: `<div class="pic-scene" style="background:#e3f2fd">
+      <div style="position:absolute;bottom:18px;left:40px;width:80px;height:52px;background:#ef9a9a;border-radius:4px"></div>
+      <div style="position:absolute;bottom:68px;left:26px;width:0;height:0;border-left:54px solid transparent;border-right:54px solid transparent;border-bottom:34px solid #e57373"></div>
+      <div class="pic-emoji" style="top:12px;left:62px;font-size:1.6rem">🐦</div>
+    </div>`,
+    opts:['under','next to','above','between'],
+    ans:'above',
+    explain:'above = 在上方（不接觸）— 鳥兒飛在房子上空'
+  },
+  {
+    sentence: 'The ball is ___ the two cones.',
+    scene: `<div class="pic-scene" style="background:#f3e5f5">
+      <div class="pic-emoji" style="bottom:22px;left:26px;font-size:1.8rem">🔺</div>
+      <div class="pic-emoji" style="bottom:22px;right:22px;font-size:1.8rem">🔺</div>
+      <div class="pic-emoji" style="bottom:28px;left:62px">⚽</div>
+    </div>`,
+    opts:['near','over','between','in front of'],
+    ans:'between',
+    explain:'between = 在…之間 — 球在兩個錐子中間'
+  },
+  {
+    sentence: 'The cat is ___ the tree.',
+    scene: `<div class="pic-scene" style="background:#e8f5e9">
+      <div class="pic-tree-top" style="width:60px;height:60px;top:18px;left:50px"></div>
+      <div class="pic-tree-trunk" style="width:14px;height:32px;bottom:18px;left:73px"></div>
+      <div class="pic-emoji" style="bottom:20px;left:102px">🐱</div>
+    </div>`,
+    opts:['on','above','next to','under'],
+    ans:'next to',
+    explain:'next to = 緊鄰旁邊 — 貓咪站在樹旁邊'
+  },
+  {
+    sentence: 'The fish swims ___ the bowl.',
+    scene: `<div class="pic-scene" style="background:#e0f7fa">
+      <div style="position:absolute;bottom:20px;left:40px;width:78px;height:70px;border-radius:50%;background:rgba(144,202,249,.55);border:3px solid #64b5f6"></div>
+      <div class="pic-emoji" style="bottom:38px;left:64px;font-size:1.5rem">🐟</div>
+    </div>`,
+    opts:['on','in','over','next to'],
+    ans:'in',
+    explain:'in = 在裡面 — 魚游在碗裡（水裡面）'
+  },
+  {
+    sentence: 'The kite flies ___ the clouds.',
+    scene: `<div class="pic-scene" style="background:#bbdefb">
+      <div style="position:absolute;top:20px;left:10px;width:60px;height:22px;background:#fff;border-radius:50px;opacity:.85"></div>
+      <div style="position:absolute;top:14px;left:88px;width:46px;height:18px;background:#fff;border-radius:50px;opacity:.85"></div>
+      <div class="pic-emoji" style="bottom:18px;left:62px;font-size:1.8rem">🪁</div>
+    </div>`,
+    opts:['under','near','over','in'],
+    ans:'over',
+    explain:'over = 越過/跨越上方 — 風箏飛過雲層上方'
+  },
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+const PHASES = ['learn','partA','partB','partC','partD','partE','done'];
+const TOTAL_Q = PART_A.length + PART_B.length + PART_C.length + PART_D.length + PART_E.length;
+let phase = 0, qi = 0, score = 0, wrongs = [], answered = false;
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+const app  = () => document.getElementById('app');
+const prog = (n) => `<div class="prog-wrap"><div class="prog-bar" style="width:${TOTAL_Q ? Math.round(n/TOTAL_Q*100) : 0}%"></div></div>`;
+
+function buildDots() {
+  document.getElementById('dots').innerHTML = PHASES.map((_,i) =>
+    `<span class="dot ${i < phase ? 'done' : i === phase ? 'active' : ''}"></span>`
+  ).join('');
+}
+
+function star(x, y) {
+  const s = document.createElement('span');
+  s.className = 'star-pop';
+  s.textContent = ['⭐','🌟','✨'][Math.floor(Math.random()*3)];
+  s.style.left = (x - 16) + 'px';
+  s.style.top  = (y - 16) + 'px';
+  document.body.appendChild(s);
+  setTimeout(() => s.remove(), 900);
+}
+
+function nextPhase() { phase++; qi = 0; answered = false; buildDots(); renderGame(); }
+function renderGame() {
+  const p = PHASES[phase];
+  if      (p === 'learn') phLearn();
+  else if (p === 'partA') phA();
+  else if (p === 'partB') phB();
+  else if (p === 'partC') phC();
+  else if (p === 'partD') phD();
+  else if (p === 'partE') phE();
+  else phDone();
+}
+
+// ─── LEARN ───────────────────────────────────────────────────────────────────
+function phLearn() {
+  app().innerHTML = `
+    <div class="card">
+      ${prog(0)}
+      <div class="phase-title">📖 今天的介系詞</div>
+      <div class="rule-box">
+        A <strong>preposition</strong>（介系詞）tells us <em>where</em> something is.<br>
+        📌 <strong>Prepositional phrase</strong> = preposition + noun<br>
+        e.g. <em>on the box</em> · <em>under the table</em> · <em>next to the tree</em>
+      </div>
+      <div class="learn-section">
+        <div class="learn-head">📦 Position 位置</div>
+        <div class="chips">
+          <span class="chip place">on</span>
+          <span class="chip place">in</span>
+          <span class="chip place">under</span>
+          <span class="chip place">above</span>
+          <span class="chip place">over</span>
+        </div>
+        <div class="ex">
+          <em>on</em> 在上面（接觸）　<em>in</em> 在裡面<br>
+          <em>under</em> 在下面　<em>above</em> 在上方（不接觸）<br>
+          <em>over</em> 越過上方（可移動）
+        </div>
+      </div>
+      <div class="learn-section">
+        <div class="learn-head">🧭 Direction &amp; Relative Position 相對位置</div>
+        <div class="chips">
+          <span class="chip dir">next to</span>
+          <span class="chip dir">in front of</span>
+          <span class="chip dir">between</span>
+          <span class="chip dir">near</span>
+          <span class="chip dir">around</span>
+        </div>
+        <div class="ex">
+          <em>next to</em> 緊鄰旁邊　<em>in front of</em> 在前面<br>
+          <em>between</em> 在兩者之間　<em>near</em> 在附近<br>
+          <em>around</em> 繞著
+        </div>
+      </div>
+      <button class="next-btn" onclick="nextPhase()">Part A — 點出介系詞 →</button>
+    </div>`;
+}
+
+// ─── PART A: tap the preposition word ────────────────────────────────────────
+function phA() {
+  if (qi >= PART_A.length) { nextPhase(); return; }
+  answered = false;
+  const q = PART_A[qi];
+  const wordsHtml = q.words.map(w => {
+    const clean = w.replace(/[.,!?]/g,'');
+    return `<span class="word-btn" onclick="checkA(this,'${clean}')">${w}</span>`;
+  }).join(' ');
+  app().innerHTML = `
+    <div class="card">
+      ${prog(qi)}
+      <div class="phase-title">✏️ Part A — 點出介系詞！</div>
+      <div class="q-num">第 ${qi+1} / ${PART_A.length} 題</div>
+      <p style="text-align:center;color:#64748b;font-size:.85rem;margin-bottom:10px">點擊句子中的 <strong>介系詞</strong></p>
+      <div class="sent-tap">${wordsHtml}</div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+
+function checkA(btn, word) {
+  if (answered) return;
+  const q = PART_A[qi];
+  if (word.toLowerCase() === q.prep.toLowerCase()) {
+    answered = true;
+    btn.classList.add('correct');
+    document.getElementById('fb').className = 'feedback ok';
+    document.getElementById('fb').textContent = `✅ 對！「${q.prep}」是介系詞 — ${q.explain}`;
+    score++;
+    star(btn.getBoundingClientRect().left + 20, btn.getBoundingClientRect().top);
+    setTimeout(() => { qi++; phA(); }, 1300);
+  } else {
+    btn.classList.add('wrong');
+    document.getElementById('fb').className = 'feedback bad';
+    document.getElementById('fb').textContent = '❌ 介系詞是表示位置的詞，再找找！';
+    setTimeout(() => btn.classList.remove('wrong'), 400);
+  }
+}
+
+// ─── PART B: fill in preposition ─────────────────────────────────────────────
+function phB() {
+  if (qi >= PART_B.length) { nextPhase(); return; }
+  answered = false;
+  const q = PART_B[qi];
+  const optsHtml = q.opts.map(o =>
+    `<button class="opt-btn" onclick="checkB(this,'${o.replace(/'/g,"\\'")}')"> ${o} </button>`
+  ).join('');
+  app().innerHTML = `
+    <div class="card">
+      ${prog(PART_A.length + qi)}
+      <div class="phase-title">📝 Part B — 填入介系詞</div>
+      <div class="q-num">第 ${qi+1} / ${PART_B.length} 題</div>
+      <div class="sent-blank">${q.before} <span class="blank" id="blankEl">___</span> ${q.after}</div>
+      <div class="opts2">${optsHtml}</div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+
+function checkB(btn, chosen) {
+  if (answered) return;
+  answered = true;
+  const q = PART_B[qi];
+  document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  document.getElementById('blankEl').textContent = chosen;
+  if (chosen === q.blank) {
+    btn.classList.add('correct');
+    document.getElementById('fb').className = 'feedback ok';
+    document.getElementById('fb').textContent = `✅ 答對了！${q.explain}`;
+    score++;
+    star(btn.getBoundingClientRect().left + 40, btn.getBoundingClientRect().top);
+  } else {
+    btn.classList.add('wrong');
+    document.getElementById('fb').className = 'feedback bad';
+    document.getElementById('fb').textContent = `❌ 正確答案：${q.blank} — ${q.explain}`;
+    wrongs.push({ q: `${q.before} ___ ${q.after}`, a: q.blank, h: q.explain });
+    document.querySelectorAll('.opt-btn').forEach(b => { if (b.textContent.trim() === q.blank) b.classList.add('correct'); });
+  }
+  setTimeout(() => { qi++; phB(); }, 1400);
+}
+
+// ─── PART C: tap the prepositional phrase ────────────────────────────────────
+function phC() {
+  if (qi >= PART_C.length) { nextPhase(); return; }
+  answered = false;
+  const q = PART_C[qi];
+  const chunks = [
+    { text: q.subj,   isPhrase: false },
+    { text: q.phrase, isPhrase: true  },
+  ];
+  if (Math.random() > 0.5) chunks.reverse();
+  const html = chunks.map(c =>
+    `<span class="chunk-btn" onclick="checkC(this,${c.isPhrase})">${c.text}</span>`
+  ).join(' ');
+  app().innerHTML = `
+    <div class="card">
+      ${prog(PART_A.length + PART_B.length + qi)}
+      <div class="phase-title">🔍 Part C — 點出介系詞片語！</div>
+      <div class="q-num">第 ${qi+1} / ${PART_C.length} 題</div>
+      <p style="text-align:center;color:#64748b;font-size:.85rem;margin-bottom:10px">點擊 <strong>prepositional phrase</strong>（介詞 + 名詞）</p>
+      <div class="sent-phrase">${html}</div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+
+function checkC(btn, isPhrase) {
+  if (answered) return;
+  answered = true;
+  const q = PART_C[qi];
+  document.querySelectorAll('.chunk-btn').forEach(b => b.style.pointerEvents = 'none');
+  if (isPhrase) {
+    btn.classList.add('correct');
+    document.getElementById('fb').className = 'feedback ok';
+    document.getElementById('fb').textContent = `✅ 對！「${q.phrase}」是介系詞片語 — ${q.explain}`;
+    score++;
+    star(btn.getBoundingClientRect().left + 40, btn.getBoundingClientRect().top);
+  } else {
+    btn.classList.add('wrong');
+    document.getElementById('fb').className = 'feedback bad';
+    document.getElementById('fb').textContent = `❌ 介系詞片語是「${q.phrase}」— ${q.explain}`;
+    wrongs.push({ q: `${q.subj} ${q.phrase}`, a: q.phrase, h: q.explain });
+    document.querySelectorAll('.chunk-btn').forEach(b => { if (b.textContent === q.phrase) b.classList.add('correct'); });
+  }
+  setTimeout(() => { qi++; phC(); }, 1400);
+}
+
+// ─── PART D: best prepositional phrase MC ────────────────────────────────────
+function phD() {
+  if (qi >= PART_D.length) { nextPhase(); return; }
+  answered = false;
+  const q = PART_D[qi];
+  const optsHtml = q.opts.map((o, i) =>
+    `<button class="mc-btn" onclick="checkD(this,${i})">${o}</button>`
+  ).join('');
+  app().innerHTML = `
+    <div class="card">
+      ${prog(PART_A.length + PART_B.length + PART_C.length + qi)}
+      <div class="phase-title">🎯 Part D — 選最合適的片語！</div>
+      <div class="q-num">第 ${qi+1} / ${PART_D.length} 題</div>
+      <div class="mc-sent">${q.before} <span style="color:#0d9488;font-weight:800">________</span></div>
+      <div class="mc-opts">${optsHtml}</div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+
+function checkD(btn, idx) {
+  if (answered) return;
+  answered = true;
+  const q = PART_D[qi];
+  document.querySelectorAll('.mc-btn').forEach(b => b.disabled = true);
+  if (idx === q.ans) {
+    btn.classList.add('correct');
+    document.getElementById('fb').className = 'feedback ok';
+    document.getElementById('fb').textContent = `✅ 答對了！${q.explain}`;
+    score++;
+    star(btn.getBoundingClientRect().left + 60, btn.getBoundingClientRect().top);
+  } else {
+    btn.classList.add('wrong');
+    document.getElementById('fb').className = 'feedback bad';
+    document.getElementById('fb').textContent = `❌ 正確答案：${q.opts[q.ans]} — ${q.explain}`;
+    wrongs.push({ q: `${q.before} ________`, a: q.opts[q.ans], h: q.explain });
+    document.querySelectorAll('.mc-btn').forEach((b, i) => { if (i === q.ans) b.classList.add('correct'); });
+  }
+  setTimeout(() => { qi++; phD(); }, 1400);
+}
+
+// ─── PART E: picture questions ───────────────────────────────────────────────
+function phE() {
+  if (qi >= PART_E.length) { nextPhase(); return; }
+  answered = false;
+  const q = PART_E[qi];
+  const qOffset = PART_A.length + PART_B.length + PART_C.length + PART_D.length;
+  const optsHtml = q.opts.map(o =>
+    `<button class="opt-btn" onclick="checkE(this,'${o.replace(/'/g,"\\'")}')"> ${o} </button>`
+  ).join('');
+  app().innerHTML = `
+    <div class="card">
+      ${prog(qOffset + qi)}
+      <div class="phase-title">🖼️ Part E — 看圖選答案！</div>
+      <div class="q-num">第 ${qi+1} / ${PART_E.length} 題</div>
+      ${q.scene}
+      <div class="sent-blank" style="margin-bottom:14px">${q.sentence.replace('___','<span class="blank" id="blankEl">___</span>')}</div>
+      <div class="opts2">${optsHtml}</div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+}
+
+function checkE(btn, chosen) {
+  if (answered) return;
+  answered = true;
+  const q = PART_E[qi];
+  document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  const blankEl = document.getElementById('blankEl');
+  if (blankEl) blankEl.textContent = chosen;
+  if (chosen === q.ans) {
+    btn.classList.add('correct');
+    document.getElementById('fb').className = 'feedback ok';
+    document.getElementById('fb').textContent = `✅ 答對了！${q.explain}`;
+    score++;
+    star(btn.getBoundingClientRect().left + 40, btn.getBoundingClientRect().top);
+  } else {
+    btn.classList.add('wrong');
+    document.getElementById('fb').className = 'feedback bad';
+    document.getElementById('fb').textContent = `❌ 正確答案：${q.ans} — ${q.explain}`;
+    wrongs.push({ q: q.sentence, a: q.ans, h: q.explain });
+    document.querySelectorAll('.opt-btn').forEach(b => { if (b.textContent.trim() === q.ans) b.classList.add('correct'); });
+  }
+  setTimeout(() => { qi++; phE(); }, 1500);
+}
+
+// ─── DONE ─────────────────────────────────────────────────────────────────────
+function phDone() {
+  const pct = Math.round(score / TOTAL_Q * 100);
+  const medal = pct >= 90 ? '🏆' : pct >= 70 ? '🥈' : '💪';
+  app().innerHTML = `
+    <div class="card">
+      <div class="score-wrap">
+        <div style="font-size:3rem">${medal}</div>
+        <div class="score-num">${score} / ${TOTAL_Q}</div>
+        <div style="color:#64748b;font-size:.9rem;margin-top:4px">${pct}% — ${pct>=90?'太棒了！':pct>=70?'很不錯！':'繼續加油！'}</div>
+      </div>
+      ${wrongs.length ? `
+        <div style="font-family:'Fredoka One',cursive;color:#dc2626;margin-bottom:8px;font-size:.95rem">❌ 錯題複習</div>
+        <ul class="wrong-list">
+          ${wrongs.map(w => `
+            <li class="wrong-item">
+              <div class="wq">📝 ${w.q}</div>
+              <div class="wa">✅ ${w.a}</div>
+              <div class="wh">${w.h}</div>
+            </li>`).join('')}
+        </ul>` : '<div style="text-align:center;color:#16a34a;font-weight:800;font-size:1.1rem;margin-bottom:10px">🎉 全部答對！太厲害了！</div>'}
+      <button class="next-btn" style="margin-top:16px" onclick="restart()">再玩一次 🔄</button>
+    </div>`;
+}
+
+function restart() {
+  phase = 0; qi = 0; score = 0; wrongs = []; answered = false;
+  buildDots(); renderGame();
+}
+
+buildDots();
+renderGame();
+</script>
+</body>
+</html>
